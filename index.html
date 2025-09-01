@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Support Agent - Intelligent Customer Support Automation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .login-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .login-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23ffffff10" points="0,1000 1000,300 1000,1000"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 80px 0;
+            background: #f8fafc;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2d3748;
+        }
+
+        .workflow-schema {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            margin: 4rem 0;
+            align-items: center;
+        }
+
+        .workflow-step {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .workflow-step:hover {
+            transform: translateY(-10px);
+        }
+
+        .workflow-step::after {
+            content: '⇄';
+            position: absolute;
+            top: 50%;
+            right: -2.5rem;
+            width: 2rem;
+            text-align: center;
+            font-size: 2rem;
+            color: #667eea;
+            font-weight: bold;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .workflow-step:last-child::after {
+            display: none;
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .step-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-left: 5px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .pricing-card {
+            background: white;
+            color: #333;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            margin: 3rem auto 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .pricing-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .pricing-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-amount span {
+            color: #667eea;
+        }
+
+        .pricing-period {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-feature {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pricing-feature:last-child {
+            border-bottom: none;
+        }
+
+        /* Integration Section */
+        .integration {
+            padding: 80px 0;
+            background: #f8fafc;
+        }
+
+        .integration-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .integration-step {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+            overflow-x: auto;
+        }
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 0;
+            }
+
+            .nav-links li:not(:last-child) {
+                display: none;
+            }
+
+            .workflow-step::after {
+                display: none;
+            }
+
+            .workflow-schema {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                AI Support Agent
+            </div>
+            <ul class="nav-links">
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#integration">Integration</a></li>
+                <li><a href="#" class="login-button">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>AI Support Agent</h1>
+                <p>Intelligent customer support automation that scales with your business</p>
+                <a href="#integration" class="cta-button">Get Started Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title fade-in">How It Works</h2>
+            
+            <div class="workflow-schema">
+                <div class="workflow-step fade-in">
+                    <div class="step-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="step-title">1. Client Interaction</h3>
+                    <p class="step-description">Customer starts a conversation through the embedded chat widget on your website and gets instant and personalized support</p>
+                </div>
+
+                <div class="workflow-step fade-in">
+                    <div class="step-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="step-title">2. AI Support Agent</h3>
+                    <p class="step-description">Our AI instantly analyzes customer queries and provides accurate responses using your comprehensive documentation and knowledge base</p>
+                </div>
+
+                <div class="workflow-step fade-in">
+                    <div class="step-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3 class="step-title">3. Smart Escalation</h3>
+                    <p class="step-description">When the AI encounters complex issues or needs additional information, it seamlessly escalates to human experts via WhatsApp for immediate assistance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title fade-in">Powerful Features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3 class="feature-title">Issue Creation & Tracking</h3>
+                    <p class="feature-description">Automatically create and track customer issues with detailed logs and status updates</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Documentation Updates</h3>
+                    <p class="feature-description">AI automatically grows your documentation by learning from interactions with product owner (WhatsApp)</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Alerts</h3>
+                    <p class="feature-description">Get notified about important client demands and trending support topics in real-time</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Analytics & Insights</h3>
+                    <p class="feature-description">Comprehensive analytics on customer satisfaction, common issues, and AI performance</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Availability</h3>
+                    <p class="feature-description">Round-the-clock support that never sleeps, ensuring customers get help whenever they need it</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3 class="feature-title">Multi-language Support</h3>
+                    <p class="feature-description">Communicate with customers in their preferred language with automatic translation capabilities</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2 class="section-title fade-in">Simple, Transparent Pricing</h2>
+            
+            <div class="pricing-card fade-in">
+                <h3 class="pricing-title">Complete AI Support</h3>
+                <div class="pricing-amount">$5<span style="font-size: 1.5rem;">/month</span></div>
+                <div class="pricing-period" style="font-size: 1.1rem;">+ <span style="color: #667eea; font-weight: bold;">$0.04</span> per message received by the AI</div>
+                
+                <div style="margin: 2rem 0;">
+                    <a href="#integration" class="cta-button">Start Trial</a>
+                    <p style="margin-top: 1rem; color: #667eea; font-weight: bold; font-size: 1.1rem;">Get your $10 free credit now</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integration Section -->
+    <section id="integration" class="integration">
+        <div class="container">
+            <h2 class="section-title fade-in">Easy Integration</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 3rem;">Get up and running in minutes with our simple 2-step integration</p>
+            
+            <div class="integration-steps">
+                <div class="integration-step fade-in">
+                    <div class="step-number">1</div>
+                    <h3>Embed the Chat Widget</h3>
+                    <p>Add our chat widget to your website with a unique token</p>
+                </div>
+
+                <div class="integration-step fade-in">
+                    <div class="step-number">2</div>
+                    <h3>Setup Webhook</h3>
+                    <p>Create a webhook endpoint to validate user tokens</p>
+                </div>
+            </div>
+
+            <div class="code-block fade-in">
+                <h4 style="color: #81c784; margin-bottom: 1rem;">Step 1: Embed the chat widget</h4>
+                <pre><code>&lt;script&gt;
+  (function() {
+    var widget = document.createElement('script');
+    widget.src = 'https://cdn.aisupportagent.com/widget.js';
+    widget.setAttribute('data-token', 'YOUR_UNIQUE_TOKEN');
+    document.head.appendChild(widget);
+  })();
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="code-block fade-in">
+                <h4 style="color: #81c784; margin-bottom: 1rem;">Control Widget Functions</h4>
+                <pre><code>// Pass a callback to get current user token
+window.AISupportWidget.setUserTokenCallback(function getUserToken() {
+  // Return the current logged user token
+  return localStorage.getItem('userToken'); // or your auth method
+});
+
+// Show the widget
+window.AISupportWidget.show();
+
+// Hide the widget
+window.AISupportWidget.hide();
+</code></pre>
+            </div>
+
+            <div class="code-block fade-in">
+                <h4 style="color: #81c784; margin-bottom: 1rem;">Step 2: Webhook endpoint (on your server)</h4>
+                <pre><code>GET /your_webhook/validate-token?userToken=USER_TOKEN&shared_secret=YOUR_SHARED_SECRET
+
+Response:
+{
+  "valid": true,
+  "userInfo": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "unique_id": "USER_UNIQUE_ID",
+    "support_level": "vip"
+  }
+}</code></pre>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="mailto:support@aisupportagent.com" class="cta-button fade-in">Get Your API Keys</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AI Support Agent. All rights reserved.</p>
+            <p style="margin-top: 1rem; opacity: 0.8;">
+                <a href="mailto:support@aisupportagent.com" style="color: white;">Contact Support</a> | 
+                <a href="#" style="color: white;">Documentation</a> | 
+                <a href="#" style="color: white;">API Reference</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Copy code functionality
+        document.querySelectorAll('.code-block').forEach(block => {
+            block.addEventListener('click', () => {
+                const code = block.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    // Could add a toast notification here
+                    console.log('Code copied to clipboard');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
