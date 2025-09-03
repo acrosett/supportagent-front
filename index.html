@@ -308,6 +308,48 @@
             margin-bottom: 2rem;
         }
 
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-table th,
+        .pricing-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pricing-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .pricing-table td {
+            color: #2d3748;
+        }
+
+        .pricing-table .price {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .pricing-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pricing-table tr:hover {
+            background: #f8fafc;
+        }
+
         .pricing-feature {
             padding: 0.5rem 0;
             border-bottom: 1px solid #e2e8f0;
@@ -363,6 +405,43 @@
             overflow-x: auto;
         }
 
+        /* Tab Navigation */
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-button:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         /* Footer */
         footer {
             background: #2d3748;
@@ -393,6 +472,38 @@
             .workflow-schema {
                 grid-template-columns: 1fr;
                 gap: 2rem;
+            }
+
+            /* Mobile pricing table fixes */
+            .pricing-card {
+                margin: 2rem 10px 0;
+                padding: 2rem 1rem;
+            }
+
+            .pricing-table {
+                font-size: 0.9rem;
+                margin: 1.5rem auto;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .pricing-table th,
+            .pricing-table td {
+                padding: 0.8rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .pricing-table th {
+                font-size: 0.9rem;
+            }
+
+            .pricing-table .price {
+                font-size: 0.9rem;
+            }
+
+            /* Ensure container doesn't overflow */
+            .container {
+                padding: 0 15px;
             }
         }
 
@@ -514,24 +625,24 @@
                     <div class="feature-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3 class="feature-title">Analytics & Insights</h3>
-                    <p class="feature-description">Comprehensive analytics on customer satisfaction, common issues, and AI performance</p>
+                    <h3 class="feature-title">Sales Conversion</h3>
+                    <p class="feature-description">AI chatbot actively converts visitors into clients by intelligently selling your products when they ask questions</p>
                 </div>
 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
-                        <i class="fas fa-clock"></i>
+                        <i class="fas fa-globe"></i>
                     </div>
                     <h3 class="feature-title">24/7 Availability</h3>
-                    <p class="feature-description">Round-the-clock support that never sleeps, ensuring customers get help whenever they need it</p>
+                    <p class="feature-description">Round-the-clock support in multiple languages that never sleeps, ensuring customers worldwide get help whenever they need it</p>
                 </div>
 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
-                        <i class="fas fa-language"></i>
+                        <i class="fas fa-cogs"></i>
                     </div>
-                    <h3 class="feature-title">Multi-language Support</h3>
-                    <p class="feature-description">Communicate with customers in their preferred language with automatic translation capabilities</p>
+                    <h3 class="feature-title">Custom Tool Support</h3>
+                    <p class="feature-description">AI can performs custom actions on your application on behalf of the user, like a real customer service agent</p>
                 </div>
             </div>
         </div>
@@ -545,7 +656,34 @@
             <div class="pricing-card fade-in">
                 <h3 class="pricing-title">Complete AI Support</h3>
                 <div class="pricing-amount">$5<span style="font-size: 1.5rem;">/month</span></div>
-                <div class="pricing-period" style="font-size: 1.1rem;">+ <span style="color: #667eea; font-weight: bold;">$0.04</span> per message received by the AI</div>
+                <p style="color: #666; margin-bottom: 2rem;">Base subscription includes all core features</p>
+                
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Messages received by AI</td>
+                            <td class="price">$0.03/message</td>
+                        </tr>
+                        <tr>
+                            <td>WhatsApp messages sent to your team<span style="color: #667eea;">*</span></td>
+                            <td class="price">$0.03/message</td>
+                        </tr>
+                        <tr>
+                            <td>Custom tools execution<span style="color: #667eea;">*</span></td>
+                            <td class="price">$0.03/execution</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p style="color: #666; font-size: 0.9rem; margin-top: 1rem; text-align: center;">
+                    <span style="color: #667eea;">*</span>Optional features - only charged when used
+                </p>
                 
                 <div style="margin: 2rem 0;">
                     <a href="#integration" class="cta-button">Start Trial</a>
@@ -559,25 +697,25 @@
     <section id="integration" class="integration">
         <div class="container">
             <h2 class="section-title fade-in">Easy Integration</h2>
-            <p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 3rem;">Get up and running in minutes with our simple 2-step integration</p>
+            <p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 1rem;">Get up and running in minutes with our simple integration</p>
             
-            <div class="integration-steps">
-                <div class="integration-step fade-in">
-                    <div class="step-number">1</div>
-                    <h3>Embed the Chat Widget</h3>
-                    <p>Add our chat widget to your website with a unique token</p>
-                </div>
-
-                <div class="integration-step fade-in">
-                    <div class="step-number">2</div>
-                    <h3>Setup Webhook</h3>
-                    <p>Create a webhook endpoint to validate user tokens</p>
-                </div>
+            <div class="tab-container fade-in">
+                <button class="tab-button active" onclick="showTab('guest')">Guest Only</button>
+                <button class="tab-button" onclick="showTab('identified')">Identified Users</button>
             </div>
+            
+            <div id="guest" class="tab-content active">
+                <div class="integration-steps" style="margin-top: 2rem;">
+                    <div class="integration-step fade-in">
+                        <div class="step-number">1</div>
+                        <h3>Embed the Chat Widget</h3>
+                        <p>Add our chat widget to your website for guest users</p>
+                    </div>
+                </div>
 
-            <div class="code-block fade-in">
-                <h4 style="color: #81c784; margin-bottom: 1rem;">Step 1: Embed the chat widget</h4>
-                <pre><code>&lt;script&gt;
+                <div class="code-block fade-in">
+                    <h4 style="color: #81c784; margin-bottom: 1rem;">Step 1: Embed the chat widget</h4>
+                    <pre><code>&lt;script&gt;
   (function() {
     var widget = document.createElement('script');
     widget.src = 'https://cdn.aisupportagent.com/widget.js';
@@ -585,11 +723,52 @@
     document.head.appendChild(widget);
   })();
 &lt;/script&gt;</code></pre>
+                </div>
+
+                <div class="code-block fade-in">
+                    <h4 style="color: #81c784; margin-bottom: 1rem;">Control Widget Functions (optional)</h4>
+                    <pre><code>// Hide the widget
+window.AISupportWidget.hide();
+
+// Show the widget
+window.AISupportWidget.show();</code></pre>
+                </div>
+
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="mailto:support@aisupportagent.com" class="cta-button fade-in">Get Your API Keys</a>
+                </div>
             </div>
 
-            <div class="code-block fade-in">
-                <h4 style="color: #81c784; margin-bottom: 1rem;">Control Widget Functions</h4>
-                <pre><code>// Pass a callback to get current user token
+            <div id="identified" class="tab-content">
+                <div class="integration-steps" style="margin-top: 2rem;">
+                    <div class="integration-step fade-in">
+                        <div class="step-number">1</div>
+                        <h3>Embed the Chat Widget</h3>
+                        <p>Add our chat widget to your website with user identification</p>
+                    </div>
+
+                    <div class="integration-step fade-in">
+                        <div class="step-number">2</div>
+                        <h3>Setup Webhook</h3>
+                        <p>Create a webhook endpoint to validate user tokens</p>
+                    </div>
+                </div>
+
+                <div class="code-block fade-in">
+                    <h4 style="color: #81c784; margin-bottom: 1rem;">Step 1: Embed the chat widget</h4>
+                    <pre><code>&lt;script&gt;
+  (function() {
+    var widget = document.createElement('script');
+    widget.src = 'https://cdn.aisupportagent.com/widget.js';
+    widget.setAttribute('data-token', 'YOUR_UNIQUE_TOKEN');
+    document.head.appendChild(widget);
+  })();
+&lt;/script&gt;</code></pre>
+                </div>
+
+                <div class="code-block fade-in">
+                    <h4 style="color: #81c784; margin-bottom: 1rem;">Control Widget Functions</h4>
+                    <pre><code>// Pass a callback to get current user token
 window.AISupportWidget.setUserTokenCallback(function getUserToken() {
   // Return the current logged user token
   return localStorage.getItem('userToken'); // or your auth method
@@ -599,13 +778,12 @@ window.AISupportWidget.setUserTokenCallback(function getUserToken() {
 window.AISupportWidget.show();
 
 // Hide the widget
-window.AISupportWidget.hide();
-</code></pre>
-            </div>
+window.AISupportWidget.hide();</code></pre>
+                </div>
 
-            <div class="code-block fade-in">
-                <h4 style="color: #81c784; margin-bottom: 1rem;">Step 2: Webhook endpoint (on your server)</h4>
-                <pre><code>GET /your_webhook/validate-token?userToken=USER_TOKEN&shared_secret=YOUR_SHARED_SECRET
+                <div class="code-block fade-in">
+                    <h4 style="color: #81c784; margin-bottom: 1rem;">Step 2: Webhook endpoint (on your server)</h4>
+                    <pre><code>GET /your_webhook/validate-token?userToken=USER_TOKEN&shared_secret=YOUR_SHARED_SECRET
 
 Response:
 {
@@ -617,10 +795,11 @@ Response:
     "support_level": "vip"
   }
 }</code></pre>
-            </div>
+                </div>
 
-            <div style="text-align: center; margin-top: 3rem;">
-                <a href="mailto:support@aisupportagent.com" class="cta-button fade-in">Get Your API Keys</a>
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="mailto:support@aisupportagent.com" class="cta-button fade-in">Get Your API Keys</a>
+                </div>
             </div>
         </div>
     </section>
@@ -638,6 +817,30 @@ Response:
     </footer>
 
     <script>
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).style.display = 'block';
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
+        // Initialize first tab as active
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.tab-button').click();
+        });
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -671,7 +874,6 @@ Response:
             block.addEventListener('click', () => {
                 const code = block.querySelector('code').textContent;
                 navigator.clipboard.writeText(code).then(() => {
-                    // Could add a toast notification here
                     console.log('Code copied to clipboard');
                 });
             });
