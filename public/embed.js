@@ -139,12 +139,10 @@
   };
 
   // Generate MongoDB-like ObjectId
-  const generateObjectId = () => {
-    const timestamp = Math.floor(Date.now() / 1000).toString(16);
-    const randomBytes = Array.from({length: 16}, () => 
-      Math.floor(Math.random() * 256).toString(16).padStart(2, '0')
-    ).join('').substring(0, 16);
-    return timestamp + randomBytes;
+  const generateObjectId = (bytes = 16) => {
+    const arr = new Uint8Array(bytes);
+    window.crypto.getRandomValues(arr);
+    return Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
   };
 
   // Get or create guest ID
@@ -155,7 +153,7 @@
 
     if (!guestId) {
       guestId = generateObjectId();
-      sessionStorage.setItem(GUEST_ID_KEY, guestId);
+      sessionStorage.setItem(GUEST_ID_KEY, "guest_" + guestId);
       isNew = true;
     }
 
@@ -253,6 +251,13 @@
             console.log('AI Support Widget ready');
             // Initialize guest ID when widget is ready
             getGuestId();
+            // Send API token to iframe if available
+            if (config.apiToken) {
+              sendMessage({
+                type: 'api-token',
+                token: config.apiToken
+              });
+            }
             break;
           case 'widget-resize':
             if (data.height) {

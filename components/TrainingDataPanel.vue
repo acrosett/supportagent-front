@@ -91,8 +91,6 @@
 <script setup lang="ts">
 interface Props {
   showPanel: boolean
-  modelId?: string
-  fanId?: string
 }
 
 interface Emits {
@@ -118,9 +116,6 @@ const isResizing = ref(false)
 const startX = ref(0)
 const startWidth = ref(0)
 
-// User activity tracking
-const activityTracker = useUserActivity()
-
 // Refs
 const inputContainer = ref<HTMLElement>()
 const outputContainer = ref<HTMLElement>()
@@ -143,7 +138,9 @@ const checkAdminRole = async () => {
 }
 
 const loadTrainingData = async (showLoading = true) => {
-  if (!props.modelId || !props.fanId) return
+  // Get identifier from session storage
+  const identifier = sessionStorage.getItem('client-identifier')
+  if (!identifier) return
   
   if (showLoading) {
     loading.value = true
@@ -152,7 +149,7 @@ const loadTrainingData = async (showLoading = true) => {
     const nuxtApp = useNuxtApp()
     const query = {
       agentName: "chat-agent",
-      contextId: `${props.modelId}_${props.fanId}`,
+      contextId: identifier, // Use client identifier directly
       isTest: isAdmin.value ? undefined : true
     }
     
@@ -228,19 +225,6 @@ const formatDate = (date: Date) => {
   }).format(date)
 }
 
-// Auto-refresh functions using activity tracker
-const startAutoRefresh = () => {
-  activityTracker.startAutoRefresh(async () => {
-    if (props.modelId && props.fanId) {
-      await loadTrainingData(false) // Don't show loading spinner for auto-refresh
-    }
-  }, 3000) // 3 seconds
-}
-
-const stopAutoRefresh = () => {
-  activityTracker.stopAutoRefresh()
-}
-
 // Manual refresh function - exposed to parent
 const refreshData = async () => {
   await loadTrainingData(false) // Don't show loading for manual refresh from parent
@@ -281,11 +265,6 @@ const stopResize = () => {
   document.body.style.userSelect = ''
 }
 
-// Watch for modelId and fanId changes to reload data
-watch([() => props.modelId, () => props.fanId], () => {
-  loadTrainingData(false) // Don't show loading when props change (usually means switching context)
-})
-
 // Scroll to bottom of input when data changes or panel opens
 const scrollToBottom = () => {
   if (data.value && props.showPanel) {
@@ -305,21 +284,12 @@ watch(() => props.showPanel, scrollToBottom)
 
 onMounted(() => {
   checkAdminRole()
-  
-  // Set up activity tracking
-  const cleanup = activityTracker.setupActivityListeners()
-  
-  // Start auto-refresh
-  startAutoRefresh()
-  
-  // Store cleanup function for onUnmounted
-  onUnmounted(() => {
-    cleanup()
-    stopAutoRefresh()
-    if (isResizing.value) {
-      stopResize()
-    }
-  })
+})
+
+onUnmounted(() => {
+  if (isResizing.value) {
+    stopResize()
+  }
 })
 </script>
 

@@ -4,8 +4,6 @@
     <TrainingDataPanel
       ref="trainingDataPanel"
       :showPanel="showSidebar"
-      :modelId="modelId"
-      :fanId="fanId"
       @toggle="toggleSidebar"
       @widthChange="handlePanelWidthChange"
     />
@@ -129,7 +127,7 @@ const isTyping = ref(false)
 
 // User activity tracking
 const activityTracker = useUserActivity()
-const messagePollingInterval = ref<NodeJS.Timeout | null>(null)
+const socket = ref<WebSocket | null>(null)
 
 // Admin sidebar state
 const showSidebar = ref(false)
@@ -140,65 +138,21 @@ const lastMessageCount = ref(0)
 // Refs
 const messagesContainer = ref<HTMLElement>()
 const messageInput = ref<HTMLTextAreaElement>()
+const trainingDataPanel = ref()
 
 const initializeChat = async (nuxtApp: NuxtApp) => {
-  if (!modelId.value) {
-    nuxtApp.$toast.show(new Error('Model ID is required'), 'error')
-    await router.push('/models')
-    return
-  }
+  isLoading.value = false
 
   try {
-    // Load model
-    selectedModel.value = await nuxtApp.$sp.model.findOne({ id: modelId.value, isTestModel: true })
+    // Load initial messages
+    await refreshMessages(nuxtApp)
     
-    if (!selectedModel.value) {
-  nuxtApp.$toast.show(new Error('Model not found'), 'error')
-      await router.push('/models')
-      return
-    }
-
-    // Handle fan - create new one if fanId not provided
-    if (fanId.value) {
-      try {
-        currentFan.value = await nuxtApp.$sp.testing.get_fan_info({ fanId: fanId.value })
-      } catch (error) {
-        console.warn('Fan not found, creating new one')
-      }
-    }
-
-    if (!currentFan.value) {
-      // Create new fan
-      const newFan = await nuxtApp.$sp.testing.create_fan({
-        fanName: fanName.value || `Test Fan ${Date.now()}`,
-        model_id: modelId.value,
-      })
-      
-      currentFan.value = newFan as any;
-      
-      // Update URL with new fanId
-      await router.replace({
-        query: { ...route.query, fanId: currentFan?.value?.id }
-      })
-    }
-
-
-  // Load messages and spents
-  await refreshMessages(nuxtApp)
-
-    // Start message polling if chat initialized successfully
-    if (selectedModel.value && currentFan.value) {
-      startMessagePolling(nuxtApp)
-    }
-
-    // Scroll to bottom after initial load
-    await nextTick()
-    scrollToBottom()
+    // Open socket connection for real-time updates
+    await openSocketConnection(nuxtApp)
 
   } catch (error: any) {
     console.error('Failed to initialize chat:', error)
-  console.error(error)
-  nuxtApp.$toast.show(error, 'error')
+    nuxtApp.$toast.show(error, 'error')
   } finally {
     isLoading.value = false
   }
@@ -207,11 +161,14 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
 
 // Loads messages and builds ChatMessage[]
 const refreshMessages = async (nuxtApp: NuxtApp) => {
-  if (!selectedModel.value?.id || !currentFan.value?.id) return
+  // Get identifier from session storage
+  const identifier = sessionStorage.getItem('client-identifier')
+  if (!identifier) {
+    return;
+  }
   try {
     const res = await nuxtApp.$sp.testing.get_messages({
-      model_id: selectedModel.value.id,
-      fan: currentFan.value.id
+      identifier: identifier
     })
     const rawMessages = res.messages?.data || []
 
@@ -246,6 +203,11 @@ const refreshMessages = async (nuxtApp: NuxtApp) => {
     
     // Update message count tracking
     lastMessageCount.value = newMessageCount
+    
+    // Trigger training data panel refresh when messages are updated
+    if (hasNewMessages && trainingDataPanel.value) {
+      await trainingDataPanel.value.refreshData()
+    }
   } catch (error: any) {
     console.error('Failed to load messages:', error)
   console.error(error)
@@ -257,22 +219,31 @@ const sendMessage = async () => {
   console.log('Sending message:', messageText.value)
   if (!messageText.value.trim()) return
 
-  useNuxtApp().$sp.testing.send_message({
-    model_id: selectedModel.value?.id as string,
-    fan: currentFan.value?.id as string,
-    content: messageText.value.trim() || undefined || '',
-  }).catch(err => {
-    useNuxtApp().$toast.show(err, 'error')
-  })
-  
-  // Clear input
-  messageText.value = ''
-  
-  // Scroll to bottom
-  await nextTick()
-  scrollToBottom()
+  const identifier = sessionStorage.getItem('client-identifier')
+  if (!identifier) {
+    console.warn('Missing client identifier for sending message')
+    return
+  }
 
-  await refreshMessages(useNuxtApp());
+  try {
+    await useNuxtApp().$sp.testing.send_message({
+      identifier: identifier,
+      content: messageText.value.trim(),
+    })
+    
+    // Clear input
+    messageText.value = ''
+    
+    // Scroll to bottom
+    await nextTick()
+    scrollToBottom()
+
+    // Socket will handle message updates automatically
+    // No need to manually refresh messages
+    
+  } catch (err) {
+    useNuxtApp().$toast.show(err, 'error')
+  }
 }
 
 const handleShiftEnter = (event: KeyboardEvent) => {
@@ -320,47 +291,92 @@ const handlePanelWidthChange = (width: number) => {
   console.log('Panel width changed to:', width)
 }
 
-const startMessagePolling = (nuxtApp: NuxtApp) => {
-  if (messagePollingInterval.value) {
-    clearInterval(messagePollingInterval.value)
-  }
-  fetchNewMessages(nuxtApp);
-  messagePollingInterval.value = setInterval(async () => {
-    // Only fetch messages if user is active
-    if (activityTracker.isUserActive.value && selectedModel.value && currentFan.value) {
-      await fetchNewMessages(nuxtApp)
+// Socket connection management
+const openSocketConnection = async (nuxtApp: NuxtApp) => {
+  try {
+    // Close existing socket if any
+    closeSocketConnection()
+    
+    // Get identifier from session storage
+    const identifier = sessionStorage.getItem('client-identifier')
+    if (!identifier) {
+      console.warn('Missing client identifier for socket connection')
+      return
     }
     
-    // Check if user is still active
-    activityTracker.checkUserActivity()
-  }, 3000) // Every 3 seconds
-}
-
-const stopMessagePolling = () => {
-  if (messagePollingInterval.value) {
-    clearInterval(messagePollingInterval.value)
-    messagePollingInterval.value = null
+    // Get socket URL from runtime config
+    const config = useRuntimeConfig()
+    const wsBaseUrl = config.public.socketBaseUrl || 'ws://localhost:3001'
+    
+    // Create WebSocket connection with only client identifier
+    const wsUrl = `${wsBaseUrl}/chat-socket?identifier=${encodeURIComponent(identifier)}`
+    socket.value = new WebSocket(wsUrl)
+    
+    socket.value.onopen = () => {
+      console.log('Socket connected for identifier:', identifier)
+    }
+    
+    socket.value.onmessage = async (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        
+        switch (data.type) {
+          case 'new_message':
+            // Refresh messages when server tells us to
+            await refreshMessages(nuxtApp)
+            break
+          case 'typing_status':
+            // Update typing indicator
+            isTyping.value = data.isTyping || false
+            break
+          case 'message_update':
+            // Refresh messages for any updates
+            await refreshMessages(nuxtApp)
+            break
+        }
+      } catch (error) {
+        console.error('Error parsing socket message:', error)
+      }
+    }
+    
+    socket.value.onerror = (error) => {
+      console.error('Socket error:', error)
+    }
+    
+    socket.value.onclose = () => {
+      console.log('Socket disconnected')
+      socket.value = null
+    }
+    
+  } catch (error) {
+    console.error('Failed to open socket connection:', error)
   }
 }
 
+const closeSocketConnection = () => {
+  if (socket.value) {
+    socket.value.close()
+    socket.value = null
+  }
+}
 
-// Alias for polling
-const fetchNewMessages = refreshMessages
-
+// Setup activity listeners for socket management
 const setupActivityListeners = (nuxtApp: NuxtApp) => {
   // Get the base cleanup function from activity tracker
   const baseCleanup = activityTracker.setupActivityListeners()
   
-  // Track window focus - restart message polling
+  // Track window focus - ensure socket is connected
   const handleFocus = () => {
     activityTracker.updateActivity()
-    startMessagePolling(nuxtApp)
+    const identifier = sessionStorage.getItem('client-identifier')
+    if (!socket.value && identifier) {
+      openSocketConnection(nuxtApp)
+    }
   }
   
-  // Track window blur - stop message polling
+  // Track window blur - keep socket alive but update activity
   const handleBlur = () => {
     activityTracker.isUserActive.value = false
-    stopMessagePolling()
   }
   
   // Add additional event listeners specific to chat
@@ -372,7 +388,7 @@ const setupActivityListeners = (nuxtApp: NuxtApp) => {
     baseCleanup() // Clean up base activity listeners
     window.removeEventListener('focus', handleFocus)
     window.removeEventListener('blur', handleBlur)
-    stopMessagePolling()
+    closeSocketConnection() // Close socket on cleanup
   }
 }
 
@@ -396,16 +412,6 @@ watch(isTyping, (newIsTyping) => {
 onMounted(() => {
   const nuxtApp = useNuxtApp()
   
-  // Initialize chat if modelId is present
-  if (modelId.value) {
-    initializeChat(nuxtApp)
-  }
-  
-  // Auto-focus message input
-  nextTick(() => {
-    messageInput.value?.focus()
-  })
-  
   // Set up activity tracking and message polling
   const cleanup = setupActivityListeners(nuxtApp)
   
@@ -421,20 +427,71 @@ onMounted(() => {
     
     // Listen for messages from parent
     const handleParentMessage = (event: MessageEvent) => {
-      const { type, data } = event.data || {}
+      const { type, data, guestId, isNew, visible, token } = event.data || {}
       
       switch (type) {
         case 'widget-show':
           // Handle show command from parent
+          console.log('Widget show command received')
           break
         case 'widget-hide':
           // Handle hide command from parent
+          console.log('Widget hide command received')
+          break
+        case 'widget-visibility-changed':
+          // Handle visibility change from embed.js
+          console.log('Widget visibility changed:', visible)
+          if (visible) {
+            // Widget became visible - resume activity, ensure socket connection
+            activityTracker.updateActivity()
+            const identifier = sessionStorage.getItem('client-identifier')
+            if (!socket.value && identifier) {
+              const nuxtApp = useNuxtApp()
+              openSocketConnection(nuxtApp)
+            }
+          } else {
+            // Widget became hidden - keep socket alive but mark as inactive
+            // Socket stays connected for real-time updates
+            activityTracker.isUserActive.value = false
+          }
+          break
+        case 'guest-id':
+          // Handle guest ID from embed.js
+          console.log('Guest ID received:', guestId, 'isNew:', isNew)
+          // Store guest ID for chat functionality
+          sessionStorage.setItem('client-identifier', guestId)
+          if (!isNew) {
+            const nuxtApp = useNuxtApp()
+            initializeChat(nuxtApp)
+          }
+          break
+        case 'api-token':
+          // Handle API token from embed.js (initial setup)
+          console.log('API token received:', token)
+          if (token) {
+            sessionStorage.setItem('client-identifier', token)
+            // Initialize chat with the received token
+            const nuxtApp = useNuxtApp()
+            initializeChat(nuxtApp)
+          }
+          break
+        case 'update-token':
+          // Handle token update from embed.js
+          console.log('Token update received:', token)
+          if (token) {
+            // Update authentication token
+            sessionStorage.setItem('chat-api-token', token)
+            // Could re-initialize chat with new token
+            const nuxtApp = useNuxtApp()
+            initializeChat(nuxtApp)
+          }
           break
         case 'widget-config':
           // Handle configuration updates
           if (data?.apiToken) {
             // Update API token if provided
-            console.log('Received API token update')
+            console.log('Received API token update via config')
+            sessionStorage.setItem('chat-api-token', data.apiToken)
           }
           break
       }
