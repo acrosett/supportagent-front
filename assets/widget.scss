@@ -1,0 +1,282 @@
+/* Minimal CSS for chat widget - only essential styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  overflow: hidden;
+}
+
+/* Widget-specific styles */
+.test-chat-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 1rem;
+  border-bottom: 1px solid #e1e5e9;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.model-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.model-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.model-details h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.chat-subtitle {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: 18px;
+  word-wrap: break-word;
+}
+
+.message-fan {
+  align-self: flex-end;
+  background: #667eea;
+  color: white;
+  border-bottom-right-radius: 6px;
+}
+
+.message-model {
+  align-self: flex-start;
+  background: #f1f3f4;
+  color: #333;
+  border-bottom-left-radius: 6px;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.sender-name {
+  font-weight: 600;
+}
+
+.message-time {
+  font-size: 0.7rem;
+}
+
+.message-content p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  padding: 0.75rem 1rem;
+  background: #f1f3f4;
+  border-radius: 18px;
+  max-width: 80%;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  background: #999;
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+  0%, 80%, 100% { 
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.typing-text {
+  font-size: 0.875rem;
+  color: #666;
+  font-style: italic;
+}
+
+.message-input-container {
+  padding: 1rem;
+  border-top: 1px solid #e1e5e9;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  background: #f8f9fa;
+  border: 1px solid #e1e5e9;
+  border-radius: 24px;
+  padding: 0.5rem;
+}
+
+.input-wrapper textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  max-height: 120px;
+  font-family: inherit;
+}
+
+.input-wrapper textarea::placeholder {
+  color: #999;
+}
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.send-button {
+  width: 36px;
+  height: 36px;
+  background: #667eea;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.send-button:hover:not(:disabled) {
+  background: #5a6fd8;
+}
+
+.send-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Hide training data panel in widget mode */
+.training-data-panel {
+  display: none !important;
+}
+
+/* Responsive for very small widget sizes */
+@media (max-width: 320px) {
+  .message {
+    max-width: 90%;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .chat-header {
+    padding: 0.75rem;
+  }
+  
+  .messages-container {
+    padding: 0.75rem;
+  }
+}
