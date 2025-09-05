@@ -1,8 +1,8 @@
 import type { NuxtApp } from 'nuxt/app'
 import { SuperClient } from '../eicrud_exports/super_client';
 import { ClientStorage } from '@eicrud/client';
-import { Model } from '../eicrud_exports/services/OF-ms/model/model.entity';
 import { isPublicPath } from '~/utils/auth-config'
+import { Product } from '../eicrud_exports/services/SUPPORT-ms/product/product.entity';
 
 export default defineNuxtPlugin(nuxtApp => {
   const config = useRuntimeConfig()
@@ -44,9 +44,7 @@ export default defineNuxtPlugin(nuxtApp => {
   });
   nuxtApp.provide('sp', sp)
   
-  // Initialize global state with a reactive ref
-  const selectedModel = ref<Model | null>(null)
-  nuxtApp.provide('selectedModel', selectedModel)
+
 })
 
 // Type augmentation for NuxtApp
@@ -55,6 +53,6 @@ declare module 'nuxt/app' {
   interface NuxtApp {
     $sp: SuperClient,
     $userId: string,
-    $selectedModel: Ref<Model | null>
+    $userProductId: string
   }
 }

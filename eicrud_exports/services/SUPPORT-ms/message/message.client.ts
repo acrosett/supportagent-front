@@ -1,4 +1,5 @@
 import { SendClientMessageDto, SendClientMessageReturnDto } from './cmds/send_client_message/send_client_message.dto';
+import { GetClientMessagesDto, GetClientMessagesReturnDto } from './cmds/get_client_messages/get_client_messages.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
 import { ICrudOptions } from "@eicrud/shared/interfaces";
 import { Message } from "./message.entity";
@@ -39,6 +40,38 @@ export class MessageClient extends CrudClient<Message> {
       copts?: ClientOptions,
     ): Promise<SendClientMessageReturnDto> {
       return super.cmdSL('send_client_message', dto, options, copts) as any;
+  }
+
+  async get_client_messages(
+      dto: GetClientMessagesDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<GetClientMessagesReturnDto> {
+      return super.cmd('get_client_messages', dto, options, copts);
+  }
+
+  async get_client_messagesS(
+      dto: GetClientMessagesDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<GetClientMessagesReturnDto> {
+      return super.cmdS('get_client_messages', dto, options, copts);
+  }
+
+  async get_client_messagesL(
+      dto: GetClientMessagesDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<GetClientMessagesReturnDto> {
+      return super.cmdL('get_client_messages', dto, options, copts) as any;
+  }
+
+  async get_client_messagesSL(
+      dto: GetClientMessagesDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<GetClientMessagesReturnDto> {
+      return super.cmdSL('get_client_messages', dto, options, copts) as any;
   }
 
 }

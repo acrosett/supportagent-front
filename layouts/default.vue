@@ -8,7 +8,7 @@
   <Toast />
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @use '~/assets/variables' as *;
 
 .app-layout {

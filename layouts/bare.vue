@@ -9,7 +9,7 @@
 import Toast from '~/components/Toast.vue'
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @use '~/assets/variables' as *;
 
 .main-content {

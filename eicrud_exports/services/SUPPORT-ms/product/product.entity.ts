@@ -17,6 +17,14 @@ export class Product {
     @IsOptional()
     description: string;
 
+    @IsString()
+    @IsOptional()
+    webhookUrl?: string;
+
+    @IsString()
+    @IsOptional()
+    sharedSecret?: string;
+
     createdAt: Date;
 
     updatedAt: Date;

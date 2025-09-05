@@ -197,7 +197,7 @@
   const updateChatToken = (token) => {
     // Send token update to iframe
     sendMessage({
-      type: 'update-token',
+      type: 'user-token',
       token: token
     });
   };

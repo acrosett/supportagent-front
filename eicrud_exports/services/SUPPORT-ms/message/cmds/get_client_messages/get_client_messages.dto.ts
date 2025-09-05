@@ -1,7 +1,8 @@
 import { IsString, IsOptional, MaxLength } from "class-validator";
+import { FindResponseDto } from '@eicrud/shared/interfaces';
+import { Message } from "../../message.entity";
 
-
-export class SendClientMessageDto {
+export class GetClientMessagesDto {
 
     @IsString()
     @MaxLength(100)
@@ -11,11 +12,7 @@ export class SendClientMessageDto {
     @MaxLength(200)
     apiKey: string;
 
-    @IsString()
-    @MaxLength(2000)
-    content: string;
-
 }
 
 //used by super-client, update me here
-export type SendClientMessageReturnDto = string;
+export type GetClientMessagesReturnDto = FindResponseDto<Message>;

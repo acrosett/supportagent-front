@@ -18,13 +18,19 @@
         <span></span>
         <span></span>
       </button>
-      <h1 class="mobile-title">AI Support Agent</h1>
+      <h1 class="mobile-title">
+        <i class="fas fa-robot"></i>
+        AI Support Agent
+      </h1>
     </header>
 
     <!-- Sidebar navigation -->
     <nav class="sidebar" :class="{ 'sidebar-open': isMobileMenuOpen }">
       <div class="sidebar-header">
-        <h2 class="app-title">AI Support Agent</h2>
+        <h2 class="app-title">
+          <i class="fas fa-robot"></i>
+          AI Support Agent
+        </h2>
       </div>
       <ul class="nav-list">
         <li>
@@ -46,10 +52,14 @@
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/test-chat" @click="closeMobileMenu">
+          <a 
+            href="#"
+            @click="handleTestChatClick($event)"
+            class="nav-link"
+          >
             <AppIcon name="chat" size="md" class="nav-icon" />
             Test Chat
-          </NuxtLink>
+          </a>
         </li>
       </ul>
       <div style="flex:1"></div>
@@ -74,6 +84,19 @@
         </li>
       </ul>
     </nav>
+    
+    <!-- Test Client Selector Popup -->
+    <AppPopup
+      :show="showTestClientSelector"
+      title="Select Test Client"
+      size="md"
+      @close="showTestClientSelector = false"
+    >
+      <TestClientSelector
+        @close="showTestClientSelector = false"
+        @client-selected="handleClientSelected"
+      />
+    </AppPopup>
   </div>
 </template>
 
@@ -81,12 +104,36 @@
 const isMobileMenuOpen = ref(false)
 const isAdmin = ref(false)
 
+// Test client selector state
+const showTestClientSelector = ref(false)
+
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
+}
+
+const handleTestChatClick = (event: Event) => {
+  event.preventDefault()
+  showTestClientSelector.value = true
+  closeMobileMenu()
+}
+
+const handleClientSelected = (clientData: { guestId?: string, userToken?: string, apiToken?: string } | null) => {
+  showTestClientSelector.value = false
+  
+  if (clientData) {
+    // Build URL with parameters
+    const params = new URLSearchParams()
+    if (clientData.guestId) params.set('guest-id', clientData.guestId)
+    if (clientData.userToken) params.set('user-token', clientData.userToken)
+    if (clientData.apiToken) params.set('api-token', clientData.apiToken)
+    
+    const url = `/test-chat${params.toString() ? '?' + params.toString() : ''}`
+    window.open(url, '_blank')
+  }
 }
 
 // Close menu when route changes
@@ -195,7 +242,7 @@ onMounted(async () => {
 .app-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0a0d14;
+  color: $text-white;
   margin: 0;
 }
 
@@ -226,7 +273,7 @@ onMounted(async () => {
 
 .nav-list a.router-link-active {
   background: linear-gradient(135deg, $brand 0%, $brand-2 100%);
-  color: #0a0d14;
+  color: $text-white;
   border-left-color: $brand;
 }
 

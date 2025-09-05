@@ -1,58 +1,58 @@
 <template>
-  <div class="test-fan-selector">
+  <div class="test-client-selector">
     <div class="selector-header">
-      <h3>Select Test Fan</h3>
-      <p class="subtitle">Choose a fan to start a test chat with {{ modelName }}</p>
+      <h3>Select Test Client</h3>
+      <p class="subtitle">Choose a client to start a test chat session</p>
     </div>
 
     <div v-if="isLoading" class="loading-state">
       <div class="spinner"></div>
-      <p>Loading test fans...</p>
+      <p>Loading test clients...</p>
     </div>
 
-    <div v-else-if="testFans.length === 0" class="empty-state">
+    <div v-else-if="testClients.length === 0" class="empty-state">
       <AppIcon name="user" size="lg" />
-      <p>No test fans found for this model</p>
+      <p>No test clients found</p>
     </div>
 
-    <div v-else class="fans-list">
+    <div v-else class="clients-list">
       <div 
-        v-for="fan in testFans" 
-        :key="fan.id" 
-        class="fan-item"
-        @click="selectFan(fan)"
+        v-for="client in testClients" 
+        :key="client.id" 
+        class="client-item"
+        @click="selectClient(client)"
       >
-        <div class="fan-info">
-          <div class="fan-avatar">
-            <div class="avatar-placeholder">{{ fan.name?.charAt(0) || 'F' }}</div>
+        <div class="client-info">
+          <div class="client-avatar">
+            <div class="avatar-placeholder">{{ client.name?.charAt(0) || 'C' }}</div>
           </div>
-          <div class="fan-details">
-            <h4>{{ fan.name || 'Unnamed Fan' }}</h4>
-            <p class="fan-meta">ID: {{ fan.id }}</p>
-            <p class="fan-meta">Created: {{ formatDate(fan.createdAt?.toString() || '') }}</p>
+          <div class="client-details">
+            <h4>{{ client.name || 'Unnamed Client' }}</h4>
+            <p class="client-meta">ID: {{ client.id }}</p>
+            <p class="client-meta">Created: {{ formatDate(client.createdAt?.toString() || '') }}</p>
           </div>
         </div>
         <button 
-          @click.stop="deleteFan(fan)"
+          @click.stop="deleteClient(client)"
           class="delete-btn"
-          title="Delete fan"
+          title="Delete client"
         >
-          <AppIcon name="trash" size="sm" />
+          <AppIcon name="delete" size="sm" />
         </button>
       </div>
     </div>
 
     <div class="selector-actions">
       <AppButton
-        label="Delete All Fans"
+        label="Delete All Clients"
         color="warning"
-        @click="deleteAllFans"
-        :disabled="testFans.length === 0"
+        @click="deleteAllClients"
+        :disabled="testClients.length === 0"
       />
       <AppButton
-        label="Create New Test Fan"
+        label="Create New Test Client"
         color="secondary"
-        @click="showCreateFanInput = true"
+        @click="showCreateClientInput = true"
       />
       <AppButton
         label="Cancel"
@@ -61,31 +61,31 @@
       />
     </div>
 
-    <!-- Create Fan Name Input -->
-    <div v-if="showCreateFanInput" class="name-input-overlay">
+    <!-- Create Client Name Input -->
+    <div v-if="showCreateClientInput" class="name-input-overlay">
       <div class="name-input-modal">
-        <h4>Create New Test Fan</h4>
-        <p>Enter a name for the new test fan:</p>
+        <h4>Create New Test Client</h4>
+        <p>Enter a name for the new test client:</p>
         <input
-          v-model="newFanName"
+          v-model="newClientName"
           type="text"
-          placeholder="Enter fan name..."
-          class="fan-name-input"
-          @keydown.enter="createNewFan"
-          @keydown.escape="cancelCreateFan"
-          ref="fanNameInput"
+          placeholder="Enter client name..."
+          class="client-name-input"
+          @keydown.enter="createNewClient"
+          @keydown.escape="cancelCreateClient"
+          ref="clientNameInput"
         />
         <div class="name-input-actions">
           <AppButton
             label="Cancel"
             color="secondary"
-            @click="cancelCreateFan"
+            @click="cancelCreateClient"
           />
           <AppButton
-            label="Create Fan"
+            label="Create Client"
             color="primary"
-            @click="createNewFan"
-            :disabled="!newFanName.trim()"
+            @click="createNewClient"
+            :disabled="!newClientName.trim()"
           />
         </div>
       </div>
@@ -94,105 +94,113 @@
 </template>
 
 <script setup lang="ts">
-import { Fan } from '~/eicrud_exports/services/OF-ms/fan/fan.entity'
-
-interface Props {
-  modelId: string
-  modelName: string
+interface TestClient {
+  id: string
+  name: string
+  createdAt: Date
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits(['close', 'fanSelected'])
+const emit = defineEmits(['close', 'client-selected'])
 
-const isLoading = ref(true)
-const testFans = ref<Fan[]>([])
-const showCreateFanInput = ref(false)
-const newFanName = ref('')
-const fanNameInput = ref<HTMLInputElement | null>(null)
+const isLoading = ref(false)
+const testClients = ref<TestClient[]>([])
+const showCreateClientInput = ref(false)
+const newClientName = ref('')
+const clientNameInput = ref<HTMLInputElement | null>(null)
 
-const loadTestFans = async () => {
-  isLoading.value = true
-  try {
-    const result = await useNuxtApp().$sp.fan.find({
-      model: props.modelId,
-      isTestFan: true
-    })
-    testFans.value = result.data || []
-  } catch (error: any) {
-    console.error('Failed to load test fans:', error)
-    useNuxtApp().$toast.show(error, 'error')
-    testFans.value = []
-  } finally {
-    isLoading.value = false
+// Generate a unique identifier (similar to MongoDB ObjectId)
+const generateId = () => {
+  const timestamp = Math.floor(Date.now() / 1000).toString(16)
+  const randomBytes = Array.from({ length: 16 }, () => 
+    Math.floor(Math.random() * 16).toString(16)
+  ).join('')
+  return timestamp + randomBytes.substring(0, 16)
+}
+
+const loadTestClients = () => {
+  if (import.meta.client) {
+    try {
+      const stored = localStorage.getItem('test-clients')
+      if (stored) {
+        const clients = JSON.parse(stored)
+        testClients.value = clients.map((client: any) => ({
+          ...client,
+          createdAt: new Date(client.createdAt)
+        }))
+      }
+    } catch (error) {
+      console.warn('Failed to load test clients:', error)
+      testClients.value = []
+    }
   }
 }
 
-const selectFan = (fan: Fan) => {
-  emit('fanSelected', fan)
-}
-
-const deleteFan = async (fan: Fan) => {
-  try {
-    useNuxtApp().$toast.show(`Deleting test fan ${fan.name}...`, 'info')
-    
-    await useNuxtApp().$sp.testing.delete_test_fan({
-      fanId: fan.id,
-      modelId: props.modelId
-    })
-    
-    useNuxtApp().$toast.show('Test fan deleted successfully', 'success')
-    
-    // Reload the fans list
-    await loadTestFans()
-  } catch (error: any) {
-    console.error('Failed to delete test fan:', error)
-    useNuxtApp().$toast.show(error, 'error')
+const saveTestClients = () => {
+  if (import.meta.client) {
+    try {
+      localStorage.setItem('test-clients', JSON.stringify(testClients.value))
+    } catch (error) {
+      console.warn('Failed to save test clients:', error)
+    }
   }
 }
 
-const deleteAllFans = async () => {
-  if (testFans.value.length === 0) return
-  
-  // Confirm deletion
-  if (!confirm(`Are you sure you want to delete all ${testFans.value.length} test fans for this model? This action cannot be undone.`)) {
+const selectClient = (client: TestClient) => {
+  // Generate guest ID for this client
+  const clientData = {
+    guestId: generateId(),
+    name: client.name
+  }
+  emit('client-selected', clientData)
+}
+
+const deleteClient = (client: TestClient) => {
+  if (!confirm(`Delete test client "${client.name}"?`)) {
     return
   }
   
-  try {
-    useNuxtApp().$toast.show(`Deleting ${testFans.value.length} test fans...`, 'info')
-    
-    // Delete all fans sequentially
-    for (const fan of testFans.value) {
-      await useNuxtApp().$sp.testing.delete_test_fan({
-        fanId: fan.id,
-        modelId: props.modelId
-      })
-    }
-    
-    useNuxtApp().$toast.show('All test fans deleted successfully', 'success')
-    
-    // Reload the fans list
-    await loadTestFans()
-  } catch (error: any) {
-    console.error('Failed to delete all test fans:', error)
-    useNuxtApp().$toast.show(error, 'error')
+  const index = testClients.value.findIndex(c => c.id === client.id)
+  if (index > -1) {
+    testClients.value.splice(index, 1)
+    saveTestClients()
   }
 }
 
-const createNewFan = () => {
-  if (!newFanName.value.trim()) return
+const deleteAllClients = () => {
+  if (testClients.value.length === 0) return
   
-  // Emit with the fan name to create a new fan
-  emit('fanSelected', null, newFanName.value.trim())
+  if (!confirm(`Are you sure you want to delete all ${testClients.value.length} test clients? This action cannot be undone.`)) {
+    return
+  }
   
-  // Reset the input
-  newFanName.value = ''
-  showCreateFanInput.value = false
+  testClients.value = []
+  saveTestClients()
 }
 
-const cancelCreateFan = () => {
-  newFanName.value = ''
-  showCreateFanInput.value = false
+const createNewClient = () => {
+  if (!newClientName.value.trim()) return
+  
+  const newClient: TestClient = {
+    id: generateId(),
+    name: newClientName.value.trim(),
+    createdAt: new Date()
+  }
+  
+  // Add to list
+  testClients.value.unshift(newClient)
+  saveTestClients()
+  
+  // Reset input and close modal
+  newClientName.value = ''
+  showCreateClientInput.value = false
+  
+  // Auto-select the new client
+  selectClient(newClient)
+}
+
+const cancelCreateClient = () => {
+  newClientName.value = ''
+  showCreateClientInput.value = false
 }
 
 const formatDate = (dateStr: string) => {
@@ -205,14 +213,14 @@ const formatDate = (dateStr: string) => {
 }
 
 onMounted(() => {
-  loadTestFans()
+  loadTestClients()
 })
 
-// Focus the input when the create fan modal shows
-watch(showCreateFanInput, (newValue) => {
+// Focus the input when the create client modal shows
+watch(showCreateClientInput, (newValue) => {
   if (newValue) {
     nextTick(() => {
-      fanNameInput.value?.focus()
+      clientNameInput.value?.focus()
     })
   }
 })
@@ -222,7 +230,7 @@ watch(showCreateFanInput, (newValue) => {
 @use '~/assets/variables' as *;
 @use 'sass:color';
 
-.test-fan-selector {
+.test-client-selector {
   background: $bg;
   border-radius: 0.75rem;
   padding: 1.5rem;
@@ -276,14 +284,14 @@ watch(showCreateFanInput, (newValue) => {
   }
 }
 
-.fans-list {
+.clients-list {
   flex: 1;
   overflow-y: auto;
   margin-bottom: 1rem;
   max-height: 300px;
 }
 
-.fan-item {
+.client-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -304,14 +312,14 @@ watch(showCreateFanInput, (newValue) => {
   }
 }
 
-.fan-info {
+.client-info {
   display: flex;
   align-items: center;
   gap: 1rem;
   flex: 1;
 }
 
-.fan-avatar {
+.client-avatar {
   .avatar-placeholder {
     width: 2.5rem;
     height: 2.5rem;
@@ -326,7 +334,7 @@ watch(showCreateFanInput, (newValue) => {
   }
 }
 
-.fan-details {
+.client-details {
   h4 {
     margin: 0 0 0.25rem 0;
     color: $text;
@@ -334,7 +342,7 @@ watch(showCreateFanInput, (newValue) => {
     font-weight: 500;
   }
   
-  .fan-meta {
+  .client-meta {
     margin: 0;
     color: $muted;
     font-size: 0.75rem;
@@ -379,7 +387,7 @@ watch(showCreateFanInput, (newValue) => {
   100% { transform: rotate(360deg); }
 }
 
-// Fan name input modal styles
+// Client name input modal styles
 .name-input-overlay {
   position: fixed;
   top: 0;
@@ -415,7 +423,7 @@ watch(showCreateFanInput, (newValue) => {
   }
 }
 
-.fan-name-input {
+.client-name-input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid rgba($ring, 0.2);
@@ -444,7 +452,7 @@ watch(showCreateFanInput, (newValue) => {
 
 // Mobile responsive
 @media (max-width: 480px) {
-  .test-fan-selector {
+  .test-client-selector {
     min-width: unset;
     max-width: unset;
     width: 100%;
@@ -458,16 +466,16 @@ watch(showCreateFanInput, (newValue) => {
     }
   }
   
-  .fan-item {
+  .client-item {
     padding: 0.75rem;
   }
   
-  .fan-details {
+  .client-details {
     h4 {
       font-size: 0.875rem;
     }
     
-    .fan-meta {
+    .client-meta {
       font-size: 0.7rem;
     }
   }

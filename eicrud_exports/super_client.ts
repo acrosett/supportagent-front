@@ -8,6 +8,7 @@ import { IssueClient } from './services/SUPPORT-ms/issue/issue.client';
 import { FaqClient } from './services/SUPPORT-ms/faq/faq.client';
 import { EventClient } from './services/SUPPORT-ms/event/event.client';
 import { ClientClient } from './services/SUPPORT-ms/client/client.client';
+import { LlmTrainingDataClient } from './services/LOG-ms/llm-training-data/llm-training-data.client';
 import { EmailClient } from './services/email/email.client';
 import { SpendClient } from './services/BANK-ms/spend/spend.client';
 import { DepositClient } from './services/BANK-ms/deposit/deposit.client';
@@ -33,6 +34,7 @@ export class SuperClient {
         this.faq = new FaqClient(config);
         this.event = new EventClient(config);
         this.client = new ClientClient(config);
+        this.llmTrainingData = new LlmTrainingDataClient(config);
         this.email = new EmailClient(config);
         this.spend = new SpendClient(config);
         this.deposit = new DepositClient(config);
@@ -54,6 +56,7 @@ export class SuperClient {
     faq: FaqClient;
     event: EventClient;
     client: ClientClient;
+    llmTrainingData: LlmTrainingDataClient;
     email: EmailClient;
     spend: SpendClient;
     deposit: DepositClient;

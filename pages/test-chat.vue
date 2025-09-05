@@ -20,11 +20,11 @@
       <div class="chat-header">
         <div class="model-info">
           <div class="model-avatar">
-            <div class="avatar-placeholder">{{ selectedModel?.name?.charAt(0) || 'M' }}</div>
+            <div class="avatar-placeholder">SA</div>
           </div>
           <div class="model-details">
-            <h1>{{ selectedModel?.name || 'Test Model' }}</h1>
-            <p class="chat-subtitle">Test Chat - Fan ID: {{ currentFan?.id || 'Loading...' }}</p>
+            <h1>Support Agent</h1>
+            <p class="chat-subtitle">Chat Support</p>
           </div>
         </div>
       </div>
@@ -32,18 +32,18 @@
       <!-- Messages Area -->
       <div class="messages-container" ref="messagesContainer">
         <div v-for="message in messages" :key="message.id" class="message-wrapper">
-          <div :class="['message', message.sender === 'fan' ? 'message-fan' : 'message-model']">
+          <div :class="['message', message.type === 'user' ? 'message-fan' : 'message-model']">
             <!-- Message Header -->
             <div class="message-header">
               <span class="sender-name">
-                {{ message.sender === 'fan' ? (currentFan?.name || 'You') : selectedModel?.name }}
+                {{ message.type === 'user' ? 'You' : 'Support Agent' }}
               </span>
-              <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+              <span class="message-time">{{ formatTime(message.createdAt) }}</span>
             </div>
 
             <!-- Message Content -->
             <div class="message-content">
-              <p v-if="message.text">{{ message.text }}</p>
+              <p v-if="message.content">{{ message.content }}</p>
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@
             <span></span>
             <span></span>
           </div>
-          <span class="typing-text">{{ selectedModel?.name }} is thinking...</span>
+          <span class="typing-text">Support agent is thinking...</span>
         </div>
       </div>
 
@@ -91,6 +91,7 @@
 <script setup lang="ts">
 import { NuxtApp } from 'nuxt/app'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 
 definePageMeta({ 
   layout: 'bare',
@@ -101,32 +102,15 @@ definePageMeta({
   plugins: ['sp', 'toast'] // Only load super client and toast plugins
 })
 
-interface ChatMessage {
-  id: string
-  sender: 'fan' | 'model'
-  text?: string
-  timestamp: Date
+interface ChatMessage extends Message {
 }
-
-// URL Parameters
-const route = useRoute()
-const router = useRouter()
-const modelId = computed(() => route.query.modelId as string)
-const fanId = computed(() => route.query.fanId as string)
-const fanName = computed(() => route.query.fanName as string)
-
-
 
 // State
 const isLoading = ref(true)
-const selectedModel = ref<Model | null>(null)
-const currentFan = ref<GetFanInfoReturnDto | null>(null)
 const messages = ref<ChatMessage[]>([])
 const messageText = ref('')
 const isTyping = ref(false)
 
-// User activity tracking
-const activityTracker = useUserActivity()
 const socket = ref<WebSocket | null>(null)
 
 // Admin sidebar state
@@ -167,26 +151,17 @@ const refreshMessages = async (nuxtApp: NuxtApp) => {
     return;
   }
   try {
-    const res = await nuxtApp.$sp.testing.get_messages({
-      identifier: identifier
+    const res = await nuxtApp.$sp.message.get_client_messages({
+      identifier: identifier,
+      apiKey: sessionStorage.getItem('chat-api-token') || ''
     })
     const rawMessages = res.messages?.data || []
 
     // Update typing status from API response
     isTyping.value = res.isTyping || false
 
-    // Build ChatMessage[] for messages
-    const chatMessages = rawMessages.map((msg: any) => {
-      return {
-        id: msg.id,
-        sender: msg.from,
-        text: msg.content,
-        timestamp: msg.date ? new Date(msg.date) : (msg.createdAt ? new Date(msg.createdAt) : new Date())
-      }
-    })
-
-    // Sort messages by timestamp
-    const newMessages = chatMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
+    // Sort messages by createdAt
+    const newMessages = rawMessages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     const newMessageCount = newMessages.length
     
     // Check if new messages arrived
@@ -226,9 +201,10 @@ const sendMessage = async () => {
   }
 
   try {
-    await useNuxtApp().$sp.testing.send_message({
+    await useNuxtApp().$sp.message.send_client_message({
       identifier: identifier,
       content: messageText.value.trim(),
+      apiKey: sessionStorage.getItem('chat-api-token') || ''
     })
     
     // Clear input
@@ -273,14 +249,6 @@ const formatTime = (date: Date) => {
   }).format(date)
 }
 
-const goBack = () => {
-  router.push('/models')
-}
-
-// User activity tracking functions - using shared utility
-const updateActivity = activityTracker.updateActivity
-const checkUserActivity = activityTracker.checkUserActivity
-
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value
 }
@@ -297,8 +265,10 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     // Close existing socket if any
     closeSocketConnection()
     
-    // Get identifier from session storage
+    // Get identifier and apikey from session storage
     const identifier = sessionStorage.getItem('client-identifier')
+    const apikey = sessionStorage.getItem('chat-api-token')
+    
     if (!identifier) {
       console.warn('Missing client identifier for socket connection')
       return
@@ -306,33 +276,38 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     
     // Get socket URL from runtime config
     const config = useRuntimeConfig()
-    const wsBaseUrl = config.public.socketBaseUrl || 'ws://localhost:3001'
+    const wsBaseUrl = config.public.socketBaseUrl || 'ws://localhost:3200'
     
-    // Create WebSocket connection with only client identifier
-    const wsUrl = `${wsBaseUrl}/chat-socket?identifier=${encodeURIComponent(identifier)}`
+    // Create WebSocket connection with identifier and apikey
+    const socketData = {
+      identifier: identifier,
+      apikey: apikey || ''
+    }
+    const wsUrl = `${wsBaseUrl}/chat-socket?data=${encodeURIComponent(JSON.stringify(socketData))}`
     socket.value = new WebSocket(wsUrl)
     
     socket.value.onopen = () => {
-      console.log('Socket connected for identifier:', identifier)
+      console.log('Socket connected with data:', socketData)
     }
     
     socket.value.onmessage = async (event) => {
       try {
-        const data = JSON.parse(event.data)
+        const message = JSON.parse(event.data)
         
-        switch (data.type) {
+        switch (message.type) {
           case 'new_message':
             // Refresh messages when server tells us to
             await refreshMessages(nuxtApp)
             break
-          case 'typing_status':
-            // Update typing indicator
-            isTyping.value = data.isTyping || false
+          case 'thinking_start':
+            // AI started thinking - show typing indicator
+            isTyping.value = true
             break
-          case 'message_update':
-            // Refresh messages for any updates
-            await refreshMessages(nuxtApp)
+          case 'thinking_stop':
+            // AI stopped thinking - hide typing indicator
+            isTyping.value = false
             break
+  
         }
       } catch (error) {
         console.error('Error parsing socket message:', error)
@@ -360,45 +335,32 @@ const closeSocketConnection = () => {
   }
 }
 
-// Setup activity listeners for socket management
-const setupActivityListeners = (nuxtApp: NuxtApp) => {
-  // Get the base cleanup function from activity tracker
-  const baseCleanup = activityTracker.setupActivityListeners()
-  
+// Setup listeners for socket management
+const setupSocketListeners = (nuxtApp: NuxtApp) => {
   // Track window focus - ensure socket is connected
   const handleFocus = () => {
-    activityTracker.updateActivity()
     const identifier = sessionStorage.getItem('client-identifier')
     if (!socket.value && identifier) {
       openSocketConnection(nuxtApp)
     }
   }
   
-  // Track window blur - keep socket alive but update activity
+  // Track window blur - socket stays connected
   const handleBlur = () => {
-    activityTracker.isUserActive.value = false
+    // Socket stays connected for real-time updates
   }
   
-  // Add additional event listeners specific to chat
+  // Add event listeners for socket management
   window.addEventListener('focus', handleFocus)
   window.addEventListener('blur', handleBlur)
   
-  // Combined cleanup function
+  // Cleanup function
   return () => {
-    baseCleanup() // Clean up base activity listeners
     window.removeEventListener('focus', handleFocus)
     window.removeEventListener('blur', handleBlur)
     closeSocketConnection() // Close socket on cleanup
   }
 }
-
-// Watch for fanId changes and reload the page
-watch(fanId, (newFanId, oldFanId) => {
-  if (oldFanId && newFanId && newFanId !== oldFanId) {
-    // Reload the page when fanId changes
-    window.location.reload()
-  }
-})
 
 // Watch for typing indicator and auto-scroll to show it
 watch(isTyping, (newIsTyping) => {
@@ -412,8 +374,36 @@ watch(isTyping, (newIsTyping) => {
 onMounted(() => {
   const nuxtApp = useNuxtApp()
   
-  // Set up activity tracking and message polling
-  const cleanup = setupActivityListeners(nuxtApp)
+  // Handle URL parameters for testing
+  const route = useRoute()
+  
+  // Check for guest-id URL parameter
+  if (route.query['guest-id']) {
+    console.log('Guest ID from URL:', route.query['guest-id'])
+    sessionStorage.setItem('client-identifier', route.query['guest-id'] as string)
+  }
+  
+  // Check for api-token URL parameter
+  if (route.query['api-token']) {
+    console.log('API token from URL:', route.query['api-token'])
+    sessionStorage.setItem('chat-api-token', route.query['api-token'] as string)
+  }
+  
+  // Check for user-token URL parameter
+  if (route.query['user-token']) {
+    console.log('User token from URL:', route.query['user-token'])
+    sessionStorage.setItem('client-identifier', route.query['user-token'] as string)
+  }
+  
+  // Initialize chat if we have an identifier from URL params
+  const identifier = sessionStorage.getItem('client-identifier')
+  if (identifier && (route.query['guest-id'] || route.query['user-token'])) {
+    console.log('Initializing chat from URL parameters...')
+    initializeChat(nuxtApp)
+  }
+  
+  // Set up socket listeners
+  const cleanup = setupSocketListeners(nuxtApp)
   
   // Widget communication with parent window (for embedded iframe)
   const isEmbedded = window.self !== window.top
@@ -442,17 +432,14 @@ onMounted(() => {
           // Handle visibility change from embed.js
           console.log('Widget visibility changed:', visible)
           if (visible) {
-            // Widget became visible - resume activity, ensure socket connection
-            activityTracker.updateActivity()
+            // Widget became visible - ensure socket connection
             const identifier = sessionStorage.getItem('client-identifier')
             if (!socket.value && identifier) {
               const nuxtApp = useNuxtApp()
               openSocketConnection(nuxtApp)
             }
           } else {
-            // Widget became hidden - keep socket alive but mark as inactive
-            // Socket stays connected for real-time updates
-            activityTracker.isUserActive.value = false
+            // Widget became hidden - keep socket alive for real-time updates
           }
           break
         case 'guest-id':
@@ -465,9 +452,9 @@ onMounted(() => {
             initializeChat(nuxtApp)
           }
           break
-        case 'api-token':
+        case 'user-token':
           // Handle API token from embed.js (initial setup)
-          console.log('API token received:', token)
+          console.log('User token received:', token)
           if (token) {
             sessionStorage.setItem('client-identifier', token)
             // Initialize chat with the received token
@@ -475,7 +462,7 @@ onMounted(() => {
             initializeChat(nuxtApp)
           }
           break
-        case 'update-token':
+        case 'api-token':
           // Handle token update from embed.js
           console.log('Token update received:', token)
           if (token) {
@@ -512,5 +499,5 @@ onMounted(() => {
 
 <style lang="scss">
 // Import widget-specific minimal CSS
-@import '~/assets/widget.scss';
+@use '~/assets/widget.scss';
 </style>

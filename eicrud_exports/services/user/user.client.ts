@@ -4,7 +4,9 @@ import { SendVerificationEmailDto } from './cmds/send_verification_email/send_ve
 import { SendPasswordResetEmailDto } from './cmds/send_password_reset_email/send_password_reset_email.dto';
 import { ResetPasswordDto } from './cmds/reset_password/reset_password.dto';
 import { LogoutEverywhereDto } from './cmds/logout_everywhere/logout_everywhere.dto';
+import { GetUserRoleDto, GetUserRoleReturnDto } from './cmds/get_user_role/get_user_role.dto';
 import { CreateAccountDto, CreateAccountReturnDto } from './cmds/create_account/create_account.dto';
+import { CheckJwtExtendedDto, CheckJwtExtendedReturnDto } from './cmds/check_jwt_extended/check_jwt_extended.dto';
 import { ChangePasswordDto } from './cmds/change_password/change_password.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
 import { ICrudOptions } from "@eicrud/shared/interfaces";
@@ -208,6 +210,38 @@ export class UserClient extends CrudClient<User> {
       return super.cmdSL('logout_everywhere', dto, options, copts) as any;
   }
 
+  async get_user_role(
+      dto: GetUserRoleDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<GetUserRoleReturnDto> {
+      return super.cmd('get_user_role', dto, options, copts);
+  }
+
+  async get_user_roleS(
+      dto: GetUserRoleDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<GetUserRoleReturnDto> {
+      return super.cmdS('get_user_role', dto, options, copts);
+  }
+
+  async get_user_roleL(
+      dto: GetUserRoleDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<GetUserRoleReturnDto> {
+      return super.cmdL('get_user_role', dto, options, copts) as any;
+  }
+
+  async get_user_roleSL(
+      dto: GetUserRoleDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<GetUserRoleReturnDto> {
+      return super.cmdSL('get_user_role', dto, options, copts) as any;
+  }
+
   async create_account(
       dto: CreateAccountDto,
       options: ICrudOptions = undefined,
@@ -238,6 +272,38 @@ export class UserClient extends CrudClient<User> {
       copts?: ClientOptions,
     ): Promise<CreateAccountReturnDto> {
       return super.cmdSL('create_account', dto, options, copts) as any;
+  }
+
+  async check_jwt_extended(
+      dto: CheckJwtExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CheckJwtExtendedReturnDto> {
+      return super.cmd('check_jwt_extended', dto, options, copts);
+  }
+
+  async check_jwt_extendedS(
+      dto: CheckJwtExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CheckJwtExtendedReturnDto> {
+      return super.cmdS('check_jwt_extended', dto, options, copts);
+  }
+
+  async check_jwt_extendedL(
+      dto: CheckJwtExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CheckJwtExtendedReturnDto> {
+      return super.cmdL('check_jwt_extended', dto, options, copts) as any;
+  }
+
+  async check_jwt_extendedSL(
+      dto: CheckJwtExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CheckJwtExtendedReturnDto> {
+      return super.cmdSL('check_jwt_extended', dto, options, copts) as any;
   }
 
   async change_password(
