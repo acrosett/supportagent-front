@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
 import { validateSync, getMetadataStorage } from 'class-validator'
 import AppButton from './AppButton.vue'
 import RichTextEditor from './RichTextEditor.vue'
 import ChecklistInput from './ChecklistInput.vue'
+import FieldTooltip from './FieldTooltip.vue'
 
 // Component type mapping
 const componentTypeMap: Record<string, any> = {
@@ -15,6 +16,7 @@ export interface FieldOverride<T = any> {
   type?: string;
   label?: string;
   placeholder?: string;
+  description?: string; // Tooltip description shown on info icon hover
   component?: any;
   props?: { disabled?: boolean; [key: string]: any };
   doubleCheck?: boolean;
@@ -23,6 +25,7 @@ export interface FieldOverride<T = any> {
   conditionsFields?: (keyof T)[]; // Only show if all these fields are truthy
   invertedConditionsFields?: (keyof T)[]; // Only show if all these fields are falsy
   maxHeight?: string; // CSS max-height value (e.g. "500px", "20rem")
+  maxChars?: number; // Maximum character count for input fields
 }
 
 export type ActionColor = 'primary' | 'secondary' | 'ok' | 'warning' | 'error';
@@ -150,9 +153,9 @@ function validateForm() {
       instance[key] = formData[key]
     }
   })
-  
+
   const result = validateSync(instance, {
-    skipMissingProperties: true,
+    skipMissingProperties: false,
     whitelist: true,
     forbidNonWhitelisted: false
   })
@@ -161,11 +164,26 @@ function validateForm() {
     if (e.property && e.constraints) {
       errors.value[e.property] = Object.values(e.constraints).map(msg => {
         let formatted = msg.charAt(0).toUpperCase() + msg.slice(1)
-        if (!formatted.endsWith('.')) formatted += '.'
+        if (!formatted.endsWith('.') && !formatted.endsWith('!')) formatted += '.'
         return formatted
       })
     }
   })
+
+  // Manual validation for required fields (fields without @IsOptional)
+  fields.value.forEach(field => {
+    if (field.show && !field.isOptional) {
+      const value = formData[field.key]
+      const isEmpty = value === null || value === undefined || value === '' || 
+                     (typeof value === 'string' && value.trim() === '')
+      
+      if (isEmpty) {
+        if (!errors.value[field.key]) errors.value[field.key] = []
+        errors.value[field.key]!.push(`${field.label} is required.`)
+      }
+    }
+  })
+
   // Double check validation
   if (props.fieldOverrides) {
     Object.entries(props.fieldOverrides).forEach(([key, override]) => {
@@ -277,10 +295,34 @@ watch(formData, () => {
   <form @submit.prevent="validateForm">
     <div v-for="field in fields" :key="field.key" class="megaform-field">
       <template v-if="field.show">
-        <label :for="field.key" class="megaform-label">
-          {{ field.label }}
-          <span v-if="!field.isOptional" class="megaform-required">*</span>
-          <button v-if="field.isArray" type="button" class="megaform-array-add" @click="addArrayItem(field.key)">+</button>
+                <label 
+          v-if="field.label" 
+          :for="field.key"
+          class="megaform-label"
+        >
+          <div class="megaform-label-content">
+            <div class="megaform-label-text">
+              <span 
+                v-if="!field.isOptional"
+                class="megaform-required"
+                title="Required"
+              >*</span>
+              {{ field.label }}
+              <FieldTooltip
+                v-if="fieldOverrides?.[field.key]?.description"
+                :text="fieldOverrides?.[field.key]?.description || ''"
+                class="megaform-info-icon"
+              >
+                <i class="fas fa-info-circle" style="opacity: 0.4;"></i>
+              </FieldTooltip>
+            </div>
+            <div 
+              v-if="fieldOverrides?.[field.key]?.maxChars"
+              class="megaform-char-counter"
+            >
+              {{ (formData[field.key] || '').length }}/{{ fieldOverrides?.[field.key]?.maxChars }}
+            </div>
+          </div>
         </label>
         <!-- Array input rendering -->
         <template v-if="field.isArray">
@@ -330,6 +372,7 @@ watch(formData, () => {
           :name="field.key"
           :placeholder="field.placeholder"
           :disabled="fieldOverrides?.[field.key]?.props?.disabled"
+          :maxlength="fieldOverrides?.[field.key]?.maxChars"
           class="megaform-input"
           :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"
         />
@@ -344,13 +387,31 @@ watch(formData, () => {
         />
         <!-- Double check input -->
         <div v-if="fieldOverrides?.[field.key]?.doubleCheck" class="megaform-field megaform-doublecheck" style="margin-top:0.5em;">
-          <label :for="field.key + '-double'" class="megaform-label">{{ 'Confirm ' + field.label }}</label>
+          <label :for="field.key + '-double'" class="megaform-label">
+            <div class="megaform-label-content">
+              <div class="megaform-label-text">
+                <span 
+                  v-if="!field.isOptional"
+                  class="megaform-required"
+                  title="Required"
+                >*</span>
+                {{ 'Confirm ' + field.label }}
+              </div>
+              <div 
+                v-if="fieldOverrides?.[field.key]?.maxChars"
+                class="megaform-char-counter"
+              >
+                {{ (doubleCheckData[field.key] || '').length }}/{{ fieldOverrides?.[field.key]?.maxChars }}
+              </div>
+            </div>
+          </label>
           <input
             :type="field.inputType"
             v-model="doubleCheckData[field.key]"
             :id="field.key + '-double'"
             :name="field.key + '-double'"
             :placeholder="'Confirm ' + field.label"
+            :maxlength="fieldOverrides?.[field.key]?.maxChars"
             class="megaform-input"
           />
         </div>
@@ -443,9 +504,10 @@ watch(formData, () => {
 
 .megaform-required {
   color: $brand-2;
-  margin-left: 0.2em;
+  margin-right: 0em;
   font-size: 1.1em;
   font-weight: bold;
+  cursor: help;
 }
 
 .megaform-actions {
@@ -497,6 +559,25 @@ watch(formData, () => {
   margin-bottom: 0.5em;
   font-weight: 500;
   color: $text;
+}
+
+.megaform-label-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.megaform-label-text {
+  display: flex;
+  align-items: center;
+}
+
+.megaform-char-counter {
+  font-size: 0.85em;
+  color: $muted;
+  font-weight: 400;
+  margin-left: auto;
 }
 .megaform-input {
   padding: 0.6em 1em;

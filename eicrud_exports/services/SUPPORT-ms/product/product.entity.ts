@@ -1,4 +1,4 @@
-import { IsString, IsOptional } from "class-validator";
+import { IsString, IsOptional, MinLength } from "class-validator";
 import { User } from "../../user/user.entity";
 
 
@@ -8,9 +8,11 @@ export class Product {
     @IsOptional()
     id: string;
 
+    @IsString()
     owner: User | string;
 
     @IsString()
+    @MinLength(1)
     name: string;
 
     @IsString()

@@ -39,6 +39,9 @@ export class Client {
     @IsBoolean()
     isGuest: boolean;
 
+    @IsBoolean()
+    isTest: boolean;
+
     @IsOptional()
     lastMessageDate?: Date;
 

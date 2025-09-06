@@ -27,9 +27,10 @@ import { ref, onMounted, computed } from 'vue'
 definePageMeta({ layout: 'default' })
 
 const router = useRouter()
+const nuxtApp = useNuxtApp() // Capture nuxtApp in setup context
 
 // Use the user's product ID from nuxtApp
-const productId = computed(() => useNuxtApp().$userProductId as string)
+const productId = computed(() => nuxtApp.$userProductId as string)
 const isEditing = computed(() => !!productId.value)
 const isLoading = ref(false)
 const currentProduct = ref<Product | null>(null)
@@ -53,7 +54,7 @@ const loadProduct = async () => {
   isLoading.value = true
   try {
     console.log("Loading product with ID:", productId.value);
-    const product = await useNuxtApp().$sp.product.findOne({ 
+    const product = await nuxtApp.$sp.product.findOne({ 
       id: productId.value, 
     })
     if (product) {
@@ -68,7 +69,7 @@ const loadProduct = async () => {
     }
   } catch (error) {
     console.error('Failed to load product:', error)
-    useNuxtApp().$toast.show('Failed to load product', 'error')
+    nuxtApp.$toast.show('Failed to load product', 'error')
   } finally {
     isLoading.value = false
   }
@@ -83,20 +84,29 @@ onMounted(() => {
 const fieldOverrides: OverrideRecord<Product> = {
   name: {
     label: 'Product Name',
-    placeholder: 'e.g. My Support Agent'
+    placeholder: 'e.g. My Support Agent',
+    description: 'A unique name for your AI support agent product'
   },
   description: {
+    maxChars: 3000,
     label: 'Product Description',
     type: 'richtext',
-    maxHeight: '500px'
+    maxHeight: '500px',
+    description: `1. What your product is and does.  
+2. A few marketing arguments to sell the product + your pricing model.  
+3. A general overview on how to use your product.  
+4. Detailed documentation with troubleshooting steps. If not enough room, input this info in the FAQ tab.
+`,
   },
   webhookUrl: {
-    label: 'Webhook URL (Optional)',
-    placeholder: 'https://yoursite.com/api/validate-token'
+    label: 'Webhook URL',
+    placeholder: 'https://yoursite.com/api/validate-token',
+    description: 'URL endpoint for validating user tokens for authenticated users'
   },
   sharedSecret: {
-    label: 'Shared Secret (Optional)',
-    placeholder: 'Your webhook shared secret'
+    label: 'Shared Secret',
+    placeholder: 'Your webhook shared secret',
+    description: 'Secret key used to secure webhook requests between your system and ours'
   }
 }
 
@@ -106,23 +116,23 @@ const actions: MegaFormAction[] = [
     color: 'primary',
     margin: 'right',
     callback: async (data: any) => {
-      data.owner = useNuxtApp().$userId;
+      data.owner = nuxtApp.$userId;
       
       if (isEditing.value && productId.value) {
         // Update existing product
         const updateData = { ...data }
         delete updateData.owner; 
         console.log("Updating product with data:", updateData);
-        const res = await useNuxtApp().$sp.product.patch({ 
+        const res = await nuxtApp.$sp.product.patch({ 
           id: productId.value, 
-          owner: useNuxtApp().$userId 
+          owner: nuxtApp.$userId 
         }, updateData);
-        useNuxtApp().$toast.show('Product updated!', 'success')
+        nuxtApp.$toast.show('Product updated!', 'success')
       } else {
         // Create new product
         console.log("Creating product with data:", data);
-        const res = await useNuxtApp().$sp.product.create(data);
-        useNuxtApp().$toast.show('Product created!', 'success')
+        const res = await nuxtApp.$sp.product.create(data);
+        nuxtApp.$toast.show('Product created!', 'success')
         // Reload the page to show the created product
         window.location.reload()
       }
