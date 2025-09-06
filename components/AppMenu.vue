@@ -61,6 +61,12 @@
             Test Chat
           </a>
         </li>
+        <li>
+          <NuxtLink to="/edit-product" @click="closeMobileMenu">
+            <AppIcon name="settings" size="md" class="nav-icon" />
+            Edit Product
+          </NuxtLink>
+        </li>
       </ul>
       <div style="flex:1"></div>
       <ul class="nav-list" style="margin-top:auto;">

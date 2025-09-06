@@ -2,6 +2,14 @@
 import { ref, reactive, watch, computed } from 'vue'
 import { validateSync, getMetadataStorage } from 'class-validator'
 import AppButton from './AppButton.vue'
+import RichTextEditor from './RichTextEditor.vue'
+import ChecklistInput from './ChecklistInput.vue'
+
+// Component type mapping
+const componentTypeMap: Record<string, any> = {
+  'richtext': RichTextEditor,
+  'checklist': ChecklistInput
+}
 
 export interface FieldOverride<T = any> {
   type?: string;
@@ -14,6 +22,7 @@ export interface FieldOverride<T = any> {
   mapObjectField?: string; // Field to display from objects (e.g. "name") while keeping full objects
   conditionsFields?: (keyof T)[]; // Only show if all these fields are truthy
   invertedConditionsFields?: (keyof T)[]; // Only show if all these fields are falsy
+  maxHeight?: string; // CSS max-height value (e.g. "500px", "20rem")
 }
 
 export type ActionColor = 'primary' | 'secondary' | 'ok' | 'warning' | 'error';
@@ -290,7 +299,7 @@ watch(formData, () => {
             <button type="button" class="megaform-array-remove" @click="formData[field.key].splice(idx, 1)">×</button>
           </div>
         </template>
-        <!-- Custom field override -->
+        <!-- Custom field override component -->
         <component
           v-else-if="fieldOverrides?.[field.key]?.component"
           :is="fieldOverrides?.[field.key]?.component"
@@ -298,7 +307,19 @@ watch(formData, () => {
           :id="field.key"
           :name="field.key"
           v-bind="fieldOverrides?.[field.key]?.props || {}"
-          class="megaform-input"
+          :class="['megaform-input', fieldOverrides?.[field.key]?.type === 'richtext' ? 'megaform-richtext' : '']"
+          :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"
+        />
+        <!-- Auto-mapped component based on type -->
+        <component
+          v-else-if="componentTypeMap[field.inputType]"
+          :is="componentTypeMap[field.inputType]"
+          v-model="formData[field.key]"
+          :id="field.key"
+          :name="field.key"
+          v-bind="fieldOverrides?.[field.key]?.props || {}"
+          class="megaform-input megaform-richtext"
+          :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"
         />
         <!-- Default input with optional placeholder and name -->
         <input
@@ -310,6 +331,7 @@ watch(formData, () => {
           :placeholder="field.placeholder"
           :disabled="fieldOverrides?.[field.key]?.props?.disabled"
           class="megaform-input"
+          :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"
         />
         <input
           v-else
@@ -500,6 +522,7 @@ watch(formData, () => {
     cursor: not-allowed;
     background: rgba($muted, 0.1);
   }
+
 }
 .megaform-input:focus {
   border-color: $brand;

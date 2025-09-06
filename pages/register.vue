@@ -49,7 +49,9 @@ const actions: MegaFormAction[] = [
       data.role = "user";
 
       const { userId, accessToken } = await useNuxtApp().$sp.user.create_accountS(data);
-      await useNuxtApp().$sp.user.setJwt(accessToken as string);
+      await useNuxtApp().$sp.user.setJwt(accessToken as string, 3600 * 30); // 30 minutes
+      useNuxtApp().$userId = userId;
+            
       // Navigate to /
       await useRouter().push('/');
 
