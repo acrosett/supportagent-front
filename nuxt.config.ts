@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   components: true,
   pages: true,
-  css: ['~/assets/main.scss', 'highlight.js/styles/github-dark.css', 'quill/dist/quill.snow.css'],
+  css: ['~/assets/main.scss', 'highlight.js/styles/github-dark.css' ],
   app: {
     head: {
       link: [

@@ -1,29 +1,47 @@
-import type { NuxtApp } from 'nuxt/app'
+import type { Router } from 'vue-router'
 import { SuperClient } from '../eicrud_exports/super_client';
 import { ClientStorage } from '@eicrud/client';
 import { isPublicPath } from '~/utils/auth-config'
-import { Product } from '../eicrud_exports/services/SUPPORT-ms/product/product.entity';
 
 export default defineNuxtPlugin(nuxtApp => {
   const config = useRuntimeConfig()
 
+  // Safe cookie helpers (avoid Nuxt composables in plugin storage)
+  function getCookieRaw(key: string): string {
+    if (!process.client) return ''
+    const name = `${key}=`
+    const decodedCookie = decodeURIComponent(document.cookie)
+    const ca = decodedCookie.split(';')
+    for (let c of ca) {
+      while (c.charAt(0) === ' ') c = c.substring(1)
+      if (c.indexOf(name) === 0) return c.substring(name.length, c.length)
+    }
+    return ''
+  }
+  function setCookieRaw(key: string, value: string, maxAgeSeconds: number, secure: boolean) {
+    if (!process.client) return
+    const attrs = [
+      `path=/`,
+      `max-age=${maxAgeSeconds}`,
+      `SameSite=Strict`,
+      secure ? `Secure` : ''
+    ].filter(Boolean).join('; ')
+    document.cookie = `${key}=${encodeURIComponent(value)}; ${attrs}`
+  }
+  function deleteCookieRaw(key: string) {
+    if (!process.client) return
+    document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Strict`;
+  }
+
   const nuxtCookieStorage: ClientStorage = {
     get(name: string): string {
-      const cookie = useCookie<string>(`l-${name}-l`, { secure: true });
-      return cookie.value || '';
+      return getCookieRaw(`l-${name}-l`)
     },
     set(name: string, value: string, durationSeconds: number, secure: boolean): void {
-      const cookie = useCookie<string>(`l-${name}-l`, {
-        maxAge: durationSeconds,
-        secure: true,
-        sameSite: 'strict',
-      });
-      console.log("Setting cookie:", name, value, cookie);
-      cookie.value = value;
+      setCookieRaw(`l-${name}-l`, value, durationSeconds, true)
     },
     del(name: string): void {
-      const cookie = useCookie<string>(`l-${name}-l`, { secure: true });
-      cookie.value = null as unknown as string;
+      deleteCookieRaw(`l-${name}-l`)
     },
   };
 
@@ -31,8 +49,9 @@ export default defineNuxtPlugin(nuxtApp => {
     url: config.public.apiBaseUrl as string,
     onLogout: () => {
       console.log("onLogout called");
-      const router = useNuxtApp().$router;
-      const currentPath = router.currentRoute.value.path;
+  const router = nuxtApp.$router as unknown as Router | undefined;
+  if (!router) return;
+  const currentPath = router.currentRoute.value.path;
       
       // Only redirect to login if we're not on a public path
       if (!isPublicPath(currentPath)) {

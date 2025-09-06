@@ -67,6 +67,18 @@
             Edit Product
           </NuxtLink>
         </li>
+        <li>
+          <NuxtLink to="/document-upload" @click="closeMobileMenu">
+            <AppIcon name="document" size="md" class="nav-icon" />
+            Document Upload
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/faq" @click="closeMobileMenu">
+            <AppIcon name="info" size="md" class="nav-icon" />
+            FAQ Management
+          </NuxtLink>
+        </li>
       </ul>
       <div style="flex:1"></div>
       <ul class="nav-list" style="margin-top:auto;">

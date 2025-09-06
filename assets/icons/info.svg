@@ -1,5 +1,6 @@
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
   <circle cx="12" cy="12" r="10"/>
   <path d="M9,9h0a3,3,0,0,1,6,0c0,2-3,3-3,3"/>
-  <path d="M12,17h0"/>
+  <!-- Dot of the question mark: use a small filled circle to ensure visibility across browsers -->
+  <circle cx="12" cy="17" r="1" fill="currentColor"/>
 </svg>

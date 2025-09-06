@@ -88,10 +88,9 @@ const fieldOverrides: OverrideRecord<Product> = {
     description: 'A unique name for your AI support agent product'
   },
   description: {
-    maxChars: 3000,
+    maxChars: 4000,
     label: 'Product Description',
     type: 'richtext',
-    maxHeight: '500px',
     description: `1. What your product is and does.  
 2. A few marketing arguments to sell the product + your pricing model.  
 3. A general overview on how to use your product.  

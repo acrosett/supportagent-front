@@ -155,7 +155,7 @@ function validateForm() {
   })
 
   const result = validateSync(instance, {
-    skipMissingProperties: false,
+    skipMissingProperties: true,
     whitelist: true,
     forbidNonWhitelisted: false
   })
@@ -319,6 +319,7 @@ watch(formData, () => {
             <div 
               v-if="fieldOverrides?.[field.key]?.maxChars"
               class="megaform-char-counter"
+              :class="{ 'megaform-char-counter--exceeded': (formData[field.key] || '').length > (fieldOverrides?.[field.key]?.maxChars || 0) }"
             >
               {{ (formData[field.key] || '').length }}/{{ fieldOverrides?.[field.key]?.maxChars }}
             </div>
@@ -400,6 +401,7 @@ watch(formData, () => {
               <div 
                 v-if="fieldOverrides?.[field.key]?.maxChars"
                 class="megaform-char-counter"
+                :class="{ 'megaform-char-counter--exceeded': (doubleCheckData[field.key] || '').length > (fieldOverrides?.[field.key]?.maxChars || 0) }"
               >
                 {{ (doubleCheckData[field.key] || '').length }}/{{ fieldOverrides?.[field.key]?.maxChars }}
               </div>
@@ -578,6 +580,11 @@ watch(formData, () => {
   color: $muted;
   font-weight: 400;
   margin-left: auto;
+}
+
+.megaform-char-counter--exceeded {
+  color: $error;
+  font-weight: 500;
 }
 .megaform-input {
   padding: 0.6em 1em;

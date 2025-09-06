@@ -13,15 +13,13 @@
     "@eicrud/client": "^0.9.3",
     "@highlightjs/vue-plugin": "^2.1.0",
     "class-validator": "^0.14.2",
+    "easymde": "^2.20.0",
     "highlight.js": "^11.11.1",
+    "mammoth": "^1.10.0",
     "nuxt": "^4.0.1",
-    "quill": "^2.0.3",
+    "pdf-parse": "^1.1.1",
     "sass-embedded": "^1.90.0",
-    "turndown": "^7.2.1",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
-  },
-  "devDependencies": {
-    "@types/turndown": "^5.0.5"
   }
 }

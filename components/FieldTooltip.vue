@@ -1,6 +1,7 @@
 <template>
   <span 
     class="field-tooltip-trigger"
+    :class="props.class"
     @mouseenter="showTooltip"
     @mouseleave="hideTooltip"
     @click="toggleTooltip"
@@ -28,6 +29,7 @@ import { ref, computed, nextTick } from 'vue'
 
 interface Props {
   text: string
+  class?: string // Accept class as a prop to avoid the warning
 }
 
 const props = defineProps<Props>()
