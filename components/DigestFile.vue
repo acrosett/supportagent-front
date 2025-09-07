@@ -75,6 +75,9 @@
 </template>
 
 <script setup lang="ts">
+
+import { calculateDigestCost } from "~/eicrud_exports/services/AI-ms/digestor/shared.utils"
+
 interface Props {
   modelValue?: string
 }
@@ -99,7 +102,6 @@ const processedText = ref(props.modelValue || '')
 // Upload confirmation state
 const showConfirm = ref(false)
 const pendingFile = ref<File | null>(null)
-const RATE_PER_KB = 0.01
 
 // Watch for external changes
 watch(() => props.modelValue, (newValue) => {
@@ -159,9 +161,10 @@ const pendingSizeKB = computed(() => {
   return pendingFile.value ? (pendingFile.value.size / 1024) : 0
 })
 const estimatedCost = computed(() => {
-  const cost = pendingSizeKB.value * RATE_PER_KB
-  return Math.max(0, Number.isFinite(cost) ? parseFloat(cost.toFixed(2)) : 0)
+  return calculateDigestCost(pendingSizeKB.value);
 })
+
+
 const confirmUpload = () => {
   if (!pendingFile.value) return
   const file = pendingFile.value

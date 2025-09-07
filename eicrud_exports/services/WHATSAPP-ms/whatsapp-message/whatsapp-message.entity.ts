@@ -1,6 +1,7 @@
 import { IsString, IsOptional, IsEnum } from "class-validator";
 import { User } from "../../user/user.entity";
 import { PhoneNumber } from "../phone-number/phone-number.entity";
+import { Spend } from "../../BANK-ms/spend/spend.entity";
 
 export enum WhatsappMessageDirection {
   TO = 'to',
@@ -33,6 +34,9 @@ export class WhatsappMessage {
 
     @IsOptional()
     metadata?: any;
+
+    @IsOptional()
+    spend?: Spend;
 
     createdAt: Date;
 

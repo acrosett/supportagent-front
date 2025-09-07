@@ -1,6 +1,7 @@
 import { IsString, IsOptional, IsEnum } from "class-validator";
 import { Client } from "../client/client.entity";
 import { User } from "../../user/user.entity";
+import { Spend } from "../../BANK-ms/spend/spend.entity";
 
 export enum MessageType {
   USER = 'user',
@@ -29,6 +30,9 @@ export class Message {
 
     @IsOptional()
     metadata?: any;
+
+    @IsOptional()
+    spend?: Spend;
 
     createdAt: Date;
 

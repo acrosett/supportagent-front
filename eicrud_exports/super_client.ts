@@ -13,8 +13,10 @@ import { EmailClient } from './services/email/email.client';
 import { SpendClient } from './services/BANK-ms/spend/spend.client';
 import { DepositClient } from './services/BANK-ms/deposit/deposit.client';
 import { WhatsappAgentClient } from './services/AI-ms/whatsapp-agent/whatsapp-agent.client';
+import { TaskClient } from './services/AI-ms/task/task.client';
 import { LlmProviderClient } from './services/AI-ms/llm-provider/llm-provider.client';
 import { EditorAgentClient } from './services/AI-ms/editor-agent/editor-agent.client';
+import { DigestorClient } from './services/AI-ms/digestor/digestor.client';
 import { ChatAgentClient } from './services/AI-ms/chat-agent/chat-agent.client';
 import { AgentMessageClient } from './services/AI-ms/agent-message/agent-message.client';
 import { SuperClientConfig } from "@eicrud/client";
@@ -39,8 +41,10 @@ export class SuperClient {
         this.spend = new SpendClient(config);
         this.deposit = new DepositClient(config);
         this.whatsappAgent = new WhatsappAgentClient(config);
+        this.task = new TaskClient(config);
         this.llmProvider = new LlmProviderClient(config);
         this.editorAgent = new EditorAgentClient(config);
+        this.digestor = new DigestorClient(config);
         this.chatAgent = new ChatAgentClient(config);
         this.agentMessage = new AgentMessageClient(config);
     }
@@ -61,8 +65,10 @@ export class SuperClient {
     spend: SpendClient;
     deposit: DepositClient;
     whatsappAgent: WhatsappAgentClient;
+    task: TaskClient;
     llmProvider: LlmProviderClient;
     editorAgent: EditorAgentClient;
+    digestor: DigestorClient;
     chatAgent: ChatAgentClient;
     agentMessage: AgentMessageClient;
 }
