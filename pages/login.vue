@@ -32,17 +32,26 @@ const links = [
 
 const formData = ref({
   email: '',
-  password: ''
+  password: '',
+  expiresInSec: false
 })
 
 const fieldOverrides: OverrideRecord<LoginDto> = {
-
   password : {
     type: 'password',
+  },
+  expiresInSec: {
+    type: 'checkbox',
+    label: 'Stay Connected (15 days)',
+    description: 'Keep me logged in for 15 days instead of the default session duration',
+    mapValue: {
+      true: 60*60*24*15,
+      false: undefined
+    }
   }
 }
 
-const excludeFields = ['twoFA_code', 'expiresInSec']
+const excludeFields = ['twoFA_code']
 
 
 const actions: MegaFormAction[] = [
@@ -51,7 +60,7 @@ const actions: MegaFormAction[] = [
     color: 'primary',
     margin: 'right',
     callback: async (data: LoginDto) => {
-      // TODO: handle registration
+      // The mapValue in fieldOverrides already converts the checkbox to the correct value
       const res = await useNuxtApp().$sp.user.login(data);
       if(!res){
         throw Error("Login failed");
@@ -59,7 +68,10 @@ const actions: MegaFormAction[] = [
       const { userId, accessToken } = res;
       console.log("User ID:", userId);
       console.log("Access Token:", accessToken);
-      await useNuxtApp().$sp.user.setJwt(accessToken as string, 3600 * 30); // 30 minutes
+      
+      // Use the same expiration time for JWT storage
+      const jwtExpiration = data.expiresInSec || (3600 * 30); // Default to 30 minutes if not staying connected
+      await useNuxtApp().$sp.user.setJwt(accessToken as string, jwtExpiration);
       useNuxtApp().$userId = userId;
 
       // Navigate to /

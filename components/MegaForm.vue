@@ -30,6 +30,7 @@ export interface FieldOverride<T = any> {
   selectOptions?: Array<{ label: string; value: any }>; // Options for select dropdown
   onLabel?: string; // Label for toggle switch "ON" state
   offLabel?: string; // Label for toggle switch "OFF" state
+  mapValue?: Record<string, any>; // Map form values before validation (e.g. {true: 123, false: undefined})
 }
 
 export type ActionColor = 'primary' | 'secondary' | 'ok' | 'warning' | 'error';
@@ -161,10 +162,21 @@ function validateForm() {
     delete instance[key]
   })
   
-  // Only set values for visible fields
+  // Only set values for visible fields with mapValue transformation applied
   visibleFields.forEach(key => {
     if (key in formData) {
-      instance[key] = formData[key]
+      let value = formData[key]
+      
+      // Apply mapValue transformation if defined BEFORE validation
+      const fieldOverride = props.fieldOverrides?.[key]
+      if (fieldOverride?.mapValue && value !== undefined && value !== null) {
+        const mappedValue = fieldOverride.mapValue[value]
+        if (mappedValue !== undefined) {
+          value = mappedValue
+        }
+      }
+      
+      instance[key] = value
     }
   })
 
@@ -228,7 +240,20 @@ function handleAction(idx: number, action: MegaFormAction) {
   // Only send visible fields in callback
   const visibleFields = fields.value.filter(f => f.show).map(f => f.key)
   const sendData: Record<string, any> = {}
-  visibleFields.forEach(key => { sendData[key] = formData[key] })
+  visibleFields.forEach(key => { 
+    let value = formData[key]
+    
+    // Apply mapValue transformation if defined
+    const fieldOverride = props.fieldOverrides?.[key]
+    if (fieldOverride?.mapValue && value !== undefined && value !== null) {
+      const mappedValue = fieldOverride.mapValue[value]
+      if (mappedValue !== undefined) {
+        value = mappedValue
+      }
+    }
+    
+    sendData[key] = value
+  })
   Promise.resolve(action.callback(sendData).catch(err => {
     console.error(err)
     useNuxtApp().$toast.show(err, 'error')
