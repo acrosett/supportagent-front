@@ -1,6 +1,13 @@
 <template>
   <div class="auth-page">
-    <h1>Login</h1>
+    <div class="auth-header">
+      <div class="auth-logo">
+        <i class="fas fa-robot"></i>
+        <h1>DirectSupport.ai</h1>
+      </div>
+      <h2 class="auth-title">Welcome Back</h2>
+      <p class="auth-subtitle">Sign in to your account</p>
+    </div>
     <MegaForm
       :formClass="LoginDto"
       v-model="formData"
@@ -71,11 +78,43 @@ const actions: MegaFormAction[] = [
   max-width: 400px;
   margin: 2rem auto;
   padding: 0 1rem;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  
+  i {
+    font-size: 2rem;
+    color: $brand;
+  }
   
   h1 {
-    text-align: center;
+    margin: 0;
     color: $text;
-    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: bold;
   }
+}
+
+.auth-title {
+  margin: 0 0 0.5rem 0;
+  color: $text;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.auth-subtitle {
+  margin: 0 0 1.5rem 0;
+  color: $muted;
+  font-size: 1rem;
 }
 </style>

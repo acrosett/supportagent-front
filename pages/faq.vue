@@ -27,22 +27,19 @@ definePageMeta({
 .faq-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
 .faq-header {
-  text-align: center;
   margin-bottom: 3rem;
   
   h1 {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 0.75rem;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: $text;
-    margin-bottom: 1rem;
+    margin: 0;
   }
   
   p {
@@ -89,10 +86,6 @@ definePageMeta({
 }
 
 @media (max-width: 768px) {
-  .faq-page {
-    padding: 1rem;
-  }
-  
   .faq-header {
     margin-bottom: 2rem;
     

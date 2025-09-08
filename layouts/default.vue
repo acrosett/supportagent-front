@@ -37,8 +37,8 @@
   }
   
   .main-content {
-    margin: 60px 1rem 1rem; /* Account for mobile header */
-    padding: 1.5rem;
+    margin: 60px 0.5rem 0.5rem; /* Account for mobile header with smaller margins */
+    padding: 1rem;
   }
 }
 

@@ -5,6 +5,7 @@ import AppButton from './AppButton.vue'
 import RichTextEditor from './RichTextEditor.vue'
 import ChecklistInput from './ChecklistInput.vue'
 import FieldTooltip from './FieldTooltip.vue'
+import ToggleSwitch from './ToggleSwitch.vue'
 
 // Component type mapping
 const componentTypeMap: Record<string, any> = {
@@ -26,6 +27,9 @@ export interface FieldOverride<T = any> {
   invertedConditionsFields?: (keyof T)[]; // Only show if all these fields are falsy
   maxHeight?: string; // CSS max-height value (e.g. "500px", "20rem")
   maxChars?: number; // Maximum character count for input fields
+  selectOptions?: Array<{ label: string; value: any }>; // Options for select dropdown
+  onLabel?: string; // Label for toggle switch "ON" state
+  offLabel?: string; // Label for toggle switch "OFF" state
 }
 
 export type ActionColor = 'primary' | 'secondary' | 'ok' | 'warning' | 'error';
@@ -64,6 +68,16 @@ const doubleCheckData = reactive<Record<string, any>>({})
 const errors = ref<Record<string, string[]>>({})
 const showErrorAnim = ref<Record<number, boolean>>({})
 const loading = ref<Record<number, boolean>>({})
+
+// Initialize select fields with empty strings to show placeholder properly
+if (props.fieldOverrides) {
+  Object.keys(props.fieldOverrides).forEach(fieldKey => {
+    const field = props.fieldOverrides![fieldKey]
+    if (field && field.selectOptions && (formData[fieldKey] === null || formData[fieldKey] === undefined)) {
+      formData[fieldKey] = ''
+    }
+  })
+}
 
 // Infer fields and types from class-validator decorators
 function getFields(cls: any) {
@@ -364,6 +378,24 @@ watch(formData, () => {
           class="megaform-input megaform-richtext"
           :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"
         />
+        <!-- Select dropdown with options -->
+        <select
+          v-else-if="fieldOverrides?.[field.key]?.selectOptions"
+          v-model="formData[field.key]"
+          :id="field.key"
+          :name="field.key"
+          :disabled="fieldOverrides?.[field.key]?.props?.disabled"
+          class="megaform-input megaform-select"
+        >
+          <option value="" disabled>{{ field.placeholder || 'Select an option...' }}</option>
+          <option 
+            v-for="option in fieldOverrides?.[field.key]?.selectOptions" 
+            :key="option.value" 
+            :value="option.value"
+          >
+            {{ option.label }}
+          </option>
+        </select>
         <!-- Default input with optional placeholder and name -->
         <input
           v-else-if="field.inputType !== 'checkbox'"
@@ -377,14 +409,12 @@ watch(formData, () => {
           class="megaform-input"
           :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"
         />
-        <input
+        <ToggleSwitch
           v-else
-          type="checkbox"
           v-model="formData[field.key]"
-          :id="field.key"
-          :name="field.key"
           :disabled="fieldOverrides?.[field.key]?.props?.disabled"
-          class="megaform-checkbox"
+          :on-label="fieldOverrides?.[field.key]?.onLabel || 'ON'"
+          :off-label="fieldOverrides?.[field.key]?.offLabel || 'OFF'"
         />
         <!-- Double check input -->
         <div v-if="fieldOverrides?.[field.key]?.doubleCheck" class="megaform-field megaform-doublecheck" style="margin-top:0.5em;">
@@ -516,6 +546,38 @@ watch(formData, () => {
   display: flex;
   justify-content: flex-end;
   gap: 1em;
+  flex-wrap: wrap;
+  
+  // Mobile responsive styles
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+    justify-content: center;
+    
+    // Make buttons smaller on mobile
+    :deep(.app-button) {
+      padding: 0.5em 1.2em;
+      font-size: 0.9em;
+      min-width: fit-content;
+      flex: 1;
+      max-width: 45%;
+      
+      // Ensure text doesn't wrap
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    // Stack buttons vertically on very small screens
+    flex-direction: column;
+    gap: 0.75rem;
+    
+    :deep(.app-button) {
+      max-width: 100%;
+      flex: none;
+    }
+  }
 }
 // Remove bottom margin for double check field and its input
 .megaform-doublecheck {
@@ -594,6 +656,8 @@ watch(formData, () => {
   background: $panel;
   color: $text;
   box-shadow: $shadow;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  
   // Hide number input arrows (spinners) for all browsers
   &[type="number"]::-webkit-inner-spin-button,
   &[type="number"]::-webkit-outer-spin-button {
@@ -611,20 +675,57 @@ watch(formData, () => {
     background: rgba($muted, 0.1);
   }
 
+  &:focus {
+    border-color: $brand;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($brand, 0.1);
+  }
 }
-.megaform-input:focus {
-  border-color: $brand;
-  outline: none;
-}
-.megaform-checkbox {
-  margin-top: 0.5em;
-  width: 1.2em;
-  height: 1.2em;
-  accent-color: $brand-2;
+
+// Apply the same base styling to select elements
+.megaform-select {
+  @extend .megaform-input;
+  // Ensure select dropdown has proper cursor
+  cursor: pointer;
+  // Ensure proper text color inheritance
+  color: $text;
+  // Add some padding for the dropdown arrow
+  padding-right: 2.5em;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  // Style the dropdown options
+  option {
+    background: $panel;
+    color: $text;
+    padding: 0.5em 1em;
+    
+    &:hover, &:focus {
+      background: rgba($brand, 0.1);
+      color: $text;
+    }
+    
+    &:disabled {
+      color: $muted;
+      background: rgba($muted, 0.1);
+    }
+  }
   
   &:disabled {
-    opacity: 0.6;
     cursor: not-allowed;
+    color: $muted;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%9ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+  
+  // Firefox specific dropdown styling
+  &::-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 $text;
   }
 }
 .megaform-error {

@@ -161,7 +161,7 @@ const handleClick = (event: MouseEvent) => {
 .app-button-error.app-button-error {
   animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
   background: $brand-2 !important;
-  box-shadow: 0 0 0 3px $brand-2;
+  box-shadow: $brand-2;
 }
 
 @keyframes shake {

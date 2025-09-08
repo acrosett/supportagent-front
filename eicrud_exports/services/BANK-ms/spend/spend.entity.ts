@@ -2,6 +2,7 @@ import { IsString, IsOptional, IsEnum, IsNumber } from "class-validator";
 import { Message } from "../../SUPPORT-ms/message/message.entity";
 import { WhatsappMessage } from "../../WHATSAPP-ms/whatsapp-message/whatsapp-message.entity";
 import { Task } from "../../AI-ms/task/task.entity";
+import { Product } from "../../SUPPORT-ms/product/product.entity";
 
 export enum SpendType {
   MESSAGE = 'message',
@@ -21,6 +22,8 @@ export class Spend {
 
     @IsNumber()
     amount: number;
+
+    product: Product | string;
 
     @IsOptional()
     message?: Message;

@@ -3,10 +3,9 @@ import { User } from "../../user/user.entity";
 import { Product } from "../product/product.entity";
 
 export enum ClientPriority {
-    LOW = 'low',
+    LOWEST = 'lowest',
     REGULAR = 'regular',
     HIGH = 'high',
-    HIGHEST = 'highest'
 }
 
 
@@ -44,6 +43,8 @@ export class Client {
 
     @IsOptional()
     lastMessageDate?: Date;
+
+    conversationResolved: Boolean = false;
 
     ghostedUntil: Date;
 

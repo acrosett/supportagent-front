@@ -1,7 +1,6 @@
-import { IsString, IsOptional, IsBoolean } from "class-validator";
+import { IsString, IsOptional, IsBoolean, IsPhoneNumber } from "class-validator";
 import { User } from "../../user/user.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
-
 
 export class PhoneNumber {
 
@@ -11,7 +10,7 @@ export class PhoneNumber {
 
     owner: User | string;
 
-    @IsString()
+    @IsPhoneNumber()
     number: string;
 
     @IsString()
@@ -21,13 +20,14 @@ export class PhoneNumber {
     product: Product;
 
     @IsBoolean()
-    isEmergency: boolean;
+    isVerified: boolean;
 
-    @IsBoolean()
-    isDocumentation: boolean;
+    @IsString()
+    @IsOptional()
+    verifyCode?: string;
 
-    @IsBoolean()
-    isDailySupport: boolean;
+    @IsOptional()
+    lastVerifySentDate?: Date;
 
     createdAt: Date;
 

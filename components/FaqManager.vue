@@ -4,12 +4,22 @@
       <h2 class="faq-title">
         Frequently Asked Questions
       </h2>
-      <AppButton
-        label="New FAQ"
-        color="primary"
-        :showPlusIcon="true"
-        @click="startCreate"
-      />
+      <div class="header-actions">
+        <AppButton
+          label="New FAQ"
+          color="primary"
+          :showPlusIcon="true"
+          @click="startCreate"
+        />
+        <AppButton
+          label="Document Upload"
+          color="secondary"
+          margin="left"
+          @click="navigateToDocumentUpload"
+        >
+          <AppIcon name="document" size="sm" />
+        </AppButton>
+      </div>
     </header>
 
     <div class="faq-controls">
@@ -305,6 +315,11 @@ function confirmDelete() {
     closeDeleteConfirmation()
   }
 }
+
+// Navigation functions
+function navigateToDocumentUpload() {
+  navigateTo('/document-upload')
+}
 </script>
 
 <style scoped lang="scss">
@@ -332,6 +347,12 @@ function confirmDelete() {
   gap: 0.5rem;
   margin: 0;
   color: $text;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .title-icon { opacity: 0.7; }

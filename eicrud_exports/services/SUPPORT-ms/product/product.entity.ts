@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MinLength } from "class-validator";
+import { IsString, IsOptional, MinLength, IsNumber, IsBoolean } from "class-validator";
 import { User } from "../../user/user.entity";
 
 
@@ -26,6 +26,22 @@ export class Product {
     @IsString()
     @IsOptional()
     sharedSecret?: string;
+
+    @IsNumber()
+    @IsOptional()
+    balance: number;
+
+    @IsOptional()
+    lastComputedBalance?: Date;
+
+    @IsBoolean()
+    chatOn: boolean;
+
+    @IsBoolean()
+    subscriptionActive: boolean;
+
+    @IsOptional()
+    lastSubscriptionChecked?: Date;
 
     createdAt: Date;
 

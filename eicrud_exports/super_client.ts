@@ -1,5 +1,6 @@
 import { WhatsappMessageClient } from './services/WHATSAPP-ms/whatsapp-message/whatsapp-message.client';
 import { PhoneNumberClient } from './services/WHATSAPP-ms/phone-number/phone-number.client';
+import { ContactConfigClient } from './services/WHATSAPP-ms/contact-config/contact-config.client';
 import { UserClient } from './services/user/user.client';
 import { ProductClient } from './services/SUPPORT-ms/product/product.client';
 import { MessageClient } from './services/SUPPORT-ms/message/message.client';
@@ -14,6 +15,7 @@ import { SpendClient } from './services/BANK-ms/spend/spend.client';
 import { DepositClient } from './services/BANK-ms/deposit/deposit.client';
 import { WhatsappAgentClient } from './services/AI-ms/whatsapp-agent/whatsapp-agent.client';
 import { TaskClient } from './services/AI-ms/task/task.client';
+import { StaffContactAgentClient } from './services/AI-ms/staff-contact-agent/staff-contact-agent.client';
 import { LlmProviderClient } from './services/AI-ms/llm-provider/llm-provider.client';
 import { EditorAgentClient } from './services/AI-ms/editor-agent/editor-agent.client';
 import { DigestorClient } from './services/AI-ms/digestor/digestor.client';
@@ -28,6 +30,7 @@ export class SuperClient {
         // GENERATED START 1
         this.whatsappMessage = new WhatsappMessageClient(config);
         this.phoneNumber = new PhoneNumberClient(config);
+        this.contactConfig = new ContactConfigClient(config);
         this.user = new UserClient(config);
         this.product = new ProductClient(config);
         this.message = new MessageClient(config);
@@ -42,6 +45,7 @@ export class SuperClient {
         this.deposit = new DepositClient(config);
         this.whatsappAgent = new WhatsappAgentClient(config);
         this.task = new TaskClient(config);
+        this.staffContactAgent = new StaffContactAgentClient(config);
         this.llmProvider = new LlmProviderClient(config);
         this.editorAgent = new EditorAgentClient(config);
         this.digestor = new DigestorClient(config);
@@ -52,6 +56,7 @@ export class SuperClient {
     // GENERATED START 2
     whatsappMessage: WhatsappMessageClient;
     phoneNumber: PhoneNumberClient;
+    contactConfig: ContactConfigClient;
     user: UserClient;
     product: ProductClient;
     message: MessageClient;
@@ -66,6 +71,7 @@ export class SuperClient {
     deposit: DepositClient;
     whatsappAgent: WhatsappAgentClient;
     task: TaskClient;
+    staffContactAgent: StaffContactAgentClient;
     llmProvider: LlmProviderClient;
     editorAgent: EditorAgentClient;
     digestor: DigestorClient;

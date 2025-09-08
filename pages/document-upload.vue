@@ -1,9 +1,18 @@
 <template>
   <div class="document-upload-page">
     <div class="upload-header">
-      <h1>
-        Document Upload & Processing
-      </h1>
+      <div class="header-content">
+        <AppButton
+          label="Back to FAQ"
+          color="secondary"
+          :showBackIcon="true"
+          @click="navigateToFAQ"
+        />
+        <h1>
+          Document Upload & Processing
+        </h1>
+        <div></div> <!-- Spacer for flexbox alignment -->
+      </div>
     </div>
 
     <div class="upload-content">
@@ -34,6 +43,9 @@
 </template>
 
 <script setup lang="ts">
+import AppButton from '~/components/AppButton.vue'
+import AppIcon from '~/components/AppIcon.vue'
+
 const processedText = ref('')
 
 const textSizeFormatted = computed(() => {
@@ -45,6 +57,10 @@ const textSizeFormatted = computed(() => {
 const handleError = (error: string) => {
   // Handle errors from the DigestFile component
   console.error('File processing error:', error)
+}
+
+const navigateToFAQ = () => {
+  navigateTo('/faq')
 }
 
 const formatFileSize = (bytes: number): string => {
@@ -67,22 +83,30 @@ definePageMeta({
 .document-upload-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
 .upload-header {
-  text-align: center;
   margin-bottom: 3rem;
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
   
   h1 {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 0.75rem;
     font-size: 2.5rem;
     font-weight: 700;
     color: $text;
-    margin-bottom: 1rem;
+    margin: 0;
   }
 }
 
@@ -156,10 +180,6 @@ definePageMeta({
 }
 
 @media (max-width: 768px) {
-  .document-upload-page {
-    padding: 1rem;
-  }
-  
   .upload-header {
     margin-bottom: 2rem;
     

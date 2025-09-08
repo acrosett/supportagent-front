@@ -20,7 +20,7 @@
       </button>
       <h1 class="mobile-title">
         <i class="fas fa-robot"></i>
-        AI Support Agent
+        DirectSupport.ai
       </h1>
     </header>
 
@@ -29,7 +29,7 @@
       <div class="sidebar-header">
         <h2 class="app-title">
           <i class="fas fa-robot"></i>
-          AI Support Agent
+          DirectSupport.ai
         </h2>
       </div>
       <ul class="nav-list">
@@ -40,37 +40,15 @@
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/notifications" @click="closeMobileMenu">
-            <AppIcon name="notifications" size="md" class="nav-icon" />
-            Notifications
-          </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink to="/insights" @click="closeMobileMenu">
-            <AppIcon name="stats" size="md" class="nav-icon" />
-            Analytics & Insights
-          </NuxtLink>
-        </li>
-        <li>
-          <a 
-            href="#"
-            @click="handleTestChatClick($event)"
-            class="nav-link"
-          >
-            <AppIcon name="chat" size="md" class="nav-icon" />
-            Test Chat
-          </a>
-        </li>
-        <li>
           <NuxtLink to="/edit-product" @click="closeMobileMenu">
             <AppIcon name="settings" size="md" class="nav-icon" />
             Edit Product
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/document-upload" @click="closeMobileMenu">
-            <AppIcon name="document" size="md" class="nav-icon" />
-            Document Upload
+          <NuxtLink to="/contact-priority" @click="closeMobileMenu">
+            <AppIcon name="phone" size="md" class="nav-icon" />
+            Contact & Priority
           </NuxtLink>
         </li>
         <li>
@@ -79,9 +57,37 @@
             FAQ Management
           </NuxtLink>
         </li>
+        <li>
+          <NuxtLink to="/conversations" @click="closeMobileMenu">
+            <AppIcon name="message" size="md" class="nav-icon" />
+            Conversations
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/issues" @click="closeMobileMenu">
+            <AppIcon name="document" size="md" class="nav-icon" />
+            Issues
+          </NuxtLink>
+        </li>
+        <li>
+          <a 
+            href="#"
+            @click="handleTestChatClick($event)"
+            class="nav-link"
+          >
+            <AppIcon name="media" size="md" class="nav-icon" />
+            Test Chat
+          </a>
+        </li>
       </ul>
       <div style="flex:1"></div>
       <ul class="nav-list" style="margin-top:auto;">
+        <li>
+          <NuxtLink to="/notifications" @click="closeMobileMenu">
+            <AppIcon name="notifications" size="md" class="nav-icon" />
+            Notifications
+          </NuxtLink>
+        </li>
         <li v-if="isAdmin">
           <NuxtLink to="/debug" @click="closeMobileMenu">
             <AppIcon name="tool" size="md" class="nav-icon" />

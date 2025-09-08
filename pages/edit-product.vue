@@ -1,21 +1,28 @@
 <template>
-  <div>
-    <h1>{{ isEditing ? 'Edit Product' : 'Create New Product' }}</h1>
-    <p>{{ isEditing ? 'Update your product configuration below.' : 'Configure your product settings to set up the AI support agent.' }}</p>
-    
-    <div v-if="isLoading" class="loading-state">
-      <div class="spinner"></div>
-      <p>Loading product...</p>
+  <div class="edit-product-page">
+    <header class="page-header">
+      <div class="page-title">
+        <h1>{{ isEditing ? 'Edit Product' : 'Create New Product' }}</h1>
+      </div>
+    </header>
+
+    <div class="content-section">
+      <p class="page-description">{{ isEditing ? 'Update your product configuration below.' : 'Configure your product settings to set up the AI support agent.' }}</p>
+      
+      <div v-if="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading product...</p>
+      </div>
+      
+      <MegaForm
+        v-else
+        :formClass="Product"
+        v-model="formData"
+        :fieldOverrides="fieldOverrides"
+        :excludeFields="excludeFields"
+        :actions="actions"
+      />
     </div>
-    
-    <MegaForm
-      v-else
-      :formClass="Product"
-      v-model="formData"
-      :fieldOverrides="fieldOverrides"
-      :excludeFields="excludeFields"
-      :actions="actions"
-    />
   </div>
 </template>
 
@@ -143,6 +150,36 @@ const actions: MegaFormAction[] = [
 <style scoped lang="scss">
 @use '~/assets/variables' as *;
 
+.edit-product-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  h1 {
+    margin: 0;
+    color: $text;
+    font-size: 2rem;
+  }
+}
+
+.content-section {
+  background: $panel;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  padding: 2rem;
+}
+
+.page-description {
+  color: $muted;
+  margin: 0 0 2rem 0;
+  font-size: 0.9rem;
+}
+
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -166,5 +203,12 @@ const actions: MegaFormAction[] = [
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+  .content-section {
+    padding: 1rem;
+  }
 }
 </style>
