@@ -144,31 +144,42 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
 
 
 // Loads messages and builds ChatMessage[]
-const refreshMessages = async (nuxtApp: NuxtApp) => {
+const refreshMessages = async (nuxtApp: NuxtApp, limit = false) => {
   // Get identifier from session storage
   const identifier = sessionStorage.getItem('client-identifier')
   if (!identifier) {
     return;
   }
   try {
-    const res = await nuxtApp.$sp.message.get_client_messages({
+    const res = await nuxtApp.$sp.message.get_client_messagesL({
       identifier: identifier,
       apiKey: sessionStorage.getItem('chat-api-token') || ''
-    })
-    const rawMessages = res.messages?.data || []
-
-    // Update typing status from API response
-    isTyping.value = res.isTyping || false
+    },
+    {
+      orderBy: { createdAt: 'asc' },
+      limit: limit ? 10 : undefined
+    });
+    const rawMessages = res?.data || []
 
     // Sort messages by createdAt
     const newMessages = rawMessages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-    const newMessageCount = newMessages.length
+    
+    // Merge messages based on ID to avoid duplicates
+    const existingIds = new Set(messages.value.map(msg => msg.id))
+    const uniqueNewMessages = newMessages.filter((msg: any) => !existingIds.has(msg.id))
+    
+    // Combine existing and new messages, then sort by createdAt
+    const allMessages = [...messages.value, ...uniqueNewMessages].sort((a: any, b: any) => 
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    )
+    
+    const newMessageCount = allMessages.length
     
     // Check if new messages arrived
     const hasNewMessages = newMessageCount > lastMessageCount.value
     
     // Update messages
-    messages.value = newMessages
+    messages.value = allMessages
     
     // Auto-scroll to bottom if new messages arrived
     if (hasNewMessages) {
@@ -297,7 +308,7 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
         switch (message.type) {
           case 'new_message':
             // Refresh messages when server tells us to
-            await refreshMessages(nuxtApp)
+            await refreshMessages(nuxtApp, true)
             break
           case 'thinking_start':
             // AI started thinking - show typing indicator

@@ -146,10 +146,13 @@ const saveTestClients = () => {
 }
 
 const selectClient = (client: TestClient) => {
+  const nuxtApp = useNuxtApp()
+  
   // Generate guest ID for this client
   const clientData = {
-    guestId: generateId(),
-    name: client.name
+    guestId: "guest_" + generateId(),
+    name: client.name,
+    apiToken: nuxtApp.$userProductId
   }
   emit('client-selected', clientData)
 }
