@@ -1,5 +1,5 @@
 <template>
-  <div class="image-card-test">
+  <div class="image-card-test page-container">
     <div class="page-header">
       <h1>ImageCard Component Tests</h1>
       <p>Testing the enhanced ImageCard component with real images from Picsum Photos to demonstrate cropping and responsive sizing</p>
@@ -160,9 +160,7 @@ const handleEditClick = () => {
 @use '~/assets/variables' as *;
 
 .image-card-test {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+
 }
 
 .page-header {

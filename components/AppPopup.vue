@@ -140,7 +140,6 @@ onUnmounted(() => {
 
 .popup-size-xl {
   width: 100%;
-  max-width: 1200px;
 }
 
 .popup-fullscreen {

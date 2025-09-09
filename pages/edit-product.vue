@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-product-page">
+  <div class="page-container edit-product-page">
     <header class="page-header">
       <div class="page-title">
         <h1>{{ isEditing ? 'Edit Product' : 'Create New Product' }}</h1>
@@ -7,7 +7,6 @@
     </header>
 
     <div class="content-section">
-      <p class="page-description">{{ isEditing ? 'Update your product configuration below.' : 'Configure your product settings to set up the AI support agent.' }}</p>
       
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
@@ -150,10 +149,7 @@ const actions: MegaFormAction[] = [
 <style scoped lang="scss">
 @use '~/assets/variables' as *;
 
-.edit-product-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+// Uses global .page-container for sizing
 
 .page-header {
   margin-bottom: 2rem;

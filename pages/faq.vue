@@ -1,5 +1,5 @@
 <template>
-  <div class="faq-page">
+  <div class="page-container faq-page">
     <div class="faq-header">
       <h1>
         FAQ Management
@@ -24,10 +24,7 @@ definePageMeta({
 <style scoped lang="scss">
 @use "~/assets/_variables.scss" as *;
 
-.faq-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+// Uses global .page-container for sizing
 
 .faq-header {
   margin-bottom: 3rem;

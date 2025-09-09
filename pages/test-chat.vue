@@ -33,18 +33,11 @@
       <div class="messages-container" ref="messagesContainer">
         <div v-for="message in messages" :key="message.id" class="message-wrapper">
           <div :class="['message', message.type === 'user' ? 'message-fan' : 'message-model']">
-            <!-- Message Header -->
             <div class="message-header">
-              <span class="sender-name">
-                {{ message.type === 'user' ? 'You' : 'Support Agent' }}
-              </span>
-              <span class="message-time">{{ formatTime(message.createdAt) }}</span>
+              <span class="sender-name">{{ message.type === 'user' ? 'Client' : 'Support Agent' }}</span>
+              <span class="message-time">&nbsp;&nbsp;{{ formatTime(message.createdAt) }}</span>
             </div>
-
-            <!-- Message Content -->
-            <div class="message-content">
-              <p v-if="message.content">{{ message.content }}</p>
-            </div>
+            <div class="message-content" v-html="renderMarkdown(message.content || '')"></div>
           </div>
         </div>
 
@@ -91,6 +84,9 @@
 <script setup lang="ts">
 import { NuxtApp } from 'nuxt/app'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import hljs from 'highlight.js'
+import { marked, Renderer } from 'marked'
+import DOMPurify from 'dompurify'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 
 definePageMeta({ 
@@ -289,6 +285,7 @@ const addWelcomeMessage = () => {
     // Scroll to bottom to show welcome message
     nextTick(() => {
       scrollToBottom()
+  highlightAllDeferred()
     })
   }
 }
@@ -361,6 +358,7 @@ const sendMessage = async () => {
     }
     useNuxtApp().$toast.show(err, 'error')
   }
+  highlightAllDeferred()
 }
 
 const handleShiftEnter = (event: KeyboardEvent) => {
@@ -383,12 +381,73 @@ const scrollToBottom = () => {
   }
 }
 
-const formatTime = (date?: Date) => {
+const formatTime = (date?: Date | string | null) => {
   if (!date) return ''
-  return new Intl.DateTimeFormat('en-US', {
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date)
+  const d = date instanceof Date ? date : new Date(date)
+  if (isNaN(d.getTime())) return ''
+  return new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(d)
+}
+
+// --- Markdown Rendering using marked + DOMPurify ---
+// Configure marked with custom renderer for code highlighting
+const renderer = new Renderer()
+const originalCode = renderer.code.bind(renderer)
+renderer.code = (code: string, infostring: string | undefined, escaped: boolean) => {
+  const lang = (infostring || '').match(/^[^\s]+/)?.[0]
+  let highlighted = code
+  if (lang && hljs.getLanguage(lang)) {
+    try { highlighted = hljs.highlight(code, { language: lang }).value } catch {}
+  } else {
+    try { highlighted = hljs.highlightAuto(code).value } catch {}
+  }
+  return `<pre><code class="hljs language-${lang || 'plaintext'}">${highlighted}</code></pre>`
+}
+// Override link rendering to force new tab + security rel
+const escapeAttr = (s: string) => s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+renderer.link = (href: string | null, title: string | null, text: string) => {
+  const safeHref = escapeAttr(href || '')
+  const titleAttr = title ? ` title="${escapeAttr(title)}"` : ''
+  return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
+}
+marked.setOptions({ gfm: true, breaks: true, renderer })
+
+function renderMarkdown(raw: string): string {
+  if (!raw) return ''
+  const dirty = marked.parse(raw) as string
+  // Sanitize HTML output
+  return DOMPurify.sanitize(dirty, { USE_PROFILES: { html: true }, ADD_ATTR: ['target','rel'] })
+}
+
+function highlightAllDeferred() {
+  nextTick(() => {
+    document.querySelectorAll('.message-content pre').forEach(pre => {
+      const code = pre.querySelector('code') as HTMLElement | null
+      if (code) {
+        try { hljs.highlightElement(code) } catch { /* ignore */ }
+      }
+      // Add copy button if not present
+      if (!pre.querySelector('.code-copy-btn')) {
+        const btn = document.createElement('button')
+        btn.type = 'button'
+        btn.className = 'code-copy-btn'
+        btn.setAttribute('aria-label', 'Copy code to clipboard')
+        btn.textContent = 'Copy'
+        btn.addEventListener('click', () => {
+          const raw = code?.textContent || ''
+            ;(navigator.clipboard?.writeText(raw) || Promise.reject()).then(() => {
+              const orig = btn.textContent
+              btn.textContent = 'Copied!'
+              btn.classList.add('copied')
+              setTimeout(() => { btn.textContent = orig || 'Copy'; btn.classList.remove('copied') }, 1600)
+            }).catch(() => {
+              btn.textContent = 'Failed'
+              setTimeout(() => { btn.textContent = 'Copy' }, 1600)
+            })
+        })
+        pre.appendChild(btn)
+      }
+    })
+  })
 }
 
 // Audio context for bip sounds (created after user interaction)
@@ -570,9 +629,17 @@ watch(isTyping, (newIsTyping) => {
   }
 })
 
+// Re-highlight & ensure copy buttons whenever messages list changes
+// (Removed direct messages watch; using length watcher below)
+watch(() => messages.value.length, () => {
+  highlightAllDeferred()
+})
+
 onMounted(() => {
   const nuxtApp = useNuxtApp()
   
+  // Initial highlight attempt (preloaded messages)
+  highlightAllDeferred()
   // Handle URL parameters for testing
   const route = useRoute()
   
@@ -739,6 +806,14 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .chat-subtitle { font-size:.875rem; color:#666; }
 
 .messages-container { flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:1rem; }
+.messages-container { scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.28) transparent; }
+.dark-mode .messages-container { scrollbar-color:rgba(255,255,255,.28) transparent; }
+.messages-container::-webkit-scrollbar { width:8px; }
+.messages-container::-webkit-scrollbar-track { background:transparent; }
+.messages-container::-webkit-scrollbar-thumb { background:rgba(0,0,0,.28); border-radius:4px; }
+.messages-container:hover::-webkit-scrollbar-thumb { background:rgba(0,0,0,.4); }
+.dark-mode .messages-container::-webkit-scrollbar-thumb { background:rgba(255,255,255,.25); }
+.dark-mode .messages-container:hover::-webkit-scrollbar-thumb { background:rgba(255,255,255,.4); }
 .message-wrapper { display:flex; flex-direction:column; }
 .message { max-width:80%; padding:.75rem 1rem; border-radius:18px; word-wrap:break-word; }
 .message-fan { align-self:flex-end; background:var(--primary-color, #667eea); color:#fff; border-bottom-right-radius:6px; }
@@ -749,6 +824,21 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .sender-name { font-weight:600; }
 .message-time { font-size:.7rem; }
 .message-content p { margin:0; line-height:1.4; }
+.message-content { display:flex; flex-direction:column; gap:.5rem; }
+.message-content pre { position:relative; background:#1e1e22; color:#f5f5f5; padding:.75rem 1rem; border-radius:8px; overflow:auto; font-size:.75rem; line-height:1.4; }
+.message-content pre { scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.25) transparent; }
+.message-content pre::-webkit-scrollbar { height:8px; width:8px; }
+.message-content pre::-webkit-scrollbar-track { background:transparent; }
+.message-content pre::-webkit-scrollbar-thumb { background:rgba(255,255,255,.22); border-radius:4px; }
+.message-content pre:hover::-webkit-scrollbar-thumb { background:rgba(255,255,255,.34); }
+.dark-mode .message-content pre { scrollbar-color:rgba(255,255,255,.25) transparent; }
+.message-content pre code { background:transparent; padding:0; display:block; font-family:Menlo,Consolas,monospace; }
+.message-content pre .code-copy-btn { position:absolute; top:6px; right:6px; background:#2d2d33; color:#ddd; border:1px solid #3a3a42; font-size:.65rem; padding:.25rem .5rem; border-radius:4px; cursor:pointer; opacity:.85; transition:background .15s, opacity .15s; }
+.message-content pre .code-copy-btn:hover { background:#3a3a42; opacity:1; }
+.message-content pre .code-copy-btn.copied { background:var(--primary-color,#667eea); color:#fff; border-color:var(--primary-color,#667eea); }
+.dark-mode .message-content pre { background:#111114; }
+.dark-mode .message-content pre .code-copy-btn { background:#24242a; border-color:#2f2f37; }
+.dark-mode .message-content pre .code-copy-btn:hover { background:#2f2f37; }
 
 .typing-indicator { display:flex; align-items:center; gap:.5rem; align-self:flex-start; padding:.75rem 1rem; background:#f1f3f4; border-radius:18px; max-width:80%; }
 .dark-mode .typing-indicator { background:#26262b; }

@@ -3,12 +3,18 @@ import { PUBLIC_PATHS, isPublicPath } from "../utils/auth-config"
 import { NuxtApp } from "nuxt/app";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
+
   const nuxtApp = useNuxtApp()
   const jwt = nuxtApp.$sp.user.config.storage?.get(nuxtApp.$sp.user.JWT_STORAGE_KEY);
 
   const loggedIn = jwt && await checkLogin(nuxtApp).catch((e) => {
     return false;
   });
+
+    // Run redirect logic only on client side
+  if (import.meta.server) {
+    return
+  }
   
   // Redirect logged-in users away from login page only
   if (to.path === "/login" && loggedIn) {

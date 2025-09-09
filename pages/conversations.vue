@@ -1,5 +1,5 @@
 <template>
-  <section class="conversations-page">
+  <section class="page-container conversations-page">
     <header class="page-header">
       <div class="page-title">
         <h1>Conversations</h1>
@@ -7,10 +7,10 @@
     </header>
 
     <div class="content-section">
-      <div class="section-header">
+      <!-- <div class="section-header">
         <h2>Customer Conversations</h2>
         <p class="section-description">Monitor and manage all customer chat interactions</p>
-      </div>
+      </div> -->
 
       <!-- Filters and Search -->
       <div class="filters-section">
@@ -199,10 +199,7 @@ const formatDate = (date: Date) => {
 <style scoped lang="scss">
 @use "~/assets/_variables.scss" as *;
 
-.conversations-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+// Uses global .page-container for sizing
 
 .page-header {
   margin-bottom: 2rem;

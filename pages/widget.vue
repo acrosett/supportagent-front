@@ -1,5 +1,5 @@
 <template>
-  <div class="widget-config-page">
+  <div class="widget-config-page page-container">
     <header class="page-header">
       <h1 class="page-title">Widget Configuration</h1>
       <p class="page-desc">Tune your support widget appearance & behavior, then copy the embed snippet.</p>
@@ -119,6 +119,7 @@ const copySnippet = async () => {
 }
 
 const cleanupPreview = () => {
+  sessionStorage.removeItem('ai-support-guest-id');
   document.querySelectorAll('#ai-support-widget').forEach(el => el.remove())
   document.querySelectorAll('#ai-support-widget-bubble').forEach(el => el.remove())
   document.querySelectorAll('#widget-preview-script').forEach(el => el.remove())
@@ -181,7 +182,6 @@ const fieldOverrides: OverrideRecord<WidgetConfig> = {
 const actions: MegaFormAction[] = [
   { label: 'Save', color: 'primary', callback: async (data:any) => {
       try {
-        data.owner = nuxtApp.$userId
         // Associate product (if available) so server can link
         if (nuxtApp.$userProductId) data.product = { id: nuxtApp.$userProductId }
         // Persist via service client (create or update based on existing id?)
@@ -204,7 +204,7 @@ const actions: MegaFormAction[] = [
 <style scoped lang="scss">
 @use "~/assets/_variables.scss" as *;
 
-.widget-config-page { max-width:1200px; margin:0 auto; }
+.widget-config-page { }
 .page-header { margin-bottom:2rem; }
 .page-title { margin:0; font-size:2rem; color:$text; }
 .page-desc { color:$muted; margin:.5rem 0 0; font-size:.9rem; }

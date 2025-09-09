@@ -1,5 +1,5 @@
 <template>
-  <div class="document-upload-page">
+  <div class="page-container document-upload-page">
     <div class="upload-header">
       <div class="header-content">
         <AppButton
@@ -80,10 +80,7 @@ definePageMeta({
 <style scoped lang="scss">
 @use "~/assets/_variables.scss" as *;
 
-.document-upload-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+// Uses global .page-container for sizing
 
 .upload-header {
   margin-bottom: 3rem;

@@ -1,5 +1,5 @@
 <template>
-  <div class="debug-page">
+  <div class="page-container debug-page">
     <div class="page-header">
       <h1>Debug Tools</h1>
       <p>Administrative debugging and testing utilities</p>
@@ -113,9 +113,7 @@ const replayLLMParsing = async () => {
 @use '~/assets/variables' as *;
 
 .debug-page {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+
 }
 
 .page-header {

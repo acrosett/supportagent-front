@@ -10,7 +10,6 @@ export enum WidgetPosition {
 export enum WidgetIcon {
   ROBOT = 'robot',
   MESSAGE = 'message',
-  PHONE = 'phone',
   HEADSET = 'headset',
 }
 

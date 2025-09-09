@@ -1,5 +1,5 @@
 <template>
-  <section class="contact-priority-page">
+  <section class="page-container contact-priority-page">
     <header class="page-header">
       <div class="page-title">
         <h1>Contact & Priority</h1>
@@ -721,8 +721,7 @@ const configFormActions: MegaFormAction[] = [
 @use "~/assets/_variables.scss" as *;
 
 .contact-priority-page {
-  max-width: 1200px;
-  margin: 0 auto;
+
 }
 
 .page-header {
@@ -757,6 +756,7 @@ const configFormActions: MegaFormAction[] = [
     gap: 0.75rem;
     
     h2 {
+      width: max-content;
       margin: 0;
       color: $text;
       font-size: 1.5rem;

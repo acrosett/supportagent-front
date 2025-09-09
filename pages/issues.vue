@@ -1,5 +1,5 @@
 <template>
-  <section class="issues-page">
+  <section class="issues-page page-container">
     <header class="page-header">
       <div class="page-title">
         <h1>Issues</h1>
@@ -7,19 +7,6 @@
     </header>
 
     <div class="content-section">
-      <div class="section-header">
-        <div class="section-title-row">
-          <h2>Support Issues</h2>
-          <AppButton
-            label="Create Issue"
-            color="primary"
-            @click="openCreateIssueModal"
-          >
-            <AppIcon name="plus" size="sm" />
-          </AppButton>
-        </div>
-        <p class="section-description">Track and resolve customer support issues</p>
-      </div>
 
       <!-- Filters and Search -->
       <div class="filters-section">
@@ -46,17 +33,19 @@
             @click="setFilter('open')"
           />
           <AppButton
-            :label="'In Progress (' + inProgressIssues + ')'"
-            :color="activeFilter === 'in-progress' ? 'primary' : 'secondary'"
-            size="sm"
-            @click="setFilter('in-progress')"
-          />
-          <AppButton
             :label="'Resolved (' + resolvedIssues + ')'"
             :color="activeFilter === 'resolved' ? 'primary' : 'secondary'"
             size="sm"
             @click="setFilter('resolved')"
           />
+          
+          <AppButton
+            label="Create Issue"
+            color="primary"
+            @click="openCreateIssueModal"
+          >
+            <AppIcon name="plus" size="sm" />
+          </AppButton>
         </div>
       </div>
 
@@ -396,8 +385,7 @@ const formatDate = (date: Date) => {
 @use "~/assets/_variables.scss" as *;
 
 .issues-page {
-  max-width: 1200px;
-  margin: 0 auto;
+ 
 }
 
 .page-header {
@@ -474,6 +462,7 @@ const formatDate = (date: Date) => {
   position: relative;
   flex: 1;
   max-width: 400px;
+  min-width: 200px;
   
   .search-icon {
     position: absolute;
