@@ -6,7 +6,6 @@
     width: '400px',
     height: '600px',
     domain: window.location.origin, // Will be replaced with actual domain in production
-    brandText: 'Powered by AI Support Agent',
     position: 'bottom-right',
     zIndex: 1000
   };
@@ -70,7 +69,7 @@ const createWidget = (config) => {
   } = config || {};
 
   const footerHeight = '31px';
-  const fullScreenMargin = '5%';
+  const fullScreenMargin = '1%';
   const hbg = false; 
   const pos = getPositionStyles(position);
 
@@ -372,6 +371,39 @@ const createWidget = (config) => {
     let bubbleEl = null;
     let isFullscreen = false;
 
+    // Ensure widget never exceeds on small screens (<=768px)
+    const enforceMobileBounds = () => {
+      if (isFullscreen) return; // skip while fullscreen
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      if (vw > 768) { // desktop - allow configured size
+        return;
+      }
+      const maxW = Math.floor(vw * 0.96);
+      const maxH = Math.floor(vh * 0.98);
+      // Apply max constraints
+      container.style.maxWidth = maxW + 'px';
+      container.style.maxHeight = maxH + 'px';
+      const rect = container.getBoundingClientRect();
+      if (rect.width > maxW) container.style.width = maxW + 'px';
+      if (rect.height > maxH) container.style.height = maxH + 'px';
+      // Recompute after potential resize
+      const newRect = container.getBoundingClientRect();
+      let left = newRect.left;
+      let top = newRect.top;
+      let changed = false;
+      if (left + newRect.width > vw - 4) { left = Math.max(4, vw - newRect.width - 4); changed = true; }
+      if (top + newRect.height > vh - 4) { top = Math.max(4, vh - newRect.height - 4); changed = true; }
+      if (left < 4) { left = 4; changed = true; }
+      if (top < 4) { top = 4; changed = true; }
+      if (changed) {
+        container.style.left = left + 'px';
+        container.style.top = top + 'px';
+        container.style.right = 'auto';
+        container.style.bottom = 'auto';
+      }
+    };
+
   const getBubble = () => {
       if (bubbleEl) return bubbleEl;
   const primary = config.primaryColor || '#764ba2';
@@ -392,6 +424,10 @@ const createWidget = (config) => {
         bubbleEl.addEventListener('mousedown', (e)=>{ dragging=true; moved=false; startX=e.clientX; startY=e.clientY; const r=bubbleEl.getBoundingClientRect(); origX=r.left; origY=r.top; document.addEventListener('mousemove', move); document.addEventListener('mouseup', up); e.preventDefault(); });
         const move=(e)=>{ if(!dragging) return; const dx=e.clientX-startX, dy=e.clientY-startY; if (Math.abs(dx)>MOVE_THRESHOLD || Math.abs(dy)>MOVE_THRESHOLD) moved=true; const vw=window.innerWidth, vh=window.innerHeight, size=BUBBLE_SIZE; bubbleEl.style.left=clamp(origX+dx,4,vw-size-4)+'px'; bubbleEl.style.top=clamp(origY+dy,4,vh-size-4)+'px'; bubbleEl.style.right='auto'; bubbleEl.style.bottom='auto'; };
         const up=()=>{ dragging=false; setTimeout(()=>{moved=false;},0); document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
+  // Touch support (mobile)
+  bubbleEl.addEventListener('touchstart', (e)=>{ if(e.touches.length!==1) return; const t=e.touches[0]; dragging=true; moved=false; startX=t.clientX; startY=t.clientY; const r=bubbleEl.getBoundingClientRect(); origX=r.left; origY=r.top; document.addEventListener('touchmove', tmove, { passive:false }); document.addEventListener('touchend', tup); }, { passive:true });
+  const tmove=(e)=>{ if(!dragging) return; const t=e.touches[0]; const dx=t.clientX-startX, dy=t.clientY-startY; if (Math.abs(dx)>MOVE_THRESHOLD || Math.abs(dy)>MOVE_THRESHOLD) moved=true; const vw=window.innerWidth, vh=window.innerHeight, size=BUBBLE_SIZE; bubbleEl.style.left=clamp(origX+dx,4,vw-size-4)+'px'; bubbleEl.style.top=clamp(origY+dy,4,vh-size-4)+'px'; bubbleEl.style.right='auto'; bubbleEl.style.bottom='auto'; e.preventDefault(); };
+  const tup=()=>{ if(!dragging) return; dragging=false; setTimeout(()=>{moved=false;},0); document.removeEventListener('touchmove', tmove); document.removeEventListener('touchend', tup); };
       }
       bubbleEl.addEventListener('click', (e)=>{ if(dragging || moved) return; restoreWidget(); });
       document.body.appendChild(bubbleEl);
@@ -434,8 +470,27 @@ const createWidget = (config) => {
       sendMessage({ type:'widget-visibility-changed', visible:true });
     };
     const toggleFullscreen = () => {
-      if (!isFullscreen) { container.classList.add('ai-fullscreen'); isFullscreen=true; }
-      else { container.classList.remove('ai-fullscreen'); isFullscreen=false; }
+      if (!isFullscreen) {
+        container.classList.add('ai-fullscreen');
+        isFullscreen = true;
+      } else {
+        container.classList.remove('ai-fullscreen');
+        isFullscreen = false;
+      }
+      // Update fullscreen control icon & accessible labels
+      const fsBtn = container.querySelector('.ai-widget-controls button[data-action="fullscreen"]');
+      if (fsBtn) {
+        if (isFullscreen) {
+          // fsBtn.textContent = '⛶'; // exit fullscreen icon
+          fsBtn.title = 'Exit fullscreen';
+          fsBtn.setAttribute('aria-label', 'Exit fullscreen');
+        } else {
+          // fsBtn.textContent = '⛶'; // enter fullscreen icon
+          fsBtn.title = 'Fullscreen';
+          fsBtn.setAttribute('aria-label', 'Fullscreen');
+        }
+      }
+  if (!isFullscreen) enforceMobileBounds(); // re-clamp after exiting fullscreen
     };
 
     // Control button events
@@ -499,6 +554,14 @@ const createWidget = (config) => {
           window.removeEventListener('blur', onUp, true);
         };
         dragHandle.addEventListener('mousedown', onDown);
+        // Touch support for widget dragging
+        const onTouchStart = (e)=>{
+          if (isFullscreen) return; if(e.touches.length!==1) return; const t=e.touches[0]; dragging=true; startX=t.clientX; startY=t.clientY; const rect=container.getBoundingClientRect(); if (!container.style.left && (rect.left || rect.top)) { container.style.left = rect.left + 'px'; container.style.top = rect.top + 'px'; container.style.right='auto'; container.style.bottom='auto'; }
+          origLeft=parseFloat(container.style.left)||rect.left; origTop=parseFloat(container.style.top)||rect.top; document.addEventListener('touchmove', onTouchMove, { passive:false }); document.addEventListener('touchend', onTouchEnd, { passive:true });
+        };
+        const onTouchMove = (e)=>{ if(!dragging) return; const t=e.touches[0]; const dx=t.clientX-startX, dy=t.clientY-startY; const w=container.offsetWidth, h=container.offsetHeight, vw=window.innerWidth, vh=window.innerHeight; const clamp=(v,min,max)=>Math.min(Math.max(v,min),max); const newLeft=clamp(origLeft+dx,4,vw-w-4); const newTop=clamp(origTop+dy,4,vh-h-4); container.style.left=newLeft+'px'; container.style.top=newTop+'px'; if (bubbleEl) { const BUBBLE_SIZE=72; bubbleEl.style.left=(newLeft + w - BUBBLE_SIZE - 12)+'px'; bubbleEl.style.top=(newTop + h - BUBBLE_SIZE - 12)+'px'; bubbleEl.style.right='auto'; bubbleEl.style.bottom='auto'; } e.preventDefault(); };
+        const onTouchEnd = ()=>{ if(!dragging) return; dragging=false; document.removeEventListener('touchmove', onTouchMove); document.removeEventListener('touchend', onTouchEnd); };
+        dragHandle.addEventListener('touchstart', onTouchStart, { passive:true });
       }
     }
 
@@ -563,6 +626,16 @@ const createWidget = (config) => {
     if (config.bounceAfterInit || config.periodicBounce) {
       getBubble();
     }
+
+    // Initial mobile bounds enforcement & responsive handling
+    enforceMobileBounds();
+    let resizeRaf = null;
+    window.addEventListener('resize', () => {
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        enforceMobileBounds();
+      });
+    });
 
     // Inject bounce CSS once
     (function ensureBounceCSS(){
