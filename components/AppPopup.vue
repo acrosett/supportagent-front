@@ -11,15 +11,6 @@
       >
         <div class="popup-header">
           <h3 class="popup-title">{{ title }}</h3>
-          <div class="popup-actions">
-            <button
-              v-if="allowFullscreenToggle"
-              class="popup-action-btn"
-              @click="toggleFullscreen"
-              :aria-label="internalFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
-            >
-              <AppIcon :name="internalFullscreen ? 'close' : 'expand'" size="md" />
-            </button>
           <button 
             v-if="showCloseButton"
             class="popup-close" 
@@ -28,7 +19,6 @@
           >
             <AppIcon name="close" size="md" />
           </button>
-          </div>
         </div>
         
         <div class="popup-content">
@@ -51,7 +41,6 @@ interface Props {
   fullscreen?: boolean
   closeOnOverlay?: boolean
   showCloseButton?: boolean
-  allowFullscreenToggle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -60,12 +49,10 @@ const props = withDefaults(defineProps<Props>(), {
   fullscreen: false,
   closeOnOverlay: true,
   showCloseButton: true
-  allowFullscreenToggle: true
 })
 
 const emit = defineEmits<{
   close: []
-  'update:fullscreen': [boolean]
 }>()
 
 const handleClose = () => {
