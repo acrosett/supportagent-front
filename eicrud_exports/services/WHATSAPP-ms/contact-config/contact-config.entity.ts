@@ -42,6 +42,24 @@ export class ContactConfig {
     @IsNumber()
     MaxMessagesPerDayPerUser: number = 80;
 
+    @IsNumber()
+    messageCountToday: number;
+
+    @IsOptional()
+    lastMessageDailyReset?: Date;
+
+    @IsNumber()
+    messageCountThisWeek: number;
+
+    @IsOptional()
+    lastMessageWeeklyReset?: Date;
+
+    @IsBoolean()
+    hasBeenNotifiedDailyGlobal: boolean;
+
+    @IsBoolean()
+    hasBeenNotifiedWeeklyGlobal: boolean;
+
     @IsEnum(AIType)
     clientFacingAiType: AIType = AIType.FAST;
 

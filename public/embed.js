@@ -7,7 +7,6 @@
     height: '600px',
     domain: window.location.origin, // Will be replaced with actual domain in production
     brandText: 'Powered by AI Support Agent',
-    hideBranding: false,
     position: 'bottom-right',
     zIndex: 1000
   };
@@ -34,7 +33,7 @@
       config.width = script.dataset.width || config.width;
       config.height = script.dataset.height || config.height;
       config.domain = script.dataset.domain || config.domain;
-      config.hideBranding = script.dataset.hideBranding === 'true';
+
       config.position = script.dataset.position || config.position;
       config.zIndex = parseInt(script.dataset.zIndex) || config.zIndex;
       config.apiToken = script.dataset.apiToken; // Required for chat functionality
@@ -48,6 +47,7 @@
   config.draggable = script.dataset.draggable !== 'false'; // default true
   config.startOpen = script.dataset.startOpen === 'true'; // default false (start minimized)
   config.darkMode = script.dataset.darkMode === 'true'; // dark mode flag
+  config.soundOn = script.dataset.soundOn !== 'false'; // sound enabled by default
   // Bounce timing (seconds)
   const parseSeconds = (v)=>{ if(!v) return undefined; const n=parseFloat(v); return isNaN(n)?undefined:n; };
   config.bounceAfterInit = parseSeconds(script.dataset.bounceAfterInit); // delay before first double bounce
@@ -67,13 +67,12 @@ const createWidget = (config) => {
     zIndex = 1000,
     domain,
     apiToken,
-    hideBranding = false,
     primaryColor = '#764ba2',
   } = config || {};
 
   const footerHeight = '31px';
   const fullScreenMargin = '5%';
-
+  const hbg = false; 
   const pos = getPositionStyles(position);
 
   const html = `
@@ -94,6 +93,7 @@ const createWidget = (config) => {
            display: flex;
            flex-direction: column;
          "
+         class="${config.darkMode ? 'ai-dark-mode' : ''}"
     >
       <style>
         @keyframes aiSpin {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
@@ -107,7 +107,12 @@ const createWidget = (config) => {
           line-height: 1;
           cursor: pointer;
         }
-        #ai-support-widget .ai-brand-link:hover { color: ${primaryColor}; }
+  #ai-support-widget .ai-brand-link:hover { color: ${primaryColor}; }
+  #ai-support-widget.ai-dark-mode { background:#1f1f23; color:#f5f7fa; }
+  #ai-support-widget.ai-dark-mode iframe { background:#1f1f23; }
+  #ai-support-widget.ai-dark-mode .ai-branding { background:#26262b; border-top-color:#333; color:#a8b3cf; }
+  #ai-support-widget.ai-dark-mode .ai-widget-controls button { background:rgba(255,255,255,0.08); border:1px solid #333; color:#ddd; }
+  #ai-support-widget.ai-dark-mode .ai-widget-controls button:hover { background:${primaryColor}; color:#fff; border-color:${primaryColor}; }
         #ai-support-widget .ai-brand-icon,
         #ai-support-widget .ai-brand-text {
           display: flex;
@@ -153,24 +158,24 @@ const createWidget = (config) => {
         style="
           display: block;
           width: 100%;
-          height: ${hideBranding ? '100%' : 'calc(100% - ' + footerHeight + ')'};
+          height: ${hbg ? '100%' : 'calc(100% - ' + footerHeight + ')'};
           border: none;
-          border-radius: 12px 12px ${hideBranding ? '12px 12px' : '0 0'};
+          border-radius: 12px 12px ${hbg ? '12px 12px' : '0 0'};
           flex: 1 1 auto;
         ">
       </iframe>
 
-      ${hideBranding ? '' : `
+      ${hbg ? '' : `
       <div class="ai-branding"
            style="
              height: ${footerHeight};
-             background: #f8f9fa;
-             border-top: 1px solid #e9ecef;
+             background: ${config.darkMode ? '#1f2125' : '#f8f9fa'};
+             border-top: 1px solid ${config.darkMode ? '#2a2d33' : '#e9ecef'};
              display: flex;
              align-items: center;
              justify-content: center;
              padding: 0 10px;
-             color: #6c757d;
+             color: ${config.darkMode ? '#adb5bd' : '#6c757d'};
              font-size: 12px;
              border-radius: 0 0 12px 12px;
              line-height: 1;
@@ -217,12 +222,6 @@ const createWidget = (config) => {
         return `bottom: ${margin}; left: ${margin};`;
       case 'bottom-right':
         return `bottom: ${margin}; right: ${margin};`;
-      case 'top-left':
-        return `top: ${margin}; left: ${margin};`;
-      case 'top-right':
-        return `top: ${margin}; right: ${margin};`;
-      case 'center':
-        return `top: 50%; left: 50%; transform: translate(-50%, -50%);`;
       default:
         return `bottom: ${margin}; right: ${margin};`;
     }

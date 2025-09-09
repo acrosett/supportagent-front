@@ -58,6 +58,12 @@
           </NuxtLink>
         </li>
         <li>
+          <NuxtLink to="/widget" @click="closeMobileMenu">
+            <AppIcon name="gear" size="md" class="nav-icon" />
+            Widget Builder
+          </NuxtLink>
+        </li>
+        <li>
           <NuxtLink to="/conversations" @click="closeMobileMenu">
             <AppIcon name="message" size="md" class="nav-icon" />
             Conversations

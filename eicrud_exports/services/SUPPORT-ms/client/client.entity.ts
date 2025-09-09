@@ -32,6 +32,18 @@ export class Client {
     @IsNumber()
     messageCount: number;
 
+    @IsNumber()
+    messagesToday: number;
+
+    @IsOptional()
+    lastMessageDailyReset?: Date;
+
+    @IsNumber()
+    messagesThisWeek: number;
+
+    @IsOptional()
+    lastMessageWeeklyReset?: Date;
+
     @IsEnum(ClientPriority)
     priority: ClientPriority;
 
@@ -47,6 +59,8 @@ export class Client {
     conversationResolved: Boolean = false;
 
     ghostedUntil: Date;
+
+
 
     createdAt: Date;
 

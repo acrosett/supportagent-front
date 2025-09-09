@@ -28,9 +28,6 @@ export class WhatsappMessage {
     @IsOptional()
     messageId?: string;
 
-    @IsString()
-    @IsOptional()
-    sessionId?: string;
 
     @IsOptional()
     metadata?: any;

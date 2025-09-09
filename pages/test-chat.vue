@@ -1,5 +1,5 @@
 <template>
-  <div class="test-chat-page" :style="dynamicStyles">
+  <div class="test-chat-page" :class="{ 'dark-mode': widgetConfig.darkMode }" :style="dynamicStyles">
     <!-- Admin Training Data Panel -->
     <TrainingDataPanel
       ref="trainingDataPanel"
@@ -125,7 +125,9 @@ const widgetConfig = ref<any>({
   primaryColor: '',
   secondaryColor: '',
   apiToken: '',
-  icons: null
+  icons: null,
+  darkMode: false,
+  soundOn: true
 })
 
 // Client state
@@ -166,9 +168,26 @@ const dynamicStyles = computed(() => {
   if (widgetConfig.value.secondaryColor) {
     styles['--secondary-color'] = widgetConfig.value.secondaryColor
   }
+  if (widgetConfig.value.primaryColor) {
+    styles['--primary-color-hover'] = shadeColor(widgetConfig.value.primaryColor, -8)
+  }
   
   return styles
 })
+
+// Utility: lighten/darken color
+function shadeColor(col: string, percent: number) {
+  if(!/^#?[0-9A-Fa-f]{6}$/.test(col)) return col
+  const hex = col.replace('#','')
+  const num = parseInt(hex,16)
+  let r = (num >> 16) & 0xFF
+  let g = (num >> 8) & 0xFF
+  let b = num & 0xFF
+  r = Math.min(255, Math.max(0, r + Math.round(255 * (percent/100))))
+  g = Math.min(255, Math.max(0, g + Math.round(255 * (percent/100))))
+  b = Math.min(255, Math.max(0, b + Math.round(255 * (percent/100))))
+  return '#' + ((1<<24) + (r<<16) + (g<<8) + b).toString(16).slice(1)
+}
 
 const initializeChat = async (nuxtApp: NuxtApp) => {
   isLoading.value = false
@@ -264,8 +283,8 @@ const addWelcomeMessage = () => {
     messages.value.push(welcomeMessage)
     console.log('Added welcome message:', welcomeMessage)
     
-    // Play bip sound for welcome message
-    playBipSound()
+  // Play bip sound for welcome message if enabled
+  if (widgetConfig.value.soundOn) playBipSound()
     
     // Scroll to bottom to show welcome message
     nextTick(() => {
@@ -477,8 +496,8 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
           case 'new_message':
             // Refresh messages when server tells us to
             await refreshMessages(nuxtApp, 10)
-            // Play bip sound for new message
-            playBipSound()
+            // Play bip sound for new message if enabled
+            if (widgetConfig.value.soundOn) playBipSound()
             break
           case 'thinking_start':
             // AI started thinking - show typing indicator
@@ -703,6 +722,7 @@ onMounted(() => {
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.6; color:#333; overflow:hidden; }
 
 .test-chat-page { width:100vw; height:100vh; display:flex; flex-direction:column; background:#fff; }
+.test-chat-page.dark-mode { background:#121215; color:#f5f7fa; }
 
 .loading-state { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#666; }
 
@@ -711,6 +731,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 
 .chat-container { display:flex; flex-direction:column; height:100%; overflow:hidden; }
 .chat-header { padding:1rem; border-bottom:1px solid #e1e5e9; background:#f8f9fa; flex-shrink:0; }
+.dark-mode .chat-header { background:#1e1e22; border-bottom-color:#2a2a31; }
 .model-info { display:flex; align-items:center; gap:.75rem; }
 .model-avatar { width:40px; height:40px; flex-shrink:0; }
 .avatar-placeholder { width:100%; height:100%; background:linear-gradient(135deg, var(--primary-color, #667eea) 0%, var(--secondary-color, #764ba2) 100%); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:1.2rem; }
@@ -722,12 +743,15 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .message { max-width:80%; padding:.75rem 1rem; border-radius:18px; word-wrap:break-word; }
 .message-fan { align-self:flex-end; background:var(--primary-color, #667eea); color:#fff; border-bottom-right-radius:6px; }
 .message-model { align-self:flex-start; background:#f1f3f4; color:#333; border-bottom-left-radius:6px; }
+.dark-mode .message-model { background:#26262b; color:#e6e8ef; }
+.dark-mode .message-fan { background:linear-gradient(135deg,var(--primary-color,#667eea) 0%,var(--secondary-color,#764ba2) 100%); }
 .message-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem; font-size:.75rem; opacity:.8; }
 .sender-name { font-weight:600; }
 .message-time { font-size:.7rem; }
 .message-content p { margin:0; line-height:1.4; }
 
 .typing-indicator { display:flex; align-items:center; gap:.5rem; align-self:flex-start; padding:.75rem 1rem; background:#f1f3f4; border-radius:18px; max-width:80%; }
+.dark-mode .typing-indicator { background:#26262b; }
 .typing-dots { display:flex; gap:.25rem; }
 .typing-dots span { width:6px; height:6px; background:#999; border-radius:50%; animation:typing 1.4s infinite ease-in-out; }
 .typing-dots span:nth-child(1){ animation-delay:-.32s; }
@@ -736,11 +760,15 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .typing-text { font-size:.875rem; color:#666; font-style:italic; }
 
 .message-input-container { padding:1rem; border-top:1px solid #e1e5e9; background:#fff; flex-shrink:0; }
+.dark-mode .message-input-container { background:#1a1a1d; border-top-color:#2a2a31; }
 .input-wrapper { display:flex; align-items:flex-end; gap:.5rem; background:#f8f9fa; border:1px solid #e1e5e9; border-radius:24px; padding:.5rem; }
+.dark-mode .input-wrapper { background:#26262b; border-color:#2f2f37; }
 .input-wrapper textarea { flex:1; background:transparent; border:none; outline:none; resize:none; padding:.5rem .75rem; font-size:.875rem; line-height:1.4; max-height:120px; font-family:inherit; }
+.dark-mode .input-wrapper textarea { color:#fff; }
 .input-wrapper textarea::placeholder { color:#999; }
 .input-actions { display:flex; align-items:center; gap:.25rem; }
 .send-button { width:36px; height:36px; background:var(--primary-color, #667eea); border:none; border-radius:50%; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background-color .2s; }
+.dark-mode .send-button { background:linear-gradient(135deg,var(--primary-color,#667eea) 0%,var(--secondary-color,#764ba2) 100%); }
 .send-button:hover:not(:disabled) { background:var(--primary-color-hover, #5a6fd8); }
 .send-button:disabled { background:#ccc; cursor:not-allowed; }
 

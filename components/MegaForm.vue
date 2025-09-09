@@ -423,7 +423,7 @@ watch(formData, () => {
         </select>
         <!-- Default input with optional placeholder and name -->
         <input
-          v-else-if="field.inputType !== 'checkbox'"
+          v-else-if="field.inputType !== 'checkbox' && field.inputType !== 'color'"
           :type="field.inputType"
           v-model="formData[field.key]"
           :id="field.key"
@@ -434,6 +434,26 @@ watch(formData, () => {
           class="megaform-input"
           :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"
         />
+        <!-- Color picker -->
+        <div v-else-if="field.inputType === 'color'" class="megaform-color-wrapper">
+          <input
+            type="color"
+            v-model="formData[field.key]"
+            :id="field.key"
+            :name="field.key"
+            class="megaform-input megaform-color"
+          />
+          <input
+            type="text"
+            v-model="formData[field.key]"
+            :id="field.key + '-hex'"
+            :name="field.key + '-hex'"
+            class="megaform-input megaform-color-hex"
+            placeholder="#FFFFFF"
+            maxlength="7"
+            style="width:110px;"
+          />
+        </div>
         <ToggleSwitch
           v-else
           v-model="formData[field.key]"

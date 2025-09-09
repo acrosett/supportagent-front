@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MaxLength } from "class-validator";
+import { IsString, IsOptional, MaxLength, IsBoolean } from "class-validator";
 import { FindResponseDto } from '@eicrud/shared/interfaces';
 import { Message } from "../../message.entity";
 

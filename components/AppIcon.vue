@@ -79,7 +79,6 @@ watch(() => props.name, loadSvg)
     width: 100%;
     height: 100%;
     stroke: currentColor;
-    fill: none;
   }
   
   &.icon-xs {

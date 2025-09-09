@@ -1,6 +1,5 @@
-import { IsString, IsOptional, MinLength, IsNumber, IsBoolean } from "class-validator";
+import { IsString, IsOptional, MinLength, IsNumber, IsBoolean, IsEnum } from "class-validator";
 import { User } from "../../user/user.entity";
-
 
 export class Product {
 
@@ -27,21 +26,21 @@ export class Product {
     @IsOptional()
     sharedSecret?: string;
 
-    @IsNumber()
-    @IsOptional()
-    balance: number;
-
-    @IsOptional()
-    lastComputedBalance?: Date;
-
     @IsBoolean()
     chatOn: boolean;
 
-    @IsBoolean()
+    // Start vault properties, do not put class-validator decorators on these,
+    // it keeps them from being set through the API
+    balance: number;
+
+    lastComputedBalance?: Date;
+
     subscriptionActive: boolean;
 
-    @IsOptional()
     lastSubscriptionChecked?: Date;
+
+    //End Vault properties
+
 
     createdAt: Date;
 

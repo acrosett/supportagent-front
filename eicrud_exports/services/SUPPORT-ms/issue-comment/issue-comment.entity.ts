@@ -27,6 +27,10 @@ export class IssueComment {
 
     product: Product;
 
+    @IsString()
+    @IsOptional()
+    identifier: string;
+
     createdAt: Date;
 
     updatedAt: Date;

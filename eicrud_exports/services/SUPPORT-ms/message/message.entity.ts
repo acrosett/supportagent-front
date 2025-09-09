@@ -1,6 +1,7 @@
 import { IsString, IsOptional, IsEnum } from "class-validator";
 import { Client } from "../client/client.entity";
 import { User } from "../../user/user.entity";
+import { Product } from "../product/product.entity";
 import { Spend } from "../../BANK-ms/spend/spend.entity";
 
 export enum MessageType {
@@ -24,9 +25,7 @@ export class Message {
 
     client: Client;
 
-    @IsString()
-    @IsOptional()
-    sessionId?: string;
+    product: Product;
 
     @IsOptional()
     metadata?: any;
