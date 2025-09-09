@@ -37,9 +37,8 @@ const apiToken = computed(() => (nuxtApp as any).$userProductId || 'REPLACE_TOKE
 
 const excludeFields = ['id','owner','product','createdAt','updatedAt']
 
-const formData = ref<WidgetConfig>({
+const defaultConfig = (): Partial<WidgetConfig> => ({
   id: '',
-  owner: nuxtApp.$userId,
   product: undefined as any,
   position: WidgetPosition.BOTTOM_RIGHT,
   width: '400px',
@@ -48,15 +47,38 @@ const formData = ref<WidgetConfig>({
   secondaryColor: '#764ba2',
   icon: WidgetIcon.ROBOT,
   welcomeMessage: '👋 Welcome! How can I help you today?',
-  bounceAfterInit: 1.2,
+  bounceAfterInit: 1,
   periodicBounce: 20,
   startOpen: false,
   darkMode: false,
   draggable: true,
   soundOn: true,
-  createdAt: new Date(),
-  updatedAt: new Date()
+
 })
+
+const formData = ref<WidgetConfig>(defaultConfig() as any)
+const loadingConfig = ref(false)
+
+const loadConfig = async () => {
+  if (!nuxtApp.$userProductId) return
+  loadingConfig.value = true
+  try {
+  const existing = await nuxtApp.$sp.widgetConfig.findOne({ product:  nuxtApp.$userProductId })
+    if (existing) {
+      formData.value = { ...existing }
+    } else {
+      // create default
+      const payload: any = { ...defaultConfig(), product: nuxtApp.$userProductId }
+      const created = await nuxtApp.$sp.widgetConfig.create(payload)
+      formData.value = { ...created }
+    }
+  } catch (e) {
+    console.error('Failed to load widget config', e)
+    nuxtApp.$toast.show(e, 'error')
+  } finally {
+    loadingConfig.value = false
+  }
+}
 
 const buildAttributes = () => {
   const attrs: string[] = []
@@ -132,7 +154,7 @@ const schedulePreview = () => {
 
 watch(() => ({...formData.value, apiToken: apiToken.value}), () => schedulePreview(), { deep: true })
 
-onMounted(buildPreview)
+onMounted(async () => { await loadConfig(); buildPreview() })
 onBeforeUnmount(() => { if (previewBuildTimer) clearTimeout(previewBuildTimer); cleanupPreview() })
 
 const fieldOverrides: OverrideRecord<WidgetConfig> = {
@@ -143,18 +165,17 @@ const fieldOverrides: OverrideRecord<WidgetConfig> = {
   icon: { selectOptions: [
     { label: 'Robot', value: WidgetIcon.ROBOT },
     { label: 'Message', value: WidgetIcon.MESSAGE },
-    { label: 'Phone', value: WidgetIcon.PHONE },
     { label: 'Headset', value: WidgetIcon.HEADSET },
   ]},
   primaryColor: { type: 'color', label: 'Primary Color' },
   secondaryColor: { type: 'color', label: 'Secondary Color' },
-  bounceAfterInit: { type: 'number', label: 'Bounce After Init (s)' },
-  periodicBounce: { type: 'number', label: 'Periodic Bounce (s)' },
+  bounceAfterInit: { type: 'number', label: 'Bounce After Init (seconds)' },
+  periodicBounce: { type: 'number', label: 'Periodic Bounce (seconds)' },
   startOpen: { type: 'checkbox', onLabel: 'YES', offLabel: 'NO' },
   darkMode: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
   draggable: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
   soundOn: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
-  welcomeMessage: { placeholder: '👋 Welcome!', label: 'Welcome Message' }
+  welcomeMessage: { type: "richtext", placeholder: '👋 Welcome!', label: 'Welcome Message' }
 }
 
 const actions: MegaFormAction[] = [
@@ -165,7 +186,7 @@ const actions: MegaFormAction[] = [
         if (nuxtApp.$userProductId) data.product = { id: nuxtApp.$userProductId }
         // Persist via service client (create or update based on existing id?)
         if (formData.value.id) {
-          await nuxtApp.$sp.widgetConfig.patch({ id: formData.value.id, owner: nuxtApp.$userId }, data)
+          await nuxtApp.$sp.widgetConfig.patchOne({ id: formData.value.id }, data)
           nuxtApp.$toast.show('Widget config updated', 'success')
         } else {
           const created = await nuxtApp.$sp.widgetConfig.create(data)
@@ -174,7 +195,7 @@ const actions: MegaFormAction[] = [
         }
       } catch (e:any) {
         console.error(e)
-        nuxtApp.$toast.show('Save failed', 'error')
+        nuxtApp.$toast.show(e, 'error')
       }
     }}
 ]

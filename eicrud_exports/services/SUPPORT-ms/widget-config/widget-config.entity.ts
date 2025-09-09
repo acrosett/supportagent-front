@@ -20,9 +20,8 @@ export class WidgetConfig {
     @IsOptional()
     id: string;
 
-    owner: User | string;
-
-    product: Product;
+    @IsString()
+    product: Product | string;
 
     @IsEnum(WidgetPosition)
     position: WidgetPosition;

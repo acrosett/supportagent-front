@@ -76,7 +76,7 @@ const loadProduct = async () => {
     }
   } catch (error) {
     console.error('Failed to load product:', error)
-    nuxtApp.$toast.show('Failed to load product', 'error')
+    nuxtApp.$toast.show(error, 'error')
   } finally {
     isLoading.value = false
   }

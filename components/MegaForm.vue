@@ -657,6 +657,25 @@ watch(formData, () => {
   margin-bottom: 1.5em;
 }
 
+/* Color picker styles */
+.megaform-color-wrapper {
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+}
+.megaform-color {
+  padding:0;
+  width:60px;
+  height:40px;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+}
+.megaform-color::-webkit-color-swatch-wrapper { padding:0; }
+.megaform-color::-webkit-color-swatch { border:1px solid $border; border-radius:8px; }
+.megaform-color::-moz-color-swatch { border:1px solid $border; border-radius:8px; }
+.megaform-color-hex { flex:0 0 auto; }
+
 // ...existing code...
 
 .megaform-field {
