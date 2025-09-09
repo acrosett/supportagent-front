@@ -1,5 +1,5 @@
 <template>
-  <div class="test-chat-page">
+  <div class="test-chat-page" :style="dynamicStyles">
     <!-- Admin Training Data Panel -->
     <TrainingDataPanel
       ref="trainingDataPanel"
@@ -20,7 +20,7 @@
       <div class="chat-header">
         <div class="model-info">
           <div class="model-avatar">
-            <div class="avatar-placeholder">SA</div>
+            <div class="avatar-placeholder" v-html="avatarIcon"></div>
           </div>
           <div class="model-details">
             <h1>Support Agent</h1>
@@ -102,8 +102,7 @@ definePageMeta({
   plugins: ['sp', 'toast'] // Only load super client and toast plugins
 })
 
-interface ChatMessage extends Message {
-}
+type ChatMessage = Partial<Message>;
 
 // State
 const isLoading = ref(true)
@@ -119,10 +118,46 @@ const showSidebar = ref(false)
 // Message count tracking for training data reload optimization
 const lastMessageCount = ref(0)
 
+// Widget configuration state
+const widgetConfig = ref({
+  welcomeMessage: '',
+  icon: 'robot',
+  primaryColor: '',
+  secondaryColor: '',
+  apiToken: ''
+})
+
+// Client state
+const clientIdentifier = ref('')
+
 // Refs
 const messagesContainer = ref<HTMLElement>()
 const messageInput = ref<HTMLTextAreaElement>()
 const trainingDataPanel = ref()
+
+// Computed properties
+const avatarIcon = computed(() => {
+  const iconMap: Record<string, string> = {
+    'robot': '<i class="fas fa-robot" style="color: white; font-size: 20px;"></i>',
+    'message': '<i class="fas fa-comment" style="color: white; font-size: 20px;"></i>', 
+    'phone': '<i class="fas fa-phone" style="color: white; font-size: 20px;"></i>'
+  }
+  return iconMap[widgetConfig.value.icon] || '<i class="fas fa-robot" style="color: white; font-size: 20px;"></i>'
+})
+
+const dynamicStyles = computed(() => {
+  const styles: Record<string, string> = {}
+  
+  if (widgetConfig.value.primaryColor) {
+    styles['--primary-color'] = widgetConfig.value.primaryColor
+  }
+  
+  if (widgetConfig.value.secondaryColor) {
+    styles['--secondary-color'] = widgetConfig.value.secondaryColor
+  }
+  
+  return styles
+})
 
 const initializeChat = async (nuxtApp: NuxtApp) => {
   isLoading.value = false
@@ -144,25 +179,27 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
 
 
 // Loads messages and builds ChatMessage[]
-const refreshMessages = async (nuxtApp: NuxtApp, limit = false) => {
-  // Get identifier from session storage
-  const identifier = sessionStorage.getItem('client-identifier')
-  if (!identifier) {
+const refreshMessages = async (nuxtApp: NuxtApp, limit?: number) => {
+  // Use client identifier from variable
+  if (!clientIdentifier.value) {
     return;
   }
   try {
     const res = await nuxtApp.$sp.message.get_client_messagesL({
-      identifier: identifier,
-      apiKey: sessionStorage.getItem('chat-api-token') || ''
+      identifier: clientIdentifier.value,
+      apiKey: widgetConfig.value.apiToken || ''
     },
     {
       orderBy: { createdAt: 'asc' },
-      limit: limit ? 10 : undefined
+      limit: limit || undefined
     });
     const rawMessages = res?.data || []
 
     // Sort messages by createdAt
     const newMessages = rawMessages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    
+    // Remove temporary messages (messages without proper server IDs)
+    messages.value = messages.value.filter(msg => !msg.id?.startsWith('temp-'))
     
     // Merge messages based on ID to avoid duplicates
     const existingIds = new Set(messages.value.map(msg => msg.id))
@@ -201,34 +238,97 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit = false) => {
   }
 }
 
+// Add welcome message for new users
+const addWelcomeMessage = () => {
+  if (widgetConfig.value.welcomeMessage && messages.value.length === 0) {
+    const welcomeMessage = {
+      id: 'welcome-message',
+      content: widgetConfig.value.welcomeMessage,
+      type: 'model' as any,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      identifier: 'system'
+    } as Partial<Message>
+    
+    messages.value.push(welcomeMessage)
+    console.log('Added welcome message:', welcomeMessage)
+    
+    // Play bip sound for welcome message
+    playBipSound()
+    
+    // Scroll to bottom to show welcome message
+    nextTick(() => {
+      scrollToBottom()
+    })
+  }
+}
+
 const sendMessage = async () => {
   console.log('Sending message:', messageText.value)
   if (!messageText.value.trim()) return
 
-  const identifier = sessionStorage.getItem('client-identifier')
+  // Initialize audio context on first user interaction
+  await initAudioContext()
+
+  let identifier = clientIdentifier.value
+  
+  // If no identifier exists (new guest), request it from parent
+  if (!identifier && window.parent !== window) {
+    // Request guest ID from parent for new user's first message
+    window.parent.postMessage({ type: 'request-guest-id' }, '*')
+    // Wait a moment for the response (this is not ideal but simple)
+    await new Promise(resolve => setTimeout(resolve, 100))
+    identifier = clientIdentifier.value
+  }
+  
   if (!identifier) {
     console.warn('Missing client identifier for sending message')
     return
   }
 
+  const messageContent = messageText.value.trim()
+  
+  // Create temporary message and add to UI immediately
+  const tempMessage = {
+    id: `temp-${Date.now()}`, // Temporary ID
+    content: messageContent,
+    type: 'user' as any,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    identifier: identifier
+  } as Partial<Message>
+  
+  // Add message to UI immediately
+  messages.value.push(tempMessage)
+  
+  // Clear input
+  messageText.value = ''
+  
+  // Scroll to bottom
+  await nextTick()
+  scrollToBottom()
+
   try {
     await useNuxtApp().$sp.message.send_client_message({
       identifier: identifier,
-      content: messageText.value.trim(),
-      apiKey: sessionStorage.getItem('chat-api-token') || ''
+      content: messageContent,
+      apiKey: widgetConfig.value.apiToken || ''
     })
-    
-    // Clear input
-    messageText.value = ''
-    
-    // Scroll to bottom
-    await nextTick()
-    scrollToBottom()
+
+    // Notify parent window about user message (for guest ID storage)
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'user-message' }, '*')
+    }
 
     // Socket will handle message updates automatically
-    // No need to manually refresh messages
+    // The temporary message will be replaced by the real one from the server
     
   } catch (err) {
+    // Remove the temporary message on error
+    const tempIndex = messages.value.findIndex(msg => msg.id === tempMessage.id)
+    if (tempIndex > -1) {
+      messages.value.splice(tempIndex, 1)
+    }
     useNuxtApp().$toast.show(err, 'error')
   }
 }
@@ -253,11 +353,68 @@ const scrollToBottom = () => {
   }
 }
 
-const formatTime = (date: Date) => {
+const formatTime = (date?: Date) => {
+  if (!date) return ''
   return new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
     minute: '2-digit'
   }).format(date)
+}
+
+// Audio context for bip sounds (created after user interaction)
+let audioContext: AudioContext | null = null
+
+// Initialize audio context after user interaction
+const initAudioContext = async () => {
+  if (!audioContext) {
+    try {
+      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+      
+      // Resume audio context if it's suspended
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume()
+      }
+    } catch (error) {
+      console.log('Audio context creation failed:', error)
+    }
+  }
+}
+
+// Play a smooth bip sound
+const playBipSound = async () => {
+  try {
+    // Initialize audio context if needed
+    await initAudioContext()
+    
+    if (!audioContext || audioContext.state !== 'running') {
+      console.log('Audio context not available or not running')
+      return
+    }
+    
+    // Create oscillator for the bip sound
+    const oscillator = audioContext.createOscillator()
+    const gainNode = audioContext.createGain()
+    
+    // Connect nodes
+    oscillator.connect(gainNode)
+    gainNode.connect(audioContext.destination)
+    
+    // Configure the bip sound
+    oscillator.frequency.setValueAtTime(400, audioContext.currentTime) // 800Hz frequency
+    oscillator.type = 'sine' // Smooth sine wave
+    
+    // Create smooth envelope (fade in/out)
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime)
+    gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01) // Fade in
+    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.15) // Fade out
+    
+    // Play the sound
+    oscillator.start(audioContext.currentTime)
+    oscillator.stop(audioContext.currentTime + 0.15)
+    
+  } catch (error) {
+    console.log('Audio playback failed:', error)
+  }
 }
 
 const toggleSidebar = () => {
@@ -276,9 +433,9 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     // Close existing socket if any
     closeSocketConnection()
     
-    // Get identifier and apikey from session storage
-    const identifier = sessionStorage.getItem('client-identifier')
-    const apikey = sessionStorage.getItem('chat-api-token')
+    // Use reactive variables instead of sessionStorage
+    const identifier = clientIdentifier.value
+    const apikey = widgetConfig.value.apiToken
     
     if (!identifier) {
       console.warn('Missing client identifier for socket connection')
@@ -308,7 +465,9 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
         switch (message.type) {
           case 'new_message':
             // Refresh messages when server tells us to
-            await refreshMessages(nuxtApp, true)
+            await refreshMessages(nuxtApp, 10)
+            // Play bip sound for new message
+            playBipSound()
             break
           case 'thinking_start':
             // AI started thinking - show typing indicator
@@ -350,8 +509,7 @@ const closeSocketConnection = () => {
 const setupSocketListeners = (nuxtApp: NuxtApp) => {
   // Track window focus - ensure socket is connected
   const handleFocus = () => {
-    const identifier = sessionStorage.getItem('client-identifier')
-    if (!socket.value && identifier) {
+    if (!socket.value && clientIdentifier.value) {
       openSocketConnection(nuxtApp)
     }
   }
@@ -391,24 +549,23 @@ onMounted(() => {
   // Check for guest-id URL parameter
   if (route.query['guest-id']) {
     console.log('Guest ID from URL:', route.query['guest-id'])
-    sessionStorage.setItem('client-identifier', route.query['guest-id'] as string)
+    clientIdentifier.value = route.query['guest-id'] as string
   }
   
   // Check for api-token URL parameter
   if (route.query['api-token']) {
     console.log('API token from URL:', route.query['api-token'])
-    sessionStorage.setItem('chat-api-token', route.query['api-token'] as string)
+    widgetConfig.value.apiToken = route.query['api-token'] as string
   }
   
   // Check for user-token URL parameter
   if (route.query['user-token']) {
     console.log('User token from URL:', route.query['user-token'])
-    sessionStorage.setItem('client-identifier', route.query['user-token'] as string)
+    clientIdentifier.value = route.query['user-token'] as string
   }
   
   // Initialize chat if we have an identifier from URL params
-  const identifier = sessionStorage.getItem('client-identifier')
-  if (identifier && (route.query['guest-id'] || route.query['user-token'])) {
+  if (clientIdentifier.value && (route.query['guest-id'] || route.query['user-token'])) {
     console.log('Initializing chat from URL parameters...')
     initializeChat(nuxtApp)
   }
@@ -444,8 +601,7 @@ onMounted(() => {
           console.log('Widget visibility changed:', visible)
           if (visible) {
             // Widget became visible - ensure socket connection
-            const identifier = sessionStorage.getItem('client-identifier')
-            if (!socket.value && identifier) {
+            if (!socket.value && clientIdentifier.value) {
               const nuxtApp = useNuxtApp()
               openSocketConnection(nuxtApp)
             }
@@ -456,40 +612,55 @@ onMounted(() => {
         case 'guest-id':
           // Handle guest ID from embed.js
           console.log('Guest ID received:', guestId, 'isNew:', isNew)
-          // Store guest ID for chat functionality
-          sessionStorage.setItem('client-identifier', guestId)
           if (!isNew) {
+            // Only initialize for returning guests
+            clientIdentifier.value = guestId
             const nuxtApp = useNuxtApp()
             initializeChat(nuxtApp)
+          } else {
+            // For new guests, show welcome message if configured
+            addWelcomeMessage()
           }
+          // For new guests, don't store anything yet - wait for first message
+          break
+        case 'guest-id-for-message':
+          // Handle guest ID provided specifically for sending a message
+          console.log('Guest ID for message received:', guestId)
+          clientIdentifier.value = guestId
+          // Continue with pending message send if any
           break
         case 'user-token':
           // Handle API token from embed.js (initial setup)
           console.log('User token received:', token)
           if (token) {
-            sessionStorage.setItem('client-identifier', token)
+            clientIdentifier.value = token
             // Initialize chat with the received token
             const nuxtApp = useNuxtApp()
             initializeChat(nuxtApp)
           }
           break
-        case 'api-token':
-          // Handle token update from embed.js
-          console.log('Token update received:', token)
-          if (token) {
-            // Update authentication token
-            sessionStorage.setItem('chat-api-token', token)
-            // Could re-initialize chat with new token
-            const nuxtApp = useNuxtApp()
-            initializeChat(nuxtApp)
+        case 'set-config':
+          // Handle full configuration from embed.js
+          console.log('Configuration received:', data)
+          if (data?.config) {
+            const config = data.config
+            
+            // Update widget configuration directly - much simpler!
+            widgetConfig.value = config
+            
+            // Initialize chat if we have an API token
+            if (config.apiToken) {
+              const nuxtApp = useNuxtApp()
+              initializeChat(nuxtApp)
+            }
           }
           break
         case 'widget-config':
-          // Handle configuration updates
-          if (data?.apiToken) {
-            // Update API token if provided
-            console.log('Received API token update via config')
-            sessionStorage.setItem('chat-api-token', data.apiToken)
+          // Handle configuration updates (legacy support)
+          console.log('Widget config received:', data)
+          if (data) {
+            // Simple assignment - much better!
+            widgetConfig.value = data
           }
           break
       }

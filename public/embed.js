@@ -27,90 +27,139 @@
       config.width = script.dataset.width || config.width;
       config.height = script.dataset.height || config.height;
       config.domain = script.dataset.domain || config.domain;
-      config.brandText = script.dataset.brandText || config.brandText;
       config.hideBranding = script.dataset.hideBranding === 'true';
       config.position = script.dataset.position || config.position;
       config.zIndex = parseInt(script.dataset.zIndex) || config.zIndex;
       config.apiToken = script.dataset.apiToken; // Required for chat functionality
       config.windowStore = script.dataset.setWindowStore; // Window object name for API access
+      
+      // New configuration options
+      config.welcomeMessage = script.dataset.welcomeMessage; // Welcome message for new users
+      config.icon = script.dataset.icon || 'robot'; // 'robot', 'message', or 'phone'
+      config.primaryColor = script.dataset.primaryColor; // Primary color for chat
+  config.secondaryColor = script.dataset.secondaryColor; // Secondary color for chat
     }
     
     return config;
   };
 
-  // Create chat widget container
-  const createWidget = (config) => {
-    // Main container
-    const container = document.createElement('div');
-    container.id = 'ai-support-widget';
-    container.style.cssText = `
-      position: fixed;
-      ${getPositionStyles(config.position)}
-      width: ${config.width};
-      height: ${config.height};
-      z-index: ${config.zIndex};
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-      border-radius: 12px;
-      overflow: hidden;
-      background: white;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    `;
 
-    // Chat iframe
-    const iframe = document.createElement('iframe');
-    iframe.id = 'ai-support-chat-iframe';
-    iframe.src = `${config.domain}/test-chat${config.apiToken ? '?token=' + encodeURIComponent(config.apiToken) : ''}`;
-    iframe.style.cssText = `
-      width: 100%;
-      height: ${config.hideBranding ? '100%' : 'calc(100% - 24px)'};
-      border: none;
-      border-radius: 12px 12px ${config.hideBranding ? '12px 12px' : '0 0'};
-    `;
-    iframe.allow = 'camera; microphone; autoplay';
-    iframe.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups';
+// Create chat widget container (everything in the HTML string)
+const createWidget = (config) => {
+  const {
+    position,
+    width = '400px',
+    height = '600px',
+    zIndex = 1000,
+    domain,
+    apiToken,
+    hideBranding = false,
+    primaryColor = '#764ba2',
+  } = config || {};
 
-    container.appendChild(iframe);
+  const footerHeight = '31px';
 
-    // Branding/backlink
-    if (!config.hideBranding) {
-      const branding = document.createElement('div');
-      branding.style.cssText = `
-        height: 24px;
-        background: #f8f9fa;
-        border-top: 1px solid #e9ecef;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        color: #6c757d;
-        text-decoration: none;
-        border-radius: 0 0 12px 12px;
-      `;
-      
-      const brandLink = document.createElement('a');
-      brandLink.href = 'https://aisupportagent.com';
-      brandLink.target = '_blank';
-      brandLink.textContent = config.brandText;
-      brandLink.style.cssText = `
-        color: #6c757d;
-        text-decoration: none;
-        font-size: 11px;
-      `;
-      brandLink.addEventListener('mouseover', () => {
-        brandLink.style.color = '#495057';
-      });
-      brandLink.addEventListener('mouseout', () => {
-        brandLink.style.color = '#6c757d';
-      });
+  const pos = getPositionStyles(position);
 
-      branding.appendChild(brandLink);
-      container.appendChild(branding);
-    }
+  const html = `
+    <div id="ai-support-widget"
+         style="
+           --ai-brand-icon-size: 15px;
+           position: fixed;
+           ${pos}
+           width: ${width};
+           height: ${height};
+           z-index: ${zIndex};
+           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+           border-radius: 12px;
+           overflow: hidden;
+           background: white;
+           transition: transform 0.3s ease, opacity 0.3s ease;
+           display: flex;
+           flex-direction: column;
+         "
+    >
+      <style>
+        #ai-support-widget .ai-brand-link {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          height: 100%;
+          text-decoration: none;
+          color: inherit;
+          line-height: 1;
+          cursor: pointer;
+        }
+        #ai-support-widget .ai-brand-link:hover { color: ${primaryColor}; }
+        #ai-support-widget .ai-brand-icon,
+        #ai-support-widget .ai-brand-text {
+          display: flex;
+          align-items: center;
+          height: 100%;
+        }
+        #ai-support-widget .ai-brand-icon svg {
+          width: var(--ai-brand-icon-size);
+          height: var(--ai-brand-icon-size);
+          display: block;
+          fill: currentColor;
+        }
+      </style>
 
-    return { container, iframe };
-  };
+      <iframe
+        id="ai-support-chat-iframe"
+        src="${domain}/test-chat${apiToken ? `?token=${encodeURIComponent(apiToken)}` : ''}"
+        loading="lazy"
+        allow="camera; microphone; autoplay"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+        style="
+          display: block;
+          width: 100%;
+          height: ${hideBranding ? '100%' : 'calc(100% - ' + footerHeight + ')'};
+          border: none;
+          border-radius: 12px 12px ${hideBranding ? '12px 12px' : '0 0'};
+          flex: 1 1 auto;
+        ">
+      </iframe>
 
+      ${hideBranding ? '' : `
+      <div class="ai-branding"
+           style="
+             height: ${footerHeight};
+             background: #f8f9fa;
+             border-top: 1px solid #e9ecef;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             padding: 0 10px;
+             color: #6c757d;
+             font-size: 12px;
+             border-radius: 0 0 12px 12px;
+             line-height: 1;
+             flex: 0 0 auto;
+           ">
+        <a class="ai-brand-link"
+           href="https://aisupportagent.com"
+           target="_blank"
+           rel="noopener noreferrer">
+          <span class="ai-brand-icon">
+            ${robotSvg}
+          </span>
+          <span class="ai-brand-text">Powered by DirectSupport.ai</span>
+        </a>
+      </div>`}
+    </div>
+  `;
+
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html.trim();
+  const container = wrapper.firstElementChild;
+  const iframe = container.querySelector('#ai-support-chat-iframe');
+
+  return { container, iframe };
+};
+
+  
   // Get position styles based on position setting
   const getPositionStyles = (position) => {
     const margin = '20px';
@@ -152,9 +201,10 @@
     let isNew = false;
 
     if (!guestId) {
-      guestId = generateObjectId();
-      sessionStorage.setItem(GUEST_ID_KEY, "guest_" + guestId);
+      guestId = "guest_" + generateObjectId();
       isNew = true;
+      
+      // Don't store yet - wait for user interaction
     }
 
     // Send guest ID to iframe
@@ -193,6 +243,28 @@
 
 
 
+  // Store guest ID permanently (called when user sends first message)
+  const storeGuestId = () => {
+    const GUEST_ID_KEY = 'ai-support-guest-id';
+    const existingGuestId = sessionStorage.getItem(GUEST_ID_KEY);
+    
+    if (!existingGuestId) {
+      // Generate and store the guest ID permanently
+      const guestId = "guest_" + generateObjectId();
+      sessionStorage.setItem(GUEST_ID_KEY, guestId);
+      
+      // Notify iframe of the stored guest ID
+      sendMessage({
+        type: 'guest-id-stored',
+        guestId: guestId
+      });
+      
+      return guestId;
+    }
+    
+    return existingGuestId;
+  };
+
   // Update chat token dynamically
   const updateChatToken = (token) => {
     // Send token update to iframe
@@ -227,6 +299,15 @@
     const script = getCurrentScript();
     const config = parseConfig(script);
     
+    // Clear any cached widget configuration to ensure fresh settings
+    if (window.sessionStorage) {
+      try {
+        sessionStorage.removeItem('widget-config');
+      } catch (e) {
+        // Ignore storage errors
+      }
+    }
+    
     // Validate required config
     if (!config.apiToken) {
       console.warn('AI Support Widget: data-api-token is required for chat functionality');
@@ -249,15 +330,28 @@
         switch (type) {
           case 'widget-ready':
             console.log('AI Support Widget ready');
-            // Initialize guest ID when widget is ready
+            // Send full configuration to iframe
+            sendMessage({
+              type: 'set-config',
+              data: { config }
+            });
+
+            // Initialize guest ID when widget is ready (but don't store yet)
             getGuestId();
-            // Send API token to iframe if available
-            if (config.apiToken) {
-              sendMessage({
-                type: 'api-token',
-                token: config.apiToken
-              });
-            }
+       
+            break;
+          case 'user-message':
+            // User sent a message - store the guest ID permanently on first message
+            storeGuestId();
+            break;
+          case 'request-guest-id':
+            // Iframe requests guest ID for sending a message
+            const guestInfo = getGuestId();
+            sendMessage({
+              type: 'guest-id-for-message',
+              guestId: guestInfo.guestId,
+              isNew: guestInfo.isNew
+            });
             break;
           case 'widget-resize':
             if (data.height) {
@@ -281,5 +375,11 @@
   } else {
     init();
   }
+
+  const robotSvg = `<svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 640 640"
+                 aria-hidden="true" focusable="false">
+              <path d="M352 64C352 46.3 337.7 32 320 32C302.3 32 288 46.3 288 64L288 128L192 128C139 128 96 171 96 224L96 448C96 501 139 544 192 544L448 544C501 544 544 501 544 448L544 224C544 171 501 128 448 128L352 128L352 64zM160 432C160 418.7 170.7 408 184 408L216 408C229.3 408 240 418.7 240 432C240 445.3 229.3 456 216 456L184 456C170.7 456 160 445.3 160 432zM280 432C280 418.7 290.7 408 304 408L336 408C349.3 408 360 418.7 360 432C360 445.3 349.3 456 336 456L304 456C290.7 456 280 445.3 280 432zM400 432C400 418.7 410.7 408 424 408L456 408C469.3 408 480 418.7 480 432C480 445.3 469.3 456 456 456L424 456C410.7 456 400 445.3 400 432zM224 240C250.5 240 272 261.5 272 288C272 314.5 250.5 336 224 336C197.5 336 176 314.5 176 288C176 261.5 197.5 240 224 240zM368 288C368 261.5 389.5 240 416 240C442.5 240 464 261.5 464 288C464 314.5 442.5 336 416 336C389.5 336 368 314.5 368 288zM64 288C64 270.3 49.7 256 32 256C14.3 256 0 270.3 0 288L0 384C0 401.7 14.3 416 32 416C49.7 416 64 401.7 64 384L64 288zM608 256C590.3 256 576 270.3 576 288L576 384C576 401.7 590.3 416 608 416C625.7 416 640 401.7 640 384L640 288C640 270.3 625.7 256 608 256z"/>
+            </svg>`;
 
 })();

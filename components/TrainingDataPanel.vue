@@ -124,6 +124,11 @@ const outputContainer = ref<HTMLElement>()
 const checkAdminRole = async () => {
   try {
     const nuxtApp = useNuxtApp()
+
+    if(!nuxtApp.$userId){
+      return;
+    }
+
     const role = await nuxtApp.$sp.user.get_user_role({ myArg: 'check' })
     isAdmin.value = role === 'admin'
     
