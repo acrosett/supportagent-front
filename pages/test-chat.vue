@@ -119,12 +119,13 @@ const showSidebar = ref(false)
 const lastMessageCount = ref(0)
 
 // Widget configuration state
-const widgetConfig = ref({
+const widgetConfig = ref<any>({
   welcomeMessage: '',
   icon: 'robot',
   primaryColor: '',
   secondaryColor: '',
-  apiToken: ''
+  apiToken: '',
+  icons: null
 })
 
 // Client state
@@ -137,12 +138,22 @@ const trainingDataPanel = ref()
 
 // Computed properties
 const avatarIcon = computed(() => {
-  const iconMap: Record<string, string> = {
-    'robot': '<i class="fas fa-robot" style="color: white; font-size: 20px;"></i>',
-    'message': '<i class="fas fa-comment" style="color: white; font-size: 20px;"></i>', 
-    'phone': '<i class="fas fa-phone" style="color: white; font-size: 20px;"></i>'
+  const cfg = widgetConfig.value
+  if (cfg.icons && cfg.icons[cfg.icon]) {
+    // Use provided SVG, ensure it inherits currentColor
+    let svg = cfg.icons[cfg.icon] as string
+    if (!/fill="currentColor"/i.test(svg)) {
+      svg = svg.replace('<svg ','<svg fill="currentColor" ')
+    }
+    return `<span class="avatar-svg-wrapper">${svg}</span>`
   }
-  return iconMap[widgetConfig.value.icon] || '<i class="fas fa-robot" style="color: white; font-size: 20px;"></i>'
+  // Fallback font-awesome
+  const fallback: Record<string,string> = {
+    robot: '<i class="fas fa-robot" style="color: white; font-size: 20px;"></i>',
+    message: '<i class="fas fa-comment" style="color: white; font-size: 20px;"></i>',
+    phone: '<i class="fas fa-phone" style="color: white; font-size: 20px;"></i>'
+  }
+  return fallback[cfg.icon] || fallback.robot
 })
 
 const dynamicStyles = computed(() => {
@@ -680,6 +691,68 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-// Import widget-specific minimal CSS
-@use '~/assets/widget.scss';
+/* Inlined former widget.scss with dynamic color variables */
+.test-chat-page {
+  --primary-color: var(--primary-color, #667eea);
+  --secondary-color: var(--secondary-color, #764ba2);
+  --primary-color-hover: var(--primary-color-hover, #5a6fd8);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.6; color:#333; overflow:hidden; }
+
+.test-chat-page { width:100vw; height:100vh; display:flex; flex-direction:column; background:#fff; }
+
+.loading-state { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#666; }
+
+.spinner { width:32px; height:32px; border:3px solid #f3f3f3; border-top:3px solid var(--primary-color, #667eea); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:1rem; }
+@keyframes spin { 0% {transform:rotate(0deg);} 100% {transform:rotate(360deg);} }
+
+.chat-container { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+.chat-header { padding:1rem; border-bottom:1px solid #e1e5e9; background:#f8f9fa; flex-shrink:0; }
+.model-info { display:flex; align-items:center; gap:.75rem; }
+.model-avatar { width:40px; height:40px; flex-shrink:0; }
+.avatar-placeholder { width:100%; height:100%; background:linear-gradient(135deg, var(--primary-color, #667eea) 0%, var(--secondary-color, #764ba2) 100%); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:1.2rem; }
+.model-details h1 { font-size:1.1rem; font-weight:600; margin-bottom:.25rem; }
+.chat-subtitle { font-size:.875rem; color:#666; }
+
+.messages-container { flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:1rem; }
+.message-wrapper { display:flex; flex-direction:column; }
+.message { max-width:80%; padding:.75rem 1rem; border-radius:18px; word-wrap:break-word; }
+.message-fan { align-self:flex-end; background:var(--primary-color, #667eea); color:#fff; border-bottom-right-radius:6px; }
+.message-model { align-self:flex-start; background:#f1f3f4; color:#333; border-bottom-left-radius:6px; }
+.message-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem; font-size:.75rem; opacity:.8; }
+.sender-name { font-weight:600; }
+.message-time { font-size:.7rem; }
+.message-content p { margin:0; line-height:1.4; }
+
+.typing-indicator { display:flex; align-items:center; gap:.5rem; align-self:flex-start; padding:.75rem 1rem; background:#f1f3f4; border-radius:18px; max-width:80%; }
+.typing-dots { display:flex; gap:.25rem; }
+.typing-dots span { width:6px; height:6px; background:#999; border-radius:50%; animation:typing 1.4s infinite ease-in-out; }
+.typing-dots span:nth-child(1){ animation-delay:-.32s; }
+.typing-dots span:nth-child(2){ animation-delay:-.16s; }
+@keyframes typing { 0%,80%,100% { transform:scale(.8); opacity:.5;} 40% { transform:scale(1); opacity:1; } }
+.typing-text { font-size:.875rem; color:#666; font-style:italic; }
+
+.message-input-container { padding:1rem; border-top:1px solid #e1e5e9; background:#fff; flex-shrink:0; }
+.input-wrapper { display:flex; align-items:flex-end; gap:.5rem; background:#f8f9fa; border:1px solid #e1e5e9; border-radius:24px; padding:.5rem; }
+.input-wrapper textarea { flex:1; background:transparent; border:none; outline:none; resize:none; padding:.5rem .75rem; font-size:.875rem; line-height:1.4; max-height:120px; font-family:inherit; }
+.input-wrapper textarea::placeholder { color:#999; }
+.input-actions { display:flex; align-items:center; gap:.25rem; }
+.send-button { width:36px; height:36px; background:var(--primary-color, #667eea); border:none; border-radius:50%; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background-color .2s; }
+.send-button:hover:not(:disabled) { background:var(--primary-color-hover, #5a6fd8); }
+.send-button:disabled { background:#ccc; cursor:not-allowed; }
+
+.training-data-panel { display:none !important; }
+
+@media (max-width:320px) {
+  .message { max-width:90%; padding:.5rem .75rem; }
+  .chat-header { padding:.75rem; }
+  .messages-container { padding:.75rem; }
+}
+
+/* SVG avatar wrapper */
+.avatar-svg-wrapper { display:inline-flex; width:28px; height:28px; color:#fff; align-items:center; justify-content:center; }
+.avatar-svg-wrapper svg { width:100%; height:100%; display:block; fill:currentColor; }
 </style>
