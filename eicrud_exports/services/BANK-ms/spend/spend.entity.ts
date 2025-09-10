@@ -3,39 +3,76 @@ import { Message } from "../../SUPPORT-ms/message/message.entity";
 import { WhatsappMessage } from "../../WHATSAPP-ms/whatsapp-message/whatsapp-message.entity";
 import { Task } from "../../AI-ms/task/task.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
+import { Client, ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 
 export enum SpendType {
-  MESSAGE = 'message',
+  AI_THINKING = 'ai_thinking',
   WHATSAPP = 'whatsapp',
-  TASK = 'task',
-  SUBSCRIPTION = 'subscription'
+  SUBSCRIPTION = 'subscription',
+}
+
+export enum AgentType {
+  FAQ_EDITOR = 'faq_editor',
+  FILE_PROCESSOR = 'file_processor',
+  STAFF_FACING = 'staff_facing',
+  CLIENT_FACING = 'client_facing',
+}
+
+export class Think {
+  @IsOptional()
+  @IsEnum(AgentType)
+  agentType?: AgentType;
+
+  @IsNumber()
+  inputBaseTokenCount: number;
+
+  @IsNumber()
+  inputProductConfigTokenCount: number;
+
+  @IsNumber()
+  inputHistoryTokenCount: number;
+
+  @IsNumber()
+  outputTokenCount: number;
+
+  @IsString()
+  outputType: string;
+
+  modelType: 'smart' | 'fast';
 }
 
 export class Spend {
 
-    @IsString()
-    @IsOptional()
-    id: string;
+  @IsString()
+  @IsOptional()
+  id: string;
 
-    @IsEnum(SpendType)
-    type: SpendType;
+  @IsEnum(SpendType)
+  type: SpendType;
 
-    @IsNumber()
-    amount: number;
+  @IsNumber()
+  amount: number;
 
-    product: Product | string;
+  product: Product | string;
 
-    @IsOptional()
-    message?: Message;
+  @IsOptional()
+  client?: Client | string;
 
-    @IsOptional()
-    whatsappMessage?: WhatsappMessage;
+  @IsOptional()
+  @IsEnum(ClientPriority)
+  clientPriority?: ClientPriority;
 
-    @IsOptional()
-    task?: Task;
+  @IsOptional()
+  message?: Message;
 
-    createdAt: Date;
+  @IsOptional()
+  whatsappMessage?: WhatsappMessage;
 
-    updatedAt: Date;
+  @IsOptional()
+  think?: Think;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 
 }

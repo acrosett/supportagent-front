@@ -1,4 +1,5 @@
 import { IsString, IsOptional } from "class-validator";
+import { FILE_MAX_SIZE } from "../../shared.utils";
 
 
 export class DigestFileDto {

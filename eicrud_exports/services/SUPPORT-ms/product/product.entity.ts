@@ -27,6 +27,7 @@ export class Product {
     sharedSecret?: string;
 
     @IsBoolean()
+    @IsOptional()
     chatOn: boolean;
 
     // Start vault properties, do not put class-validator decorators on these,

@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsBoolean, IsDate } from "class-validator";
-import { ContextPiece } from "../AiAgent";
+import { ContextPiece } from "../shared";
 
 
 export class ChatAgent {
@@ -16,7 +16,11 @@ export class ChatAgent {
 
     @IsDate()
     date: Date;
-
+    
+    @IsDate()
+    @IsOptional()
+    expiryDate?: Date;
+    
     @IsDate()
     createdAt: Date;
 

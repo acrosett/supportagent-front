@@ -8,8 +8,9 @@ export class TrySpendDto {
     @IsNumber()
     amount: number;
 
+    @IsOptional()
     @IsBoolean()
-    checkChatOn: boolean;
+    bTest?: boolean;
 
 }
 
