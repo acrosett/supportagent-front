@@ -40,6 +40,24 @@ export class Product {
 
     lastSubscriptionChecked?: Date;
 
+    // Auto top-up configuration
+    autoTopUpEnabled: boolean = false;
+
+    @IsOptional()
+    @IsNumber()
+    maxDepositPerMonth?: number;
+
+    @IsOptional()
+    @IsNumber()
+    autoTopUpAmount?: number;
+
+    // Error tracking
+    @IsNumber()
+    autoTopUpFailureCount: number = 0;
+
+    @IsOptional()
+    lastAutoTopUpAttempt?: Date;
+
     //End Vault properties
 
 

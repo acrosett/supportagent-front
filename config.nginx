@@ -1,0 +1,92 @@
+# shared (once)
+map $http_upgrade $connection_upgrade { default upgrade; '' close; }
+
+upstream nuxt { server 127.0.0.1:3000; }  # Nuxt container/port
+upstream api  { server 127.0.0.1:4000; }  # API container/port
+# If Nginx runs in the same Docker network, use service names:
+# upstream api { server api:4000; }
+
+# --- api.xxx.com (WebSockets + HTTP API) ---
+server {
+  listen 80; listen 443 ssl http2;
+  server_name api.xxx.com;
+
+  # Common proxy headers
+  location / {
+    proxy_pass http://api;
+    proxy_http_version 1.1;
+    proxy_set_header Host              $host;
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # WebSocket upgrade
+    proxy_set_header Upgrade    $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+
+    # Good defaults for WS/streaming
+    proxy_read_timeout  3600s;
+    proxy_send_timeout  3600s;
+    proxy_buffering off;
+  }
+}
+
+# --- admin.xxx.com → Nuxt SPA (admin + /test-chat) ---
+server {
+  listen 80; listen 443 ssl http2;
+  server_name admin.xxx.com;
+
+  location / {
+    proxy_pass http://nuxt;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+  }
+}
+
+# --- cdn.xxx.com → /embed.js from Nuxt (short TTL set by Nuxt) ---
+server {
+  listen 80; listen 443 ssl http2;
+  server_name cdn.xxx.com;
+
+  location = /embed.js {
+    proxy_pass http://nuxt/embed.js;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # (optional) source map
+  location = /embed.js.map {
+    proxy_pass http://nuxt/embed.js.map;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location / { return 404; }
+}
+
+# --- xxx.com → serve /landing/index.html from Nuxt (marketing page) ---
+server {
+  listen 80; listen 443 ssl http2;
+  server_name xxx.com;
+
+  # root path → fetch the static file inside Nuxt public/
+  location = / {
+    proxy_pass http://nuxt/landing/index.html;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # assets referenced by the landing page (e.g., /landing/*)
+  location / {
+    proxy_pass http://nuxt;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}

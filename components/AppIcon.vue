@@ -8,6 +8,7 @@
 </template>
 
 <script setup lang="ts">
+import { loadSvg as loadIconSvg } from '~/composables/useIcon'
 interface Props {
   name: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
@@ -38,26 +39,8 @@ const customStyle = computed(() => {
 
 const svgContent = ref('')
 
-// Cache for loaded SVGs to avoid repeated network requests
-const svgCache = new Map<string, string>()
-
 const loadSvg = async () => {
-  if (svgCache.has(props.name)) {
-    svgContent.value = svgCache.get(props.name)!
-    return
-  }
-
-  try {
-    const svgModule = await import(`~/assets/icons/${props.name}.svg?raw`)
-    const content = svgModule.default
-    svgCache.set(props.name, content)
-    svgContent.value = content
-  } catch (error) {
-    console.warn(`Icon "${props.name}" not found`)
-    const fallback = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/></svg>`
-    svgCache.set(props.name, fallback)
-    svgContent.value = fallback
-  }
+  svgContent.value = await loadIconSvg(props.name)
 }
 
 const handleClick = () => props.clickable && emit('click')

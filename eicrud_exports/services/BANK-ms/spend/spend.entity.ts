@@ -1,7 +1,6 @@
 import { IsString, IsOptional, IsEnum, IsNumber } from "class-validator";
 import { Message } from "../../SUPPORT-ms/message/message.entity";
 import { WhatsappMessage } from "../../WHATSAPP-ms/whatsapp-message/whatsapp-message.entity";
-import { Task } from "../../AI-ms/task/task.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
 import { Client, ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 

@@ -5,10 +5,7 @@ import highlightJS from '@highlightjs/vue-plugin'
 import 'highlight.js/styles/github-dark.css'
 
 export default defineNuxtPlugin((nuxtApp) => {
-    // Skip highlight.js for lightweight routes (like widget)
-    if (nuxtApp.$isLightweightRoute) {
-        return
-    }
+
     
     hljs.registerLanguage('xml', xml)
     hljs.registerLanguage('json', json)

@@ -1,8 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import { resolve } from 'path';
+import wasm from 'vite-plugin-wasm'
+import topLevelAwait from 'vite-plugin-top-level-await'
 
 export default defineNuxtConfig({
+  ssr: false, // SPA
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   components: true,
@@ -45,12 +48,21 @@ export default defineNuxtConfig({
   },
   // Route-specific optimizations
   routeRules: {
-    // Optimize /test-chat for embedding
+    // build assets → cache forever
+    '/_nuxt/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    // embed script → short cache (you'll purge on release)
+    '/embed.js': { headers: { 'cache-control': 'public, max-age=300, stale-while-revalidate=86400' } },
+    // iframe route → short HTML cache + allow embedding
     '/test-chat': {
-      ssr: false, // Disable SSR for widget
-      prerender: false, // Disable prerendering
-      experimentalNoScripts: false, // Keep scripts but minimize
-    }
+      headers: {
+        'cache-control': 'public, max-age=60',
+        'content-security-policy': 'frame-ancestors *'
+      }
+    },
+    // landing files (you’ll request /landing/index.html from Nginx)
+    '/landing/**': { headers: { 'cache-control': 'public, max-age=60' } },
+    // default HTML
+    '/**': { headers: { 'cache-control': 'public, max-age=60' } }
   },
   // Chunk splitting configuration
   vite: {
@@ -66,24 +78,11 @@ export default defineNuxtConfig({
           }
         }
       }
-    }
+    },
+    plugins: [
+      wasm(),
+      topLevelAwait()
+    ]
   },
-  // Nitro config for static assets and caching
-  nitro: {
-    routeRules: {
-      // Cache widget assets for 1 year
-      '/test-chat/**': { 
-        headers: { 
-          'Cache-Control': 'public, max-age=31536000, immutable' 
-        }
-      },
-      // Cache embed script for 1 day
-      '/embed.js': { 
-        headers: { 
-          'Cache-Control': 'public, max-age=86400',
-          'Content-Type': 'application/javascript'
-        }
-      }
-    }
-  }
+
 })
