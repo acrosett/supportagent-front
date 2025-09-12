@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean, IsEnum, IsNumber } from "class-validator";
+import { IsString, IsOptional, IsBoolean, IsEnum, IsNumber, Min } from "class-validator";
 import { ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
 import { PhoneNumber } from "../phone-number/phone-number.entity";
@@ -65,6 +65,10 @@ export class ContactConfig {
 
     @IsEnum(AIType)
     staffFacingAiType: AIType = AIType.FAST;
+
+    @IsNumber()
+    @Min(12)
+    maxHistoryPages: number = 18;
 
     createdAt: Date;
 

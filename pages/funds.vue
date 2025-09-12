@@ -184,34 +184,37 @@
           :key="transaction.id"
           class="transaction-item"
         >
-          <div class="transaction-icon">
-            <AppIcon
-              :name="transaction.type === 'deposit' ? 'plus' : 'credit-card'"
-              :color="transaction.type === 'deposit' ? 'var(--success-color)' : 'var(--error-color)'"
-            />
-          </div>
-          
-          <div class="transaction-details">
-            <div class="transaction-header">
-              <span class="transaction-type">
-                {{ transaction.type === 'deposit' ? 'Deposit' : 'Spending' }}
-                <span v-if="transaction.isAutoTopUp" class="auto-badge">Auto</span>
-              </span>
-              <span :class="['transaction-amount', transaction.type]">
-                {{ transaction.type === 'deposit' ? '+' : '-' }}${{ formatBalance(transaction.amount) }}
-              </span>
+          <!-- Basic Transaction Row -->
+          <div class="transaction-basic">
+            <div class="transaction-icon">
+              <AppIcon
+                :name="transaction.type === 'deposit' ? 'plus' : 'credit-card'"
+                :color="transaction.type === 'deposit' ? 'var(--success-color)' : 'var(--error-color)'"
+              />
             </div>
             
-            <div class="transaction-meta">
-              <span class="transaction-date">{{ formatDate(transaction.createdAt) }}</span>
-              <span v-if="transaction.description" class="transaction-description">
-                {{ transaction.description }}
-              </span>
-              <span v-if="transaction.status && transaction.status !== 'completed'" 
-                    :class="['transaction-status', transaction.status]">
-                {{ transaction.status }}
-              </span>
+            <div class="transaction-info">
+              <div class="transaction-main">
+                <span class="transaction-type">
+                  {{ transaction.type === 'deposit' ? 'Deposit' : 'Spending' }}
+                  <span v-if="transaction.isAutoTopUp" class="auto-badge">Auto</span>
+                </span>
+                <span :class="['transaction-amount', transaction.type]">
+                  {{ transaction.type === 'deposit' ? '+' : '-' }}${{ formatBalance(transaction.amount) }}
+                </span>
+              </div>
+              <div class="transaction-date">
+                {{ formatDate(transaction.createdAt) }}
+              </div>
             </div>
+
+            <button 
+              class="detail-button"
+              @click="showTransactionDetail(transaction)"
+              title="View Details"
+            >
+              <AppIcon name="eye" />
+            </button>
           </div>
         </div>
 
@@ -398,6 +401,181 @@
         </div>
       </div>
     </AppPopup>
+
+    <!-- Transaction Details Popup -->
+    <AppPopup
+      :show="showTransactionDetailPopup"
+      :title="`Transaction Details - ${selectedTransaction?.type === 'deposit' ? 'Deposit' : 'Spending'}`"
+      @close="showTransactionDetailPopup = false"
+    >
+      <div v-if="selectedTransaction" class="transaction-detail-popup">
+        <!-- Basic Transaction Info -->
+        <div class="transaction-summary">
+          <div class="summary-row">
+            <span class="summary-label">Amount:</span>
+            <span :class="['summary-value', 'amount', selectedTransaction.type]">
+              {{ selectedTransaction.type === 'deposit' ? '+' : '-' }}${{ formatBalance(selectedTransaction.amount) }}
+            </span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Date:</span>
+            <span class="summary-value">{{ formatDate(selectedTransaction.createdAt) }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Transaction ID:</span>
+            <span class="summary-value transaction-id">{{ selectedTransaction.id }}</span>
+          </div>
+        </div>
+
+        <!-- Deposit Details -->
+        <div v-if="selectedTransaction.type === 'deposit'" class="deposit-details">
+          <h4>Deposit Information</h4>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Status:</span>
+              <span :class="['detail-value', 'status', selectedTransaction.status]">
+                {{ selectedTransaction.status }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Source:</span>
+              <span class="detail-value">{{ selectedTransaction.source || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Currency:</span>
+              <span class="detail-value">{{ selectedTransaction.currency || 'USD' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Auto Top-up:</span>
+              <span class="detail-value">{{ selectedTransaction.isAutoTopUp ? 'Yes' : 'No' }}</span>
+            </div>
+          </div>
+
+          <!-- Stripe Information -->
+          <div v-if="selectedTransaction.stripePaymentIntentId" class="stripe-info">
+            <h5>Payment Details</h5>
+            <div class="detail-grid">
+              <div v-if="selectedTransaction.stripePaymentIntentId" class="detail-item">
+                <span class="detail-label">Payment Intent:</span>
+                <span class="detail-value code">{{ selectedTransaction.stripePaymentIntentId }}</span>
+              </div>
+              <div v-if="selectedTransaction.stripeChargeId" class="detail-item">
+                <span class="detail-label">Charge ID:</span>
+                <span class="detail-value code">{{ selectedTransaction.stripeChargeId }}</span>
+              </div>
+              <div v-if="selectedTransaction.stripeCustomerId" class="detail-item">
+                <span class="detail-label">Customer ID:</span>
+                <span class="detail-value code">{{ selectedTransaction.stripeCustomerId }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Refund Information -->
+          <div v-if="selectedTransaction.refundedAmount" class="refund-info">
+            <h5>Refund Information</h5>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Refunded Amount:</span>
+                <span class="detail-value refund">-${{ formatBalance(selectedTransaction.refundedAmount) }}</span>
+              </div>
+              <div v-if="selectedTransaction.refundedAt" class="detail-item">
+                <span class="detail-label">Refunded At:</span>
+                <span class="detail-value">{{ formatDate(selectedTransaction.refundedAt) }}</span>
+              </div>
+              <div v-if="selectedTransaction.stripeRefundId" class="detail-item">
+                <span class="detail-label">Refund ID:</span>
+                <span class="detail-value code">{{ selectedTransaction.stripeRefundId }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spend Details -->
+        <div v-else class="spend-details">
+          <h4>Spending Information</h4>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Spend Type:</span>
+              <span class="detail-value spend-type">{{ selectedTransaction.spendType || 'N/A' }}</span>
+            </div>
+            <div v-if="selectedTransaction.clientPriority" class="detail-item">
+              <span class="detail-label">Priority:</span>
+              <span class="detail-value priority">{{ selectedTransaction.clientPriority }}</span>
+            </div>
+            <div v-if="selectedTransaction.agentType" class="detail-item">
+              <span class="detail-label">Agent Type:</span>
+              <span class="detail-value">{{ selectedTransaction.agentType }}</span>
+            </div>
+          </div>
+
+          <!-- Token Count Details -->
+          <div v-if="selectedTransaction.think" class="token-details">
+            <h5>Token Usage Details</h5>
+            <div class="token-grid">
+              <div v-if="selectedTransaction.think.inputBaseTokenCount" class="token-item">
+                <span class="token-label">
+                  Input Base:
+                  <FieldTooltip text="Base tokens the AI needs to function.">
+                    <AppIcon name="info" size="xs" />
+                  </FieldTooltip>
+                </span>
+                <span class="token-value">{{ selectedTransaction.think.inputBaseTokenCount.toLocaleString() }}</span>
+              </div>
+              
+              <div v-if="selectedTransaction.think.inputProductConfigTokenCount" class="token-item">
+                <span class="token-label">
+                  Product Config:
+                  <FieldTooltip text="Tokens used for product configuration and settings. You can reduce this by simplifying your product description, custom tools description and additional agent instructions.">
+                    <AppIcon name="info" size="xs" />
+                  </FieldTooltip>
+                </span>
+                <span class="token-value">{{ selectedTransaction.think.inputProductConfigTokenCount.toLocaleString() }}</span>
+              </div>
+              
+              <div v-if="selectedTransaction.think.inputHistoryTokenCount" class="token-item">
+                <span class="token-label">
+                  History:
+                  <FieldTooltip text="Tokens used for conversation history and context. You can reduce this by limiting your custom tools' output.">
+                    <AppIcon name="info" size="xs" />
+                  </FieldTooltip>
+                </span>
+                <span class="token-value">{{ selectedTransaction.think.inputHistoryTokenCount.toLocaleString() }}</span>
+              </div>
+              
+              <div v-if="selectedTransaction.think.outputTokenCount" class="token-item">
+                <span class="token-label">
+                  Output:
+                  <FieldTooltip text="Tokens generated in the response. You can reduce this making your custom tools take less arguments.">
+                    <AppIcon name="info" size="xs" />
+                  </FieldTooltip>
+                </span>
+                <span class="token-value">{{ selectedTransaction.think.outputTokenCount.toLocaleString() }}</span>
+              </div>
+            </div>
+
+            <!-- Additional AI Details -->
+            <div class="ai-details">
+              <div v-if="selectedTransaction.think.outputType" class="detail-item">
+                <span class="detail-label">Output Type:</span>
+                <span class="detail-value">{{ selectedTransaction.think.outputType }}</span>
+              </div>
+              <div v-if="selectedTransaction.think.modelType" class="detail-item model-type">
+                <span class="detail-label">Model Type:</span>
+                <span class="detail-value model-badge">{{ selectedTransaction.think.modelType }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="popup-actions">
+          <AppButton
+            label="Close"
+            color="primary"
+            @click="showTransactionDetailPopup = false"
+          />
+        </div>
+      </div>
+    </AppPopup>
   </div>
 </template>
 
@@ -408,6 +586,7 @@ import { Spend } from '~/eicrud_exports/services/BANK-ms/spend/spend.entity'
 import { StripeDepositDto } from '~/eicrud_exports/services/BANK-ms/product-vault/cmds/stripe_deposit/stripe_deposit.dto'
 import MegaForm, { MegaFormAction } from '~/components/MegaForm.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
+import FieldTooltip from '~/components/FieldTooltip.vue'
 
 definePageMeta({
   layout: 'default'
@@ -428,6 +607,7 @@ const showAddFundsPopup = ref(false)
 const showAutoTopUpPopup = ref(false)
 const showSpendingLimitPopup = ref(false)
 const showSubscriptionPopup = ref(false)
+const showTransactionDetailPopup = ref(false)
 
 // Form data
 const depositAmount = ref<number>()
@@ -437,6 +617,7 @@ const autoTopUpEnabled = ref(false)
 
 // Transaction history
 const transactions = ref<any[]>([])
+const selectedTransaction = ref<any>(null)
 const currentPage = ref(1)
 const totalPages = ref(1)
 const totalTransactions = ref(0)
@@ -512,21 +693,105 @@ const loadTransactions = async () => {
   try {
     // For now, create mock data until the proper API endpoints are available
     const mockTransactions = [
+      // Deposit transaction
       {
         id: '1',
         type: 'deposit' as const,
         amount: 50.00,
-        createdAt: new Date('2024-12-01'),
-        status: 'completed',
+        currency: 'USD',
         isAutoTopUp: false,
-        description: 'Credit card deposit'
+        status: 'completed',
+        source: 'stripe_card',
+        stripePaymentIntentId: 'pi_1ABC123def456',
+        stripeChargeId: 'ch_1ABC123def456',
+        createdAt: new Date('2024-12-01'),
+        updatedAt: new Date('2024-12-01')
       },
+      // Auto top-up deposit
       {
-        id: '2', 
+        id: '2',
+        type: 'deposit' as const,
+        amount: 100.00,
+        currency: 'USD',
+        isAutoTopUp: true,
+        status: 'completed',
+        source: 'stripe_card',
+        stripePaymentIntentId: 'pi_2ABC123def456',
+        createdAt: new Date('2024-11-28'),
+        updatedAt: new Date('2024-11-28')
+      },
+      // Spend transaction with AI thinking
+      {
+        id: '3',
         type: 'spend' as const,
         amount: 12.50,
+        spendType: 'AI_THINKING',
+        agentType: 'CLIENT_FACING',
+        clientPriority: 'HIGH',
+        think: {
+          agentType: 'CLIENT_FACING',
+          inputBaseTokenCount: 1250,
+          inputProductConfigTokenCount: 850,
+          inputHistoryTokenCount: 2100,
+          outputTokenCount: 680,
+          outputType: 'send_result',
+          modelType: 'smart'
+        },
         createdAt: new Date('2024-12-02'),
-        description: 'AI thinking spend'
+        updatedAt: new Date('2024-12-02')
+      },
+      // WhatsApp spend transaction
+      {
+        id: '4',
+        type: 'spend' as const,
+        amount: 3.25,
+        spendType: 'WHATSAPP',
+        createdAt: new Date('2024-12-03'),
+        updatedAt: new Date('2024-12-03')
+      },
+      // AI Summary spend
+      {
+        id: '5',
+        type: 'spend' as const,
+        amount: 8.75,
+        spendType: 'AI_SUMMARY',
+        agentType: 'FAQ_EDITOR',
+        think: {
+          agentType: 'FAQ_EDITOR',
+          inputBaseTokenCount: 950,
+          inputProductConfigTokenCount: 450,
+          inputHistoryTokenCount: 1800,
+          outputTokenCount: 420,
+          outputType: 'use_tools',
+          modelType: 'fast'
+        },
+        createdAt: new Date('2024-12-04'),
+        updatedAt: new Date('2024-12-04')
+      },
+      // Refunded deposit
+      {
+        id: '6',
+        type: 'deposit' as const,
+        amount: 25.00,
+        currency: 'USD',
+        isAutoTopUp: false,
+        status: 'refunded',
+        source: 'stripe_card',
+        stripePaymentIntentId: 'pi_3ABC123def456',
+        stripeRefundId: 'rf_1ABC123def456',
+        refundedAmount: 25.00,
+        refundedAt: new Date('2024-11-30'),
+        createdAt: new Date('2024-11-25'),
+        updatedAt: new Date('2024-11-30')
+      },
+      // Subscription spend
+      {
+        id: '7',
+        type: 'spend' as const,
+        amount: 5.00,
+        spendType: 'SUBSCRIPTION',
+        createdAt: new Date('2024-12-01'),
+        updatedAt: new Date('2024-12-01')
       }
     ]
     
@@ -637,6 +902,11 @@ const handleAutoTopUpToggle = async (enabled: boolean) => {
 const handlePageChange = (page: number) => {
   currentPage.value = page
   loadTransactions()
+}
+
+const showTransactionDetail = (transaction: any) => {
+  selectedTransaction.value = transaction
+  showTransactionDetailPopup.value = true
 }
 
 const handleActivateSubscription = async () => {
@@ -790,7 +1060,7 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  background: color.scale($ok, $lightness: 35%);
+  background: color.scale($ok, $lightness: -10%);
   border-radius: $radius-small;
   margin-top: 1rem;
 }
@@ -1083,14 +1353,23 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
 }
 
 .transaction-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
   border-bottom: 1px solid $border;
   
   &:last-child {
     border-bottom: none;
+  }
+}
+
+.transaction-basic {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: color.scale($panel, $lightness: 10%);
   }
 }
 
@@ -1102,13 +1381,14 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
   height: 2.5rem;
   border-radius: 50%;
   background: $panel;
+  flex-shrink: 0;
 }
 
-.transaction-details {
+.transaction-info {
   flex: 1;
 }
 
-.transaction-header {
+.transaction-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1133,36 +1413,269 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
   font-weight: 600;
   
   &.deposit {
-    color: $ok;
+    color: color.scale($ok, $lightness: -40%);
   }
   
   &.spend {
-    color: $error;
+    color: $warning;
   }
 }
 
-.transaction-meta {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.transaction-date {
   font-size: 0.875rem;
   color: $text-muted;
 }
 
-.transaction-status {
-  padding: 0.125rem 0.375rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  text-transform: uppercase;
+.detail-button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  color: $text-muted;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
   
-  &.refunded {
-    background: color.scale($warning, $lightness: 30%);
-    color: color.scale($warning, $lightness: -10%);
+  &:hover {
+    background: $panel;
+    color: $text;
+  }
+}
+
+// Transaction Details Popup Styles
+.transaction-detail-popup {
+  max-width: 600px;
+  
+  h4, h5 {
+    margin: 0 0 1rem;
+    color: $text;
   }
   
-  &.disputed {
-    background: color.scale($error, $lightness: 30%);
-    color: color.scale($error, $lightness: -10%);
+  h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    border-bottom: 1px solid $border;
+    padding-bottom: 0.5rem;
+  }
+  
+  h5 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 1.5rem;
+  }
+}
+
+.transaction-summary {
+  background: color.scale($panel, $lightness: 10%);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .summary-label {
+    font-size: 0.875rem;
+    color: $text-muted;
+    font-weight: 500;
+  }
+  
+  .summary-value {
+    font-size: 0.875rem;
+    color: $text;
+    font-weight: 500;
+    
+    &.amount {
+      font-size: 1.125rem;
+      font-weight: 600;
+      
+      &.deposit {
+        color: color.scale($ok, $lightness: -40%);
+      }
+      
+      &.spend {
+        color: $error;
+      }
+    }
+    
+    &.transaction-id {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: $text-muted;
+    }
+  }
+}
+
+.deposit-details,
+.spend-details {
+  margin-bottom: 1rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: $bg-white;
+  border-radius: 6px;
+  border: 1px solid $border;
+}
+
+.detail-label {
+  font-size: 0.875rem;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 0.875rem;
+  color: $text;
+  
+  &.status {
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 500;
+    
+    &.completed {
+      color: color.scale($ok, $lightness: -30%);
+    }
+    
+    &.refunded {
+      color: color.scale($warning, $lightness: -10%);
+    }
+    
+    &.disputed {
+      background: color.scale($error, $lightness: 30%);
+      color: color.scale($error, $lightness: -10%);
+    }
+  }
+  
+  &.code {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: $text-muted;
+    background: color.scale($panel, $lightness: 15%);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+  
+  &.refund {
+    color: $warning;
+    font-weight: 500;
+  }
+  
+  &.spend-type {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $brand;
+  }
+  
+  &.priority {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
+    
+    &[class*="HIGH"] {
+      color: $error;
+    }
+    
+    &[class*="MEDIUM"] {
+      color: $warning;
+    }
+    
+    &[class*="LOW"] {
+      color: $ok;
+    }
+  }
+}
+
+.stripe-info,
+.refund-info {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid color.scale($border, $lightness: 20%);
+}
+
+.token-details {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid color.scale($border, $lightness: 20%);
+}
+
+.token-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.token-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: $bg-white;
+  border-radius: 6px;
+  border: 1px solid $border;
+}
+
+.token-label {
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.token-value {
+  font-size: 0.75rem;
+  color: $text;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.ai-details {
+  margin-top: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem;
+  
+  .detail-item.model-type {
+    background: color.scale($brand, $lightness: 35%);
+    border-color: color.scale($brand, $lightness: 20%);
+    
+    .detail-label {
+      color: color.scale($brand, $lightness: -10%);
+    }
+    
+    .detail-value.model-badge {
+      background: $brand;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
   }
 }
 

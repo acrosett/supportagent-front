@@ -3,11 +3,11 @@ import { Message } from "../../SUPPORT-ms/message/message.entity";
 import { WhatsappMessage } from "../../WHATSAPP-ms/whatsapp-message/whatsapp-message.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
 import { Client, ClientPriority } from "../../SUPPORT-ms/client/client.entity";
-import { AgentResultType } from "../../AI-ms/AiAgent";
 import { Digestor } from "../../AI-ms/digestor/digestor.entity";
 
 export enum SpendType {
   AI_THINKING = 'ai_thinking',
+  AI_SUMMARY = 'ai_summary',
   WHATSAPP = 'whatsapp',
   SUBSCRIPTION = 'subscription',
 }
@@ -37,7 +37,7 @@ export class Think {
   outputTokenCount?: number;
 
   @IsString()
-  outputType?: AgentResultType;
+  outputType?: 'use_tools' | 'send_result' | 'throw_error';
 
   modelType?: 'smart' | 'fast' ;
 }
@@ -65,12 +65,6 @@ export class Spend {
   @IsOptional()
   @IsEnum(ClientPriority)
   clientPriority?: ClientPriority;
-
-  @IsOptional()
-  message?: Message;
-
-  @IsOptional()
-  whatsappMessage?: WhatsappMessage;
 
   @IsOptional()
   think?: Think;

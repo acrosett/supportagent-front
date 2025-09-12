@@ -248,7 +248,18 @@
         :formClass="ContactConfig"
         v-model="configFormData"
         :fieldOverrides="configFieldOverrides"
-        :excludeFields="['id', 'clientPriority', 'product', 'createdAt', 'updatedAt']"
+        :includeFields="[
+          'phoneNumber',
+          'contactForDocumentationUpdate',
+          'contactForIssues',
+          'MaxMessagesPerWeekGlobal',
+          'MaxMessagesPerDayGlobal',
+          'MaxMessagesPerWeekPerUser',
+          'MaxMessagesPerDayPerUser',
+          'clientFacingAiType',
+          'staffFacingAiType',
+          'maxHistoryPages'
+        ]"
         :actions="configFormActions"
       />
     </AppPopup>
@@ -649,6 +660,11 @@ const configFieldOverrides = computed<OverrideRecord>(() => {
         { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' }
       ]
     },
+    maxHistoryPages: {
+      label: 'Max History Pages',
+      type: 'number',
+      description: 'Maximum number of chat history pages the AI retain before summarizing it. Increase if you have custom tools that return large amounts of data.'
+    },
     contactForDocumentationUpdate: {
       label: 'Documentation Update Notifications',
       description: 'AI will send messages to ask for documentation updates'
@@ -684,6 +700,7 @@ const configFormActions: MegaFormAction[] = [
   {
     label: 'Cancel',
     color: 'secondary',
+    skipValidation: true,
     callback: async () => {
       closeConfigPopup()
     }
@@ -691,6 +708,7 @@ const configFormActions: MegaFormAction[] = [
   {
     label: 'Save Configuration',
     color: 'primary',
+    margin: 'left',
     callback: async (formData: any) => {
       if (editingConfig.value) {
         const index = contactConfigs.value.findIndex(c => c.id === editingConfig.value!.id)

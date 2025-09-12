@@ -236,7 +236,7 @@ const createWidget = (config) => {
   // Get product public information from backend
   const getProductPublicInfo = async (backEndDomain, productId) => {
     // Check cache first
-    const cacheKey = `product-info-${productId}`;
+    const cacheKey = `direct-support-ai-cache-product-info-${productId}`;
     const TTL_MS = 60 * 1000; // 60 seconds
     
     try {
