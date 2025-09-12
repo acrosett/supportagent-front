@@ -3,7 +3,7 @@ import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
 import { validateSync, getMetadataStorage } from 'class-validator'
 import AppButton from './AppButton.vue'
 import RichTextEditor from './RichTextEditor.vue'
-import ChecklistInput from './ChecklistInput.vue'
+import ChecklistInput, { type ChecklistOption } from './ChecklistInput.vue'
 import FieldTooltip from './FieldTooltip.vue'
 import ToggleSwitch from './ToggleSwitch.vue'
 
@@ -19,7 +19,12 @@ export interface FieldOverride<T = any> {
   placeholder?: string;
   description?: string; // Tooltip description shown on info icon hover
   component?: any;
-  props?: { disabled?: boolean; [key: string]: any };
+  props?: { 
+    disabled?: boolean;
+    // For checklist type
+    options?: ChecklistOption[];
+    [key: string]: any;
+  };
   doubleCheck?: boolean;
   isArray?: boolean;
   mapObjectField?: string; // Field to display from objects (e.g. "name") while keeping full objects
@@ -32,6 +37,9 @@ export interface FieldOverride<T = any> {
   offLabel?: string; // Label for toggle switch "OFF" state
   mapValue?: Record<string, any>; // Map form values before validation (e.g. {true: 123, false: undefined})
   titleColor?: string | (() => string | undefined); // Color for the field title/label
+  nestedClass?: new () => any; // Class for nested MegaForm
+  nestedFieldOverrides?: OverrideRecord<any>; // Field overrides for nested MegaForm
+  nestedIncludeFields?: string[]; // Only include these fields in nested MegaForm
 }
 
 export type ActionColor = 'primary' | 'secondary' | 'ok' | 'warning' | 'error';
@@ -70,13 +78,22 @@ const doubleCheckData = reactive<Record<string, any>>({})
 const errors = ref<Record<string, string[]>>({})
 const showErrorAnim = ref<Record<number, boolean>>({})
 const loading = ref<Record<number, boolean>>({})
+const nestedFormRefs = ref<Record<string, any>>({}) // Store refs to nested MegaForms
 
-// Initialize select fields with empty strings to show placeholder properly
+// Initialize select fields and nested classes
 if (props.fieldOverrides) {
   Object.keys(props.fieldOverrides).forEach(fieldKey => {
     const field = props.fieldOverrides![fieldKey]
     if (field && field.selectOptions && (formData[fieldKey] === null || formData[fieldKey] === undefined)) {
       formData[fieldKey] = ''
+    }
+    // Initialize nested class fields
+    if (field && field.nestedClass && (formData[fieldKey] === null || formData[fieldKey] === undefined)) {
+      if (field.isArray) {
+        formData[fieldKey] = []
+      } else {
+        formData[fieldKey] = new field.nestedClass()
+      }
     }
   })
 }
@@ -222,13 +239,19 @@ function validateForm() {
       }
     })
   }
+
+  // Validate nested forms
+  const nestedFormsValid = validateNestedForms()
+  
+  // Return whether form is valid (no errors and nested forms are valid)
+  return Object.keys(errors.value).length === 0 && nestedFormsValid
 }
 
 function handleAction(idx: number, action: MegaFormAction) {
 
   if (!action.skipValidation) {
-    validateForm()
-    const hasErrors = Object.keys(errors.value).length > 0
+    const isValid = validateForm()
+    const hasErrors = !isValid
     showErrorAnim.value[idx] = hasErrors
     if (hasErrors) {
       //log the errors
@@ -324,7 +347,11 @@ function addArrayItem(fieldKey: string) {
   if (!formData[fieldKey]) formData[fieldKey] = []
   
   const override = props.fieldOverrides?.[fieldKey]
-  if (override?.mapObjectField) {
+  if (override?.nestedClass) {
+    // Create empty instance of nested class
+    const nestedInstance = new override.nestedClass()
+    formData[fieldKey] = [...formData[fieldKey], nestedInstance]
+  } else if (override?.mapObjectField) {
     // Create object with empty mapped field and temporary ID
     const tempId = `new_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     formData[fieldKey] = [...formData[fieldKey], { 
@@ -337,8 +364,39 @@ function addArrayItem(fieldKey: string) {
   }
 }
 
+// Function to remove nested form array item
+function removeNestedArrayItem(fieldKey: string, index: number) {
+  if (!formData[fieldKey]) return
+  formData[fieldKey].splice(index, 1)
+  // Clean up nested form ref
+  const refKey = `${fieldKey}-${index}`
+  if (nestedFormRefs.value[refKey]) {
+    delete nestedFormRefs.value[refKey]
+  }
+}
+
+// Function to trigger validation on all nested forms
+function validateNestedForms(): boolean {
+  let allValid = true
+  Object.values(nestedFormRefs.value).forEach((nestedFormRef: any) => {
+    if (nestedFormRef && typeof nestedFormRef.validateForm === 'function') {
+      const isValid = nestedFormRef.validateForm()
+      if (!isValid) {
+        allValid = false
+      }
+    }
+  })
+  return allValid
+}
+
 watch(formData, () => {
   emit('update:modelValue', { ...formData })
+})
+
+// Expose validateForm and errors for parent forms to access
+defineExpose({
+  validateForm,
+  errors
 })
 
 </script>
@@ -380,19 +438,55 @@ watch(formData, () => {
         </label>
         <!-- Array input rendering -->
         <template v-if="field.isArray">
-          <div v-for="(item, idx) in formData[field.key] || []" :key="idx" class="megaform-array-item">
-            <span v-if="showArrayIndex" class="megaform-array-index">{{ idx }}.</span>
-            <!-- Object field mapping - show mapped field but store full object -->
-            <input
-              :type="field.inputType"
-              :value="getArrayItemValue(item, field.key)"
-              @input="handleArrayItemInput(field.key, idx, $event)"
-              :id="field.key + '-' + idx"
-              :name="field.key + '-' + idx"
-              :placeholder="field.placeholder"
-              class="megaform-input"
+          <!-- Nested MegaForm Array -->
+          <template v-if="fieldOverrides?.[field.key]?.nestedClass">
+            <div v-for="(item, idx) in formData[field.key] || []" :key="idx" class="megaform-nested-array-item">
+              <div class="megaform-nested-header">
+                <span v-if="showArrayIndex" class="megaform-array-index">{{ idx + 1 }}.</span>
+                <span class="megaform-nested-title">{{ field.label }} {{ idx + 1 }}</span>
+                <button type="button" class="megaform-array-remove" @click="removeNestedArrayItem(field.key, idx)">×</button>
+              </div>
+              <MegaForm
+                :ref="(el: any) => { if (el) nestedFormRefs[`${field.key}-${idx}`] = el }"
+                :formClass="fieldOverrides?.[field.key]?.nestedClass!"
+                v-model="formData[field.key][idx]"
+                :fieldOverrides="fieldOverrides?.[field.key]?.nestedFieldOverrides"
+                :includeFields="fieldOverrides?.[field.key]?.nestedIncludeFields"
+                class="megaform-nested"
+              />
+            </div>
+            <button type="button" class="megaform-array-add" @click="addArrayItem(field.key)">+</button>
+          </template>
+          <!-- Regular Array Input -->
+          <template v-else>
+            <div v-for="(item, idx) in formData[field.key] || []" :key="idx" class="megaform-array-item">
+              <span v-if="showArrayIndex" class="megaform-array-index">{{ idx }}.</span>
+              <!-- Object field mapping - show mapped field but store full object -->
+              <input
+                :type="field.inputType"
+                :value="getArrayItemValue(item, field.key)"
+                @input="handleArrayItemInput(field.key, idx, $event)"
+                :id="field.key + '-' + idx"
+                :name="field.key + '-' + idx"
+                :placeholder="field.placeholder"
+                class="megaform-input"
+              />
+              <button type="button" class="megaform-array-remove" @click="formData[field.key].splice(idx, 1)">×</button>
+            </div>
+            <button type="button" class="megaform-array-add" @click="addArrayItem(field.key)">+</button>
+          </template>
+        </template>
+        <!-- Nested MegaForm (single object) -->
+        <template v-else-if="fieldOverrides?.[field.key]?.nestedClass">
+          <div class="megaform-nested-container">
+            <MegaForm
+              :ref="(el: any) => { if (el) nestedFormRefs[field.key] = el }"
+              :formClass="fieldOverrides?.[field.key]?.nestedClass!"
+              v-model="formData[field.key]"
+              :fieldOverrides="fieldOverrides?.[field.key]?.nestedFieldOverrides"
+              :includeFields="fieldOverrides?.[field.key]?.nestedIncludeFields"
+              class="megaform-nested"
             />
-            <button type="button" class="megaform-array-remove" @click="formData[field.key].splice(idx, 1)">×</button>
           </div>
         </template>
         <!-- Custom field override component -->
@@ -559,6 +653,58 @@ watch(formData, () => {
 .megaform-array-add:hover {
   background: $brand;
 }
+
+/* Nested MegaForm Styles */
+.megaform-nested-container {
+  border: 1px solid $muted;
+  border-radius: $radius;
+  padding: 1em;
+  background: rgba($panel, 0.5);
+  margin-bottom: 0.5em;
+}
+
+.megaform-nested-array-item {
+  border: 1px solid $muted;
+  border-radius: $radius;
+  padding: 1em;
+  background: rgba($panel, 0.5);
+  margin-bottom: 1em;
+  position: relative;
+}
+
+.megaform-nested-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid rgba($muted, 0.3);
+}
+
+.megaform-nested-title {
+  font-weight: 600;
+  color: $text;
+  font-size: 1.1em;
+}
+
+.megaform-nested {
+  // Remove actions from nested forms
+  :deep(.megaform-actions) {
+    display: none;
+  }
+  
+  // Reduce spacing in nested forms
+  :deep(.megaform-field) {
+    margin-bottom: 1em;
+  }
+  
+  // Style nested form inputs slightly differently
+  :deep(.megaform-input) {
+    background: $bg;
+    border-color: rgba($muted, 0.7);
+  }
+}
+
 .megaform-array-item {
   margin-bottom: 0.5em;
   display: flex;

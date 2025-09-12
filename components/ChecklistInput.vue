@@ -1,20 +1,20 @@
 <template>
   <div class="checklist-input">
-    <div class="checklist-label">{{ label }}</div>
+    <div class="checklist-label" v-if="label">{{ label }}</div>
     <div class="checklist-options">
       <div 
-        v-for="(option, id) in options" 
-        :key="id" 
+        v-for="option in options" 
+        :key="option.value"
         class="checklist-option"
       >
         <input 
-          :id="`checklist-${id}`"
-          v-model="selectedIds"
-          :value="option.id"
+          :id="`checklist-${option.value}`"
+          v-model="selectedValues"
+          :value="option.value"
           type="checkbox"
           class="checklist-checkbox"
         />
-        <label :for="`checklist-${id}`" class="checklist-option-label">
+        <label :for="`checklist-${option.value}`" class="checklist-option-label">
           {{ option.label }}
         </label>
       </div>
@@ -24,42 +24,38 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ClothesOption, ClothesOptions } from './EditMedia.vue'
 
+export interface ChecklistOption {
+  value: any // What will be put in the array
+  label: string // What is displayed
+}
 
 interface Props {
-  modelValue?: ClothesOption[]
-  options: ClothesOptions
+  modelValue?: any[]
+  options: ChecklistOption[]
   label?: string
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: ClothesOption[]): void
+  (e: 'update:modelValue', value: any[]): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => [],
-  label: 'Select Options'
+  label: '',
+  options: () => []
 })
 
 const emit = defineEmits<Emits>()
 
-const selectedIds = computed({
+const selectedValues = computed({
   get: () => {
-    // Extract IDs from the selected ClothesOption objects
-    return props.modelValue?.map(item => item.id) || []
+    // Use modelValue as-is
+    return props.modelValue || []
   },
-  set: (selectedIdArray: string[]) => {
-    // Convert selected IDs back to full ClothesOption objects
-    const selectedOptions: ClothesOption[] = []
-    
-    Object.entries(props.options).forEach(([key, option]) => {
-      if (selectedIdArray.includes(option.id)) {
-        selectedOptions.push(option)
-      }
-    })
-    
-    emit('update:modelValue', selectedOptions)
+  set: (selectedValueArray: any[]) => {
+    // Always return primitive values (simplified for string arrays)
+    emit('update:modelValue', selectedValueArray)
   }
 })
 </script>

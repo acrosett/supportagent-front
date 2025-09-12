@@ -313,6 +313,7 @@
           v-if="showVerificationPopup"
           :formClass="VerifyCodeDto"
           v-model="verificationFormData"
+          :includeFields="['code']"
           :actions="verificationFormActions"
         />
       </div>
@@ -587,6 +588,7 @@ const verificationFormActions: MegaFormAction[] = [
   {
     label: 'Cancel',
     color: 'secondary',
+    
     callback: async () => {
       closeVerificationPopup()
     }
@@ -594,7 +596,7 @@ const verificationFormActions: MegaFormAction[] = [
   {
     label: 'Send WhatsApp Code',
     color: 'warning',
-    margin: 'left',
+    margin: 'no-margins',
     skipValidation: true,
     callback: async () => {
       // TODO: Implement send verification code API call

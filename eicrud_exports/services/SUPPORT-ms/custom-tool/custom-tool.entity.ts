@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsArray, ValidateNested, IsUrl, MinLength, IsBoolean } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsArray, ValidateNested, IsUrl, MinLength, IsBoolean, ArrayMinSize } from "class-validator";
 import { Transform } from "class-transformer";
 import { Product } from "../product/product.entity";
 import { ClientPriority } from "../client/client.entity";
@@ -64,6 +64,7 @@ export class CustomToolArgument {
 
     @IsString()
     @IsOptional()
+    @Transform(({ value }) => value.trim())
     defaultValue?: string;
 }
 
@@ -82,7 +83,7 @@ export class CustomTool {
     @IsOptional()
     description?: string;
 
-    @IsUrl()
+    @IsUrl({ protocols: ['https'] })
     url: string;
 
     @IsEnum(HttpMethod)
@@ -106,7 +107,7 @@ export class CustomTool {
 
     @IsArray()
     @IsEnum(ClientPriority, { each: true })
-    @IsOptional()
+    @ArrayMinSize(1)
     clientPriorities?: ClientPriority[] = [ClientPriority.LOWEST, ClientPriority.REGULAR, ClientPriority.HIGH];
 
     @IsString()

@@ -16,6 +16,7 @@
     "@dqbd/tiktoken": "^1.0.22",
     "@eicrud/client": "^0.9.3",
     "@highlightjs/vue-plugin": "^2.1.0",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dompurify": "^3.2.6",
     "easymde": "^2.20.0",

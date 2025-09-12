@@ -80,6 +80,12 @@
             Issues
           </NuxtLink>
         </li>
+                <li>
+          <NuxtLink to="/custom-tools" @click="closeMobileMenu">
+            <AppIcon name="tool" size="md" class="nav-icon" />
+            Custom Tools
+          </NuxtLink>
+        </li>
         <li>
           <a 
             href="#"

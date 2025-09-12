@@ -18,6 +18,10 @@ export class Product {
     @IsOptional()
     description: string;
 
+    @IsOptional()
+    @IsString()
+    additionalInstructions: string;
+
     @IsString()
     @IsOptional()
     webhookUrl?: string;
