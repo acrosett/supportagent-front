@@ -211,30 +211,41 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number) => {
     return;
   }
   try {
-    const res = await nuxtApp.$sp.message.get_client_messagesL({
-      identifier: clientIdentifier.value,
-      apiKey: widgetConfig.value.apiToken || ''
-    },
-    {
-      orderBy: { createdAt: 'asc' },
-      limit: limit || undefined
-    });
-    const rawMessages = res?.data || []
+    
+    const cacheKey = `chat-messages-${clientIdentifier.value}`;
+    const cachedMessages = limit ? null : sessionStorage.getItem(cacheKey);
+    let allMessages = cachedMessages ? JSON.parse(cachedMessages) as ChatMessage[] : null;
+    if (!allMessages || limit) {
 
-    // Sort messages by createdAt
-    const newMessages = rawMessages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-    
-    // Remove temporary messages (messages without proper server IDs)
-    messages.value = messages.value.filter(msg => !msg.id?.startsWith('temp-'))
-    
-    // Merge messages based on ID to avoid duplicates
-    const existingIds = new Set(messages.value.map(msg => msg.id))
-    const uniqueNewMessages = newMessages.filter((msg: any) => !existingIds.has(msg.id))
-    
-    // Combine existing and new messages, then sort by createdAt
-    const allMessages = [...messages.value, ...uniqueNewMessages].sort((a: any, b: any) => 
-      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    )
+      const res = await nuxtApp.$sp.message.get_client_messagesL({
+        identifier: clientIdentifier.value,
+        apiKey: widgetConfig.value.apiToken || ''
+      },
+      {
+        orderBy: { createdAt: 'asc' },
+        limit: limit || undefined
+      });
+      const rawMessages = res?.data || []
+
+      // Sort messages by createdAt
+      const newMessages = rawMessages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      
+      // Remove temporary messages (messages without proper server IDs)
+      messages.value = messages.value.filter(msg => !msg.id?.startsWith('temp-'))
+      
+      // Merge messages based on ID to avoid duplicates
+      const existingIds = new Set(messages.value.map(msg => msg.id))
+      const uniqueNewMessages = newMessages.filter((msg: any) => !existingIds.has(msg.id))
+
+      
+      // Combine existing and new messages, then sort by createdAt
+      allMessages = [...messages.value, ...uniqueNewMessages].sort((a: any, b: any) => 
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      )
+
+      // Cache messages in sessionStorage
+      sessionStorage.setItem(cacheKey, JSON.stringify(allMessages));
+    }
     
     const newMessageCount = allMessages.length
     
@@ -637,6 +648,20 @@ watch(() => messages.value.length, () => {
 
 onMounted(() => {
   const nuxtApp = useNuxtApp()
+  
+  // Clear session storage on page restore to avoid stale data
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+      // Page was restored from bfcache or session restore
+      // Clear only chat message caches, not all sessionStorage
+      Object.keys(sessionStorage).forEach(key => {
+        if (key.startsWith('chat-messages-')) {
+          sessionStorage.removeItem(key);
+        }
+      });
+      console.log("Chat message caches cleared on restore - avoiding stale message cache.");
+    }
+  });
   
   // Initial highlight attempt (preloaded messages)
   highlightAllDeferred()

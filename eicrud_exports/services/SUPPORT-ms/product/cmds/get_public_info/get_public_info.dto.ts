@@ -15,6 +15,6 @@ export class GetPublicInfoDto {
 //used by super-client, update me here
 export type GetPublicInfoReturnDto = {
     productName: string;
-
     chatOn: boolean;
+    quotasExceeded: boolean;
 };

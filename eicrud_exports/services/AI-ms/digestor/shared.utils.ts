@@ -55,7 +55,7 @@ export async function estimateFullDigestCost(fileText: string) {
 
       let nextStepCount = Math.ceil(estimatedOutput / FAQ_SPLIT_TOKENS);
 
-      nextStepCount *= 2.5; //AI read FAQ and then update it with tools, then send result;
+      nextStepCount *= 3.5; //AI search FAQs then read FAQs and then update it with tools, then send result;
 
       price +=  calculateTokensPrice({
                   inputTokens: FAQ_SPLIT_TOKENS,

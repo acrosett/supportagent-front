@@ -233,6 +233,29 @@ const createWidget = (config) => {
     }
   };
 
+  // Get product public information from backend
+  const getProductPublicInfo = async (backEndDomain, productId) => {
+    const endpoint = `${backEndDomain}/crud/s/product/cmd/get_public_info`;
+
+    // The API expects the dto in the "query" parameter as JSON string
+    const queryParam = encodeURIComponent(JSON.stringify({ productId }));
+
+    const url = `${endpoint}?query=${queryParam}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${await response.text()}`);
+    }
+
+    return response.json();
+  };
+
   // Generate MongoDB-like ObjectId
   const generateObjectId = (bytes = 16) => {
     const arr = new Uint8Array(bytes);
@@ -341,7 +364,7 @@ const createWidget = (config) => {
   };
 
   // Initialize widget when DOM is ready
-  const init = () => {
+  const init = async () => {
     const script = getCurrentScript();
     const config = parseConfig(script);
     
@@ -357,6 +380,34 @@ const createWidget = (config) => {
     // Validate required config
     if (!config.apiToken) {
       console.warn('AI Support Widget: data-api-token is required for chat functionality');
+      return;
+    }
+
+    // Use API token directly as product ID
+    const productId = config.apiToken;
+
+    // Check product status before initializing widget
+    try {
+      const backEndDomain = 'https://api.directsupport.ai';
+      const productInfo = await getProductPublicInfo(backEndDomain, productId);
+      
+      // Hide widget if chat is disabled or quotas exceeded
+      if (!productInfo.chatOn || productInfo.quotasExceeded) {
+        if (!productInfo.chatOn) {
+          console.warn(`AI Support Widget: Chat functionality is disabled for product ${productId}. Widget will not be displayed. Please enable AI chat in your product settings.`);
+        }
+        if (productInfo.quotasExceeded) {
+          console.warn(`AI Support Widget: Usage quotas have been exceeded for product ${productId}. Widget will not be displayed. Please check your billing and usage limits.`);
+        }
+        return;
+      }
+      
+      // Store product info for potential use
+      config.productInfo = productInfo;
+      
+    } catch (error) {
+      console.error('AI Support Widget: Failed to get product info:', error);
+      return;
     }
 
     // Create global API with custom window store name if specified
@@ -667,7 +718,9 @@ const createWidget = (config) => {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
-    init();
+    init().catch(error => {
+      console.error('AI Support Widget initialization failed:', error);
+    });
   }
 
 })();
