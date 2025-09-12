@@ -56,7 +56,8 @@ export default defineNuxtConfig({
     '/test-chat': {
       headers: {
         'cache-control': 'public, max-age=60',
-        'content-security-policy': 'frame-ancestors *'
+        ...(process.env.NODE_ENV === 'development' ? {} : { 'content-security-policy': 'frame-ancestors *' }) 
+
       }
     },
     // landing files (you’ll request /landing/index.html from Nginx)
