@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsArray, ValidateNested, IsUrl, MinLength, IsBoolean, ArrayMinSize } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsArray, ValidateNested, IsUrl, MinLength, IsBoolean, ArrayMinSize, Matches, IsIn } from "class-validator";
 import { Transform } from "class-transformer";
 import { Product } from "../product/product.entity";
 import { ClientPriority } from "../client/client.entity";
@@ -37,7 +37,7 @@ export enum ArgumentDataType {
 
 export class CustomToolArgument {
     @IsString()
-    @MinLength(1)
+    @MinLength(3)
     @Transform(({ value }) => value.trim())
     name: string;
 
@@ -83,7 +83,8 @@ export class CustomTool {
     @IsOptional()
     description?: string;
 
-    @IsUrl({ protocols: ['https'] })
+    @IsUrl()
+    @Matches(/^https/, { message: 'URL must start with https' })
     url: string;
 
     @IsEnum(HttpMethod)
@@ -95,6 +96,7 @@ export class CustomTool {
     arguments?: CustomToolArgument[] = [];
 
     @IsString()
+    @IsIn(['application/json', 'application/x-www-form-urlencoded', 'text/plain', 'multipart/form-data'])
     @IsOptional()
     contentType?: string = 'application/json';
 

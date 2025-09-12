@@ -12,7 +12,7 @@
         <h2>Additional Instructions for AI</h2>
       </div>
       <p class="section-description">
-        Provide additional context and instructions that the AI should follow when supporting your customers.
+        Provide additional context and instructions that the AI should follow when assisting your customers.
       </p>
       
       <MegaForm
@@ -26,6 +26,86 @@
           color: 'primary'
         }]"
       />
+    </div>
+
+    <!-- Verified Domains Section -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Verified Domains</h2>
+        <AppButton
+          label="Add Domain"
+          color="primary"
+          margin="left"
+          @click="showAddDomain = true"
+        />
+      </div>
+      
+      <p class="section-description">
+        Verify domains to enable custom tool integrations with your systems.
+      </p>
+
+      <div v-if="verifiedDomains.length === 0" class="empty-state">
+        <div class="empty-icon">🌐</div>
+        <h3>No domains configured</h3>
+        <p>Add a domain to enable custom tool integrations</p>
+      </div>
+
+      <div v-else class="domains-grid">
+        <div
+          v-for="domain in verifiedDomains"
+          :key="domain.id"
+          class="domain-card"
+          :class="{ 'verified': domain.isVerified, 'unverified': !domain.isVerified }"
+        >
+          <div class="domain-header">
+            <div class="domain-info">
+              <h4 class="domain-name">{{ domain.domain }}</h4>
+              <p v-if="!domain.isVerified && domain.randomString" class="verification-code">
+                <strong>Setup Instructions (choose one):</strong><br><br>
+                
+                <strong>Option 1: DNS TXT Record</strong><br>
+                Add a TXT record to your domain's DNS:<br>
+                Value: <code>direct-support-ai-verify={{ domain.randomString }}</code><br><br>
+                
+                <strong>Option 2: Webhook Endpoint</strong><br>
+                Create a webhook endpoint at:<br>
+                <code>https://{{ domain.domain }}/direct-support-ai-verify-domain</code><br>
+                That returns the verification string: <code>{{ domain.randomString }}</code>
+              </p>
+            </div>
+            <div class="domain-status">
+              <span
+                v-if="domain.isVerified"
+                class="status-badge verified"
+              >
+                <AppIcon name="check" size="sm" />
+                Verified
+              </span>
+              <span v-else class="status-badge unverified">
+                <AppIcon name="time" size="sm" />
+                Unverified
+              </span>
+            </div>
+          </div>
+
+          <div class="domain-actions">
+            <AppButton
+              v-if="!domain.isVerified"
+              label="Verify Domain"
+              color="warning"
+              size="sm"
+              @click="verifyDomain(domain)"
+            />
+            <AppButton
+              label="Delete"
+              color="error"
+              :margin="domain.isVerified ? 'no-margins' : 'left'"
+              size="sm"
+              @click="deleteDomain(domain)"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Custom Tools Section -->
@@ -100,11 +180,41 @@
     </div>
 
     <!-- Create/Edit Tool Modal -->
-    <AppPopup :show="showCreateTool" title="Custom Tool" size="lg" @close="closeToolForm">
+        <!-- Create/Edit Tool Popup -->
+    <AppPopup
+      v-if="showCreateTool"
+      :show="showCreateTool"
+      title="Custom Tool"
+      @close="closeToolForm"
+    >
       <CustomToolForm
         :tool="selectedTool"
         @save="handleToolSave"
         @cancel="closeToolForm"
+      />
+    </AppPopup>
+
+    <!-- Add Domain Popup -->
+    <AppPopup
+      v-if="showAddDomain"
+      :show="showAddDomain"
+      title="Add Domain"
+      @close="showAddDomain = false"
+    >
+      <MegaForm
+        :formClass="Domain"
+        v-model="newDomain"
+        :includeFields="['domain']"
+        :fieldOverrides="domainOverrides"
+        :actions="[{
+          label: 'Add Domain',
+          callback: handleDomainSave,
+          color: 'primary'
+        }, {
+          label: 'Cancel',
+          callback: closeDomainForm,
+          color: 'secondary'
+        }]"
       />
     </AppPopup>
   </section>
@@ -118,6 +228,7 @@ import AppPopup from '~/components/AppPopup.vue'
 import CustomToolForm from '~/components/CustomToolForm.vue'
 import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
 import { CustomTool } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
+import { Domain } from '~/eicrud_exports/services/SUPPORT-ms/domain/domain.entity'
 
 // AI Instructions
 const aiInstructions = reactive({
@@ -138,10 +249,27 @@ const customTools = ref<CustomTool[]>([])
 const showCreateTool = ref(false)
 const selectedTool = ref<CustomTool | null>(null)
 
+// Domain management
+const verifiedDomains = ref<Domain[]>([])
+const showAddDomain = ref(false)
+const newDomain = reactive({
+  domain: ''
+})
+
+const domainOverrides = {
+  domain: {
+    label: 'Domain',
+    description: 'Enter the domain name you want to verify (e.g., example.com)',
+    placeholder: 'example.com',
+    required: true
+  }
+}
+
 // Load data on mount
 onMounted(async () => {
   await loadAiInstructions()
   await loadCustomTools()
+  await loadDomains()
 })
 
 // AI Instructions Methods
@@ -206,6 +334,25 @@ async function deleteTool(toolId: string) {
 
 async function handleToolSave(tool: CustomTool) {
   try {
+    // Validate that the tool URL uses a verified domain
+    if (tool.url) {
+      const toolUrl = new URL(tool.url)
+      const toolDomain = toolUrl.hostname
+      
+      // Exact domain match only - no subdomains
+      const verifiedDomain = verifiedDomains.value.find(domain => 
+        domain.domain === toolDomain && domain.isVerified
+      )
+      
+      if (!verifiedDomain) {
+        useNuxtApp().$toast.show(
+          `Domain "${toolDomain}" is not verified. Please add and verify this exact domain before creating the custom tool.`, 
+          'error'
+        )
+        return
+      }
+    }
+
     console.log('Saving tool:', tool)
     // TODO: Save to your API
     
@@ -233,6 +380,124 @@ async function handleToolSave(tool: CustomTool) {
 function closeToolForm() {
   showCreateTool.value = false
   selectedTool.value = null
+}
+
+// Domain management methods
+async function loadDomains() {
+  try {
+    const nuxtApp = useNuxtApp()
+    if (!nuxtApp.$userProductId) return
+    
+    const result = await nuxtApp.$sp.domain.find({
+      product: nuxtApp.$userProductId
+    })
+    verifiedDomains.value = result.data || []
+  } catch (error) {
+    console.error('Failed to load domains:', error)
+    useNuxtApp().$toast.show('Failed to load domains', 'error')
+  }
+}
+
+async function verifyDomain(domain: Domain) {
+  try {
+    const nuxtApp = useNuxtApp()
+    if (!nuxtApp.$userProductId) {
+      useNuxtApp().$toast.show('Product ID not found', 'error')
+      return
+    }
+
+    await nuxtApp.$sp.domain.verify_domain({
+      domainId: domain.id,
+      productId: nuxtApp.$userProductId
+    })
+    
+    // Reload domains to get updated verification status
+    await loadDomains()
+    useNuxtApp().$toast.show('Domain verified successfully!', 'success')
+  } catch (error: any) {
+    console.error('Failed to verify domain:', error)
+    const errorMessage = error?.data?.message || error?.message || 'Domain verification failed'
+    
+    if (!domain.isVerified && domain.randomString) {
+      useNuxtApp().$toast.show(
+        `${errorMessage}. Please create a webhook at https://${domain.domain}/direct-support-ai-verify-domain that returns the verification string: ${domain.randomString}`, 
+        'error'
+      )
+    } else {
+      useNuxtApp().$toast.show(errorMessage, 'error')
+    }
+  }
+}
+
+async function deleteDomain(domain: Domain) {
+  try {
+    // Check if domain is used by any custom tools (exact domain match only)
+    const toolsUsingDomain = customTools.value.filter(tool => {
+      if (!tool.url) return false
+      
+      try {
+        const toolUrl = new URL(tool.url)
+        return toolUrl.hostname === domain.domain
+      } catch {
+        return false // Invalid URL
+      }
+    })
+    
+    if (toolsUsingDomain.length > 0) {
+      useNuxtApp().$toast.show(`Cannot delete domain. It is used by ${toolsUsingDomain.length} custom tool(s).`, 'error')
+      return
+    }
+
+    const nuxtApp = useNuxtApp()
+    await nuxtApp.$sp.domain.deleteOne({ id: domain.id, product: nuxtApp.$userProductId })
+    
+    verifiedDomains.value = verifiedDomains.value.filter(d => d.id !== domain.id)
+    useNuxtApp().$toast.show('Domain deleted successfully!', 'success')
+  } catch (error: any) {
+    console.error('Failed to delete domain:', error)
+    const errorMessage = error?.data?.message || error?.message || 'Failed to delete domain'
+    useNuxtApp().$toast.show(errorMessage, 'error')
+  }
+}
+
+async function handleDomainSave(domainData: any) {
+  try {
+    const nuxtApp = useNuxtApp()
+    if (!nuxtApp.$userProductId) {
+      useNuxtApp().$toast.show('Product ID not found', 'error')
+      return
+    }
+
+    const domain = await nuxtApp.$sp.domain.create({
+      ...domainData,
+      product: nuxtApp.$userProductId
+    })
+    
+    verifiedDomains.value.push(domain)
+    showAddDomain.value = false
+    newDomain.domain = ''
+    useNuxtApp().$toast.show('Domain created successfully! Please verify it to enable custom tool integrations.', 'success')
+  } catch (error: any) {
+    console.error('Failed to create domain:', error)
+    const errorMessage = error?.data?.message || error?.message || 'Failed to create domain'
+    useNuxtApp().$toast.show(errorMessage, 'error')
+    throw error
+  }
+}
+
+async function closeDomainForm() {
+  showAddDomain.value = false
+  newDomain.domain = ''
+}
+
+async function copyToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text)
+    useNuxtApp().$toast.show('Copied to clipboard!', 'success')
+  } catch (error) {
+    console.error('Failed to copy text:', error)
+    useNuxtApp().$toast.show('Failed to copy to clipboard', 'error')
+  }
 }
 </script>
 
@@ -401,6 +666,104 @@ function closeToolForm() {
     color: $muted;
     margin-bottom: 2rem;
     line-height: 1.6;
+  }
+}
+
+.domains-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1rem;
+}
+
+.domain-card {
+  background: $bg-white;
+  border: 1px solid $border;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $brand;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  }
+
+  &.verified {
+    border-color: $ok;
+    
+    &:hover {
+      border-color: $ok;
+      box-shadow: 0 2px 8px rgba(124, 247, 195, 0.1);
+    }
+  }
+
+  &.unverified {
+    border-color: $warning;
+    
+    &:hover {
+      border-color: $warning;
+      box-shadow: 0 2px 8px rgba(255, 184, 108, 0.1);
+    }
+  }
+
+  .domain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+
+    .domain-info {
+      flex: 1;
+
+      .domain-name {
+        margin: 0 0 0.5rem 0;
+        color: $text;
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+
+      .verification-code {
+        margin: 0;
+        padding: 0.5rem;
+        background: $bg;
+        border: 1px solid $border;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        color: $text-muted;
+
+        code {
+          background: transparent;
+          color: $warning;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .domain-status {
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+
+        &.verified {
+          background: rgba(124, 247, 195, 0.1);
+          color: $ok;
+        }
+
+        &.unverified {
+          background: rgba(255, 184, 108, 0.1);
+          color: $warning;
+        }
+      }
+    }
+  }
+
+  .domain-actions {
+    display: flex;
+    gap: 0.5rem;
   }
 }
 </style>

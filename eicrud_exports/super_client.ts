@@ -9,6 +9,7 @@ import { IssueCommentClient } from './services/SUPPORT-ms/issue-comment/issue-co
 import { IssueClient } from './services/SUPPORT-ms/issue/issue.client';
 import { FaqClient } from './services/SUPPORT-ms/faq/faq.client';
 import { EventClient } from './services/SUPPORT-ms/event/event.client';
+import { DomainClient } from './services/SUPPORT-ms/domain/domain.client';
 import { CustomToolClient } from './services/SUPPORT-ms/custom-tool/custom-tool.client';
 import { ClientClient } from './services/SUPPORT-ms/client/client.client';
 import { NotificationClient } from './services/notification/notification.client';
@@ -43,6 +44,7 @@ export class SuperClient {
         this.issue = new IssueClient(config);
         this.faq = new FaqClient(config);
         this.event = new EventClient(config);
+        this.domain = new DomainClient(config);
         this.customTool = new CustomToolClient(config);
         this.client = new ClientClient(config);
         this.notification = new NotificationClient(config);
@@ -73,6 +75,7 @@ export class SuperClient {
     issue: IssueClient;
     faq: FaqClient;
     event: EventClient;
+    domain: DomainClient;
     customTool: CustomToolClient;
     client: ClientClient;
     notification: NotificationClient;
