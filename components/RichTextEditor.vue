@@ -118,8 +118,12 @@ watch(() => props.modelValue, (newValue) => {
 
 /* Simple: Just make the CodeMirror scroll within its container */
 .easymde-wrapper .CodeMirror {
-  height: 300px;
+  height: 310px;
   max-height: inherit;
+}
+
+.easymde-wrapper .CodeMirror-code {
+
 }
 
 .easymde-wrapper .CodeMirror-scroll {

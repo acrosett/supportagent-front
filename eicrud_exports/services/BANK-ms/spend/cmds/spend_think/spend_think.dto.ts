@@ -1,17 +1,19 @@
 import { IsString, IsOptional, IsBoolean } from "class-validator";
-import { Think } from "../../spend.entity";
+import { Think, Spend } from "../../spend.entity";
 import { Product } from "../../../../SUPPORT-ms/product/product.entity";
 
+// Type that forces think to be defined on Spend
+export type SpendWithThink = Omit<Spend, 'think'> & {
+    think: Think;
+};
 
 export class SpendThinkDto {
 
     product: Product;
 
-    @IsOptional()
-    @IsBoolean()
     bTest?: boolean;
 
-    think: Think;
+    spend: SpendWithThink;
 
 }
 

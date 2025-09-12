@@ -7,18 +7,8 @@
 
     <!-- Balance Section -->
     <div class="balance-section">
-      <div class="balance-card">
-        <div class="balance-info">
-          <h2>Account Balance</h2>
-          <div class="balance-amount">
-            <span class="currency">$</span>
-            <span class="amount">{{ formatBalance(currentProduct?.balance || 0) }}</span>
-          </div>
-          <p class="balance-subtitle" v-if="currentProduct?.lastComputedBalance">
-            Last updated {{ formatDate(currentProduct.lastComputedBalance) }}
-          </p>
-        </div>
-        
+      <div class="section-header">
+        <h3>Account Balance</h3>
         <div class="balance-actions">
           <AppButton
             label="Add Funds"
@@ -33,36 +23,130 @@
           />
         </div>
       </div>
+      
+      <div class="balance-display section-card">
+        <div class="balance-amount">
+          <span class="currency">$</span>
+          <span class="amount">{{ formatBalance(currentProduct?.balance || 0) }}</span>
+        </div>
+        <p class="balance-subtitle" v-if="currentProduct?.lastComputedBalance">
+          Last verified {{ formatDate(currentProduct.lastComputedBalance) }}
+        </p>
+        
+        <!-- Low Balance Warning -->
+        <div v-if="currentProduct && (currentProduct.balance || 0) < 1" class="low-balance-warning">
+          <AppIcon name="info" size="sm" />
+          <span>Low balance - Add funds to continue service</span>
+        </div>
+      </div>
 
       <!-- Auto Top-up Status -->
       <div v-if="currentProduct?.autoTopUpEnabled" class="auto-topup-status">
-        <AppIcon name="check" size="sm" />
-        <span>Auto top-up enabled: ${{ currentProduct.autoTopUpAmount }} when balance drops below ${{ formatBalance((currentProduct.autoTopUpAmount || 0) * 0.1) }}</span>
+        <div class="auto-topup-info">
+          <div class="auto-topup-header">
+            <AppIcon name="check" size="sm" />
+            <span class="auto-topup-title">Auto top-up enabled</span>
+          </div>
+          <div class="auto-topup-details">
+            <span class="auto-topup-amount">${{ currentProduct.autoTopUpAmount }}</span>
+            <span class="auto-topup-trigger">when balance drops below ${{ formatBalance((currentProduct.autoTopUpAmount || 0) * 0.1) }}</span>
+          </div>
+        </div>
+        <ToggleSwitch
+          v-model="autoTopUpEnabled"
+          on-label="ON"
+          off-label="OFF"
+          @update:model-value="handleAutoTopUpToggle"
+        />
+      </div>
+    </div>
+
+    <!-- Subscription Section -->
+    <div class="subscription-section">
+      <div class="section-header">
+        <h3>Subscription</h3>
+        <div class="subscription-actions">
+          <AppButton
+            :disabled="currentProduct?.subscriptionActive"
+            label="Activate Subscription"
+            color="primary"
+            @click="showSubscriptionPopup = true"
+          />
+        </div>
+      </div>
+      
+      <div class="subscription-display section-card">
+        <div class="subscription-status">
+          <div class="status-indicator">
+            <AppIcon 
+              :name="currentProduct?.subscriptionActive ? 'check' : 'close'"
+              :color="currentProduct?.subscriptionActive ? '$ok' : '$error'"
+              size="sm"
+            />
+            <span :class="['status-text', { active: currentProduct?.subscriptionActive }]">
+              {{ currentProduct?.subscriptionActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+          <div class="subscription-price">
+            <span class="price">$5</span>
+            <span class="period">/month</span>
+          </div>
+        </div>
+        
+        <p class="subscription-description">
+          {{ currentProduct?.subscriptionActive 
+             ? 'Your subscription is active and will renew automatically' 
+             : 'Activate your subscription to unlock all features and enable AI chat.' }}
+        </p>
+
+        <!-- Auto Renew Toggle (only show if subscription is active) -->
+        <div class="auto-renew-section">
+          <div class="auto-renew-label">
+            <span>Auto-renew subscription</span>
+            <p class="auto-renew-description">Automatically renew your subscription each month</p>
+          </div>
+          <ToggleSwitch
+            v-model="autoRenewEnabled"
+            on-label="ON"
+            off-label="OFF"
+            @update:model-value="handleAutoRenewToggle"
+          />
+        </div>
+
+        <!-- Next billing date (only show if subscription is active) -->
+        <div v-if="currentProduct?.subscriptionActive && currentProduct?.lastSubscriptionChecked" class="next-billing">
+          <span class="billing-label">Next billing date:</span>
+          <span class="billing-date">{{ formatNextBillingDate(currentProduct.lastSubscriptionChecked) }}</span>
+        </div>
       </div>
     </div>
 
     <!-- Spending Limit Section -->
     <div class="spending-section">
-      <h3>Monthly Spending Limit</h3>
-      <div class="spending-limit">
-        <div class="limit-input">
-          <label for="monthlyLimit">Maximum monthly spending</label>
-          <input
-            id="monthlyLimit"
-            v-model="monthlySpendingLimit"
-            type="number"
-            min="0"
-            step="10"
-            placeholder="No limit"
-            @blur="updateSpendingLimit"
-          />
-        </div>
-        <div class="limit-info">
-          <span v-if="monthlySpendingLimit">
-            Limit: ${{ formatBalance(monthlySpendingLimit) }}/month
+      <div class="section-header">
+        <h3>Monthly Spending Limit</h3>
+        <AppButton
+          label="Edit Limit"
+          color="secondary"
+          show-edit-icon
+          margin="left"
+          @click="showSpendingLimitPopup = true"
+        />
+      </div>
+      
+      <div class="spending-display section-card">
+        <div class="limit-amount">
+          <span v-if="currentProduct?.maxDepositPerMonth" class="amount">
+            ${{ formatBalance(currentProduct.maxDepositPerMonth) }}
           </span>
-          <span v-else class="no-limit">No spending limit set</span>
+          <span v-else class="no-limit">No limit set</span>
+          <span class="period">/month</span>
         </div>
+        <p class="limit-description">
+          {{ currentProduct?.maxDepositPerMonth 
+             ? 'Maximum amount that can be deposited per month' 
+             : 'Set a monthly deposit limit to control your costs' }}
+        </p>
       </div>
     </div>
 
@@ -70,27 +154,75 @@
     <div class="history-section">
       <h3>Transaction History</h3>
       
-      <!-- Search and Paginate Component -->
-      <SearchAndPaginate
-        :entity-class="mockTransactionClass"
-        :items="transactions"
-        :total-items="totalTransactions"
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        :loading="loading"
-        :card-component="TransactionCard"
-        :filter-overrides="transactionFilterOverrides"
-        :sort-options="transactionSortOptions"
-        entity-name="transaction"
-        empty-title="No transactions found"
-        empty-message="Your transaction history will appear here once you make deposits or spend credits."
-        empty-icon="credit-card"
-        filter-title="Transaction Filters"
-        @query-change="handleTransactionQuery"
-        @page-change="handlePageChange"
-        @refresh="loadTransactions"
-        @clear="handleClearFilters"
-      />
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button
+          v-for="filter in transactionFilters"
+          :key="filter.value"
+          :class="['filter-tab', { active: activeFilter === filter.value }]"
+          @click="activeFilter = filter.value; loadTransactions()"
+        >
+          {{ filter.label }}
+        </button>
+      </div>
+
+      <!-- Transactions List -->
+      <div v-if="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading transactions...</p>
+      </div>
+
+      <div v-else-if="transactions.length === 0" class="empty-state">
+        <AppIcon name="credit-card" size="xl" />
+        <h4>No transactions found</h4>
+        <p>Your transaction history will appear here.</p>
+      </div>
+
+      <div v-else class="transactions-list section-card">
+        <div
+          v-for="transaction in transactions"
+          :key="transaction.id"
+          class="transaction-item"
+        >
+          <div class="transaction-icon">
+            <AppIcon
+              :name="transaction.type === 'deposit' ? 'plus' : 'credit-card'"
+              :color="transaction.type === 'deposit' ? 'var(--success-color)' : 'var(--error-color)'"
+            />
+          </div>
+          
+          <div class="transaction-details">
+            <div class="transaction-header">
+              <span class="transaction-type">
+                {{ transaction.type === 'deposit' ? 'Deposit' : 'Spending' }}
+                <span v-if="transaction.isAutoTopUp" class="auto-badge">Auto</span>
+              </span>
+              <span :class="['transaction-amount', transaction.type]">
+                {{ transaction.type === 'deposit' ? '+' : '-' }}${{ formatBalance(transaction.amount) }}
+              </span>
+            </div>
+            
+            <div class="transaction-meta">
+              <span class="transaction-date">{{ formatDate(transaction.createdAt) }}</span>
+              <span v-if="transaction.description" class="transaction-description">
+                {{ transaction.description }}
+              </span>
+              <span v-if="transaction.status && transaction.status !== 'completed'" 
+                    :class="['transaction-status', transaction.status]">
+                {{ transaction.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <AppPagination
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          :total-items="totalTransactions"
+          @page-change="handlePageChange"
+        />
+      </div>
     </div>
 
     <!-- Add Funds Popup -->
@@ -162,11 +294,25 @@
               id="autoTopUpAmount"
               v-model="autoTopUpAmount"
               type="number"
-              min="10"
-              step="10"
+              min="60"
+              step="1"
               placeholder="0"
             />
           </div>
+          <div v-if="autoTopUpAmount && autoTopUpAmount < 60" class="minimum-warning">
+            Minimum auto top-up amount is $60
+          </div>
+        </div>
+
+        <div class="quick-amounts">
+          <button
+            v-for="amount in autoTopUpQuickAmounts"
+            :key="amount"
+            class="quick-amount"
+            @click="autoTopUpAmount = amount"
+          >
+            ${{ amount }}
+          </button>
         </div>
 
         <div class="trigger-info" v-if="autoTopUpAmount">
@@ -191,22 +337,63 @@
 
         <div class="popup-actions">
           <AppButton
-            v-if="currentProduct?.autoTopUpEnabled"
-            label="Disable Auto Top-up"
-            color="error"
-            @click="handleDisableAutoTopUp"
-          />
-          <AppButton
             label="Cancel"
             color="secondary"
             @click="showAutoTopUpPopup = false"
           />
           <AppButton
-            label="Save Settings"
+            label="Choose Payment Method"
             color="primary"
-            :disabled="!autoTopUpAmount || autoTopUpAmount < 10"
+            margin="left"
+            :disabled="!autoTopUpAmount || autoTopUpAmount < 60"
             :loading="autoTopUpLoading"
             @click="handleSaveAutoTopUp"
+          />
+        </div>
+      </div>
+    </AppPopup>
+
+    <!-- Spending Limit Popup -->
+    <AppPopup
+      :show="showSpendingLimitPopup"
+      title="Monthly Spending Limit"
+      @close="showSpendingLimitPopup = false"
+    >
+      <div class="spending-limit-form">
+        <MegaForm
+          v-if="currentProduct"
+          :formClass="Product"
+          v-model="currentProduct"
+          :includeFields="['maxDepositPerMonth']"
+          :actions="spendingLimitActions"
+        />
+      </div>
+    </AppPopup>
+
+    <!-- Subscription Activation Popup -->
+    <AppPopup
+      :show="showSubscriptionPopup"
+      title="Activate Subscription"
+      @close="showSubscriptionPopup = false"
+    >
+      <div class="subscription-confirm-form">
+
+        <div class="confirmation-question">
+          <p>You will be charged  <span class="large-price">$5</span>. You can cancel anytime.</p>
+        </div>
+
+        <div class="popup-actions">
+          <AppButton
+            label="Cancel"
+            color="secondary"
+            @click="showSubscriptionPopup = false"
+          />
+          <AppButton
+            label="Activate ($5/month)"
+            color="primary"
+            margin="left"
+            :loading="subscriptionLoading"
+            @click="handleActivateSubscription"
           />
         </div>
       </div>
@@ -219,19 +406,8 @@ import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.en
 import { Deposit } from '~/eicrud_exports/services/BANK-ms/deposit/deposit.entity'
 import { Spend } from '~/eicrud_exports/services/BANK-ms/spend/spend.entity'
 import { StripeDepositDto } from '~/eicrud_exports/services/BANK-ms/product-vault/cmds/stripe_deposit/stripe_deposit.dto'
-import SearchAndPaginate from '~/components/SearchAndPaginate.vue'
-import TransactionCardComponent from '~/components/TransactionCard.vue'
-
-// Mock transaction class for filtering
-class MockTransaction {
-  id: string = ''
-  type: 'deposit' | 'spend' = 'deposit'
-  amount: number = 0
-  createdAt: Date = new Date()
-  status?: string
-  isAutoTopUp: boolean = false
-  description: string = ''
-}
+import MegaForm, { MegaFormAction } from '~/components/MegaForm.vue'
+import ToggleSwitch from '~/components/ToggleSwitch.vue'
 
 definePageMeta({
   layout: 'default'
@@ -245,15 +421,19 @@ const currentProduct = ref<Product | null>(null)
 const loading = ref(true)
 const depositLoading = ref(false)
 const autoTopUpLoading = ref(false)
+const subscriptionLoading = ref(false)
 
 // Popup states
 const showAddFundsPopup = ref(false)
 const showAutoTopUpPopup = ref(false)
+const showSpendingLimitPopup = ref(false)
+const showSubscriptionPopup = ref(false)
 
 // Form data
 const depositAmount = ref<number>()
 const autoTopUpAmount = ref<number>()
-const monthlySpendingLimit = ref<number>()
+const autoRenewEnabled = ref(true)
+const autoTopUpEnabled = ref(false)
 
 // Transaction history
 const transactions = ref<any[]>([])
@@ -262,51 +442,42 @@ const totalPages = ref(1)
 const totalTransactions = ref(0)
 const activeFilter = ref('all')
 
-// SearchAndPaginate props and configuration
-const mockTransactionClass = MockTransaction
-const TransactionCard = TransactionCardComponent
-
-const transactionFilterOverrides = [
-  {
-    fieldName: 'type',
-    type: 'select',
-    label: 'Transaction Type',
-    selectOptions: [
-      { label: 'Deposit', value: 'deposit' },
-      { label: 'Spend', value: 'spend' }
-    ]
-  },
-  {
-    fieldName: 'status',
-    type: 'select',
-    label: 'Status',
-    selectOptions: [
-      { label: 'Completed', value: 'completed' },
-      { label: 'Pending', value: 'pending' },
-      { label: 'Failed', value: 'failed' }
-    ]
-  },
-  {
-    fieldName: 'isAutoTopUp',
-    type: 'checkbox',
-    label: 'Auto Top-up Only'
-  }
-]
-
-const transactionSortOptions = [
-  { label: 'Newest First', value: 'createdAt', direction: 'desc' as const },
-  { label: 'Oldest First', value: 'createdAt', direction: 'asc' as const },
-  { label: 'Amount (High to Low)', value: 'amount', direction: 'desc' as const },
-  { label: 'Amount (Low to High)', value: 'amount', direction: 'asc' as const },
-  { label: 'Type', value: 'type', direction: 'asc' as const }
-]
-
 const quickAmounts = [10, 25, 50, 100, 250, 500]
+const autoTopUpQuickAmounts = [60, 100, 150, 250, 500, 1000]
 
 const transactionFilters = [
   { label: 'All', value: 'all' },
   { label: 'Deposits', value: 'deposits' },
   { label: 'Spending', value: 'spending' }
+]
+
+// MegaForm actions for spending limit
+const spendingLimitActions: MegaFormAction[] = [
+  {
+    label: 'Cancel',
+    color: 'secondary',
+    callback: async () => {
+      showSpendingLimitPopup.value = false
+    }
+  },
+  {
+    label: 'Save Limit',
+    color: 'primary',
+    margin: 'left',
+    callback: async (formData: Product) => {
+      try {
+        // Mock implementation - replace with actual API call
+        if (currentProduct.value) {
+          currentProduct.value.maxDepositPerMonth = formData.maxDepositPerMonth
+        }
+        $toast.show('Spending limit updated', 'success')
+        showSpendingLimitPopup.value = false
+      } catch (error) {
+        console.error('Failed to update spending limit:', error)
+        $toast.show('Failed to update spending limit', 'error')
+      }
+    }
+  }
 ]
 
 // Load initial data
@@ -318,26 +489,16 @@ onMounted(async () => {
 
 const loadProduct = async () => {
   try {
-    // Create mock product data for now
-    currentProduct.value = {
-      id: 'mock-product-1',
-      name: 'Demo Product',
-      balance: 127.50,
-      lastComputedBalance: new Date(),
-      autoTopUpEnabled: false,
-      maxDepositPerMonth: 500,
-      autoTopUpAmount: undefined,
-      autoTopUpFailureCount: 0,
-      subscriptionActive: true,
-      chatOn: true,
-      owner: 'user-1',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    } as Product
+    const nuxtApp = useNuxtApp()
+    const product = await $sp.product.findOne({ 
+      id: nuxtApp.$userProductId, 
+    })
+    
+    currentProduct.value = product
     
     if (currentProduct.value) {
-      monthlySpendingLimit.value = currentProduct.value.maxDepositPerMonth
       autoTopUpAmount.value = currentProduct.value.autoTopUpAmount
+      autoTopUpEnabled.value = currentProduct.value.autoTopUpEnabled || false
     }
   } catch (error) {
     console.error('Failed to load product:', error)
@@ -406,6 +567,11 @@ const handleAddFunds = async () => {
 const handleSaveAutoTopUp = async () => {
   if (!autoTopUpAmount.value || !currentProduct.value) return
   
+  if (autoTopUpAmount.value < 60) {
+    $toast.show('Minimum auto top-up amount is $60', 'error')
+    return
+  }
+  
   autoTopUpLoading.value = true
   try {
     // Mock implementation - replace with actual API call
@@ -443,23 +609,84 @@ const handleDisableAutoTopUp = async () => {
   }
 }
 
-const updateSpendingLimit = async () => {
+const handleAutoTopUpToggle = async (enabled: boolean) => {
   if (!currentProduct.value) return
   
   try {
     // Mock implementation - replace with actual API call
-    currentProduct.value.maxDepositPerMonth = monthlySpendingLimit.value
-    $toast.show('Spending limit updated', 'success')
+    currentProduct.value.autoTopUpEnabled = enabled
+    autoTopUpEnabled.value = enabled
+    
+    if (!enabled) {
+      currentProduct.value.autoTopUpAmount = undefined
+    }
+    
+    $toast.show(
+      enabled ? 'Auto top-up enabled' : 'Auto top-up disabled', 
+      'success'
+    )
     
   } catch (error) {
-    console.error('Failed to update spending limit:', error)
-    $toast.show('Failed to update spending limit', 'error')
+    console.error('Failed to update auto top-up setting:', error)
+    $toast.show('Failed to update auto top-up setting', 'error')
+    // Revert the toggle on error
+    autoTopUpEnabled.value = !enabled
   }
 }
 
 const handlePageChange = (page: number) => {
   currentPage.value = page
   loadTransactions()
+}
+
+const handleActivateSubscription = async () => {
+  if (!currentProduct.value) return
+  
+  subscriptionLoading.value = true
+  try {
+    // Mock implementation - replace with actual API call
+    currentProduct.value.subscriptionActive = true
+    currentProduct.value.lastSubscriptionChecked = new Date()
+    
+    $toast.show('Subscription activated successfully', 'success')
+    showSubscriptionPopup.value = false
+    
+  } catch (error) {
+    console.error('Failed to activate subscription:', error)
+    $toast.show('Failed to activate subscription', 'error')
+  } finally {
+    subscriptionLoading.value = false
+  }
+}
+
+const handleAutoRenewToggle = async (enabled: boolean) => {
+  if (!currentProduct.value) return
+  
+  // Check if subscription is active first
+  if (!currentProduct.value.subscriptionActive) {
+    // Revert the toggle immediately since subscription is not active
+    autoRenewEnabled.value = !enabled
+    // Open subscription popup instead
+    showSubscriptionPopup.value = true
+    $toast.show('Please activate your subscription first', 'warning')
+    return
+  }
+  
+  try {
+    // Mock implementation - replace with actual API call
+    autoRenewEnabled.value = enabled
+    
+    $toast.show(
+      enabled ? 'Auto-renew enabled' : 'Auto-renew disabled', 
+      'success'
+    )
+    
+  } catch (error) {
+    console.error('Failed to update auto-renew setting:', error)
+    $toast.show('Failed to update auto-renew setting', 'error')
+    // Revert the toggle on error
+    autoRenewEnabled.value = !enabled
+  }
 }
 
 const formatBalance = (amount: number): string => {
@@ -476,22 +703,21 @@ const formatDate = (date: Date | string): string => {
   })
 }
 
-// SearchAndPaginate event handlers
-const handleTransactionQuery = (query: any) => {
-  console.log('Transaction query changed:', query)
-  // Here you would typically call your API with the query
-  // For now, we'll just log the query
-}
-
-const handleClearFilters = () => {
-  console.log('Filters cleared')
-  // Here you would typically reset any additional state
-  // The SearchAndPaginate component handles its own internal state
+const formatNextBillingDate = (lastChecked: Date | string): string => {
+  const lastDate = new Date(lastChecked)
+  const nextBilling = new Date(lastDate.getFullYear(), lastDate.getMonth() + 1, lastDate.getDate())
+  
+  return nextBilling.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
 }
 </script>
 
 <style scoped lang="scss">
 @use '~/assets/variables' as *;
+@use 'sass:color';
 
 .funds-header {
   margin-bottom: 2rem;
@@ -501,31 +727,25 @@ const handleClearFilters = () => {
   }
   
   p {
-    color: var(--text-secondary);
+    color: $text-muted;
   }
+}
+
+// Shared section card styling
+.section-card {
+  padding: 1.5rem;
+  background: $bg-white;
+  border: 1px solid $border;
+  border-radius: $radius-small;
 }
 
 .balance-section {
   margin-bottom: 3rem;
 }
 
-.balance-card {
+.balance-actions {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2rem;
-  background: var(--background-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  margin-bottom: 1rem;
-}
-
-.balance-info {
-  h2 {
-    font-size: 1.125rem;
-    margin-bottom: 0.5rem;
-    color: var(--text-secondary);
-  }
+  gap: 1rem;
 }
 
 .balance-amount {
@@ -536,88 +756,256 @@ const handleClearFilters = () => {
   
   .currency {
     font-size: 1.5rem;
-    color: var(--text-secondary);
+    color: $text-muted;
   }
   
   .amount {
     font-size: 3rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: $text;
   }
 }
 
 .balance-subtitle {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: $text-muted;
   margin: 0;
 }
 
-.balance-actions {
+.low-balance-warning {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: color.scale($warning, $lightness: 90%);
+  color: $error;
+  border-radius: $radius-small;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .auto-topup-status {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: color.scale($ok, $lightness: 35%);
+  border-radius: $radius-small;
+  margin-top: 1rem;
+}
+
+.auto-topup-info {
+  flex: 1;
+}
+
+.auto-topup-header {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: var(--success-background);
-  color: var(--success-color);
-  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.auto-topup-title {
+  font-weight: 500;
+  color: color.scale($ok, $lightness: -20%);
+}
+
+.auto-topup-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.auto-topup-amount {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: color.scale($ok, $lightness: -25%);
+}
+
+.auto-topup-trigger {
   font-size: 0.875rem;
+  color: color.scale($ok, $lightness: -15%);
 }
 
 .spending-section {
   margin-bottom: 3rem;
-  
-  h3 {
-    margin-bottom: 1rem;
-  }
 }
 
-.spending-limit {
+.subscription-section {
+  margin-bottom: 3rem;
+}
+
+.subscription-status {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  padding: 1.5rem;
-  background: var(--background-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
-.limit-input {
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-text {
+  font-weight: 600;
+  color: $error;
+  
+  &.active {
+    color: $ok;
+  }
+}
+
+.subscription-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  
+  .price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $text;
+  }
+  
+  .period {
+    color: $text-muted;
+  }
+}
+
+.subscription-description {
+  margin: 0 0 1.5rem 0;
+  color: $text-muted;
+  font-size: 0.875rem;
+}
+
+.auto-renew-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: $panel;
+  border-radius: $radius-small;
+  margin-bottom: 1rem;
+}
+
+.auto-renew-label {
   flex: 1;
   
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
+  span {
     font-weight: 500;
-    color: var(--text-secondary);
-  }
-  
-  input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    background: var(--background-primary);
-    color: var(--text-primary);
-    
-    &:focus {
-      outline: none;
-      border-color: var(--primary-color);
-    }
+    color: $text;
+    display: block;
+    margin-bottom: 0.25rem;
   }
 }
 
-.limit-info {
-  color: var(--text-secondary);
+.auto-renew-description {
+  margin: 0;
   font-size: 0.875rem;
+  color: $text-muted;
+}
+
+.next-billing {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid $border;
+  font-size: 0.875rem;
+}
+
+.billing-label {
+  color: $text-muted;
+}
+
+.billing-date {
+  font-weight: 500;
+  color: $text;
+}
+
+.subscription-confirm-form {
+  padding: 1rem 0;
+}
+
+.subscription-info {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.price-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.large-price {
+  font-weight: 600;
+  color: $brand;
+}
+
+.subscription-benefits {
+  color: $text-muted;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.confirmation-question {
+  margin-bottom: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background: $panel;
+  border-radius: $radius-small;
+  
+
+  p {
+    margin: 0;
+    color: $text-muted;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  
+  h3 {
+    margin: 0;
+  }
+}
+
+.limit-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  
+  .amount {
+    font-size: 2rem;
+    font-weight: 600;
+    color: $text;
+  }
   
   .no-limit {
-    color: var(--warning-color);
+    font-size: 1.25rem;
+    color: $warning;
+    font-weight: 500;
   }
+  
+  .period {
+    font-size: 1rem;
+    color: $text-muted;
+  }
+}
+
+.limit-description {
+  margin: 0;
+  color: $text-muted;
+  font-size: 0.875rem;
 }
 
 .history-section {
@@ -630,25 +1018,25 @@ const handleClearFilters = () => {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid $border;
 }
 
 .filter-tab {
   padding: 0.75rem 1rem;
   background: transparent;
   border: none;
-  color: var(--text-secondary);
+  color: $text-muted;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
   
   &:hover {
-    color: var(--text-primary);
+    color: $text;
   }
   
   &.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
+    color: $brand;
+    border-bottom-color: $brand;
   }
 }
 
@@ -658,14 +1046,14 @@ const handleClearFilters = () => {
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  color: var(--text-secondary);
+  color: $text-muted;
 }
 
 .spinner {
   width: 2rem;
   height: 2rem;
-  border: 2px solid var(--border-color);
-  border-top: 2px solid var(--primary-color);
+  border: 2px solid $border;
+  border-top: 2px solid $brand;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
@@ -681,7 +1069,7 @@ const handleClearFilters = () => {
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  color: var(--text-secondary);
+  color: $text-muted;
   
   h4 {
     margin: 1rem 0 0.5rem;
@@ -689,9 +1077,8 @@ const handleClearFilters = () => {
 }
 
 .transactions-list {
-  background: var(--background-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  // Uses .section-card base styling
+  padding: 0; // Override base padding since transaction items have their own
   overflow: hidden;
 }
 
@@ -700,7 +1087,7 @@ const handleClearFilters = () => {
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid $border;
   
   &:last-child {
     border-bottom: none;
@@ -714,7 +1101,7 @@ const handleClearFilters = () => {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  background: var(--background-tertiary);
+  background: $panel;
 }
 
 .transaction-details {
@@ -730,10 +1117,10 @@ const handleClearFilters = () => {
 
 .transaction-type {
   font-weight: 500;
-  color: var(--text-primary);
+  color: $text;
   
   .auto-badge {
-    background: var(--primary-color);
+    background: $brand;
     color: white;
     padding: 0.125rem 0.375rem;
     border-radius: 4px;
@@ -746,11 +1133,11 @@ const handleClearFilters = () => {
   font-weight: 600;
   
   &.deposit {
-    color: var(--success-color);
+    color: $ok;
   }
   
   &.spend {
-    color: var(--error-color);
+    color: $error;
   }
 }
 
@@ -759,7 +1146,7 @@ const handleClearFilters = () => {
   align-items: center;
   gap: 1rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: $text-muted;
 }
 
 .transaction-status {
@@ -769,13 +1156,13 @@ const handleClearFilters = () => {
   text-transform: uppercase;
   
   &.refunded {
-    background: var(--warning-background);
-    color: var(--warning-color);
+    background: color.scale($warning, $lightness: 30%);
+    color: color.scale($warning, $lightness: -10%);
   }
   
   &.disputed {
-    background: var(--error-background);
-    color: var(--error-color);
+    background: color.scale($error, $lightness: 30%);
+    color: color.scale($error, $lightness: -10%);
   }
 }
 
@@ -791,8 +1178,17 @@ const handleClearFilters = () => {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: $text-muted;
   }
+}
+
+.minimum-warning {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: $warning;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .amount-field {
@@ -803,22 +1199,22 @@ const handleClearFilters = () => {
     left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-secondary);
+    color: $text-muted;
     font-size: 1.125rem;
   }
   
   input {
     width: 100%;
     padding: 0.75rem 0.75rem 0.75rem 2rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid $border;
     border-radius: 6px;
-    background: var(--background-primary);
-    color: var(--text-primary);
+    background: $bg-white;
+    color: $text;
     font-size: 1.125rem;
     
     &:focus {
       outline: none;
-      border-color: var(--primary-color);
+      border-color: $brand;
     }
   }
 }
@@ -832,28 +1228,28 @@ const handleClearFilters = () => {
 
 .quick-amount {
   padding: 0.5rem 1rem;
-  background: var(--background-tertiary);
-  border: 1px solid var(--border-color);
+  background: $panel;
+  border: 1px solid $border;
   border-radius: 6px;
-  color: var(--text-secondary);
+  color: $text-muted;
   cursor: pointer;
   transition: all 0.2s ease;
   
   &:hover {
-    background: var(--background-secondary);
-    color: var(--text-primary);
+    background: $bg-white;
+    color: $text;
   }
 }
 
 .topup-explanation {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: var(--background-tertiary);
+  background: $panel;
   border-radius: 6px;
   
   p {
     margin: 0;
-    color: var(--text-secondary);
+    color: $text-muted;
   }
 }
 
@@ -863,12 +1259,12 @@ const handleClearFilters = () => {
   gap: 0.5rem;
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: var(--info-background);
+  background: color.scale($brand, $lightness: 40%);
   border-radius: 6px;
   
   p {
     margin: 0;
-    color: var(--text-secondary);
+    color: $text-muted;
     font-size: 0.875rem;
   }
 }
@@ -876,7 +1272,7 @@ const handleClearFilters = () => {
 .current-status {
   margin-bottom: 2rem;
   padding: 1rem;
-  background: var(--background-tertiary);
+  background: $panel;
   border-radius: 6px;
 }
 
@@ -892,7 +1288,7 @@ const handleClearFilters = () => {
 
 .status-value {
   font-weight: 500;
-  color: var(--text-primary);
+  color: $text;
 }
 
 .popup-actions {
@@ -902,11 +1298,27 @@ const handleClearFilters = () => {
   margin-top: 2rem;
 }
 
+.spending-limit-form {
+  padding: 1rem 0;
+}
+
+.form-explanation {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: $panel;
+  border-radius: 6px;
+  
+  p {
+    margin: 0;
+    color: $text-muted;
+  }
+}
+
 @media (max-width: 768px) {
-  .balance-card {
+  .section-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.5rem;
+    gap: 1rem;
   }
   
   .balance-actions {

@@ -1,16 +1,16 @@
 import { IsString, IsOptional, IsNumber, IsBoolean } from "class-validator";
 import { Product } from "../../../../SUPPORT-ms/product/product.entity";
+import { Spend } from "../../spend.entity";
 
 export class TrySpendDto {
 
     product: Product;
 
-    @IsNumber()
     amount: number;
 
-    @IsOptional()
-    @IsBoolean()
     bTest?: boolean;
+
+    spend: Partial<Spend>;
 
 }
 

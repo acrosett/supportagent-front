@@ -3,6 +3,8 @@ import { Message } from "../../SUPPORT-ms/message/message.entity";
 import { WhatsappMessage } from "../../WHATSAPP-ms/whatsapp-message/whatsapp-message.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
 import { Client, ClientPriority } from "../../SUPPORT-ms/client/client.entity";
+import { AgentResultType } from "../../AI-ms/AiAgent";
+import { Digestor } from "../../AI-ms/digestor/digestor.entity";
 
 export enum SpendType {
   AI_THINKING = 'ai_thinking',
@@ -23,21 +25,21 @@ export class Think {
   agentType?: AgentType;
 
   @IsNumber()
-  inputBaseTokenCount: number;
+  inputBaseTokenCount?: number;
 
   @IsNumber()
-  inputProductConfigTokenCount: number;
+  inputProductConfigTokenCount?: number;
 
   @IsNumber()
-  inputHistoryTokenCount: number;
+  inputHistoryTokenCount?: number;
 
   @IsNumber()
-  outputTokenCount: number;
+  outputTokenCount?: number;
 
   @IsString()
-  outputType: string;
+  outputType?: AgentResultType;
 
-  modelType: 'smart' | 'fast';
+  modelType?: 'smart' | 'fast' ;
 }
 
 export class Spend {
@@ -56,6 +58,9 @@ export class Spend {
 
   @IsOptional()
   client?: Client | string;
+
+  @IsOptional()
+  digestor?: Digestor | string;
 
   @IsOptional()
   @IsEnum(ClientPriority)

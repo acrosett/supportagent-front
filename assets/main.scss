@@ -1,5 +1,33 @@
 @use 'variables' as *;
 
+// Export SCSS variables as CSS custom properties for JavaScript access
+:root {
+  --brand: #{$brand};
+  --brand-2: #{$brand-2};
+  --text: #{$text};
+  --text-light: #{$text-light};
+  --text-muted: #{$text-muted};
+  --text-white: #{$text-white};
+  --bg: #{$bg};
+  --bg-white: #{$bg-white};
+  --bg-dark: #{$bg-dark};
+  --panel: #{$panel};
+  --cta: #{$cta};
+  --cta-secondary: #{$cta-secondary};
+  --ok: #{$ok};
+  --warning: #{$warning};
+  --error: #{$error};
+  --muted: #{$muted};
+  --ring: #{$ring};
+  --border: #{$border};
+  --shadow: #{$shadow};
+  --shadow-hover: #{$shadow-hover};
+  --shadow-large: #{$shadow-large};
+  --radius: #{$radius};
+  --radius-small: #{$radius-small};
+  --radius-large: #{$radius-large};
+}
+
 // Global styles
 * {
   box-sizing: border-box;

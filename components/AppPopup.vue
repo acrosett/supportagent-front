@@ -195,6 +195,7 @@ onUnmounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
+  padding-top: 0;
 }
 
 .popup-footer {

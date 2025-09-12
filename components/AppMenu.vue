@@ -40,9 +40,14 @@
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/edit-product" @click="closeMobileMenu">
-            <AppIcon name="settings" size="md" class="nav-icon" />
-            Edit Product
+          <NuxtLink to="/edit-product" @click="closeMobileMenu" class="nav-link-with-warning">
+            <div class="nav-link-content">
+              <AppIcon name="settings" size="md" class="nav-icon" />
+              Edit Product
+            </div>
+            <div v-if="showEditProductWarning" class="warning-indicator">
+              <AppIcon name="info" size="sm" />
+            </div>
           </NuxtLink>
         </li>
         <li>
@@ -89,9 +94,14 @@
       <div style="flex:1"></div>
       <ul class="nav-list" style="margin-top:auto;">
         <li>
-          <NuxtLink to="/notifications" @click="closeMobileMenu">
-            <AppIcon name="notifications" size="md" class="nav-icon" />
-            Notifications
+          <NuxtLink to="/notifications" @click="closeMobileMenu" class="nav-link-with-notification">
+            <div class="nav-link-content">
+              <AppIcon name="notifications" size="md" class="nav-icon" />
+              Notifications
+            </div>
+            <div v-if="notificationCount > 0" class="notification-count">
+              {{ notificationCount > 99 ? '99+' : notificationCount }}
+            </div>
           </NuxtLink>
         </li>
         <li v-if="isAdmin">
@@ -101,9 +111,14 @@
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/funds" @click="closeMobileMenu">
-            <AppIcon name="credit-card" size="md" class="nav-icon" />
-            Billing & Usage
+          <NuxtLink to="/funds" @click="closeMobileMenu" class="nav-link-with-warning">
+            <div class="nav-link-content">
+              <AppIcon name="credit-card" size="md" class="nav-icon" />
+              Billing & Usage
+            </div>
+            <div v-if="showBillingWarning" class="warning-indicator">
+              <AppIcon name="info" size="sm" />
+            </div>
           </NuxtLink>
         </li>
         <li>
@@ -131,8 +146,14 @@
 </template>
 
 <script setup lang="ts">
+import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
+
 const isMobileMenuOpen = ref(false)
 const isAdmin = ref(false)
+const currentProduct = ref<Product | null>(null)
+const showBillingWarning = ref(false)
+const showEditProductWarning = ref(false)
+const notificationCount = ref(0)
 
 // Test client selector state
 const showTestClientSelector = ref(false)
@@ -166,10 +187,74 @@ const handleClientSelected = (clientData: { guestId?: string, userToken?: string
   }
 }
 
+const fetchProduct = async () => {
+  try {
+    const nuxtApp = useNuxtApp()
+    if (!nuxtApp.$userProductId) return
+    
+    const product = await nuxtApp.$sp.product.findOne({ 
+      id: nuxtApp.$userProductId
+    })
+    
+    currentProduct.value = product
+    checkWarnings()
+  } catch (error) {
+    console.error('Failed to fetch product:', error)
+  }
+}
+
+const checkWarnings = () => {
+  checkBillingWarning()
+  checkEditProductWarning()
+  checkNotificationCount()
+}
+
+const checkBillingWarning = () => {
+  if (!currentProduct.value) {
+    showBillingWarning.value = false
+    return
+  }
+  
+  const hasLowBalance = (currentProduct.value.balance || 0) <= 1
+  const hasInactiveSubscription = !currentProduct.value.subscriptionActive
+  
+  showBillingWarning.value = hasLowBalance || hasInactiveSubscription
+}
+
+const checkEditProductWarning = () => {
+  if (!currentProduct.value) {
+    showEditProductWarning.value = false
+    return
+  }
+  
+  const hasAiOff = !currentProduct.value.chatOn
+  
+  showEditProductWarning.value = hasAiOff
+}
+
+const checkNotificationCount = () => {
+  if (!currentProduct.value) {
+    notificationCount.value = 0
+    return
+  }
+  
+  notificationCount.value = currentProduct.value.notificationUnreadCount || 0
+}
+
 // Close menu when route changes
 const route = useRoute()
-watch(() => route.path, () => {
+watch(() => route.path, async (newPath, oldPath) => {
   closeMobileMenu()
+  
+  // Refetch product when leaving funds page or navigating to any page
+  if (oldPath === '/funds' || oldPath !== '/edit-product') {
+    await fetchProduct()
+  }
+
+  if(newPath === '/notifications') {
+    // set local product notification count to 0
+    notificationCount.value = 0
+  }
 })
 
 // Close menu on escape key
@@ -182,6 +267,9 @@ onMounted(async () => {
     console.error('Failed to check admin role:', error)
     isAdmin.value = false
   }
+  
+  // Fetch product on init
+  await fetchProduct()
   
   const handleEscape = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -327,6 +415,82 @@ onMounted(async () => {
   height: 20px;
   margin-right: 0.75rem;
   stroke-width: 2;
+}
+
+.nav-link-with-warning {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-link-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.warning-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: $error;
+  border-radius: 50%;
+  color: white;
+  margin-left: 0.5rem;
+  animation: pulse-warning 2s infinite;
+  
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@keyframes pulse-warning {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 193, 7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
+
+.nav-link-with-notification {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  background-color: $brand-2;
+  border-radius: 50%;
+  color: white;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0 6px;
+  animation: pulse-brand 2s infinite;
+}
+
+@keyframes pulse-brand {
+  0% {
+    box-shadow: 0 0 0 0 rgba($brand, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba($brand, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($brand, 0);
+  }
 }
 
 .mobile-overlay {

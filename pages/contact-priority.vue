@@ -434,7 +434,7 @@ const formatAiType = (aiType: string): string => {
     case 'fast':
       return 'Fast'
     case 'smart':
-      return 'Smart (2x cost)'
+      return 'Smart (2.5x cost)'
     default:
       return 'Fast'
   }
@@ -638,7 +638,7 @@ const configFieldOverrides = computed<OverrideRecord>(() => {
       description: 'AI reasoning level for customer chat interactions (smart costs 2x more)',
       selectOptions: [
         { label: 'Fast - Standard reasoning', value: 'fast' },
-        { label: 'Smart - High reasoning (2x cost)', value: 'smart' }
+        { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' }
       ]
     },
     staffFacingAiType: {
@@ -646,7 +646,7 @@ const configFieldOverrides = computed<OverrideRecord>(() => {
       description: 'AI reasoning level for WhatsApp communication with staff (smart costs 2x more)',
       selectOptions: [
         { label: 'Fast - Standard reasoning', value: 'fast' },
-        { label: 'Smart - High reasoning (2x cost)', value: 'smart' }
+        { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' }
       ]
     },
     contactForDocumentationUpdate: {

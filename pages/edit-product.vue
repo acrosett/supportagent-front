@@ -18,7 +18,7 @@
         :formClass="Product"
         v-model="formData"
         :fieldOverrides="fieldOverrides"
-        :excludeFields="excludeFields"
+        :includeFields="includeFields"
         :actions="actions"
       />
     </div>
@@ -34,6 +34,7 @@ definePageMeta({ layout: 'default' })
 
 const router = useRouter()
 const nuxtApp = useNuxtApp() // Capture nuxtApp in setup context
+const { colors } = useTheme() // Import theme colors
 
 // Use the user's product ID from nuxtApp
 const productId = computed(() => nuxtApp.$userProductId as string)
@@ -41,9 +42,9 @@ const isEditing = computed(() => !!productId.value)
 const isLoading = ref(false)
 const currentProduct = ref<Product | null>(null)
 
-// Exclude fields we don't want to show in the form
-const excludeFields = computed(() => {
-  return ['owner', 'createdAt', 'updatedAt', 'id']
+// Include fields we want to show in the form
+const includeFields = computed(() => {
+  return ['name', 'description', 'webhookUrl', 'sharedSecret','chatOn']
 })
 
 const formData = ref({
@@ -51,6 +52,7 @@ const formData = ref({
   description: '',
   webhookUrl: '',
   sharedSecret: '',
+  chatOn: true,
 })
 
 // Load existing product if editing
@@ -71,6 +73,7 @@ const loadProduct = async () => {
         description: product.description || '',
         webhookUrl: product.webhookUrl || '',
         sharedSecret: product.sharedSecret || '',
+        chatOn: product.chatOn ?? true,
       }
     }
   } catch (error) {
@@ -93,6 +96,12 @@ const fieldOverrides: OverrideRecord<Product> = {
     placeholder: 'e.g. My Support Agent',
     description: 'A unique name for your AI support agent product'
   },
+  chatOn: {
+    label: 'AI Chat Feature',
+
+    description: 'Enable or disable AI chat functionality for this product',
+    titleColor: () => !formData.value.chatOn ? colors.error() : undefined,
+  },
   description: {
     maxChars: 4000,
     label: 'Product Description',
@@ -100,7 +109,6 @@ const fieldOverrides: OverrideRecord<Product> = {
     description: `1. What your product is and does.  
 2. A few marketing arguments to sell the product + your pricing model.  
 3. A general overview on how to use your product.  
-4. Detailed documentation with troubleshooting steps. If not enough room, input this info in the FAQ tab.
 `,
   },
   webhookUrl: {

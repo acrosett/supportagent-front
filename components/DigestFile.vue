@@ -76,7 +76,6 @@
 
 <script setup lang="ts">
 
-import { calculateDigestCost } from "~/eicrud_exports/services/AI-ms/digestor/shared.utils"
 
 interface Props {
   modelValue?: string
@@ -161,7 +160,7 @@ const pendingSizeKB = computed(() => {
   return pendingFile.value ? (pendingFile.value.size / 1024) : 0
 })
 const estimatedCost = computed(() => {
-  return calculateDigestCost(pendingSizeKB.value);
+  return pendingSizeKB.value;
 })
 
 

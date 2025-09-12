@@ -2,7 +2,7 @@
 const svgCache = new Map<string, string>()
 
 // Grab every SVG in assets/icons (recursively), as RAW strings (not URLs)
-const iconLoaders = import.meta.glob<string>('~/assets/icons/**/*.svg', { as: 'raw' })
+const iconLoaders = import.meta.glob<string>('~/assets/icons/**/*.svg', { query: '?raw', import: 'default' })
 
 // Build a name → loader map:
 //  - "edit" for assets/icons/edit.svg

@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MinLength, IsNumber, IsBoolean, IsEnum } from "class-validator";
+import { IsString, IsOptional, MinLength, IsNumber, IsBoolean, IsEnum, Min } from "class-validator";
 import { User } from "../../user/user.entity";
 
 export class Product {
@@ -49,7 +49,12 @@ export class Product {
 
     @IsOptional()
     @IsNumber()
+    @Min(60)
     autoTopUpAmount?: number;
+
+    @IsNumber()
+    @IsOptional()
+    notificationUnreadCount: number = 0;
 
     // Error tracking
     @IsNumber()

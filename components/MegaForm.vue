@@ -31,6 +31,7 @@ export interface FieldOverride<T = any> {
   onLabel?: string; // Label for toggle switch "ON" state
   offLabel?: string; // Label for toggle switch "OFF" state
   mapValue?: Record<string, any>; // Map form values before validation (e.g. {true: 123, false: undefined})
+  titleColor?: string | (() => string | undefined); // Color for the field title/label
 }
 
 export type ActionColor = 'primary' | 'secondary' | 'ok' | 'warning' | 'error';
@@ -291,6 +292,18 @@ function getArrayItemValue(item: any, fieldKey: string): string {
   return item || ''
 }
 
+// Function to get label styling based on titleColor override
+function getLabelStyle(field: any) {
+  const override = props.fieldOverrides?.[field.key];
+  if (!override?.titleColor) return {};
+  
+  const color = typeof override.titleColor === 'function' 
+    ? override.titleColor() 
+    : override.titleColor;
+    
+  return color ? { color } : {};
+}
+
 // Helper function to handle array item input (handles both objects and primitives)
 function handleArrayItemInput(fieldKey: string, index: number, event: Event) {
   const target = event.target as HTMLInputElement
@@ -338,6 +351,7 @@ watch(formData, () => {
           v-if="field.label" 
           :for="field.key"
           class="megaform-label"
+          :style="getLabelStyle(field)"
         >
           <div class="megaform-label-content">
             <div class="megaform-label-text">
