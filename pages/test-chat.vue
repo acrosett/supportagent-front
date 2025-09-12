@@ -211,8 +211,8 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number) => {
     return;
   }
   try {
-    
-    const cacheKey = `chat-messages-${clientIdentifier.value}`;
+
+    const cacheKey = `${cachePrefix}chat-messages-${clientIdentifier.value}`;
     const cachedMessages = limit ? null : sessionStorage.getItem(cacheKey);
     let allMessages = cachedMessages ? JSON.parse(cachedMessages) as ChatMessage[] : null;
     if (!allMessages || limit) {
@@ -646,6 +646,8 @@ watch(() => messages.value.length, () => {
   highlightAllDeferred()
 })
 
+const cachePrefix = 'direct-support-ai-cache-'
+
 onMounted(() => {
   const nuxtApp = useNuxtApp()
   
@@ -655,7 +657,7 @@ onMounted(() => {
       // Page was restored from bfcache or session restore
       // Clear only chat message caches, not all sessionStorage
       Object.keys(sessionStorage).forEach(key => {
-        if (key.startsWith('chat-messages-')) {
+        if (key.startsWith(cachePrefix)) {
           sessionStorage.removeItem(key);
         }
       });

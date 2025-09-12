@@ -235,11 +235,33 @@ const createWidget = (config) => {
 
   // Get product public information from backend
   const getProductPublicInfo = async (backEndDomain, productId) => {
+    // Check cache first
+    const cacheKey = `product-info-${productId}`;
+    const TTL_MS = 60 * 1000; // 60 seconds
+    
+    try {
+      const cachedData = sessionStorage.getItem(cacheKey);
+      if (cachedData) {
+        const { data, timestamp } = JSON.parse(cachedData);
+        const now = Date.now();
+        
+        // Check if cache is still valid
+        if (now - timestamp < TTL_MS) {
+          console.log(`Using cached product info for ${productId} (${Math.round((TTL_MS - (now - timestamp)) / 1000)}s remaining)`);
+          return data;
+        } else {
+          // Cache expired, remove it
+          sessionStorage.removeItem(cacheKey);
+          console.log(`Product info cache expired for ${productId}, fetching fresh data`);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to read product info cache:', error);
+    }
+
+    // Fetch from API
     const endpoint = `${backEndDomain}/crud/s/product/cmd/get_public_info`;
-
-    // The API expects the dto in the "query" parameter as JSON string
     const queryParam = encodeURIComponent(JSON.stringify({ productId }));
-
     const url = `${endpoint}?query=${queryParam}`;
 
     const response = await fetch(url, {
@@ -253,7 +275,21 @@ const createWidget = (config) => {
       throw new Error(`Error ${response.status}: ${await response.text()}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    
+    // Cache the result
+    try {
+      const cacheEntry = {
+        data: data,
+        timestamp: Date.now()
+      };
+      sessionStorage.setItem(cacheKey, JSON.stringify(cacheEntry));
+      console.log(`Cached product info for ${productId} (TTL: 60s)`);
+    } catch (error) {
+      console.warn('Failed to cache product info:', error);
+    }
+
+    return data;
   };
 
   // Generate MongoDB-like ObjectId
