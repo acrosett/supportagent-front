@@ -100,7 +100,7 @@ definePageMeta({
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: $text;
     margin: 0;

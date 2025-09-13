@@ -1,5 +1,4 @@
 import { IsString, IsOptional, IsEnum, IsArray, ValidateNested, IsUrl, MinLength, IsBoolean, ArrayMinSize, Matches, IsIn } from "class-validator";
-import { Transform } from "class-transformer";
 import { Product } from "../product/product.entity";
 import { ClientPriority } from "../client/client.entity";
 
@@ -38,7 +37,6 @@ export enum ArgumentDataType {
 export class CustomToolArgument {
     @IsString()
     @MinLength(3)
-    @Transform(({ value }) => value.trim())
     name: string;
 
     @IsString()
@@ -64,7 +62,6 @@ export class CustomToolArgument {
 
     @IsString()
     @IsOptional()
-    @Transform(({ value }) => value.trim())
     defaultValue?: string;
 }
 
@@ -76,7 +73,6 @@ export class CustomTool {
 
     @IsString()
     @MinLength(1)
-    @Transform(({ value }) => value.trim().toLowerCase())
     name: string;
 
     @IsString()

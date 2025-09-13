@@ -1,11 +1,15 @@
-import { IsString, IsOptional } from "class-validator";
+import { IsString, IsOptional, IsNumber, IsBoolean, Min } from "class-validator";
 
 
 export class Email {
 
-    @IsString()
-    @IsOptional()
     id: string;
+
+    hashedEmail: string;
+
+    spamReportedCount: number = 0;
+
+    gotFreeCredits: boolean = false;
 
     createdAt: Date;
 

@@ -1,6 +1,40 @@
 import { IsString, IsOptional, MinLength, IsNumber, IsBoolean, IsEnum, Min } from "class-validator";
 import { User } from "../../user/user.entity";
 
+export class NotificationSubConfig {
+
+    @IsBoolean()
+    @IsOptional()
+    bWhatsapp: boolean = false;
+
+    @IsBoolean()
+    @IsOptional()
+    bEmail: boolean = false;
+
+}
+
+export class NotificationConfig {
+
+    @IsNumber()
+    @Min(0)
+    @IsOptional()
+    notificationUnreadCount: number = 0;
+
+    @IsBoolean()
+    @IsOptional()
+    promotionalEmails: boolean = true;
+
+    @IsOptional()
+    exceededQuota: NotificationSubConfig = new NotificationSubConfig();
+
+    @IsOptional()
+    lowBalance: NotificationSubConfig = new NotificationSubConfig();
+
+    @IsOptional()
+    newIssues: NotificationSubConfig = new NotificationSubConfig();
+
+}
+
 export class Product {
 
     @IsString()
@@ -56,9 +90,8 @@ export class Product {
     @Min(60)
     autoTopUpAmount?: number;
 
-    @IsNumber()
     @IsOptional()
-    notificationUnreadCount: number = 0;
+    notificationConfig: NotificationConfig = new NotificationConfig();
 
     // Error tracking
     @IsNumber()

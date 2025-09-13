@@ -3,6 +3,12 @@
     <header class="page-header">
       <div class="page-title">
         <h1>Custom Tools</h1>
+        <AppButton
+          label="Configure Notification Preferences"
+          color="primary"
+          margin="left"
+          @click="navigateToNotificationConfig"
+        />
       </div>
     </header>
     
@@ -171,11 +177,6 @@
         <div class="empty-icon">🛠️</div>
         <h3>No Custom Tools Yet</h3>
         <p>Create your first custom tool to start integrating with external systems.</p>
-        <AppButton
-          label="Create First Tool"
-          color="primary"
-          @click="showCreateTool = true"
-        />
       </div>
     </div>
 
