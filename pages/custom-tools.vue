@@ -3,12 +3,6 @@
     <header class="page-header">
       <div class="page-title">
         <h1>Custom Tools</h1>
-        <AppButton
-          label="Configure Notification Preferences"
-          color="primary"
-          margin="left"
-          @click="navigateToNotificationConfig"
-        />
       </div>
     </header>
     
