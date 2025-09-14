@@ -72,6 +72,7 @@ declare module 'nuxt/app' {
   interface NuxtApp {
     $sp: SuperClient,
     $userId: string,
-    $userProductId: string
+    $userProductId: string,
+    $userRole: string
   }
 }

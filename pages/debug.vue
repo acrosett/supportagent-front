@@ -65,7 +65,7 @@ const replayError = ref<string | null>(null)
 // Check admin access on page load
 onMounted(async () => {
   try {
-    const role = await useNuxtApp().$sp.user.get_user_role({ myArg: 'test' })
+    const role = await useNuxtApp().$userRole;
     if (role !== 'admin') {
       useNuxtApp().$toast.show('Access denied: Admin privileges required', 'error')
       await navigateTo('/')

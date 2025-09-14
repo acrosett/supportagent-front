@@ -129,7 +129,7 @@ const checkAdminRole = async () => {
       return;
     }
 
-    const role = await nuxtApp.$sp.user.get_user_role({ myArg: 'check' })
+    const role = await nuxtApp.$userRole;
     isAdmin.value = role === 'admin'
     
     // Load training data for all users

@@ -6,8 +6,7 @@ import { Product } from "../../SUPPORT-ms/product/product.entity";
 export enum AgentRole {
   CHAT_AGENT = 'chat_agent',
   EDITOR_AGENT = 'editor_agent',
-  OP_SUPPORT_AGENT = 'op_support_agent',
-  OVERSEER_AGENT = 'overseer_agent'
+  STAFF_CONTACT_AGENT = 'staff_contact_agent'
 }
 
 export class AgentMessage {

@@ -8,6 +8,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const jwt = nuxtApp.$sp.user.config.storage?.get(nuxtApp.$sp.user.JWT_STORAGE_KEY);
 
   const loggedIn = jwt && await checkLogin(nuxtApp).catch((e) => {
+    // Clear user role cache when login check fails
+    clearUserRoleCache()
     return false;
   });
 
@@ -38,7 +40,9 @@ async function checkLogin(nuxtApp: NuxtApp) {
   const res = await nuxtApp.$sp.user.check_jwt_extended({});
   const userId = res.base.userId as string;
   const productId = res.productId as string;
+  const userRole = res.userRole as string;
   nuxtApp.$userId = userId;
   nuxtApp.$userProductId = productId;
+  nuxtApp.$userRole = userRole;
   return res;
 }

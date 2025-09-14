@@ -108,6 +108,9 @@ export class CustomTool {
     @ArrayMinSize(1)
     clientPriorities?: ClientPriority[] = [ClientPriority.LOWEST, ClientPriority.REGULAR, ClientPriority.HIGH];
 
+    @IsBoolean()
+    provideToolToGuests: boolean = true;
+
     @IsString()
     product: Product | string;
 

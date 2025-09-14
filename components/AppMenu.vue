@@ -111,6 +111,12 @@
           </NuxtLink>
         </li>
         <li v-if="isAdmin">
+          <NuxtLink to="/logs" @click="closeMobileMenu">
+            <AppIcon name="document" size="md" class="nav-icon" />
+            System Logs
+          </NuxtLink>
+        </li>
+        <li v-if="isAdmin">
           <NuxtLink to="/debug" @click="closeMobileMenu">
             <AppIcon name="tool" size="md" class="nav-icon" />
             Debug
@@ -244,7 +250,7 @@ const checkNotificationCount = () => {
     return
   }
   
-  notificationCount.value = currentProduct.value.notificationUnreadCount || 0
+  notificationCount.value = currentProduct?.value.notificationConfig?.notificationUnreadCount || 0
 }
 
 // Close menu when route changes
@@ -265,14 +271,9 @@ watch(() => route.path, async (newPath, oldPath) => {
 
 // Close menu on escape key
 onMounted(async () => {
-  // Check admin role
-  try {
-    const role = await useNuxtApp().$sp.user.get_user_role({ myArg: 'test' })
-    isAdmin.value = role === 'admin'
-  } catch (error) {
-    console.error('Failed to check admin role:', error)
-    isAdmin.value = false
-  }
+  // Check admin role from stored value
+  const nuxtApp = useNuxtApp()
+  isAdmin.value = nuxtApp.$userRole === 'admin'
   
   // Fetch product on init
   await fetchProduct()

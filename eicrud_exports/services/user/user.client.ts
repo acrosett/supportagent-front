@@ -5,6 +5,7 @@ import { SendPasswordResetEmailDto } from './cmds/send_password_reset_email/send
 import { ResetPasswordDto } from './cmds/reset_password/reset_password.dto';
 import { LogoutEverywhereDto } from './cmds/logout_everywhere/logout_everywhere.dto';
 import { GetUserRoleDto, GetUserRoleReturnDto } from './cmds/get_user_role/get_user_role.dto';
+import { CreateAccountExtendedDto, CreateAccountExtendedReturnDto } from './cmds/create_account_extended/create_account_extended.dto';
 import { CreateAccountDto, CreateAccountReturnDto } from './cmds/create_account/create_account.dto';
 import { CheckJwtExtendedDto, CheckJwtExtendedReturnDto } from './cmds/check_jwt_extended/check_jwt_extended.dto';
 import { ChangePasswordDto } from './cmds/change_password/change_password.dto';
@@ -240,6 +241,38 @@ export class UserClient extends CrudClient<User> {
       copts?: ClientOptions,
     ): Promise<GetUserRoleReturnDto> {
       return super.cmdSL('get_user_role', dto, options, copts) as any;
+  }
+
+  async create_account_extended(
+      dto: CreateAccountExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CreateAccountExtendedReturnDto> {
+      return super.cmd('create_account_extended', dto, options, copts);
+  }
+
+  async create_account_extendedS(
+      dto: CreateAccountExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CreateAccountExtendedReturnDto> {
+      return super.cmdS('create_account_extended', dto, options, copts);
+  }
+
+  async create_account_extendedL(
+      dto: CreateAccountExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CreateAccountExtendedReturnDto> {
+      return super.cmdL('create_account_extended', dto, options, copts) as any;
+  }
+
+  async create_account_extendedSL(
+      dto: CreateAccountExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CreateAccountExtendedReturnDto> {
+      return super.cmdSL('create_account_extended', dto, options, copts) as any;
   }
 
   async create_account(
