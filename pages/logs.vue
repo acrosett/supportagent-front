@@ -70,7 +70,6 @@
                 id="start-date"
                 v-model="startDate"
                 type="datetime-local"
-                :max="maxDateTime"
                 class="filter-input date-input"
                 @change="resetAndSearch"
               />
@@ -81,7 +80,6 @@
                 id="end-date"
                 v-model="endDate"
                 type="datetime-local"
-                :max="maxDateTime"
                 class="filter-input date-input"
                 @change="resetAndSearch"
               />
@@ -218,7 +216,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { Log, LogType } from '~/eicrud_exports/services/LOG-ms/log/log.entity'
 import type { SearchDto } from '~/eicrud_exports/services/LOG-ms/log/cmds/search/search.dto'
 import type { SetDebugDto } from '~/eicrud_exports/services/LOG-ms/log/cmds/set_debug/set_debug.dto'
@@ -255,11 +253,6 @@ const selectedTypes = ref<LogType[]>([])
 const startDate = ref('')
 const endDate = ref('')
 const logTypes = Object.values(LogType)
-
-// Current datetime for max constraint
-const maxDateTime = computed(() => {
-  return new Date().toISOString().slice(0, 16)
-})
 
 // Log details popup
 const showLogDetails = ref(false)
