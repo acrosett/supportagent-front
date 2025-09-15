@@ -12,6 +12,9 @@ export class GetClientMessagesDto {
     @MaxLength(200)
     apiKey: string;
 
+    @IsBoolean()
+    inverted = false;
+
 }
 
 //used by super-client, update me here

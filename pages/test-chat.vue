@@ -27,6 +27,19 @@
             <p class="chat-subtitle">Chat Support</p>
           </div>
         </div>
+        
+        <!-- AI Toggle (only shown in inverted mode) -->
+        <div v-if="isInvertedMode" class="ai-toggle">
+          <label class="toggle-switch">
+            <span class="toggle-label">Disable AI</span>
+            <input 
+              type="checkbox" 
+              :checked="!aiEnabled" 
+              @change="toggleAI"
+            />
+            <span class="slider"></span>
+          </label>
+        </div>
       </div>
 
       <!-- Messages Area -->
@@ -34,7 +47,7 @@
         <div v-for="message in messages" :key="message.id" class="message-wrapper">
           <div :class="['message', message.type === 'user' ? 'message-fan' : 'message-model']">
             <div class="message-header">
-              <span class="sender-name">{{ message.type === 'user' ? 'Client' : 'Support Agent' }}</span>
+              <span class="sender-name">{{ getSenderName(message.type) }}</span>
               <span class="message-time">&nbsp;&nbsp;{{ formatTime(message.createdAt) }}</span>
             </div>
             <div class="message-content" v-html="renderMarkdown(message.content || '')"></div>
@@ -54,12 +67,13 @@
 
       <!-- Message Input -->
       <div class="message-input-container">
-        <div class="input-wrapper">
+        <div class="input-wrapper" :class="{ 'disabled': isInvertedMode && !aiEnabled }">
           <textarea
             v-model="messageText"
             placeholder="Type your message..."
             rows="1"
             ref="messageInput"
+            :disabled="isInvertedMode && !aiEnabled"
             @keydown.enter.exact.prevent="sendMessage"
             @keydown.enter.shift.exact="handleShiftEnter"
             @input="autoResize"
@@ -70,7 +84,7 @@
               type="button" 
               class="send-button" 
               @click="sendMessage"
-              :disabled="!messageText.trim()"
+              :disabled="!messageText.trim() || (isInvertedMode && !aiEnabled)"
             >
               <AppIcon name="send" />
             </button>
@@ -128,6 +142,8 @@ const widgetConfig = ref<any>({
 
 // Client state
 const clientIdentifier = ref('')
+const isInvertedMode = ref(false)
+const aiEnabled = ref(true)
 
 // Refs
 const messagesContainer = ref<HTMLElement>()
@@ -192,6 +208,11 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
     // Load initial messages
     await refreshMessages(nuxtApp)
     
+    // Fetch AI status if in inverted mode
+    if (isInvertedMode.value) {
+      await fetchAIStatus(nuxtApp)
+    }
+    
     // Open socket connection for real-time updates
     await openSocketConnection(nuxtApp)
 
@@ -219,7 +240,8 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number) => {
 
       const res = await nuxtApp.$sp.message.get_client_messagesL({
         identifier: clientIdentifier.value,
-        apiKey: widgetConfig.value.apiToken || ''
+        apiKey: widgetConfig.value.apiToken || '',
+        inverted: isInvertedMode.value
       },
       {
         orderBy: { createdAt: 'asc' },
@@ -350,7 +372,8 @@ const sendMessage = async () => {
     await useNuxtApp().$sp.message.send_client_message({
       identifier: identifier,
       content: messageContent,
-      apiKey: widgetConfig.value.apiToken || ''
+      apiKey: widgetConfig.value.apiToken || '',
+      inverted: isInvertedMode.value
     })
 
     // Notify parent window about user message (for guest ID storage)
@@ -397,6 +420,16 @@ const formatTime = (date?: Date | string | null) => {
   const d = date instanceof Date ? date : new Date(date)
   if (isNaN(d.getTime())) return ''
   return new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(d)
+}
+
+const getSenderName = (messageType?: string) => {
+  if (isInvertedMode.value) {
+    // In inverted mode: user messages are from AI, model messages are from Client
+    return messageType === 'user' ? 'AI' : 'Client'
+  } else {
+    // Normal mode: user messages are from Client, model messages are from Support Agent
+    return messageType === 'user' ? 'Client' : 'Support Agent'
+  }
 }
 
 // --- Markdown Rendering using marked + DOMPurify ---
@@ -459,6 +492,49 @@ function highlightAllDeferred() {
       }
     })
   })
+}
+
+// AI management functions for inverted mode
+const fetchAIStatus = async (nuxtApp: NuxtApp) => {
+  if (!isInvertedMode.value || !clientIdentifier.value || !widgetConfig.value.apiToken) {
+    return
+  }
+  
+  try {
+    const result = await nuxtApp.$sp.client.findOne({
+      id: clientIdentifier.value,
+      product: widgetConfig.value.apiToken
+    })
+    
+    if (result) {
+      aiEnabled.value = result.aiOn !== false // Default to true if undefined
+    }
+  } catch (error) {
+    console.error('Failed to fetch AI status:', error)
+  }
+}
+
+const toggleAI = async () => {
+  if (!isInvertedMode.value || !clientIdentifier.value || !widgetConfig.value.apiToken) {
+    return
+  }
+  
+  try {
+    const newAIState = !aiEnabled.value
+    
+    await useNuxtApp().$sp.client.patch({
+      id: clientIdentifier.value,
+      product: widgetConfig.value.apiToken
+    }, {
+      aiOn: newAIState
+    })
+    
+    aiEnabled.value = newAIState
+    useNuxtApp().$toast.show(`AI ${newAIState ? 'enabled' : 'disabled'}`, 'success')
+  } catch (error) {
+    useNuxtApp().$toast.show(error, 'error')
+    console.error('Failed to toggle AI:', error)
+  }
 }
 
 // Audio context for bip sounds (created after user interaction)
@@ -549,7 +625,8 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     // Create WebSocket connection with identifier and apikey
     const socketData = {
       identifier: identifier,
-      apikey: apikey || ''
+      apikey: apikey || '',
+      inverted: isInvertedMode.value
     }
     const wsUrl = `${wsBaseUrl}/chat-socket?data=${encodeURIComponent(JSON.stringify(socketData))}`
     socket.value = new WebSocket(wsUrl)
@@ -688,6 +765,12 @@ onMounted(() => {
     clientIdentifier.value = route.query['user-token'] as string
   }
   
+  // Check for inverted mode URL parameter
+  if (route.query['inverted']) {
+    console.log('Inverted mode from URL:', route.query['inverted'])
+    isInvertedMode.value = route.query['inverted'] === 'true'
+  }
+  
   // Initialize chat if we have an identifier from URL params
   if (clientIdentifier.value && (route.query['guest-id'] || route.query['user-token'])) {
     console.log('Initializing chat from URL parameters...')
@@ -824,7 +907,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 @keyframes spin { 0% {transform:rotate(0deg);} 100% {transform:rotate(360deg);} }
 
 .chat-container { display:flex; flex-direction:column; height:100%; overflow:hidden; }
-.chat-header { padding:1rem; border-bottom:1px solid #e1e5e9; background:#f8f9fa; flex-shrink:0; }
+.chat-header { padding:1rem; border-bottom:1px solid #e1e5e9; background:#f8f9fa; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; }
 .dark-mode .chat-header { background:#1e1e22; border-bottom-color:#2a2a31; }
 .model-info { display:flex; align-items:center; gap:.75rem; }
 .model-avatar { width:40px; height:40px; flex-shrink:0; }
@@ -888,6 +971,22 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .dark-mode .send-button { background:linear-gradient(135deg,var(--primary-color,#667eea) 0%,var(--secondary-color,#764ba2) 100%); }
 .send-button:hover:not(:disabled) { background:var(--primary-color-hover, #5a6fd8); }
 .send-button:disabled { background:#ccc; cursor:not-allowed; }
+
+/* AI Toggle Styles */
+.ai-toggle { display:flex; align-items:center; }
+.toggle-switch { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+.toggle-label { font-size:.875rem; color:#666; font-weight:500; }
+.dark-mode .toggle-label { color:#ccc; }
+.toggle-switch input[type="checkbox"] { display:none; }
+.slider { position:relative; width:44px; height:24px; background:#ccc; border-radius:24px; transition:background .3s; }
+.slider:before { content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; background:#fff; border-radius:50%; transition:transform .3s; }
+.toggle-switch input:checked + .slider { background:var(--primary-color, #667eea); }
+.toggle-switch input:checked + .slider:before { transform:translateX(20px); }
+
+/* Disabled Input Styles */
+.input-wrapper.disabled { opacity:.6; pointer-events:none; }
+.input-wrapper.disabled textarea { background:#f5f5f5; color:#999; }
+.dark-mode .input-wrapper.disabled textarea { background:#2a2a2a; color:#666; }
 
 .training-data-panel { display:none !important; }
 

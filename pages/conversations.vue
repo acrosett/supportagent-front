@@ -31,6 +31,12 @@
             @click="setFilter('all')"
           />
           <AppButton
+            :label="'Unread (' + unreadConversations + ')'"
+            :color="activeFilter === 'unread' ? 'primary' : 'secondary'"
+            size="sm"
+            @click="setFilter('unread')"
+          />
+          <AppButton
             :label="'Active (' + activeConversations + ')'"
             :color="activeFilter === 'active' ? 'primary' : 'secondary'"
             size="sm"
@@ -42,11 +48,23 @@
             size="sm"
             @click="setFilter('resolved')"
           />
+          <AppButton
+            :label="'AI Off (' + aiOffConversations + ')'"
+            :color="activeFilter === 'ai-off' ? 'warning' : 'secondary'"
+            size="sm"
+            @click="setFilter('ai-off')"
+          />
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading conversations...</p>
+      </div>
+
       <!-- Conversations List -->
-      <div v-if="filteredConversations.length === 0" class="empty-state">
+      <div v-else-if="filteredConversations.length === 0" class="empty-state">
         <h3>No conversations found</h3>
         <p>Customer conversations will appear here when they start chatting</p>
       </div>
@@ -56,41 +74,59 @@
           v-for="conversation in filteredConversations"
           :key="conversation.id"
           class="conversation-card"
-          :class="{ 'active': conversation.status === 'active', 'resolved': conversation.status === 'resolved' }"
+          :class="{ 
+            'active': !conversation.conversationResolved, 
+            'resolved': conversation.conversationResolved,
+            'unread': !conversation.lastMessageReadByStaff,
+            'ai-disabled': !conversation.aiOn
+          }"
         >
+          <!-- Unread indicator -->
+          <div v-if="!conversation.lastMessageReadByStaff" class="unread-indicator"></div>
+          
           <div class="conversation-header">
             <div class="customer-info">
-              <h3 class="customer-name">{{ conversation.customerName || 'Anonymous User' }}</h3>
+              <h3 class="customer-name">{{ getDisplayName(conversation) }}</h3>
               <p class="conversation-id">ID: {{ conversation.id.slice(0, 8) }}</p>
             </div>
             <div class="conversation-status">
+              <!-- AI Status Badge -->
+              <span
+                class="ai-status-badge"
+                :class="{ 'ai-on': conversation.aiOn, 'ai-off': !conversation.aiOn }"
+              >
+                <AppIcon :name="conversation.aiOn ? 'check' : 'close'" size="sm" />
+                AI {{ conversation.aiOn ? 'On' : 'Off' }}
+              </span>
+              
+              <!-- Conversation Status Badge -->
               <span
                 class="status-badge"
-                :class="conversation.status"
+                :class="{ 'active': !conversation.conversationResolved, 'resolved': conversation.conversationResolved }"
               >
-                <AppIcon :name="conversation.status === 'active' ? 'time' : 'check'" size="sm" />
-                {{ conversation.status === 'active' ? 'Active' : 'Resolved' }}
+                <AppIcon :name="!conversation.conversationResolved ? 'time' : 'check'" size="sm" />
+                {{ !conversation.conversationResolved ? 'Active' : 'Resolved' }}
               </span>
             </div>
           </div>
 
           <div class="conversation-preview">
-            <p class="last-message">{{ conversation.lastMessage }}</p>
+            <p class="last-message">{{ getLastMessage(conversation) }}</p>
             <div class="conversation-meta">
-              <span class="message-count">{{ conversation.messageCount }} messages</span>
-              <span class="last-activity">{{ formatDate(conversation.lastActivity) }}</span>
+              <span class="message-count">{{ getMessageCount(conversation) }} messages</span>
+              <span class="last-activity">{{ formatDate(conversation.lastMessageDate) }}</span>
             </div>
           </div>
 
           <div class="conversation-actions">
             <AppButton
-              label="View Details"
+              label="Open Inverted Chat"
               color="primary"
               size="sm"
-              @click="viewConversation(conversation)"
+              @click="openInvertedChat(conversation)"
             />
             <AppButton
-              v-if="conversation.status === 'active'"
+              v-if="!conversation.conversationResolved"
               label="Mark Resolved"
               color="secondary"
               size="sm"
@@ -106,82 +142,188 @@
 <script setup lang="ts">
 import AppButton from '~/components/AppButton.vue'
 import AppIcon from '~/components/AppIcon.vue'
+import { Client } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
+import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 
-// Demo data - replace with API calls
-const conversations = ref([
-  {
-    id: '1',
-    customerName: 'John Doe',
-    status: 'active',
-    lastMessage: 'I need help with my account settings...',
-    messageCount: 12,
-    lastActivity: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-  },
-  {
-    id: '2',
-    customerName: 'Jane Smith',
-    status: 'resolved',
-    lastMessage: 'Thank you for the help!',
-    messageCount: 8,
-    lastActivity: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-  },
-  {
-    id: '3',
-    customerName: null, // Anonymous
-    status: 'active',
-    lastMessage: 'How do I reset my password?',
-    messageCount: 3,
-    lastActivity: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-  }
-])
-
+// State
+const clients = ref<Client[]>([])
+const lastMessages = ref<Record<string, Message>>({})
+const isLoading = ref(true)
 const searchQuery = ref('')
 const activeFilter = ref('all')
 
+// Load conversations data
+const loadConversations = async () => {
+  try {
+    isLoading.value = true
+    
+    // Get current user's API token for product filter
+    const { $sp } = useNuxtApp()
+    
+    // Get current user (assuming we have user session)
+    const userResult = await $sp.user.find({})
+    const user = userResult.data?.[0]
+    
+    if (!user?.apiKey) {
+      throw new Error('User API key not found')
+    }
+    
+    // Search for clients using the product (API key)
+    const clientsResult = await $sp.client.search({
+      product: user.apiKey,
+      // Could add text search if needed: text: searchQuery.value
+    })
+    
+    clients.value = clientsResult.data || []
+    
+    // Load last message for each client
+    await loadLastMessages()
+    
+  } catch (error) {
+    console.error('Failed to load conversations:', error)
+    useNuxtApp().$toast.show(error, 'error')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Load the last message for each client
+const loadLastMessages = async () => {
+  const { $sp } = useNuxtApp()
+  
+  // Get current user
+  const userResult = await $sp.user.find({})
+  const user = userResult.data?.[0]
+  
+  if (!user?.apiKey) return
+  
+  const messages: Record<string, Message> = {}
+  
+  // Load last message for each client
+  await Promise.all(
+    clients.value.map(async (client) => {
+      try {
+        const result = await $sp.message.get_client_messagesL({
+          identifier: client.id,
+          apiKey: user.apiKey,
+          inverted: false
+        }, {
+          orderBy: { createdAt: 'desc' },
+          limit: 1
+        })
+        
+        if (result.data && result.data.length > 0) {
+          messages[client.id] = result.data[0]!
+        }
+      } catch (error) {
+        console.error(`Failed to load last message for client ${client.id}:`, error)
+      }
+    })
+  )
+  
+  lastMessages.value = messages
+}
+
 // Computed properties
 const filteredConversations = computed(() => {
-  let filtered = conversations.value
+  let filtered = clients.value
 
-  // Filter by status
-  if (activeFilter.value !== 'all') {
-    filtered = filtered.filter(c => c.status === activeFilter.value)
+  // Filter by status (read/unread, resolved/active, AI on/off)
+  if (activeFilter.value === 'unread') {
+    filtered = filtered.filter(c => !c.lastMessageReadByStaff)
+  } else if (activeFilter.value === 'active') {
+    filtered = filtered.filter(c => !c.conversationResolved)
+  } else if (activeFilter.value === 'resolved') {
+    filtered = filtered.filter(c => c.conversationResolved)
+  } else if (activeFilter.value === 'ai-off') {
+    filtered = filtered.filter(c => !c.aiOn)
   }
 
   // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     filtered = filtered.filter(c => 
-      c.customerName?.toLowerCase().includes(query) ||
-      c.lastMessage.toLowerCase().includes(query) ||
-      c.id.includes(query)
+      c.name?.toLowerCase().includes(query) ||
+      c.email?.toLowerCase().includes(query) ||
+      c.id.includes(query) ||
+      lastMessages.value[c.id]?.content?.toLowerCase().includes(query)
     )
   }
 
   return filtered
 })
 
-const totalConversations = computed(() => conversations.value.length)
-const activeConversations = computed(() => conversations.value.filter(c => c.status === 'active').length)
-const resolvedConversations = computed(() => conversations.value.filter(c => c.status === 'resolved').length)
+const totalConversations = computed(() => clients.value.length)
+const unreadConversations = computed(() => clients.value.filter(c => !c.lastMessageReadByStaff).length)
+const activeConversations = computed(() => clients.value.filter(c => !c.conversationResolved).length)
+const resolvedConversations = computed(() => clients.value.filter(c => c.conversationResolved).length)
+const aiOffConversations = computed(() => clients.value.filter(c => !c.aiOn).length)
 
 // Methods
 const setFilter = (filter: string) => {
   activeFilter.value = filter
 }
 
-const viewConversation = (conversation: any) => {
-  // TODO: Navigate to conversation details
-  console.log('Viewing conversation:', conversation.id)
+const openInvertedChat = async (client: Client) => {
+  try {
+    // Mark conversation as read when opening
+    await useNuxtApp().$sp.client.patch({
+      id: client.id,
+      product: client.product as string
+    }, {
+      lastMessageReadByStaff: true
+    })
+    
+    // Update local state
+    const clientIndex = clients.value.findIndex(c => c.id === client.id)
+    if (clientIndex !== -1 && clients.value[clientIndex]) {
+      clients.value[clientIndex]!.lastMessageReadByStaff = true
+    }
+    
+    // Navigate to inverted chat
+    const userResult = await useNuxtApp().$sp.user.find({})
+    const user = userResult.data?.[0]
+    
+    if (user?.apiKey) {
+      await navigateTo(`/test-chat?inverted=true&user-token=${client.id}&api-token=${user.apiKey}`)
+    }
+    
+  } catch (error) {
+    console.error('Failed to open inverted chat:', error)
+    useNuxtApp().$toast.show(error, 'error')
+  }
 }
 
-const markResolved = (conversation: any) => {
-  conversation.status = 'resolved'
-  conversation.lastActivity = new Date()
+const markResolved = async (client: Client) => {
+  try {
+    await useNuxtApp().$sp.client.patch({
+      id: client.id,
+      product: client.product as string
+    }, {
+      conversationResolved: true
+    })
+    
+    // Update local state
+    const clientIndex = clients.value.findIndex(c => c.id === client.id)
+    if (clientIndex !== -1 && clients.value[clientIndex]) {
+      clients.value[clientIndex]!.conversationResolved = true
+    }
+    
+    useNuxtApp().$toast.show('Conversation marked as resolved', 'success')
+  } catch (error) {
+    console.error('Failed to mark conversation as resolved:', error)
+    useNuxtApp().$toast.show(error, 'error')
+  }
 }
 
-const formatDate = (date: Date) => {
+const formatDate = (date?: Date | string) => {
+  if (!date) return 'No activity'
+  
+  const d = date instanceof Date ? date : new Date(date)
+  if (isNaN(d.getTime())) return 'Invalid date'
+  
   const now = new Date()
-  const diff = now.getTime() - date.getTime()
+  const diff = now.getTime() - d.getTime()
   const minutes = Math.floor(diff / (1000 * 60))
   const hours = Math.floor(diff / (1000 * 60 * 60))
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
@@ -194,6 +336,32 @@ const formatDate = (date: Date) => {
     return `${days}d ago`
   }
 }
+
+const getDisplayName = (client: Client) => {
+  return client.name || client.email || 'Anonymous User'
+}
+
+const getLastMessage = (client: Client) => {
+  const message = lastMessages.value[client.id]
+  return message?.content || 'No messages yet'
+}
+
+const getMessageCount = (client: Client) => {
+  return client.messageCount || 0
+}
+
+// Load data on mount
+onMounted(() => {
+  loadConversations()
+})
+
+// Watch search query for real-time search
+watch(searchQuery, async (newQuery) => {
+  if (newQuery.trim()) {
+    // Could implement real-time search with API
+    // For now, just filter locally
+  }
+})
 </script>
 
 <style scoped lang="scss">
@@ -314,6 +482,7 @@ const formatDate = (date: Date) => {
   border-radius: $radius;
   padding: 1.5rem;
   transition: all 0.3s ease;
+  position: relative;
   
   &.active {
     border-color: $brand;
@@ -330,6 +499,28 @@ const formatDate = (date: Date) => {
       border-bottom-color: rgba($brand-2, 0.2);
     }
   }
+  
+  &.unread {
+    background: rgba($brand, 0.02);
+    border-color: $brand;
+    border-width: 3px;
+  }
+  
+  &.ai-disabled {
+    border-color: #ff6b6b;
+    background: rgba(#ff6b6b, 0.02);
+  }
+}
+
+.unread-indicator {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 10px;
+  height: 10px;
+  background: $brand;
+  border-radius: 50%;
+  border: 2px solid $bg;
 }
 
 .conversation-header {
@@ -359,6 +550,31 @@ const formatDate = (date: Date) => {
 }
 
 .conversation-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+  
+  .ai-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: $radius;
+    font-size: 0.75rem;
+    font-weight: 600;
+    
+    &.ai-on {
+      background: rgba($brand-2, 0.1);
+      color: $brand-2;
+    }
+    
+    &.ai-off {
+      background: rgba(#ff6b6b, 0.1);
+      color: #ff6b6b;
+    }
+  }
+  
   .status-badge {
     display: inline-flex;
     align-items: center;
@@ -377,6 +593,31 @@ const formatDate = (date: Date) => {
       background: rgba($brand-2, 0.1);
       color: $brand-2;
     }
+  }
+}
+
+// Add loading spinner styles
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  color: $muted;
+  
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba($brand, 0.2);
+    border-top: 3px solid $brand;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 }
 

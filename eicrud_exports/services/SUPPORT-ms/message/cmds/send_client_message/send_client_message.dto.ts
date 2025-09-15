@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MaxLength } from "class-validator";
+import { IsString, IsOptional, MaxLength, IsBoolean } from "class-validator";
 
 
 export class SendClientMessageDto {
@@ -14,6 +14,9 @@ export class SendClientMessageDto {
     @IsString()
     @MaxLength(2000)
     content: string;
+
+    @IsBoolean()
+    inverted = false;
 
 }
 

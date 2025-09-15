@@ -1,3 +1,4 @@
+import { SearchDto, SearchReturnDto } from './cmds/search/search.dto';
 import { GetRealIdentifierDto, GetRealIdentifierReturnDto } from './cmds/get_real_identifier/get_real_identifier.dto';
 import { CheckMessageQuotaDto, CheckMessageQuotaReturnDto } from './cmds/check_message_quota/check_message_quota.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
@@ -10,6 +11,38 @@ export class ClientClient extends CrudClient<Client> {
     super({...config, serviceName: 'client'});
   }
   // GENERATED START
+  async search(
+      dto: SearchDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<SearchReturnDto> {
+      return super.cmd('search', dto, options, copts);
+  }
+
+  async searchS(
+      dto: SearchDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<SearchReturnDto> {
+      return super.cmdS('search', dto, options, copts);
+  }
+
+  async searchL(
+      dto: SearchDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<SearchReturnDto> {
+      return super.cmdL('search', dto, options, copts) as any;
+  }
+
+  async searchSL(
+      dto: SearchDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<SearchReturnDto> {
+      return super.cmdSL('search', dto, options, copts) as any;
+  }
+
   async get_real_identifier(
       dto: GetRealIdentifierDto,
       options: ICrudOptions = undefined,

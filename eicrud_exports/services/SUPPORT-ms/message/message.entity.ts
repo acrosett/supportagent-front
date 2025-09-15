@@ -30,9 +30,6 @@ export class Message {
     @IsOptional()
     metadata?: any;
 
-    @IsOptional()
-    spend?: Spend;
-
     createdAt: Date;
 
     updatedAt: Date;

@@ -17,7 +17,8 @@ export class Client {
 
     owner: User | string;
 
-    product: Product;
+    @IsString()
+    product: Product | string;
 
     uniqueId: string;
 
@@ -60,7 +61,11 @@ export class Client {
 
     ghostedUntil: Date;
 
+    @IsBoolean()
+    aiOn: boolean = true;
 
+    @IsBoolean()
+    lastMessageReadByStaff: boolean = false;
 
     createdAt: Date;
 
