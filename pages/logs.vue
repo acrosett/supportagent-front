@@ -2,27 +2,41 @@
   <div class="logs-page">
     <div class="header">
       <div class="header-content">
-        <div></div> <!-- Spacer -->
         <h1>System Logs</h1>
-        <div class="debug-toggle-container">
-          <div class="debug-toggle">
-            <label class="debug-label">
-              <span v-if="debugEnabled">⚠️</span>
-              Collect Debug Logs
-            </label>
-            <ToggleSwitch
-              :model-value="debugEnabled"
-              :disabled="debugLoading"
-              on-label="ON"
-              off-label="OFF"
-              @update:model-value="toggleDebug"
-            />
-          </div>
-        </div>
       </div>
     </div>
 
     <div class="content">
+      <!-- Chart Section -->
+      <div class="chart-section">
+        <div class="chart-header">
+          <h3>Log Activity Analysis</h3>
+          <div class="chart-controls">
+            <div class="time-period-buttons">
+              <AppButton
+                v-for="weeks in [1, 2, 3, 4]"
+                :key="weeks"
+                :label="`${weeks} Week${weeks > 1 ? 's' : ''}`"
+                :color="chartWeeks === weeks ? 'primary' : 'secondary'"
+                size="small"
+                @click="changeChartWeeks(weeks)"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container-wrapper">
+          <div v-if="chartLoading" class="chart-loading">
+            <p>Loading chart data...</p>
+          </div>
+          <canvas
+            ref="chartContainer"
+            class="chart-canvas"
+            :style="{ display: chartLoading ? 'none' : 'block' }"
+          ></canvas>
+        </div>
+      </div>
+
       <div class="filters">
         <div class="filter-group">
           <label for="message-search">Search Message:</label>
@@ -85,6 +99,20 @@
               />
             </div>
           </div>
+        </div>
+        
+        <div class="filter-group">
+          <label class="debug-label">
+            <span v-if="debugEnabled">⚠️</span>
+            Collect Debug Logs
+          </label>
+          <ToggleSwitch
+            :model-value="debugEnabled"
+            :disabled="debugLoading"
+            on-label="ON"
+            off-label="OFF"
+            @update:model-value="toggleDebug"
+          />
         </div>
         
         <AppButton
@@ -216,8 +244,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { Log, LogType } from '~/eicrud_exports/services/LOG-ms/log/log.entity'
+import { AdminNotif } from '~/eicrud_exports/services/LOG-ms/admin-notif/admin-notif.entity'
 import type { SearchDto } from '~/eicrud_exports/services/LOG-ms/log/cmds/search/search.dto'
 import type { SetDebugDto } from '~/eicrud_exports/services/LOG-ms/log/cmds/set_debug/set_debug.dto'
 import type { GetDebugDto } from '~/eicrud_exports/services/LOG-ms/log/cmds/get_debug/get_debug.dto'
@@ -225,6 +254,7 @@ import AppButton from '~/components/AppButton.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
 import { CrudOptions } from '~/eicrud_exports/CrudOptions'
+import 'chartjs-adapter-date-fns'
 
 // Define middleware to check admin access
 definePageMeta({
@@ -246,6 +276,13 @@ const pageSize = 20
 // Debug toggle
 const debugEnabled = ref(false)
 const debugLoading = ref(false)
+
+// Chart data and state
+const chartData = ref<AdminNotif[]>([])
+const chartLoading = ref(false)
+const chartWeeks = ref(1)
+const chartContainer = ref<HTMLElement | null>(null)
+let chartInstance: any = null
 
 // Filters
 const searchMessage = ref('')
@@ -338,6 +375,180 @@ const clearFilters = () => {
   startDate.value = ''
   endDate.value = ''
   resetAndSearch()
+}
+
+// Chart functions
+const loadChartData = async () => {
+  chartLoading.value = true
+  try {
+    const options: CrudOptions = {
+      orderBy: { startDate: 'ASC' },
+      limit: chartWeeks.value * 7 * 24 * 4 // 4 buckets per hour * 24 hours * days
+    }
+    
+    const result = await useNuxtApp().$sp.adminNotif.find({}, options)
+    
+    // Filter to the desired date range since buckets are ordered by startDate
+    const endDate = new Date()
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - (chartWeeks.value * 7))
+    
+    chartData.value = (result.data || []).filter(bucket => {
+      const bucketDate = new Date(bucket.startDate)
+      return bucketDate >= startDate && bucketDate <= endDate
+    })
+
+    // Use nextTick to ensure DOM is updated before creating chart
+    await nextTick()
+    createChart()
+    
+  } catch (error) {
+    console.error('Error loading chart data:', error)
+    useNuxtApp().$toast.show('Failed to load chart data', 'error')
+  } finally {
+    chartLoading.value = false
+  }
+}
+
+const createChart = async (retryCount = 0) => {
+  if (!chartData.value.length) {
+    return
+  }
+  
+  if (!chartContainer.value) {
+    if (retryCount < 3) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      return createChart(retryCount + 1)
+    } else {
+      console.error('chartContainer still not available after retries')
+      return
+    }
+  }
+  
+  try {
+    // @ts-ignore - Chart.js dynamic import in Nuxt
+    const { Chart, registerables } = await import('chart.js')
+    Chart.register(...registerables)
+    
+    // Destroy existing chart
+    if (chartInstance) {
+      chartInstance.destroy()
+    }
+    
+    const ctx = (chartContainer.value as HTMLCanvasElement).getContext('2d')
+    if (!ctx) return
+    
+    // Prepare data for each log type
+    const logTypeColors = {
+      debug: '#6c757d',
+      info: 'lightskyblue',
+      warning: '#ffc107',
+      error: 'rgb(197, 0, 0)',
+      security: 'purple',
+      critical: '#d935dc'
+    }
+    
+    const datasets = Object.keys(logTypeColors).map(logType => {
+      const data = chartData.value.map(bucket => {
+        const value = bucket[logType as keyof AdminNotif] as number
+        return {
+          x: new Date(bucket.startDate).getTime(),
+          y: value || 0,
+          bucket: bucket
+        }
+      })
+      
+      return {
+        label: logType.toUpperCase(),
+        data,
+        borderColor: logTypeColors[logType as keyof typeof logTypeColors],
+        backgroundColor: logTypeColors[logType as keyof typeof logTypeColors] + '20',
+        tension: 0.1,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }
+    })
+    
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              unit: 'hour',
+              displayFormats: {
+                hour: 'MMM dd HH:mm'
+              }
+            },
+            title: {
+              display: true,
+              text: 'Time'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Log Count'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: `Log Activity (${chartWeeks.value} week${chartWeeks.value > 1 ? 's' : ''})`
+          },
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'point'
+        },
+        onClick: (event: any, elements: any[]) => {
+          if (elements.length > 0) {
+            const element = elements[0]
+            const datasetIndex = element.datasetIndex
+            const index = element.index
+            const dataset = datasets[datasetIndex]
+            const dataPoint = dataset?.data[index]
+            const bucket = dataPoint?.bucket as AdminNotif
+            
+            if (bucket) {
+              // Set date range to this bucket
+              const bucketStart = new Date(bucket.startDate)
+              const bucketEnd = new Date(bucketStart.getTime() + 15 * 60 * 1000) // +15 minutes
+              
+              startDate.value = bucketStart.toISOString().slice(0, 16)
+              endDate.value = bucketEnd.toISOString().slice(0, 16)
+              
+              // Trigger search
+              resetAndSearch()
+              
+              // Show toast
+              useNuxtApp().$toast.show(`Filtered to ${bucketStart.toLocaleString()} - ${bucketEnd.toLocaleString()}`, 'info')
+            }
+          }
+        }
+      }
+    })
+  } catch (error) {
+    console.error('Error creating chart:', error)
+    useNuxtApp().$toast.show('Failed to load chart', 'error')
+  }
+}
+
+const changeChartWeeks = async (weeks: number) => {
+  chartWeeks.value = weeks
+  await loadChartData()
 }
 
 // Debug toggle functions
@@ -433,6 +644,9 @@ onMounted(async () => {
   // Load initial logs
   await loadLogs(true)
   
+  // Load chart data
+  await loadChartData()
+  
   // Add scroll listener
   window.addEventListener('scroll', handleScroll)
 })
@@ -440,6 +654,10 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   if (searchTimeout) clearTimeout(searchTimeout)
+  if (chartInstance) {
+    chartInstance.destroy()
+    chartInstance = null
+  }
 })
 </script>
 
@@ -477,19 +695,6 @@ onUnmounted(() => {
   }
 }
 
-.debug-toggle-container {
-  display: flex;
-  justify-content: flex-end;
-  min-width: 200px;
-}
-
-.debug-toggle {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-}
-
 .debug-label {
   font-size: 0.875rem;
   font-weight: 600;
@@ -498,6 +703,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
   
   span {
     font-size: 1rem;
@@ -653,9 +859,11 @@ onUnmounted(() => {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
   
-  &.log-type-error,
+  &.log-type-error {
+    border-left-color: rgb(197, 0, 0);
+  }
   &.log-type-critical {
-    border-left-color: var(--error);
+    border-left-color: #d935dc;
   }
   
   &.log-type-warning {
@@ -663,7 +871,7 @@ onUnmounted(() => {
   }
   
   &.log-type-info {
-    border-left-color: var(--brand);
+    border-left-color: lightskyblue;
   }
   
   &.log-type-debug {
@@ -671,7 +879,7 @@ onUnmounted(() => {
   }
   
   &.log-type-security {
-    border-left-color: #dc3545;
+    border-left-color: purple;
   }
 }
 
@@ -689,9 +897,13 @@ onUnmounted(() => {
   font-weight: 600;
   text-transform: uppercase;
   
-  &.badge-error,
+  &.badge-error {
+    background: rgb(197, 0, 0);
+    color: white;
+  }
+  
   &.badge-critical {
-    background: var(--error);
+    background: #d935dc;
     color: white;
   }
   
@@ -701,8 +913,8 @@ onUnmounted(() => {
   }
   
   &.badge-info {
-    background: var(--brand);
-    color: white;
+    background: lightskyblue;
+    color: #212529;
   }
   
   &.badge-debug {
@@ -711,7 +923,7 @@ onUnmounted(() => {
   }
   
   &.badge-security {
-    background: #dc3545;
+    background: purple;
     color: white;
   }
 }
@@ -824,6 +1036,75 @@ onUnmounted(() => {
   
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+// Chart styles
+.chart-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  
+  h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+  }
+}
+
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.time-period-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chart-container-wrapper {
+  position: relative;
+  height: 400px;
+  width: 100%;
+}
+
+.chart-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .chart-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .time-period-buttons {
+    flex-wrap: wrap;
+  }
+  
+  .chart-container-wrapper {
+    height: 300px;
   }
 }
 </style>
