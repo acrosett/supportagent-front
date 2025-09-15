@@ -160,17 +160,16 @@ const loadConversations = async () => {
     // Get current user's API token for product filter
     const { $sp } = useNuxtApp()
     
-    // Get current user (assuming we have user session)
-    const userResult = await $sp.user.find({})
-    const user = userResult.data?.[0]
+    // Get the user's product ID (API key)
+    const apiKey = useNuxtApp().$userProductId
     
-    if (!user?.apiKey) {
+    if (!apiKey) {
       throw new Error('User API key not found')
     }
     
     // Search for clients using the product (API key)
     const clientsResult = await $sp.client.search({
-      product: user.apiKey,
+      product: apiKey,
       // Could add text search if needed: text: searchQuery.value
     })
     
@@ -191,11 +190,10 @@ const loadConversations = async () => {
 const loadLastMessages = async () => {
   const { $sp } = useNuxtApp()
   
-  // Get current user
-  const userResult = await $sp.user.find({})
-  const user = userResult.data?.[0]
+  // Get the user's product ID (API key)
+  const apiKey = useNuxtApp().$userProductId
   
-  if (!user?.apiKey) return
+  if (!apiKey) return
   
   const messages: Record<string, Message> = {}
   
@@ -205,8 +203,8 @@ const loadLastMessages = async () => {
       try {
         const result = await $sp.message.get_client_messagesL({
           identifier: client.id,
-          apiKey: user.apiKey,
-          inverted: false
+          apiKey: apiKey,
+          inverted: true
         }, {
           orderBy: { createdAt: 'desc' },
           limit: 1
@@ -269,7 +267,7 @@ const openInvertedChat = async (client: Client) => {
     // Mark conversation as read when opening
     await useNuxtApp().$sp.client.patch({
       id: client.id,
-      product: client.product as string
+      product: useNuxtApp().$userProductId
     }, {
       lastMessageReadByStaff: true
     })
@@ -281,11 +279,10 @@ const openInvertedChat = async (client: Client) => {
     }
     
     // Navigate to inverted chat
-    const userResult = await useNuxtApp().$sp.user.find({})
-    const user = userResult.data?.[0]
+    const apiKey = useNuxtApp().$userProductId
     
-    if (user?.apiKey) {
-      await navigateTo(`/test-chat?inverted=true&user-token=${client.id}&api-token=${user.apiKey}`)
+    if (apiKey) {
+      await navigateTo(`/test-chat?inverted=true&user-token=${client.id}&api-token=${apiKey}`)
     }
     
   } catch (error) {
@@ -501,9 +498,12 @@ watch(searchQuery, async (newQuery) => {
   }
   
   &.unread {
-    background: rgba($brand, 0.02);
     border-color: $brand;
     border-width: 3px;
+  }
+  
+  &:not(.unread) {
+    background: rgba($brand, 0.02);
   }
   
   &.ai-disabled {
