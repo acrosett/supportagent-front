@@ -3,6 +3,21 @@
     <div class="header">
       <div class="header-content">
         <h1>System Logs</h1>
+        <div class="debug-toggle-container">
+          <div class="debug-toggle">
+            <label class="debug-label">
+              <span v-if="debugEnabled">⚠️</span>
+              Collect Debug Logs
+            </label>
+            <ToggleSwitch
+              :model-value="debugEnabled"
+              :disabled="debugLoading"
+              on-label="ON"
+              off-label="OFF"
+              @update:model-value="toggleDebug"
+            />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -10,7 +25,7 @@
       <!-- Chart Section -->
       <div class="chart-section">
         <div class="chart-header">
-          <h3>Log Activity Analysis</h3>
+          <h3>Log Activity</h3>
           <div class="chart-controls">
             <div class="time-period-buttons">
               <AppButton
@@ -99,20 +114,6 @@
               />
             </div>
           </div>
-        </div>
-        
-        <div class="filter-group">
-          <label class="debug-label">
-            <span v-if="debugEnabled">⚠️</span>
-            Collect Debug Logs
-          </label>
-          <ToggleSwitch
-            :model-value="debugEnabled"
-            :disabled="debugLoading"
-            on-label="ON"
-            off-label="OFF"
-            @update:model-value="toggleDebug"
-          />
         </div>
         
         <AppButton
@@ -695,6 +696,19 @@ onUnmounted(() => {
   }
 }
 
+.debug-toggle-container {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 200px;
+}
+
+.debug-toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
 .debug-label {
   font-size: 0.875rem;
   font-weight: 600;
@@ -703,10 +717,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
   
   span {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 }
 
