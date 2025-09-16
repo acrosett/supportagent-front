@@ -156,6 +156,10 @@ const fieldOverrides: OverrideRecord<CustomTool> = {
                     { label: 'Shared Secret', value: ArgumentValueType.SHARED_SECRET },
                     { label: 'Constant Value', value: ArgumentValueType.CONSTANT }
                 ],
+                conditionsFieldsIfValue: [
+                    { field: 'constantValue', value: ArgumentValueType.CONSTANT },
+                    { field: 'defaultValue', value: ArgumentValueType.SET_BY_AI },
+                ],
                 description: 'How the parameter value should be determined'
             },
             dataType: {
@@ -174,12 +178,7 @@ const fieldOverrides: OverrideRecord<CustomTool> = {
                 label: 'Constant Value',
                 placeholder: 'Enter fixed value...',
                 description: 'Fixed value to use (only for constant value type)',
-                conditionsFields: ['valueType'],
                 // Show only when valueType is CONSTANT
-                titleColor: () => {
-                    const arg = formData.arguments?.find((arg: any) => arg.valueType === ArgumentValueType.CONSTANT)
-                    return arg ? undefined : '#999'
-                }
             },
             required: {
                 type: 'checkbox',

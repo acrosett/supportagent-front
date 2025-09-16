@@ -30,6 +30,7 @@ export interface FieldOverride<T = any> {
   mapObjectField?: string; // Field to display from objects (e.g. "name") while keeping full objects
   conditionsFields?: (keyof T)[]; // Only show if all these fields are truthy
   invertedConditionsFields?: (keyof T)[]; // Only show if all these fields are falsy
+  conditionsFieldsIfValue?: Array<{ field: keyof T; value: any }>; // Only show if specific field equals specific value
   maxHeight?: string; // CSS max-height value (e.g. "500px", "20rem")
   maxChars?: number; // Maximum character count for input fields
   selectOptions?: Array<{ label: string; value: any }>; // Options for select dropdown
@@ -152,16 +153,30 @@ function getFields(cls: any) {
     let show = true
     
     // Check if any other field controls this field's visibility
-    Object.entries(props.fieldOverrides || {}).forEach(([controllerKey, controllerOverride]) => {
+    const overrides = Object.entries(props.fieldOverrides || {})
+    for (const [controllerKey, controllerOverride] of overrides) {
       if (controllerOverride?.conditionsFields?.includes(field.key)) {
-        // This field is controlled by controllerKey - show only if controller is truthy
-        if (!formData[controllerKey]) show = false
+      // This field is controlled by controllerKey - show only if controller is truthy
+      if (!formData[controllerKey]) {
+        show = false
+        break
+      }
       }
       if (controllerOverride?.invertedConditionsFields?.includes(field.key)) {
-        // This field is inversely controlled by controllerKey - show only if controller is falsy
-        if (formData[controllerKey]) show = false
+      // This field is inversely controlled by controllerKey - show only if controller is falsy
+      if (formData[controllerKey]) {
+        show = false
+        break
       }
-    })
+      }
+      const conditionerByValue = controllerOverride?.conditionsFieldsIfValue?.find(c => c.field == field.key)
+      if (conditionerByValue) {
+      if (formData[controllerKey] != conditionerByValue.value) {
+        show = false
+        break
+      }
+      }
+    }
     
     return { ...field, show }
   })
