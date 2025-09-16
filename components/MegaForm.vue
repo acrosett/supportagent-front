@@ -507,6 +507,7 @@ defineExpose({
           v-model="formData[field.key]"
           :id="field.key"
           :name="field.key"
+          :placeholder="fieldOverrides?.[field.key]?.placeholder || field.placeholder"
           v-bind="fieldOverrides?.[field.key]?.props || {}"
           class="megaform-input megaform-richtext"
           :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"

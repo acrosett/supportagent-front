@@ -90,7 +90,7 @@ const fieldOverrides: OverrideRecord<CustomTool> = {
     description: {
         type: 'richtext',
         label: 'Description',
-        placeholder: 'Describe what this tool does...',
+        placeholder: 'Describe what this tool does and how to use it...',
         description: 'Detailed description of the tool\'s purpose and functionality'
     },
     url: {

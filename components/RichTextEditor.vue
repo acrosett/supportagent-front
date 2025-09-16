@@ -10,6 +10,7 @@ import { ref, onMounted, watch, nextTick } from 'vue'
 
 interface Props {
   modelValue?: string
+  placeholder?: string
 }
 
 interface Emits {
@@ -17,7 +18,8 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: ''
+  modelValue: '',
+  placeholder: 'Enter your content...'
 })
 
 const emit = defineEmits<Emits>()
@@ -61,7 +63,7 @@ onMounted(async () => {
     
     easymde = new EasyMDE({
       element: textarea,
-      placeholder: 'Enter your product description...',
+      placeholder: props.placeholder,
       spellChecker: false,
       status: false,
       toolbar: toolbar
@@ -120,10 +122,6 @@ watch(() => props.modelValue, (newValue) => {
 .easymde-wrapper .CodeMirror {
   height: 310px;
   max-height: inherit;
-}
-
-.easymde-wrapper .CodeMirror-code {
-
 }
 
 .easymde-wrapper .CodeMirror-scroll {

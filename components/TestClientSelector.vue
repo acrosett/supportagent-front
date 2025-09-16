@@ -1,8 +1,7 @@
 <template>
   <div class="test-client-selector">
     <div class="selector-header">
-      <h3>Select Test Client</h3>
-      <p class="subtitle">Choose a client to start a test chat session</p>
+      <p class="subtitle">Choose a client to start a test chat session, test clients have access to disabled custom tools.</p>
     </div>
 
     <div v-if="isLoading" class="loading-state">
@@ -61,48 +60,96 @@
       />
     </div>
 
-    <!-- Create Client Name Input -->
-    <div v-if="showCreateClientInput" class="name-input-overlay">
-      <div class="name-input-modal">
-        <h4>Create New Test Client</h4>
-        <p>Enter a name for the new test client:</p>
-        <input
-          v-model="newClientName"
-          type="text"
-          placeholder="Enter client name..."
-          class="client-name-input"
-          @keydown.enter="createNewClient"
-          @keydown.escape="cancelCreateClient"
-          ref="clientNameInput"
-        />
-        <div class="name-input-actions">
-          <AppButton
-            label="Cancel"
-            color="secondary"
-            @click="cancelCreateClient"
-          />
-          <AppButton
-            label="Create Client"
-            color="primary"
-            @click="createNewClient"
-            :disabled="!newClientName.trim()"
-          />
-        </div>
-      </div>
-    </div>
+    <!-- Create Client Modal -->
+    <AppPopup
+      :show="showCreateClientInput"
+      title="Create New Test Client"
+      size="md"
+      @close="cancelCreateClient"
+    >
+      <MegaForm
+        :form-class="Client"
+        v-model="newClientData"
+        :field-overrides="clientFieldOverrides"
+        :include-fields="['name', 'email', 'uniqueId', 'isGuest', 'priority']"
+        :actions="[
+          {
+            label: 'Cancel',
+            color: 'secondary',
+            callback: cancelCreateClient,
+            skipValidation: true
+          },
+          {
+            label: 'Create Client',
+            color: 'primary',
+            callback: createNewClient
+          }
+        ]"
+      />
+    </AppPopup>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
+import MegaForm from '~/components/MegaForm.vue'
+import AppPopup from '~/components/AppPopup.vue'
+import type { OverrideRecord } from '~/components/MegaForm.vue'
 
 const emit = defineEmits(['close', 'client-selected'])
 
 const isLoading = ref(false)
 const testClients = ref<Client[]>([])
 const showCreateClientInput = ref(false)
-const newClientName = ref('')
-const clientNameInput = ref<HTMLInputElement | null>(null)
+
+// Form data for MegaForm
+const newClientData = ref({
+  name: '',
+  email: '',
+  uniqueId: '',
+  isGuest: true,
+  priority: ClientPriority.REGULAR
+})
+
+// Field overrides for MegaForm
+const clientFieldOverrides = computed((): OverrideRecord<Client> => ({
+  isGuest: {
+    label: 'Guest Client',
+    type: 'checkbox',
+    description: 'Simulate an anonymous guest user (no email or ID needed)',
+  },
+  name: {
+    label: 'Client Name',
+    placeholder: 'Enter client name...',
+    type: 'text'
+  },
+  email: {
+    label: 'Email Address',
+    placeholder: 'Enter email address...',
+    type: 'email',
+    props: {
+      disabled: newClientData.value.isGuest
+    }
+  },
+  uniqueId: {
+    label: 'Unique ID',
+    placeholder: 'Will be auto-generated for guest clients',
+    type: 'text',
+    description: 'The unique identifier corresponding to your database record of the client',
+    props: {
+      disabled: newClientData.value.isGuest
+    }
+  },
+  priority: {
+    label: 'Priority',
+    type: 'select',
+    selectOptions: [
+      { value: ClientPriority.LOWEST, label: 'Lowest' },
+      { value: ClientPriority.REGULAR, label: 'Regular' },
+      { value: ClientPriority.HIGH, label: 'High' }
+    ]
+  }
+}))
 
 // Generate a unique identifier (similar to MongoDB ObjectId)
 const generateId = () => {
@@ -195,21 +242,27 @@ const deleteAllClients = async () => {
   }
 }
 
-const createNewClient = async () => {
-  if (!newClientName.value.trim()) return
-  
+const createNewClient = async (data: any) => {
   try {
     const { $sp } = useNuxtApp()
     const nuxtApp = useNuxtApp()
     
-    const uniqueId = "guest_" + generateId()
+    // Generate uniqueId for guest clients or use provided one
+    let uniqueId: string
+    if (data.isGuest) {
+      uniqueId = "guest_" + generateId()
+    } else {
+      // For non-guest clients, use provided uniqueId or generate one
+      uniqueId = data.uniqueId?.trim() || "client_" + generateId()
+    }
     
     const newClient = await $sp.client.create({
       product: nuxtApp.$userProductId,
       uniqueId: uniqueId,
-      name: newClientName.value.trim(),
+      name: data.name?.trim() || 'Test Client',
+      email: data.isGuest ? undefined : (data.email?.trim() || undefined),
       isTest: true,
-      isGuest: true,
+      isGuest: data.isGuest,
       priority: ClientPriority.REGULAR,
       messageCount: 0,
       messagesToday: 0,
@@ -223,8 +276,14 @@ const createNewClient = async () => {
     // Add to list
     testClients.value.unshift(newClient)
     
-    // Reset input and close modal
-    newClientName.value = ''
+    // Reset form and close modal
+    newClientData.value = {
+      name: '',
+      email: '',
+      uniqueId: '',
+      isGuest: true,
+      priority: ClientPriority.REGULAR
+    }
     showCreateClientInput.value = false
     
     // Auto-select the new client
@@ -234,11 +293,18 @@ const createNewClient = async () => {
   } catch (error) {
     console.error('Failed to create test client:', error)
     useNuxtApp().$toast.show('Failed to create test client', 'error')
+    throw error // Re-throw to let MegaForm handle the error state
   }
 }
 
-const cancelCreateClient = () => {
-  newClientName.value = ''
+const cancelCreateClient = async () => {
+  newClientData.value = {
+    name: '',
+    email: '',
+    uniqueId: '',
+    isGuest: true,
+    priority: ClientPriority.REGULAR
+  }
   showCreateClientInput.value = false
 }
 
@@ -255,12 +321,12 @@ onMounted(async () => {
   await loadTestClients()
 })
 
-// Focus the input when the create client modal shows
-watch(showCreateClientInput, (newValue) => {
-  if (newValue) {
-    nextTick(() => {
-      clientNameInput.value?.focus()
-    })
+// Watch for isGuest changes to clear disabled fields
+watch(() => newClientData.value.isGuest, (isGuest) => {
+  if (isGuest) {
+    // Clear email and uniqueId when switching to guest
+    newClientData.value.email = ''
+    newClientData.value.uniqueId = ''
   }
 })
 </script>
@@ -424,69 +490,6 @@ watch(showCreateClientInput, (newValue) => {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-// Client name input modal styles
-.name-input-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001;
-}
-
-.name-input-modal {
-  background: $bg;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  
-  h4 {
-    margin: 0 0 0.5rem 0;
-    color: $text;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-  
-  p {
-    margin: 0 0 1.5rem 0;
-    color: $muted;
-    font-size: 0.875rem;
-  }
-}
-
-.client-name-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid rgba($ring, 0.2);
-  border-radius: 0.5rem;
-  background: $panel;
-  color: $text;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-  transition: border-color 0.2s;
-  
-  &:focus {
-    outline: none;
-    border-color: $brand;
-  }
-  
-  &::placeholder {
-    color: $muted;
-  }
-}
-
-.name-input-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
 }
 
 // Mobile responsive

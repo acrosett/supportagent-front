@@ -44,7 +44,7 @@ const currentProduct = ref<Product | null>(null)
 
 // Include fields we want to show in the form
 const includeFields = computed(() => {
-  return ['name', 'description', 'webhookUrl', 'sharedSecret','chatOn']
+  return ['name', 'description', 'webhookUrl', 'sharedSecret','chatOn', 'version']
 })
 
 const formData = ref({
