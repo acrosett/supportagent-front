@@ -46,6 +46,7 @@
   config.startOpen = script.dataset.startOpen === 'true'; // default false (start minimized)
   config.darkMode = script.dataset.darkMode === 'true'; // dark mode flag
   config.soundOn = script.dataset.soundOn !== 'false'; // sound enabled by default
+  config.debug = script.dataset.debug === 'true'; // debug mode flag
   // Bounce timing (seconds)
   const parseSeconds = (v)=>{ if(!v) return undefined; const n=parseFloat(v); return isNaN(n)?undefined:n; };
   config.bounceAfterInit = parseSeconds(script.dataset.bounceAfterInit); // delay before first double bounce
@@ -86,7 +87,6 @@ const createWidget = (config) => {
            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
            border-radius: 12px;
            overflow: hidden;
-           background: white;
            transition: transform 0.3s ease, opacity 0.3s ease;
            display: flex;
            flex-direction: column;
@@ -424,11 +424,12 @@ const createWidget = (config) => {
 
     // Check product status before initializing widget
     try {
-      const backEndDomain = 'https://api.directsupport.ai';
+      //const backEndDomain = 'https://api.directsupport.ai';
+      const backEndDomain = 'http://localhost:5000';
       const productInfo = await getProductPublicInfo(backEndDomain, productId);
-      
-      // Hide widget if chat is disabled or quotas exceeded
-      if (!productInfo.chatOn || productInfo.quotasExceeded) {
+      config.debug && console.log('Product Info:', productInfo);
+      // Hide widget if chat is disabled or quotas exceeded (unless debug mode is enabled)
+      if (!config.debug && (!productInfo.chatOn || productInfo.quotasExceeded)) {
         if (!productInfo.chatOn) {
           console.warn(`AI Support Widget: Chat functionality is disabled for product ${productId}. Widget will not be displayed. Please enable AI chat in your product settings.`);
         }
@@ -436,6 +437,16 @@ const createWidget = (config) => {
           console.warn(`AI Support Widget: Usage quotas have been exceeded for product ${productId}. Widget will not be displayed. Please check your billing and usage limits.`);
         }
         return;
+      }
+      
+      // Debug mode notifications
+      if (config.debug) {
+        if (!productInfo.chatOn) {
+          console.log(`AI Support Widget: Debug mode enabled - showing widget despite chat being disabled for product ${productId}.`);
+        }
+        if (productInfo.quotasExceeded) {
+          console.log(`AI Support Widget: Debug mode enabled - showing widget despite quotas being exceeded for product ${productId}.`);
+        }
       }
       
       // Store product info for potential use
@@ -708,7 +719,7 @@ const createWidget = (config) => {
       b.style.display='flex';
     }
 
-    console.log('Bounce config:', { bounceAfterInit: config.bounceAfterInit, periodicBounce: config.periodicBounce });
+    config.debug && console.log('Bounce config:', { bounceAfterInit: config.bounceAfterInit, periodicBounce: config.periodicBounce });
     // Prepare bubble early if bounce timers configured
     if (config.bounceAfterInit || config.periodicBounce) {
       getBubble();

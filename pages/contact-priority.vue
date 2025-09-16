@@ -331,6 +331,7 @@ import { PhoneNumber } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/
 import { ContactConfig } from '~/eicrud_exports/services/WHATSAPP-ms/contact-config/contact-config.entity'
 import { VerifyCodeDto } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/cmds/verify_code/verify_code.dto'
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
+import { getPriorityEmoji, formatPriority } from '~/utils/priority'
 
 // Demo data - replace with API calls
 const phoneNumbers = ref<PhoneNumber[]>([
@@ -416,31 +417,6 @@ const verifyingPhone = ref<PhoneNumber | null>(null)
 const verificationFormData = ref({})
 
 // Helper functions
-const formatPriority = (priority: ClientPriority): string => {
-  switch (priority) {
-    case ClientPriority.HIGH:
-      return 'High'
-    case ClientPriority.REGULAR:
-      return 'Regular'
-    case ClientPriority.LOWEST:
-      return 'Lowest'
-    default:
-      return priority
-  }
-}
-
-const getPriorityEmoji = (priority: ClientPriority): string => {
-  switch (priority) {
-    case ClientPriority.HIGH:
-      return '🟡' // High priority - yellow circle
-    case ClientPriority.REGULAR:
-      return '🔵' // Regular priority - blue circle
-    case ClientPriority.LOWEST:
-    default:
-      return '⚪' // Lowest priority - white circle
-  }
-}
-
 const formatAiType = (aiType: string): string => {
   switch (aiType) {
     case 'fast':
@@ -739,10 +715,6 @@ const configFormActions: MegaFormAction[] = [
 
 <style scoped lang="scss">
 @use "~/assets/_variables.scss" as *;
-
-.contact-priority-page {
-
-}
 
 .page-header {
   margin-bottom: 2rem;

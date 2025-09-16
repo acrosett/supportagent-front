@@ -28,7 +28,7 @@
           </div>
           <div class="client-details">
             <h4>{{ client.name || 'Unnamed Client' }}</h4>
-            <p class="client-meta">ID: {{ client.id }}</p>
+            <p class="client-meta">ID: {{ client.uniqueId }}</p>
             <p class="client-meta">Created: {{ formatDate(client.createdAt?.toString() || '') }}</p>
           </div>
         </div>
@@ -94,16 +94,12 @@
 </template>
 
 <script setup lang="ts">
-interface TestClient {
-  id: string
-  name: string
-  createdAt: Date
-}
+import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 
 const emit = defineEmits(['close', 'client-selected'])
 
 const isLoading = ref(false)
-const testClients = ref<TestClient[]>([])
+const testClients = ref<Client[]>([])
 const showCreateClientInput = ref(false)
 const newClientName = ref('')
 const clientNameInput = ref<HTMLInputElement | null>(null)
@@ -117,88 +113,128 @@ const generateId = () => {
   return timestamp + randomBytes.substring(0, 16)
 }
 
-const loadTestClients = () => {
-  if (import.meta.client) {
-    try {
-      const stored = localStorage.getItem('test-clients')
-      if (stored) {
-        const clients = JSON.parse(stored)
-        testClients.value = clients.map((client: any) => ({
-          ...client,
-          createdAt: new Date(client.createdAt)
-        }))
-      }
-    } catch (error) {
-      console.warn('Failed to load test clients:', error)
-      testClients.value = []
-    }
+const loadTestClients = async () => {
+  if (!import.meta.client) return
+  
+  isLoading.value = true
+  try {
+    const { $sp } = useNuxtApp()
+    const nuxtApp = useNuxtApp()
+    
+    const result = await $sp.client.find({ 
+      product: nuxtApp.$userProductId, 
+      isTest: true 
+    })
+    
+    testClients.value = result.data || []
+  } catch (error) {
+    console.error('Failed to load test clients:', error)
+    useNuxtApp().$toast.show('Failed to load test clients', 'error')
+    testClients.value = []
+  } finally {
+    isLoading.value = false
   }
 }
 
-const saveTestClients = () => {
-  if (import.meta.client) {
-    try {
-      localStorage.setItem('test-clients', JSON.stringify(testClients.value))
-    } catch (error) {
-      console.warn('Failed to save test clients:', error)
-    }
-  }
-}
-
-const selectClient = (client: TestClient) => {
+const selectClient = (client: Client) => {
   const nuxtApp = useNuxtApp()
   
-  // Generate guest ID for this client
+  // Use the uniqueId we created the client with
   const clientData = {
-    guestId: "guest_" + generateId(),
-    name: client.name,
+    guestId: client.uniqueId,
+    name: client.name || 'Test Client',
     apiToken: nuxtApp.$userProductId
   }
   emit('client-selected', clientData)
 }
 
-const deleteClient = (client: TestClient) => {
-  if (!confirm(`Delete test client "${client.name}"?`)) {
+const deleteClient = async (client: Client) => {
+  if (!confirm(`Delete test client "${client.name || 'Unnamed Client'}"?`)) {
     return
   }
   
-  const index = testClients.value.findIndex(c => c.id === client.id)
-  if (index > -1) {
-    testClients.value.splice(index, 1)
-    saveTestClients()
+  try {
+    const { $sp } = useNuxtApp()
+    await $sp.client.delete({ id: client.id })
+    
+    // Remove from local array
+    const index = testClients.value.findIndex(c => c.id === client.id)
+    if (index > -1) {
+      testClients.value.splice(index, 1)
+    }
+    
+    useNuxtApp().$toast.show('Test client deleted', 'success')
+  } catch (error) {
+    console.error('Failed to delete test client:', error)
+    useNuxtApp().$toast.show('Failed to delete test client', 'error')
   }
 }
 
-const deleteAllClients = () => {
+const deleteAllClients = async () => {
   if (testClients.value.length === 0) return
   
   if (!confirm(`Are you sure you want to delete all ${testClients.value.length} test clients? This action cannot be undone.`)) {
     return
   }
   
-  testClients.value = []
-  saveTestClients()
+  try {
+    const { $sp } = useNuxtApp()
+    
+    // Delete all test clients
+    await Promise.all(
+      testClients.value.map(client => $sp.client.delete({ id: client.id }))
+    )
+    
+    testClients.value = []
+    useNuxtApp().$toast.show('All test clients deleted', 'success')
+  } catch (error) {
+    console.error('Failed to delete all test clients:', error)
+    useNuxtApp().$toast.show('Failed to delete all test clients', 'error')
+    // Reload to get current state
+    await loadTestClients()
+  }
 }
 
-const createNewClient = () => {
+const createNewClient = async () => {
   if (!newClientName.value.trim()) return
   
-  const newClient: TestClient = {
-    id: generateId(),
-    name: newClientName.value.trim(),
-    createdAt: new Date()
+  try {
+    const { $sp } = useNuxtApp()
+    const nuxtApp = useNuxtApp()
+    
+    const uniqueId = "guest_" + generateId()
+    
+    const newClient = await $sp.client.create({
+      product: nuxtApp.$userProductId,
+      uniqueId: uniqueId,
+      name: newClientName.value.trim(),
+      isTest: true,
+      isGuest: true,
+      priority: ClientPriority.REGULAR,
+      messageCount: 0,
+      messagesToday: 0,
+      messagesThisWeek: 0,
+      conversationResolved: false,
+      conversationArchived: false,
+      aiOn: true,
+      lastMessageReadByStaff: false
+    })
+    
+    // Add to list
+    testClients.value.unshift(newClient)
+    
+    // Reset input and close modal
+    newClientName.value = ''
+    showCreateClientInput.value = false
+    
+    // Auto-select the new client
+    selectClient(newClient)
+    
+    useNuxtApp().$toast.show('Test client created', 'success')
+  } catch (error) {
+    console.error('Failed to create test client:', error)
+    useNuxtApp().$toast.show('Failed to create test client', 'error')
   }
-  
-  // Add to list
-  testClients.value.unshift(newClient)
-  saveTestClients()
-  
-  // Reset input and close modal
-  newClientName.value = ''
-  showCreateClientInput.value = false
-  
-  // Auto-select the new client
-  selectClient(newClient)
 }
 
 const cancelCreateClient = () => {
@@ -215,8 +251,8 @@ const formatDate = (dateStr: string) => {
   }).format(new Date(dateStr))
 }
 
-onMounted(() => {
-  loadTestClients()
+onMounted(async () => {
+  await loadTestClients()
 })
 
 // Focus the input when the create client modal shows

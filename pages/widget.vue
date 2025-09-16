@@ -97,6 +97,7 @@ const buildAttributes = () => {
   if (f.darkMode) attrs.push('data-dark-mode="true"')
   if (!f.draggable) attrs.push('data-draggable="false"')
   if (!f.soundOn) attrs.push('data-sound-on="false"')
+  attrs.push('data-debug="true"')
   
   return attrs.join('\n        ')
 }

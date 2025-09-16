@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsObject } from "class-validator";
+import { IsString, IsNumber, IsObject, Min } from "class-validator";
 import { ProductVault } from "../../product-vault.entity";
 
 export class StripeDepositAsyncDto {
@@ -7,6 +7,7 @@ export class StripeDepositAsyncDto {
     vault: ProductVault;
 
     @IsNumber()
+    @Min(60)
     amount: number; // Amount in credits (same as dollars)
 
 }

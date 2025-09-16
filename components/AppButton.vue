@@ -6,21 +6,32 @@
       `app-button-${color}`,
       `app-button-${margin}`,
       { 'app-button-error': showError },
-      { 'app-button-loading': loading }
+      { 'app-button-loading': loading },
+      { 'app-button-icon': !label },
     ]"
     :disabled="disabled || loading"
     @click="handleClick"
   >
     <AppIcon v-if="showBackIcon" name="chevron-left" size="sm" class="app-button-icon-back" />
     <AppIcon v-if="showPlusIcon" name="plus-simple" size="sm" class="app-button-icon-plus" />
-    <span>{{ label }}</span>
+    <i v-if="faIconLeft" :class="[
+      `fas fa-${faIconLeft}`, 
+      'app-button-fa-icon', 
+      label ? 'app-button-fa-icon-left' : 'app-button-fa-icon-center'
+    ]"></i>
+    <span v-if="label">{{ label }}</span>
+    <i v-if="faIconRight" :class="[
+      `fas fa-${faIconRight}`, 
+      'app-button-fa-icon', 
+      label ? 'app-button-fa-icon-right' : 'app-button-fa-icon-center'
+    ]"></i>
     <span v-if="loading" class="app-button-spinner"></span>
   </button>
 </template>
 
 <script setup lang="ts">
 interface AppButtonProps {
-  label: string
+  label?: string
   color?: 'primary' | 'secondary' | 'error' | 'ok' | 'warning'
   margin?: 'left' | 'right' | 'no-margins' | 'both'
   type?: 'button' | 'submit' | 'reset'
@@ -29,9 +40,12 @@ interface AppButtonProps {
   showError?: boolean
   showBackIcon?: boolean
   showPlusIcon?: boolean
+  faIconLeft?: string
+  faIconRight?: string
 }
 
 const props = withDefaults(defineProps<AppButtonProps>(), {
+  label: '',
   color: 'primary',
   margin: 'right',
   type: 'button',
@@ -39,7 +53,9 @@ const props = withDefaults(defineProps<AppButtonProps>(), {
   loading: false,
   showError: false,
   showBackIcon: false,
-  showPlusIcon: false
+  showPlusIcon: false,
+  faIconLeft: undefined,
+  faIconRight: undefined
 })
 
 const emit = defineEmits<{
@@ -69,6 +85,10 @@ const handleClick = (event: MouseEvent) => {
   align-items: center;
   gap: 0.5rem;
   position: relative;
+
+  &.app-button-icon {
+    padding: 0.7em 1em;
+  }
   
   &:disabled {
     opacity: 0.6;
@@ -155,6 +175,23 @@ const handleClick = (event: MouseEvent) => {
 .app-button-both {
   margin-left: auto;
   margin-right: auto;
+}
+
+// Font Awesome icon styles
+.app-button-fa-icon {
+  font-size: 0.875em;
+  
+  &.app-button-fa-icon-left {
+    margin-right: 0.5em;
+  }
+  
+  &.app-button-fa-icon-right {
+    margin-left: 0.5em;
+  }
+  
+  &.app-button-fa-icon-center {
+    margin: 0;
+  }
 }
 
 // Error state with shake animation

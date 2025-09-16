@@ -1,7 +1,9 @@
-import { IsString, IsOptional, IsEnum, IsArray } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsArray, IsIn } from "class-validator";
 import { ClientPriority } from "../../client.entity";
 import { FindResponseDto } from '@eicrud/shared/interfaces';
 import { Client } from "../../client.entity";
+
+type FilterValue = 'true' | 'false' | 'both';
 
 export class SearchDto {
 
@@ -16,6 +18,22 @@ export class SearchDto {
 
     @IsString()
     product: string;
+
+    @IsIn(['true', 'false', 'both'])
+    @IsOptional()
+    readStatus?: FilterValue;        // 'true' = read only, 'false' = unread only, 'both' = all
+    
+    @IsIn(['true', 'false', 'both'])
+    @IsOptional()
+    resolvedStatus?: FilterValue;    // 'true' = resolved only, 'false' = active only, 'both' = all
+    
+    @IsIn(['true', 'false', 'both'])
+    @IsOptional()
+    aiStatus?: FilterValue;          // 'true' = AI enabled only, 'false' = AI disabled only, 'both' = all
+
+    @IsIn(['true', 'false', 'both'])
+    @IsOptional()
+    archivedStatus?: FilterValue;    // 'true' = archived only, 'false' = active only, 'both' = all
 
 }
 

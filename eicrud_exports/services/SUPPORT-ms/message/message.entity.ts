@@ -25,7 +25,7 @@ export class Message {
 
     client: Client;
 
-    product: Product;
+    product: Product | string;
 
     @IsOptional()
     metadata?: any;

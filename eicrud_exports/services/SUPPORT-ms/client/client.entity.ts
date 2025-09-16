@@ -57,7 +57,11 @@ export class Client {
     @IsOptional()
     lastMessageDate?: Date;
 
+    @IsBoolean()
     conversationResolved: Boolean = false;
+
+    @IsBoolean()
+    conversationArchived: Boolean = false;
 
     ghostedUntil: Date;
 

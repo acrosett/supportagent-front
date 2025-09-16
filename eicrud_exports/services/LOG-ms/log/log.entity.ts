@@ -27,6 +27,9 @@ export class Log {
     query: string;
 
     @IsString()
+    options: string;
+
+    @IsString()
     serviceName: string;
 
     @IsString()

@@ -1,28 +1,53 @@
 <template>
   <div 
-    class="toggle-switch" 
-    :class="{ 'toggle-switch--disabled': disabled }"
-    @click="!disabled && toggle()"
+    class="toggle-container"
+    :class="[
+      `toggle-container--label-${labelPosition}`,
+      { 'toggle-container--disabled': disabled }
+    ]"
   >
-    <div 
-      class="toggle-switch__track"
-      :class="{ 'toggle-switch__track--active': modelValue }"
+    <!-- Left Label -->
+    <span 
+      v-if="label && labelPosition === 'left'" 
+      class="toggle-external-label"
     >
-      <span 
-        class="toggle-switch__label toggle-switch__label--active"
-      >
-        {{ onLabel }}
-      </span>
-      <span 
-        class="toggle-switch__label"
-      >
-        {{ offLabel }}
-      </span>
+      {{ label }}
+    </span>
+    
+    <!-- Toggle Switch -->
+    <div 
+      class="toggle-switch" 
+      :class="{ 'toggle-switch--disabled': disabled }"
+      @click="!disabled && toggle()"
+    >
       <div 
-        class="toggle-switch__thumb"
-        :class="{ 'toggle-switch__thumb--active': modelValue }"
-      ></div>
+        class="toggle-switch__track"
+        :class="{ 'toggle-switch__track--active': modelValue }"
+      >
+        <span 
+          class="toggle-switch__label toggle-switch__label--active"
+        >
+          {{ onLabel }}
+        </span>
+        <span 
+          class="toggle-switch__label"
+        >
+          {{ offLabel }}
+        </span>
+        <div 
+          class="toggle-switch__thumb"
+          :class="{ 'toggle-switch__thumb--active': modelValue }"
+        ></div>
+      </div>
     </div>
+    
+    <!-- Right Label -->
+    <span 
+      v-if="label && labelPosition === 'right'" 
+      class="toggle-external-label"
+    >
+      {{ label }}
+    </span>
   </div>
 </template>
 
@@ -32,6 +57,8 @@ interface Props {
   disabled?: boolean
   onLabel?: string
   offLabel?: string
+  label?: string
+  labelPosition?: 'left' | 'right'
 }
 
 interface Emits {
@@ -41,7 +68,8 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   onLabel: 'ON',
-  offLabel: 'OFF'
+  offLabel: 'OFF',
+  labelPosition: 'left'
 })
 
 const emit = defineEmits<Emits>()
@@ -54,16 +82,40 @@ function toggle() {
 <style scoped lang="scss">
 @use '@/assets/_variables.scss' as *;
 
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  &--label-left {
+    flex-direction: row;
+  }
+  
+  &--label-right {
+    flex-direction: row-reverse;
+  }
+  
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.toggle-external-label {
+  font-size: 0.875rem;
+  color: $text;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .toggle-switch {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
   user-select: none;
-  margin-top: 0.5em;
 
   &--disabled {
     cursor: not-allowed;
-    opacity: 0.6;
   }
 }
 

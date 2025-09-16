@@ -239,6 +239,13 @@
             <pre>{{ formatJsonData(selectedLog.query) }}</pre>
           </div>
         </div>
+
+        <div class="detail-section">
+          <h3>Options</h3>
+          <div class="detail-content">
+            <pre>{{ formatJsonData(selectedLog.options) }}</pre>
+          </div>
+        </div>
       </div>
     </AppPopup>
   </div>

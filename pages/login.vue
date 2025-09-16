@@ -66,8 +66,7 @@ const actions: MegaFormAction[] = [
         throw Error("Login failed");
       }
       const { userId, accessToken } = res;
-      console.log("User ID:", userId);
-      console.log("Access Token:", accessToken);
+
       
       // Use the same expiration time for JWT storage
       const jwtExpiration = data.expiresInSec || (3600 * 30); // Default to 30 minutes if not staying connected

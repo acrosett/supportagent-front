@@ -3,6 +3,14 @@
     <header class="page-header">
       <div class="page-title">
         <h1>Conversations</h1>
+        <div class="page-actions">
+          <ToggleSwitch
+            v-model="showArchived"
+            label="See Archived"
+            label-position="left"
+            @update:modelValue="handleArchivedToggle"
+          />
+        </div>
       </div>
     </header>
 
@@ -14,46 +22,86 @@
 
       <!-- Filters and Search -->
       <div class="filters-section">
-        <div class="search-bar">
-          <AppIcon name="search" size="sm" class="search-icon" />
-          <input 
-            type="text" 
-            placeholder="Search conversations..."
-            v-model="searchQuery"
-            class="search-input"
+        <div class="search-and-reset">
+          <div class="search-bar">
+            <AppIcon name="search" size="sm" class="search-icon" />
+            <input 
+              type="text" 
+              placeholder="Search conversations..."
+              v-model="searchQuery"
+              class="search-input"
+            />
+          </div>
+          
+          <!-- Reset Filter -->
+          <AppButton
+            label="Reset Filters"
+            color="secondary"
+            size="sm"
+            margin="left"
+            @click="resetFilters"
           />
         </div>
-        <div class="filter-buttons">
-          <AppButton
-            :label="'All (' + totalConversations + ')'"
-            :color="activeFilter === 'all' ? 'primary' : 'secondary'"
-            size="sm"
-            @click="setFilter('all')"
-          />
-          <AppButton
-            :label="'Unread (' + unreadConversations + ')'"
-            :color="activeFilter === 'unread' ? 'primary' : 'secondary'"
-            size="sm"
-            @click="setFilter('unread')"
-          />
-          <AppButton
-            :label="'Active (' + activeConversations + ')'"
-            :color="activeFilter === 'active' ? 'primary' : 'secondary'"
-            size="sm"
-            @click="setFilter('active')"
-          />
-          <AppButton
-            :label="'Resolved (' + resolvedConversations + ')'"
-            :color="activeFilter === 'resolved' ? 'primary' : 'secondary'"
-            size="sm"
-            @click="setFilter('resolved')"
-          />
-          <AppButton
-            :label="'AI Off (' + aiOffConversations + ')'"
-            :color="activeFilter === 'ai-off' ? 'warning' : 'secondary'"
-            size="sm"
-            @click="setFilter('ai-off')"
-          />
+        
+        <div class="filter-controls">
+          <!-- Filter Checkboxes -->
+          <div class="filter-checkboxes">
+            <!-- Read Status Column -->
+            <CheckBoxColumn
+              title="Read Status"
+              name="readStatus"
+              v-model="filters.readStatus"
+              :options="[
+                { value: 'both', label: 'Both' },
+                { value: 'false', label: 'Unread' },
+                { value: 'true', label: 'Read' }
+              ]"
+              @change="applyFilters"
+            />
+            
+            <!-- Conversation Status Column -->
+            <CheckBoxColumn
+              title="Status"
+              name="resolvedStatus"
+              v-model="filters.resolvedStatus"
+              :options="[
+                { value: 'both', label: 'Both' },
+                { value: 'false', label: 'Active' },
+                { value: 'true', label: 'Resolved' }
+              ]"
+              @change="applyFilters"
+            />
+            
+            <!-- AI Status Column -->
+            <CheckBoxColumn
+              title="AI Status"
+              name="aiStatus"
+              v-model="filters.aiStatus"
+              :options="[
+                { value: 'both', label: 'Both' },
+                { value: 'true', label: 'AI On' },
+                { value: 'false', label: 'AI Off' }
+              ]"
+              @change="applyFilters"
+            />
+            
+            <!-- Priority Column -->
+            <div class="filter-column">
+              <h4>Priority</h4>
+              <label class="checkbox-label">
+                <input type="checkbox" v-model="filters.priorityLowest" @change="applyFilters" />
+                <span>Lowest</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" v-model="filters.priorityRegular" @change="applyFilters" />
+                <span>Regular</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" v-model="filters.priorityHigh" @change="applyFilters" />
+                <span>High</span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -73,21 +121,28 @@
         <div
           v-for="conversation in filteredConversations"
           :key="conversation.id"
+          :ref="(el) => setCardRef(el, conversation.id)"
           class="conversation-card"
           :class="{ 
             'active': !conversation.conversationResolved, 
             'resolved': conversation.conversationResolved,
             'unread': !conversation.lastMessageReadByStaff,
-            'ai-disabled': !conversation.aiOn
+            'ai-disabled': !conversation.aiOn,
+            'animating-out': animatingCards.has(conversation.id)
           }"
         >
           <!-- Unread indicator -->
           <div v-if="!conversation.lastMessageReadByStaff" class="unread-indicator"></div>
           
+ 
+          
           <div class="conversation-header">
             <div class="customer-info">
-              <h3 class="customer-name">{{ getDisplayName(conversation) }}</h3>
-              <p class="conversation-id">ID: {{ conversation.id.slice(0, 8) }}</p>
+              <div class="customer-name-row">
+                <span class="priority-badge">{{ getPriorityEmoji(conversation.priority || ClientPriority.LOWEST) }}</span>
+                <h3 class="customer-name">{{ getDisplayName(conversation) }}</h3>
+              </div>
+              <p class="conversation-id">ID: {{ conversation.uniqueId }}</p>
             </div>
             <div class="conversation-status">
               <!-- AI Status Badge -->
@@ -126,36 +181,123 @@
               @click="openInvertedChat(conversation)"
             />
             <AppButton
-              v-if="!conversation.conversationResolved"
-              label="Mark Resolved"
+              v-if="!conversation.conversationArchived"
+              margin="left"
+              color="warning"
+              size="sm"
+              fa-icon-left="archive"
+              @click="showArchiveConfirmation(conversation)"
+            />
+            <AppButton
+              v-else
+              margin="left"
+              color="ok"
+              size="sm"
+              fa-icon-left="fa-solid fa-rotate-left"
+              @click="unarchiveConversation(conversation)"
+            />
+            <AppButton
+              :label="conversation.conversationResolved ? 'Reactivate' : 'Mark Resolved'"
+              margin="no-margins"
               color="secondary"
               size="sm"
-              @click="markResolved(conversation)"
+              @click="toggleResolved(conversation)"
             />
           </div>
         </div>
       </div>
+
+      <!-- Load More Indicator -->
+      <div v-if="isLoadingMore" class="loading-more">
+        <div class="spinner"></div>
+        <p>Loading more conversations...</p>
+      </div>
+
+      <!-- End of Results Indicator -->
+      <div v-else-if="!hasMoreData && clients.length > 0" class="end-of-results">
+        <p>No more conversations to load</p>
+      </div>
     </div>
+    
+    <!-- Archive Confirmation Popup -->
+    <AppPopup
+      :show="archiveConfirmation.show"
+      title="Archive Conversation"
+      @close="cancelArchive"
+    >
+      <p>Are you sure you want to archive this conversation?</p>
+      
+      <div class="popup-actions">
+        <AppButton
+          label="Cancel"
+          color="secondary"
+          @click="cancelArchive"
+        />
+        <AppButton
+          label="Archive"
+          color="warning"
+          margin="left"
+          @click="confirmArchive"
+        />
+      </div>
+    </AppPopup>
   </section>
 </template>
 
 <script setup lang="ts">
 import AppButton from '~/components/AppButton.vue'
 import AppIcon from '~/components/AppIcon.vue'
-import { Client } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
+import AppPopup from '~/components/AppPopup.vue'
+import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
+import ToggleSwitch from '~/components/ToggleSwitch.vue'
+import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
+import { getPriorityEmoji } from '~/utils/priority'
 
 // State
 const clients = ref<Client[]>([])
 const lastMessages = ref<Record<string, Message>>({})
 const isLoading = ref(true)
+const isLoadingMore = ref(false)
 const searchQuery = ref('')
-const activeFilter = ref('all')
+const hasMoreData = ref(true)
+const currentPage = ref(0)
+const pageSize = 20
+const cardRefs = ref<Map<string, HTMLElement>>(new Map())
+const visibleCards = ref<Set<string>>(new Set())
+const observer = ref<IntersectionObserver | null>(null)
+
+// Filter state
+const filters = ref({
+  readStatus: 'both',      // 'true' = read only, 'false' = unread only, 'both' = all
+  resolvedStatus: 'both',  // 'true' = resolved only, 'false' = active only, 'both' = all
+  aiStatus: 'both',        // 'true' = ai on only, 'false' = ai off only, 'both' = all
+  priorityLowest: false,
+  priorityRegular: false,
+  priorityHigh: false
+})
+
+// Archive state
+const showArchived = ref(false)
+const animatingCards = ref<Set<string>>(new Set())
+const archiveConfirmation = ref<{
+  show: boolean
+  client: Client | null
+}>({
+  show: false,
+  client: null
+})
 
 // Load conversations data
-const loadConversations = async () => {
+const loadConversations = async (reset = true) => {
   try {
-    isLoading.value = true
+    if (reset) {
+      isLoading.value = true
+      currentPage.value = 0
+      hasMoreData.value = true
+    } else {
+      isLoadingMore.value = true
+    }
     
     // Get current user's API token for product filter
     const { $sp } = useNuxtApp()
@@ -167,27 +309,83 @@ const loadConversations = async () => {
       throw new Error('User API key not found')
     }
     
-    // Search for clients using the product (API key)
-    const clientsResult = await $sp.client.search({
+    // Build search parameters based on filters
+    const searchParams: any = {
       product: apiKey,
-      // Could add text search if needed: text: searchQuery.value
-    })
+      text: searchQuery.value || undefined
+    }
     
-    clients.value = clientsResult.data || []
+    // Add filter parameters using new DTO structure
+    if (filters.value.readStatus !== 'both') {
+      searchParams.readStatus = filters.value.readStatus
+    }
     
-    // Load last message for each client
-    await loadLastMessages()
+    if (filters.value.resolvedStatus !== 'both') {
+      searchParams.resolvedStatus = filters.value.resolvedStatus
+    }
+    
+    if (filters.value.aiStatus !== 'both') {
+      searchParams.aiStatus = filters.value.aiStatus
+    }
+    
+    // Add archived status filter
+    searchParams.archivedStatus = showArchived.value ? 'true' : 'false'
+    
+    // Add priority filters if any are selected
+    const selectedPriorities: ClientPriority[] = []
+    if (filters.value.priorityLowest) selectedPriorities.push(ClientPriority.LOWEST)
+    if (filters.value.priorityRegular) selectedPriorities.push(ClientPriority.REGULAR)
+    if (filters.value.priorityHigh) selectedPriorities.push(ClientPriority.HIGH)
+    
+    if (selectedPriorities.length > 0) {
+      searchParams.priorities = selectedPriorities
+    }
+    
+    // Setup pagination options
+    const options: any = {
+      limit: pageSize,
+      offset: reset ? 0 : currentPage.value * pageSize,
+      orderBy: {
+        $natural: 'desc'
+      }
+    }
+    
+    // Search for clients using the search API
+    const clientsResult = await $sp.client.search(searchParams, options)
+    
+    const newClients = clientsResult.data || []
+    
+    if (reset) {
+      clients.value = newClients
+    } else {
+      clients.value = [...clients.value, ...newClients]
+    }
+    
+    // Check if there's more data
+    hasMoreData.value = newClients.length === pageSize
+    
+    // Increment page for next load
+    if (!reset) {
+      currentPage.value++
+    }
+    
+    // Don't load last messages immediately - let intersection observer handle it
     
   } catch (error) {
     console.error('Failed to load conversations:', error)
     useNuxtApp().$toast.show(error, 'error')
   } finally {
     isLoading.value = false
+    isLoadingMore.value = false
   }
 }
 
-// Load the last message for each client
-const loadLastMessages = async () => {
+// Load the last message for a specific client
+const loadLastMessage = async (clientId: string) => {
+  if (lastMessages.value[clientId]) {
+    return // Already loaded
+  }
+  
   const { $sp } = useNuxtApp()
   
   // Get the user's product ID (API key)
@@ -195,11 +393,39 @@ const loadLastMessages = async () => {
   
   if (!apiKey) return
   
-  const messages: Record<string, Message> = {}
+  try {
+    const result = await $sp.message.get_client_messagesL({
+      identifier: clientId,
+      apiKey: apiKey,
+      inverted: true
+    }, {
+      orderBy: { createdAt: 'desc' },
+      limit: 1
+    })
+    
+    if (result.data && result.data.length > 0) {
+      lastMessages.value[clientId] = result.data[0]!
+    }
+  } catch (error) {
+    console.error(`Failed to load last message for client ${clientId}:`, error)
+  }
+}
+
+// Load the last message for each client (fallback for non-intersection observer browsers)
+const loadLastMessages = async (clientsToLoad?: Client[]) => {
+  const { $sp } = useNuxtApp()
+  
+  // Get the user's product ID (API key)
+  const apiKey = useNuxtApp().$userProductId
+  
+  if (!apiKey) return
+  
+  const targetClients = clientsToLoad || clients.value
+  const messages: Record<string, Message> = { ...lastMessages.value }
   
   // Load last message for each client
   await Promise.all(
-    clients.value.map(async (client) => {
+    targetClients.map(async (client) => {
       try {
         const result = await $sp.message.get_client_messagesL({
           identifier: client.id,
@@ -222,44 +448,117 @@ const loadLastMessages = async () => {
   lastMessages.value = messages
 }
 
+// Set card ref and setup intersection observer
+const setCardRef = (el: Element | ComponentPublicInstance | null, cardId: string) => {
+  if (el && el instanceof HTMLElement) {
+    cardRefs.value.set(cardId, el)
+    
+    // Observe the card for visibility
+    if (observer.value) {
+      observer.value.observe(el)
+    }
+  }
+}
+
+// Setup intersection observer
+const setupIntersectionObserver = () => {
+  if (typeof window === 'undefined') return
+  
+  observer.value = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const cardElement = entry.target as HTMLElement
+          const cardId = Array.from(cardRefs.value.entries()).find(
+            ([, element]) => element === cardElement
+          )?.[0]
+          
+          if (cardId && !visibleCards.value.has(cardId)) {
+            visibleCards.value.add(cardId)
+            loadLastMessage(cardId)
+          }
+        }
+      })
+    },
+    {
+      rootMargin: '50px', // Start loading 50px before the card comes into view
+      threshold: 0.1 // Trigger when 10% of the card is visible
+    }
+  )
+}
+
 // Computed properties
 const filteredConversations = computed(() => {
   let filtered = clients.value
 
-  // Filter by status (read/unread, resolved/active, AI on/off)
-  if (activeFilter.value === 'unread') {
-    filtered = filtered.filter(c => !c.lastMessageReadByStaff)
-  } else if (activeFilter.value === 'active') {
-    filtered = filtered.filter(c => !c.conversationResolved)
-  } else if (activeFilter.value === 'resolved') {
-    filtered = filtered.filter(c => c.conversationResolved)
-  } else if (activeFilter.value === 'ai-off') {
-    filtered = filtered.filter(c => !c.aiOn)
+  // Apply filters locally (basic client-side filtering for UI responsiveness)
+  // The main filtering is done server-side in loadConversations()
+  
+  // Read status filters
+  if (filters.value.readStatus !== 'both') {
+    if (filters.value.readStatus === 'false') {
+      filtered = filtered.filter(c => !c.lastMessageReadByStaff)
+    } else if (filters.value.readStatus === 'true') {
+      filtered = filtered.filter(c => c.lastMessageReadByStaff)
+    }
   }
-
-  // Filter by search query
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(c => 
-      c.name?.toLowerCase().includes(query) ||
-      c.email?.toLowerCase().includes(query) ||
-      c.id.includes(query) ||
-      lastMessages.value[c.id]?.content?.toLowerCase().includes(query)
-    )
+  
+  // Conversation status filters
+  if (filters.value.resolvedStatus !== 'both') {
+    if (filters.value.resolvedStatus === 'false') {
+      filtered = filtered.filter(c => !c.conversationResolved)
+    } else if (filters.value.resolvedStatus === 'true') {
+      filtered = filtered.filter(c => c.conversationResolved)
+    }
+  }
+  
+  // AI status filters
+  if (filters.value.aiStatus !== 'both') {
+    if (filters.value.aiStatus === 'true') {
+      filtered = filtered.filter(c => c.aiOn)
+    } else if (filters.value.aiStatus === 'false') {
+      filtered = filtered.filter(c => !c.aiOn)
+    }
   }
 
   return filtered
 })
 
-const totalConversations = computed(() => clients.value.length)
-const unreadConversations = computed(() => clients.value.filter(c => !c.lastMessageReadByStaff).length)
-const activeConversations = computed(() => clients.value.filter(c => !c.conversationResolved).length)
-const resolvedConversations = computed(() => clients.value.filter(c => c.conversationResolved).length)
-const aiOffConversations = computed(() => clients.value.filter(c => !c.aiOn).length)
-
 // Methods
-const setFilter = (filter: string) => {
-  activeFilter.value = filter
+const resetFilters = () => {
+  filters.value = {
+    readStatus: 'both',
+    resolvedStatus: 'both',
+    aiStatus: 'both',
+    priorityLowest: false,
+    priorityRegular: false,
+    priorityHigh: false
+  }
+  searchQuery.value = ''
+  
+  // Clear refs and visibility tracking
+  cardRefs.value.clear()
+  visibleCards.value.clear()
+  animatingCards.value.clear()
+  
+  loadConversations(true)
+}
+
+const applyFilters = () => {
+  // Clear refs and visibility tracking
+  cardRefs.value.clear()
+  visibleCards.value.clear()
+  animatingCards.value.clear()
+  
+  // Reload conversations with new filters (reset to first page)
+  loadConversations(true)
+}
+
+const loadMore = () => {
+  if (!isLoadingMore.value && hasMoreData.value) {
+    currentPage.value++
+    loadConversations(false)
+  }
 }
 
 const openInvertedChat = async (client: Client) => {
@@ -282,7 +581,7 @@ const openInvertedChat = async (client: Client) => {
     const apiKey = useNuxtApp().$userProductId
     
     if (apiKey) {
-      await navigateTo(`/test-chat?inverted=true&user-token=${client.id}&api-token=${apiKey}`)
+      await navigateTo(`/client-chat?inverted=true&user-token=${client.id}&api-token=${apiKey}`)
     }
     
   } catch (error) {
@@ -291,24 +590,103 @@ const openInvertedChat = async (client: Client) => {
   }
 }
 
-const markResolved = async (client: Client) => {
+const toggleResolved = async (client: Client) => {
   try {
+    const newResolvedState = !client.conversationResolved
+    
     await useNuxtApp().$sp.client.patch({
       id: client.id,
       product: client.product as string
     }, {
-      conversationResolved: true
+      conversationResolved: newResolvedState
     })
     
     // Update local state
     const clientIndex = clients.value.findIndex(c => c.id === client.id)
     if (clientIndex !== -1 && clients.value[clientIndex]) {
-      clients.value[clientIndex]!.conversationResolved = true
+      clients.value[clientIndex]!.conversationResolved = newResolvedState
     }
     
-    useNuxtApp().$toast.show('Conversation marked as resolved', 'success')
+    const action = newResolvedState ? 'resolved' : 'reactivated'
+    useNuxtApp().$toast.show(`Conversation ${action}`, 'success')
   } catch (error) {
-    console.error('Failed to mark conversation as resolved:', error)
+    console.error('Failed to toggle conversation status:', error)
+    useNuxtApp().$toast.show(error, 'error')
+  }
+}
+
+// Archive functions
+const handleArchivedToggle = () => {
+  // Clear animation state when switching views
+  animatingCards.value.clear()
+  // Reload conversations when toggling archived view
+  loadConversations(true)
+}
+
+const showArchiveConfirmation = (client: Client) => {
+  archiveConfirmation.value.client = client
+  archiveConfirmation.value.show = true
+}
+
+const confirmArchive = async () => {
+  const client = archiveConfirmation.value.client
+  if (!client) return
+  
+  try {
+    // Start animation
+    animatingCards.value.add(client.id)
+    
+    await useNuxtApp().$sp.client.patch({
+      id: client.id,
+      product: client.product as string
+    }, {
+      conversationArchived: true
+    })
+    
+    // Wait for animation to complete before removing from array
+    setTimeout(() => {
+      const clientIndex = clients.value.findIndex(c => c.id === client.id)
+      if (clientIndex !== -1) {
+        clients.value.splice(clientIndex, 1)
+      }
+      animatingCards.value.delete(client.id)
+    }, 300) // Match the CSS animation duration
+    
+    useNuxtApp().$toast.show('Conversation archived', 'success')
+  } catch (error) {
+    console.error('Failed to archive conversation:', error)
+    useNuxtApp().$toast.show(error, 'error')
+    // Remove animation state if there was an error
+    animatingCards.value.delete(client.id)
+  } finally {
+    archiveConfirmation.value.show = false
+    archiveConfirmation.value.client = null
+  }
+}
+
+const cancelArchive = () => {
+  archiveConfirmation.value.show = false
+  archiveConfirmation.value.client = null
+}
+
+const unarchiveConversation = async (client: Client) => {
+  try {
+    await useNuxtApp().$sp.client.patch({
+      id: client.id,
+      product: client.product as string
+    }, {
+      conversationArchived: false
+    })
+    
+    // Update local state - the UI will reactively update the button
+    const clientIndex = clients.value.findIndex(c => c.id === client.id)
+    if (clientIndex !== -1 && clients.value[clientIndex]) {
+      clients.value[clientIndex]!.conversationArchived = false
+    }
+    
+    useNuxtApp().$toast.show('Conversation unarchived', 'success')
+  } catch (error) {
+    console.error('Failed to unarchive conversation:', error)
     useNuxtApp().$toast.show(error, 'error')
   }
 }
@@ -340,7 +718,16 @@ const getDisplayName = (client: Client) => {
 
 const getLastMessage = (client: Client) => {
   const message = lastMessages.value[client.id]
-  return message?.content || 'No messages yet'
+  if (message) {
+    return message.content
+  }
+  
+  // Show loading state if card is visible but message not loaded yet
+  if (visibleCards.value.has(client.id)) {
+    return 'Loading message...'
+  }
+  
+  return 'No messages yet'
 }
 
 const getMessageCount = (client: Client) => {
@@ -349,20 +736,50 @@ const getMessageCount = (client: Client) => {
 
 // Load data on mount
 onMounted(() => {
-  loadConversations()
+  setupIntersectionObserver()
+  loadConversations(true)
+  
+  // Add scroll listener for infinite scroll
+  const handleScroll = () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    const scrollHeight = document.documentElement.scrollHeight
+    const clientHeight = document.documentElement.clientHeight
+    
+    // Check if user scrolled near the bottom (within 200px)
+    if (scrollTop + clientHeight >= scrollHeight - 200) {
+      if (!isLoadingMore.value && hasMoreData.value) {
+        loadMore()
+      }
+    }
+  }
+  
+  window.addEventListener('scroll', handleScroll)
+  
+  // Cleanup scroll listener and intersection observer
+  onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+    if (observer.value) {
+      observer.value.disconnect()
+    }
+    if (searchTimeout) clearTimeout(searchTimeout)
+  })
 })
 
 // Watch search query for real-time search
 watch(searchQuery, async (newQuery) => {
-  if (newQuery.trim()) {
-    // Could implement real-time search with API
-    // For now, just filter locally
-  }
+  // Debounce the search to avoid too many API calls
+  if (searchTimeout) clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    loadConversations(true) // Reset to first page when searching
+  }, 500)
 })
+
+let searchTimeout: NodeJS.Timeout | null = null
 </script>
 
 <style scoped lang="scss">
 @use "~/assets/_variables.scss" as *;
+@use 'sass:color';
 
 // Uses global .page-container for sizing
 
@@ -371,11 +788,21 @@ watch(searchQuery, async (newQuery) => {
 }
 
 .page-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
   h1 {
     margin: 0;
     color: $text;
     font-size: 2rem;
   }
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .content-section {
@@ -403,9 +830,18 @@ watch(searchQuery, async (newQuery) => {
 
 .filters-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 1.5rem;
   margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
+}
+
+.search-and-reset {
+  display: flex;
+  align-items: center;
   gap: 1rem;
   
   @media (max-width: 768px) {
@@ -416,8 +852,9 @@ watch(searchQuery, async (newQuery) => {
 
 .search-bar {
   position: relative;
+  min-width: 300px;
+  max-width: 500px;
   flex: 1;
-  max-width: 400px;
   
   .search-icon {
     position: absolute;
@@ -447,9 +884,65 @@ watch(searchQuery, async (newQuery) => {
   }
 }
 
-.filter-buttons {
+.filter-controls {
   display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 2rem;
+  
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.filter-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  flex: 1;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.filter-column {
+  h4 {
+    margin: 0 0 0.75rem 0;
+    color: $text;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-bottom: 2px solid $brand;
+    padding-bottom: 0.25rem;
+  }
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: $text;
+  
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: $brand;
+    cursor: pointer;
+  }
+  
+  &:hover {
+    color: $brand;
+  }
 }
 
 .empty-state {
@@ -480,6 +973,9 @@ watch(searchQuery, async (newQuery) => {
   padding: 1.5rem;
   transition: all 0.3s ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px; // Ensure consistent card height
   
   &.active {
     border-color: $brand;
@@ -510,6 +1006,21 @@ watch(searchQuery, async (newQuery) => {
     border-color: #ff6b6b;
     background: rgba(#ff6b6b, 0.02);
   }
+  
+  // Archive animation
+  &.animating-out {
+    animation: fadeOut 0.3s ease-out forwards;
+    pointer-events: none; // Prevent interaction during animation
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .unread-indicator {
@@ -521,6 +1032,45 @@ watch(searchQuery, async (newQuery) => {
   background: $brand;
   border-radius: 50%;
   border: 2px solid $bg;
+}
+
+.archive-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 24px;
+  height: 24px;
+  background: rgba($error, 0.1);
+  border: 1px solid rgba($error, 0.3);
+  border-radius: 50%;
+  color: $error;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  z-index: 2;
+  
+  &:hover {
+    background: rgba($error, 0.2);
+    border-color: $error;
+    transform: scale(1.1);
+  }
+}
+
+.archive-warning {
+  color: $warning;
+  font-size: 0.875rem;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  justify-content: flex-end;
 }
 
 .conversation-header {
@@ -535,10 +1085,22 @@ watch(searchQuery, async (newQuery) => {
 .customer-info {
   flex: 1;
   
+  .customer-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
   .customer-name {
-    margin: 0 0 0.25rem 0;
+    margin: 0;
     color: $text;
     font-size: 1.1rem;
+  }
+  
+  .priority-badge {
+    font-size: 1.2rem;
+    line-height: 1;
   }
   
   .conversation-id {
@@ -590,8 +1152,8 @@ watch(searchQuery, async (newQuery) => {
     }
     
     &.resolved {
-      background: rgba($brand-2, 0.1);
-      color: $brand-2;
+      background: rgba($ok, 0.2);
+      color: color.scale($ok, $lightness: -60%);
     }
   }
 }
@@ -621,8 +1183,48 @@ watch(searchQuery, async (newQuery) => {
   }
 }
 
+.loading-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  color: $muted;
+  
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba($brand, 0.2);
+    border-top: 2px solid $brand;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+.end-of-results {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: $muted;
+  border-top: 1px solid rgba($muted, 0.2);
+  margin-top: 1rem;
+  
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
 .conversation-preview {
   margin-bottom: 1.5rem;
+  flex-grow: 1; // Take up available space
+  display: flex;
+  flex-direction: column;
   
   .last-message {
     margin: 0 0 0.5rem 0;
@@ -649,6 +1251,7 @@ watch(searchQuery, async (newQuery) => {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  margin-top: auto; // Push to bottom of flex container
 }
 
 // Mobile responsive
