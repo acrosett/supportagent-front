@@ -15,7 +15,7 @@ export class AgentMessage {
     @IsOptional()
     id: string;
 
-    owner: User | string;
+    
 
     @IsString()
     content: string;

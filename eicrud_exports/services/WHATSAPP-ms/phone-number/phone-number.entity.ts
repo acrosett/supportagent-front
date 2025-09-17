@@ -8,7 +8,7 @@ export class PhoneNumber {
     @IsOptional()
     id: string;
 
-    owner: User | string;
+    
 
     @IsPhoneNumber()
     number: string;

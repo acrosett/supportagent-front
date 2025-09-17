@@ -15,7 +15,7 @@ export class ProductVault {
     product: Product | string;
 
     @IsString()
-    stripeCustomerId: string;
+    stripeCustomerId?: string;
 
     // Auto top-up configuration
     @IsOptional()

@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsBoolean } from "class-validator";
 import { Client } from "../client/client.entity";
 import { User } from "../../user/user.entity";
 import { Product } from "../product/product.entity";
@@ -15,13 +15,21 @@ export class Message {
     @IsOptional()
     id: string;
 
-    owner: User | string;
+    
 
     @IsString()
     content: string;
 
     @IsEnum(MessageType)
     type: MessageType;
+
+    @IsOptional()
+    @IsBoolean()
+    fromStaff: boolean = false;
+
+    @IsOptional()
+    @IsBoolean()
+    isHidden: boolean = false;
 
     client: Client;
 

@@ -2,6 +2,17 @@ import { IsString, IsOptional, IsEnum, IsArray, ValidateNested, IsUrl, MinLength
 import { Product } from "../product/product.entity";
 import { ClientPriority } from "../client/client.entity";
 
+// Fields that trigger version increment when modified
+export const VERSION_TRIGGERING_FIELDS: (keyof CustomTool)[] = [
+    'name',
+    'description', 
+    'url',
+    'method',
+    'arguments',
+    'contentType',
+    'timeoutMs'
+];
+
 export enum HttpMethod {
     GET = 'GET',
     POST = 'POST',
@@ -39,30 +50,31 @@ export class CustomToolArgument {
     @MinLength(3)
     name: string;
 
-    @IsString()
-    @IsOptional()
-    description?: string;
-
     @IsEnum(ArgumentLocation)
     location: ArgumentLocation;
+    
+    @IsEnum(ArgumentDataType)
+    dataType: ArgumentDataType;
 
     @IsEnum(ArgumentValueType)
     valueType: ArgumentValueType;
-
-    @IsEnum(ArgumentDataType)
-    dataType: ArgumentDataType;
 
     @IsString()
     @IsOptional()
     constantValue?: string; // Only used when valueType is CONSTANT
 
-    @IsBoolean()
-    @IsOptional()
-    required?: boolean = true;
-
     @IsString()
     @IsOptional()
     defaultValue?: string;
+
+    @IsBoolean()
+    @IsOptional()
+    required?: boolean = true;
+    
+    @IsString()
+    @IsOptional()
+    description?: string;
+
 }
 
 export class CustomTool {
@@ -110,6 +122,9 @@ export class CustomTool {
 
     @IsBoolean()
     provideToolToGuests: boolean = true;
+
+    @IsOptional()
+    version: number = 1;
 
     @IsString()
     product: Product | string;

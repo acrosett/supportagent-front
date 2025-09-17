@@ -15,11 +15,12 @@ export class Client {
     @IsOptional()
     id: string;
 
-    owner: User | string;
+    
 
     @IsString()
     product: Product | string;
 
+    @IsString()
     uniqueId: string;
 
     @IsString()
@@ -62,6 +63,10 @@ export class Client {
 
     @IsBoolean()
     conversationArchived: Boolean = false;
+
+    
+    @IsBoolean()
+    nameChangedByAI: Boolean = false;
 
     ghostedUntil: Date;
 

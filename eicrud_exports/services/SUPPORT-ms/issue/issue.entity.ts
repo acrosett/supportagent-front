@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsArray } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsArray, IsBoolean } from "class-validator";
 import { User } from "../../user/user.entity";
 import { Product } from "../product/product.entity";
 import { IssueComment } from "../issue-comment/issue-comment.entity";
@@ -14,18 +14,20 @@ export class Issue {
     @IsOptional()
     id: string;
 
-    owner: User | string;
-
     @IsString()
     title: string;
 
     @IsString()
     description: string;
 
-    product: Product;
+    product: Product | string;
 
     @IsEnum(IssueStatus)
     status: IssueStatus = IssueStatus.OPEN;
+
+    @IsOptional()
+    @IsBoolean()
+    isArchived: boolean = false;
 
     @IsArray()
     @IsString({ each: true })

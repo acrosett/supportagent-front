@@ -39,7 +39,7 @@ export class CrudOptions<T = any> {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  exclude?: string[];
+  exclude?: Extract<keyof T, string>[];
 
   @IsOptional()
   @IsInt()

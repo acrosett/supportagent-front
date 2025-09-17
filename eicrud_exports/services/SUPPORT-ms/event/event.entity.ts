@@ -9,7 +9,7 @@ export class Event {
     @IsOptional()
     id: string;
 
-    owner: User | string;
+    
 
     @IsString()
     name: string;

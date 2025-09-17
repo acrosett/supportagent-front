@@ -116,11 +116,21 @@
           </div>
         </div>
         
-        <AppButton
-          label="Clear Filters"
-          color="secondary"
-          @click="clearFilters"
-        />
+        <div class="filter-actions">
+          <AppButton
+            label="Refresh"
+            color="primary"
+            fa-icon-left="refresh"
+            :loading="loading"
+            @click="refreshLogs"
+          />
+          <AppButton
+            label="Clear Filters"
+            color="secondary"
+            margin="left"
+            @click="clearFilters"
+          />
+        </div>
       </div>
 
       <div class="logs-container">
@@ -374,6 +384,11 @@ const resetAndSearch = () => {
   currentPage.value = 0
   hasMore.value = true
   loadLogs(true)
+}
+
+// Refresh logs
+const refreshLogs = () => {
+  resetAndSearch()
 }
 
 // Clear filters
@@ -760,6 +775,17 @@ onUnmounted(() => {
   label {
     font-weight: 600;
     color: var(--text);
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
   }
 }
 

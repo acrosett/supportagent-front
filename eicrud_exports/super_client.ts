@@ -3,8 +3,10 @@ import { PhoneNumberClient } from './services/WHATSAPP-ms/phone-number/phone-num
 import { ContactConfigClient } from './services/WHATSAPP-ms/contact-config/contact-config.client';
 import { UserClient } from './services/user/user.client';
 import { WidgetConfigClient } from './services/SUPPORT-ms/widget-config/widget-config.client';
+import { ToolTraceClient } from './services/SUPPORT-ms/tool-trace/tool-trace.client';
 import { ProductClient } from './services/SUPPORT-ms/product/product.client';
 import { MessageClient } from './services/SUPPORT-ms/message/message.client';
+import { IssueTagClient } from './services/SUPPORT-ms/issue-tag/issue-tag.client';
 import { IssueCommentClient } from './services/SUPPORT-ms/issue-comment/issue-comment.client';
 import { IssueClient } from './services/SUPPORT-ms/issue/issue.client';
 import { FaqClient } from './services/SUPPORT-ms/faq/faq.client';
@@ -20,6 +22,7 @@ import { EmailClient } from './services/email/email.client';
 import { SpendClient } from './services/BANK-ms/spend/spend.client';
 import { ProductVaultClient } from './services/BANK-ms/product-vault/product-vault.client';
 import { DepositClient } from './services/BANK-ms/deposit/deposit.client';
+import { TokenClient } from './services/AUTH-ms/token/token.client';
 import { TaskClient } from './services/AI-ms/task/task.client';
 import { StaffContactAgentClient } from './services/AI-ms/staff-contact-agent/staff-contact-agent.client';
 import { LlmProviderClient } from './services/AI-ms/llm-provider/llm-provider.client';
@@ -39,8 +42,10 @@ export class SuperClient {
         this.contactConfig = new ContactConfigClient(config);
         this.user = new UserClient(config);
         this.widgetConfig = new WidgetConfigClient(config);
+        this.toolTrace = new ToolTraceClient(config);
         this.product = new ProductClient(config);
         this.message = new MessageClient(config);
+        this.issueTag = new IssueTagClient(config);
         this.issueComment = new IssueCommentClient(config);
         this.issue = new IssueClient(config);
         this.faq = new FaqClient(config);
@@ -56,6 +61,7 @@ export class SuperClient {
         this.spend = new SpendClient(config);
         this.productVault = new ProductVaultClient(config);
         this.deposit = new DepositClient(config);
+        this.token = new TokenClient(config);
         this.task = new TaskClient(config);
         this.staffContactAgent = new StaffContactAgentClient(config);
         this.llmProvider = new LlmProviderClient(config);
@@ -71,8 +77,10 @@ export class SuperClient {
     contactConfig: ContactConfigClient;
     user: UserClient;
     widgetConfig: WidgetConfigClient;
+    toolTrace: ToolTraceClient;
     product: ProductClient;
     message: MessageClient;
+    issueTag: IssueTagClient;
     issueComment: IssueCommentClient;
     issue: IssueClient;
     faq: FaqClient;
@@ -88,6 +96,7 @@ export class SuperClient {
     spend: SpendClient;
     productVault: ProductVaultClient;
     deposit: DepositClient;
+    token: TokenClient;
     task: TaskClient;
     staffContactAgent: StaffContactAgentClient;
     llmProvider: LlmProviderClient;

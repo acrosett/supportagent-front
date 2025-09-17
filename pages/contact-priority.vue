@@ -74,9 +74,9 @@
               @click="editPhoneNumber(phone)"
             />
             <AppButton
-              label="Delete"
               color="error"
               margin="left"
+              faIconLeft="trash"
               size="sm"
               @click="deletePhoneNumber(phone)"
             />

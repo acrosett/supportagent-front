@@ -5,7 +5,7 @@
       'app-button',
       `app-button-${color}`,
       `app-button-${margin}`,
-      { 'app-button-error': showError },
+      { 'app-button-erroring': showError },
       { 'app-button-loading': loading },
       { 'app-button-icon': !label },
     ]"
@@ -195,10 +195,9 @@ const handleClick = (event: MouseEvent) => {
 }
 
 // Error state with shake animation
-.app-button-error.app-button-error {
+.app-button-erroring {
   animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
-  background: $brand-2 !important;
-  box-shadow: $brand-2;
+
 }
 
 @keyframes shake {

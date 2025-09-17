@@ -15,7 +15,7 @@ export class IssueComment {
     @IsOptional()
     id: string;
 
-    owner: User | string;
+    
 
     @IsString()
     content: string;

@@ -9,7 +9,7 @@ export class Faq {
     @IsOptional()
     id: string;
 
-    owner: User | string;
+    
 
     @IsString()
     question: string;
