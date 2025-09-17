@@ -3,10 +3,12 @@
     <slot />
   </main>
   <Toast />
+  <ConfirmPopup />
 </template>
 
 <script setup>
 import Toast from '~/components/Toast.vue'
+import ConfirmPopup from '~/components/ConfirmPopup.vue'
 </script>
 
 <style scoped lang="scss">

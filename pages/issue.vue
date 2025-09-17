@@ -126,7 +126,7 @@
           <div class="comment-input-container">
             <textarea
               v-model="newComment"
-              placeholder="Client Facing AI will be able to see this comment"
+              placeholder="Client Facing AI will see this comment."
               rows="3"
               class="comment-input"
             ></textarea>
@@ -402,7 +402,8 @@ const addComment = async () => {
 }
 
 const deleteComment = async (comment: IssueComment) => {
-  if (!confirm('Are you sure you want to delete this comment?')) {
+  const confirmed = await useNuxtApp().$confirmPopup.show('Are you sure you want to delete this comment?')
+  if (!confirmed) {
     return
   }
 
@@ -771,7 +772,6 @@ onMounted(() => {
     
     .add-comment-form {
       margin-bottom: 2rem;
-      padding: 1.5rem;
       border: 1px solid $border;
       border-radius: $radius;
       
@@ -820,7 +820,6 @@ onMounted(() => {
       
       .comment-item {
         margin-bottom: 1rem;
-        padding: 1.5rem;
         background: $panel;
         border: 1px solid $border;
         border-radius: $radius;

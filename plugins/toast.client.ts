@@ -30,17 +30,6 @@ export default defineNuxtPlugin(nuxtApp => {
   }
 
   nuxtApp.provide('toast', toastApi)
-  // @ts-ignore augment runtime
-  nuxtApp.$toast = toastApi
+
 
 })
-
-declare module 'nuxt/app' {
-  interface NuxtApp {
-    $toast: {
-      state: { visible: boolean; message: string; type: 'info'|'error'|'success'|'warning' }
-  show: (msgOrErr: any, type?: 'info'|'error'|'success'|'warning', duration?: number) => void
-      hide: () => void
-    }
-  }
-}

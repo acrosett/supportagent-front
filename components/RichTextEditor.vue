@@ -30,7 +30,7 @@ let easymde: any = null
 let isUpdatingFromProps = false
 
 onMounted(async () => {
-  if (process.server) return
+  if (import.meta.server) return
   
   isClient.value = true
   await nextTick()

@@ -1,7 +1,7 @@
 // composables/useTheme.ts
 export const useTheme = () => {
   const getColor = (colorName: string): string => {
-    if (process.client) {
+    if (import.meta.client) {
       const value = getComputedStyle(document.documentElement)
         .getPropertyValue(`--${colorName}`)
         .trim();

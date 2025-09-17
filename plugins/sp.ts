@@ -8,7 +8,7 @@ export default defineNuxtPlugin(nuxtApp => {
 
   // Safe cookie helpers (avoid Nuxt composables in plugin storage)
   function getCookieRaw(key: string): string {
-    if (!process.client) return ''
+    if (!import.meta.client) return ''
     const name = `${key}=`
     const decodedCookie = decodeURIComponent(document.cookie)
     const ca = decodedCookie.split(';')
@@ -19,7 +19,7 @@ export default defineNuxtPlugin(nuxtApp => {
     return ''
   }
   function setCookieRaw(key: string, value: string, maxAgeSeconds: number, secure: boolean) {
-    if (!process.client) return
+    if (!import.meta.client) return
     const attrs = [
       `path=/`,
       `max-age=${maxAgeSeconds}`,
@@ -29,7 +29,7 @@ export default defineNuxtPlugin(nuxtApp => {
     document.cookie = `${key}=${encodeURIComponent(value)}; ${attrs}`
   }
   function deleteCookieRaw(key: string) {
-    if (!process.client) return
+    if (!import.meta.client) return
     document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Strict`;
   }
 
@@ -65,14 +65,3 @@ export default defineNuxtPlugin(nuxtApp => {
   
 
 })
-
-// Type augmentation for NuxtApp
-
-declare module 'nuxt/app' {
-  interface NuxtApp {
-    $sp: SuperClient,
-    $userId: string,
-    $userProductId: string,
-    $userRole: string
-  }
-}

@@ -6,7 +6,14 @@
     </main>
   </div>
   <Toast />
+  <ConfirmPopup />
 </template>
+
+<script setup>
+import AppMenu from '~/components/AppMenu.vue'
+import Toast from '~/components/Toast.vue'
+import ConfirmPopup from '~/components/ConfirmPopup.vue'
+</script>
 
 <style scoped lang="scss">
 @use '~/assets/variables' as *;

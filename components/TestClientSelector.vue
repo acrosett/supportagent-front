@@ -196,7 +196,8 @@ const selectClient = (client: Client) => {
 }
 
 const deleteClient = async (client: Client) => {
-  if (!confirm(`Delete test client "${client.name || 'Unnamed Client'}"?`)) {
+  const confirmed = await useNuxtApp().$confirmPopup.show(`Delete test client "${client.name || 'Unnamed Client'}"?`)
+  if (!confirmed) {
     return
   }
   
@@ -220,7 +221,8 @@ const deleteClient = async (client: Client) => {
 const deleteAllClients = async () => {
   if (testClients.value.length === 0) return
   
-  if (!confirm(`Are you sure you want to delete all ${testClients.value.length} test clients? This action cannot be undone.`)) {
+  const confirmed = await useNuxtApp().$confirmPopup.show(`Are you sure you want to delete all ${testClients.value.length} test clients? This action cannot be undone.`)
+  if (!confirmed) {
     return
   }
   

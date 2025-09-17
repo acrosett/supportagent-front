@@ -310,7 +310,8 @@ function editTool(tool: CustomTool) {
 }
 
 async function deleteTool(toolId: string) {
-  if (!confirm('Are you sure you want to delete this custom tool?')) {
+  const confirmed = await useNuxtApp().$confirmPopup.show('Are you sure you want to delete this custom tool?')
+  if (!confirmed) {
     return
   }
 
