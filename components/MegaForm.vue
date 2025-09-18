@@ -184,6 +184,16 @@ function getFields(cls: any) {
 
 const fields = computed(() => getFields(props.formClass))
 
+// Helper function to apply mapValue transformation to a field value
+function applyMapValueTransformation(key: string, value: any): any {
+  const fieldOverride = props.fieldOverrides?.[key]
+  if (fieldOverride?.mapValue && value !== undefined && value !== null) {
+    const mappedValue = fieldOverride.mapValue[value]
+    return mappedValue
+  }
+  return value
+}
+
 // Validate and show errors
 function validateForm() {
   const instance = new (props.formClass as new () => any)()
@@ -194,6 +204,7 @@ function validateForm() {
   Object.keys(instance).forEach(key => {
     delete instance[key]
   })
+
   
   // Only set values for visible fields with mapValue transformation applied
   visibleFields.forEach(key => {
@@ -201,13 +212,7 @@ function validateForm() {
       let value = formData[key]
       
       // Apply mapValue transformation if defined BEFORE validation
-      const fieldOverride = props.fieldOverrides?.[key]
-      if (fieldOverride?.mapValue && value !== undefined && value !== null) {
-        const mappedValue = fieldOverride.mapValue[value]
-        if (mappedValue !== undefined) {
-          value = mappedValue
-        }
-      }
+      value = applyMapValueTransformation(key, value)
       
       instance[key] = value
     }
@@ -283,13 +288,7 @@ function handleAction(idx: number, action: MegaFormAction) {
     let value = formData[key]
     
     // Apply mapValue transformation if defined
-    const fieldOverride = props.fieldOverrides?.[key]
-    if (fieldOverride?.mapValue && value !== undefined && value !== null) {
-      const mappedValue = fieldOverride.mapValue[value]
-      if (mappedValue !== undefined) {
-        value = mappedValue
-      }
-    }
+    value = applyMapValueTransformation(key, value)
     
     sendData[key] = value
   })

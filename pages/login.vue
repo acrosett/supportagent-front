@@ -27,7 +27,8 @@ import { ref } from 'vue'
 definePageMeta({ layout: 'bare' })
 
 const links = [
-  { label: 'No account? Register here', href: '/register' }
+    { label: 'Trouble logging in? Reset your password', href: '/reset-password' },
+  { label: 'No account? Register here', href: '/register' },
 ]
 
 const formData = ref({
@@ -61,6 +62,7 @@ const actions: MegaFormAction[] = [
     margin: 'right',
     callback: async (data: LoginDto) => {
       // The mapValue in fieldOverrides already converts the checkbox to the correct value
+
       const res = await useNuxtApp().$sp.user.login(data);
       if(!res){
         throw Error("Login failed");
