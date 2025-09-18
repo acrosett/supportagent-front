@@ -40,8 +40,10 @@ async function checkLogin(nuxtApp: NuxtApp) {
   const userId = res.base.userId as string;
   const productId = res.productId as string;
   const userRole = res.userRole as string;
+  const email = res.email as string;
   nuxtApp.$userId = userId;
   nuxtApp.$userProductId = productId;
   nuxtApp.$userRole = userRole;
+  nuxtApp.$userEmail = email;
   return res;
 }

@@ -23,14 +23,19 @@ export class ToolTrace {
     @IsOptional()
     toolInput?: string;
 
+    @IsString()
+    toolName: string;
+
     @IsEnum(AgentType)
     @IsOptional()
     agentType?: AgentType;
 
     @IsOptional()
+    @IsString()
     client?: Client | string;
 
     @IsOptional()
+    @IsString()
     product?: Product | string;
 
     @IsOptional()

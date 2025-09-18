@@ -20,6 +20,7 @@ export class Issue {
     @IsString()
     description: string;
 
+    @IsString()
     product: Product | string;
 
     @IsEnum(IssueStatus)

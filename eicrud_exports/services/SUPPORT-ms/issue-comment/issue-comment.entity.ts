@@ -15,17 +15,17 @@ export class IssueComment {
     @IsOptional()
     id: string;
 
-    
-
     @IsString()
     content: string;
 
-    issue: Issue;
+    @IsString()
+    issue: Issue | string;
 
     @IsEnum(CommentFrom)
     from: CommentFrom;
 
-    product: Product;
+    @IsString()
+    product: Product | string;
 
     @IsString()
     @IsOptional()

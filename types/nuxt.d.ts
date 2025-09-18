@@ -4,6 +4,7 @@ declare module 'nuxt/app' {
   interface NuxtApp {
     $sp: SuperClient
     $userId: string
+    $userEmail: string
     $userProductId: string
     $userRole: string
     $toast: {

@@ -15,4 +15,5 @@ export type CheckJwtExtendedReturnDto = {
     base: Partial<LoginResponseDto>
     productId: string;
     userRole: string;
+    email: string;
 };

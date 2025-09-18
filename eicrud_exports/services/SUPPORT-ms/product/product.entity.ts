@@ -102,6 +102,8 @@ export class Product {
 
     //End Vault properties
 
+    @IsOptional()
+    flaggedForDeletion?: Date;
 
     createdAt: Date;
 

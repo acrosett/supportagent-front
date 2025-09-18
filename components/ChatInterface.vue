@@ -45,12 +45,35 @@
       <!-- Messages Area -->
       <div class="messages-container" ref="messagesContainer">
         <div v-for="message in messages" :key="message.id" class="message-wrapper">
-          <div :class="['message', getMessageClass(message.type)]">
+          <!-- Regular chat message -->
+          <div v-if="message.type !== 'tool-trace'" :class="['message', getMessageClass(message.type)]">
             <div class="message-header">
               <span class="sender-name">{{ getSenderName(message.type) }}</span>
               <span class="message-time">&nbsp;&nbsp;{{ formatTime(message.createdAt) }}</span>
             </div>
-            <div class="message-content" v-html="renderMarkdown(message.content || '')"></div>
+            <div class="message-content" v-html="renderMarkdown((message as ChatMessage).content || '')"></div>
+          </div>
+          
+          <!-- Tool trace message -->
+          <div v-else class="tool-trace-message">
+            <div class="tool-trace-header">
+              <div class="tool-trace-info">
+                <span class="tool-trace-icon">🛠️</span>
+                <span class="tool-trace-name">{{ getToolName(message as ToolTraceMessage) }}</span>
+                <span class="tool-trace-status" :class="getToolTraceStatusClass(message as ToolTraceMessage)">
+                  {{ getToolTraceStatus(message as ToolTraceMessage) }}
+                </span>
+              </div>
+              <div class="tool-trace-actions">
+                <span class="message-time">{{ formatTime(message.createdAt) }}</span>
+                <button 
+                  class="tool-trace-details-btn" 
+                  @click="showToolTraceDetails(message as ToolTraceMessage)"
+                >
+                  Details
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -92,6 +115,47 @@
         </div>
       </div>
     </div>
+
+    <!-- Tool Trace Details Popup -->
+    <AppPopup
+      :show="showToolTracePopup"
+      title="Tool Trace Details"
+      size="lg"
+      @close="closeToolTracePopup"
+    >
+      <div v-if="selectedToolTrace" class="tool-trace-popup-content">
+        <div class="tool-trace-detail-section">
+          <h4>Tool Information</h4>
+          <div class="tool-trace-detail-item">
+            <strong>Tool Name:</strong> {{ getToolName(selectedToolTrace) }}
+          </div>
+          <div class="tool-trace-detail-item">
+            <strong>Status:</strong> 
+            <span :class="getToolTraceStatusClass(selectedToolTrace)">
+              {{ getToolTraceStatus(selectedToolTrace) }}
+            </span>
+          </div>
+          <div class="tool-trace-detail-item">
+            <strong>Executed At:</strong> {{ formatTime(selectedToolTrace.createdAt) }}
+          </div>
+        </div>
+
+        <div v-if="selectedToolTrace.toolInput" class="tool-trace-detail-section">
+          <h4>Input</h4>
+          <pre class="tool-trace-code">{{ selectedToolTrace.toolInput }}</pre>
+        </div>
+
+        <div v-if="selectedToolTrace.toolResult" class="tool-trace-detail-section">
+          <h4>Output</h4>
+          <pre class="tool-trace-code">{{ selectedToolTrace.toolResult }}</pre>
+        </div>
+
+        <div v-if="selectedToolTrace.toolError" class="tool-trace-detail-section">
+          <h4>Error</h4>
+          <pre class="tool-trace-code error">{{ selectedToolTrace.toolError }}</pre>
+        </div>
+      </div>
+    </AppPopup>
   </div>
 </template>
 
@@ -102,16 +166,24 @@ import hljs from 'highlight.js'
 import { marked, Renderer } from 'marked'
 import DOMPurify from 'dompurify'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
+import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-trace.entity'
 
 type ChatMessage = Partial<Message>;
+type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };
+type ChatItem = ChatMessage | ToolTraceMessage;
 
 // State
 const isLoading = ref(true)
-const messages = ref<ChatMessage[]>([])
+const messages = ref<ChatItem[]>([])
 const messageText = ref('')
 const isTyping = ref(false)
 
 const socket = ref<WebSocket | null>(null)
+
+// Tool trace state
+const toolTraces = ref<ToolTraceMessage[]>([])
+const showToolTracePopup = ref(false)
+const selectedToolTrace = ref<ToolTraceMessage | null>(null)
 
 // Admin sidebar state
 const showSidebar = ref(false)
@@ -233,7 +305,7 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number) => {
 
     const cacheKey = `${cachePrefix}chat-messages-${clientIdentifier.value}`;
     const cachedMessages = limit ? null : sessionStorage.getItem(cacheKey);
-    let allMessages = cachedMessages ? JSON.parse(cachedMessages) as ChatMessage[] : null;
+    let allMessages: ChatItem[] | null = cachedMessages ? JSON.parse(cachedMessages) as ChatItem[] : null;
     if (!allMessages || limit) {
 
       console.log('Fetching messages from server...');
@@ -248,6 +320,13 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number) => {
       });
       const rawMessages = res?.data || []
       console.log(`Fetched ${rawMessages.length} messages from server.`);
+      
+      // Fetch tool traces if in inverted mode
+      let toolTraceMessages: ToolTraceMessage[] = []
+      if (isInvertedMode.value) {
+        toolTraceMessages = await fetchToolTraces(nuxtApp, limit)
+      }
+      
       // Sort messages by createdAt
       const newMessages = rawMessages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
       
@@ -259,22 +338,22 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number) => {
       const uniqueNewMessages = newMessages.filter((msg: any) => !existingIds.has(msg.id))
 
       
-      // Combine existing and new messages, then sort by createdAt
-      allMessages = [...messages.value, ...uniqueNewMessages].sort((a: any, b: any) => 
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      // Combine existing messages, new messages, and tool traces, then sort by createdAt
+      allMessages = [...messages.value, ...uniqueNewMessages, ...toolTraceMessages].sort((a: any, b: any) => 
+        new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
       )
 
       // Cache messages in sessionStorage
       sessionStorage.setItem(cacheKey, JSON.stringify(allMessages));
     }
     
-    const newMessageCount = allMessages.length
+    const newMessageCount = allMessages?.length || 0
     
     // Check if new messages arrived
     const hasNewMessages = newMessageCount > lastMessageCount.value
     
     // Update messages
-    messages.value = allMessages
+    messages.value = allMessages || []
     
     // Auto-scroll to bottom if new messages arrived
     if (hasNewMessages) {
@@ -320,6 +399,61 @@ const addWelcomeMessage = () => {
   highlightAllDeferred()
     })
   }
+  
+}
+
+// Add mock tool traces for testing
+const addMockToolTraces = (messages: any[]) => {
+  const mockTraces: ToolTraceMessage[] = [
+    {
+      id: 'mock-trace-1',
+      type: 'tool-trace',
+      toolName: 'web_search',
+      toolInput: JSON.stringify({
+        query: 'latest cryptocurrency prices',
+        max_results: 5
+      }, null, 2),
+      toolResult: JSON.stringify({
+        results: [
+          { title: 'Bitcoin Price Today', url: 'https://example.com/btc', snippet: 'Bitcoin is trading at $45,000...' },
+          { title: 'Ethereum Latest News', url: 'https://example.com/eth', snippet: 'Ethereum shows strong momentum...' }
+        ]
+      }, null, 2),
+      createdAt: new Date(Date.now() - 5000),
+      updatedAt: new Date(Date.now() - 5000)
+    },
+    {
+      id: 'mock-trace-2',
+      type: 'tool-trace',
+      toolName: 'calculate',
+      toolInput: JSON.stringify({
+        expression: '(45000 * 0.1) + 2500',
+        precision: 2
+      }, null, 2),
+      toolResult: JSON.stringify({
+        result: 7000,
+        formatted: '$7,000.00'
+      }, null, 2),
+      createdAt: new Date(Date.now() - 3000),
+      updatedAt: new Date(Date.now() - 3000)
+    },
+    {
+      id: 'mock-trace-3',
+      type: 'tool-trace',
+      toolName: 'send_email',
+      toolInput: JSON.stringify({
+        to: 'user@example.com',
+        subject: 'Investment Summary',
+        body: 'Here is your portfolio update...'
+      }, null, 2),
+      toolError: 'Failed to send email: SMTP server connection timeout',
+      createdAt: new Date(Date.now() - 1000),
+      updatedAt: new Date(Date.now() - 1000)
+    }
+  ]
+  
+  // Add mock traces to messages
+  //essages.push(...mockTraces)
 }
 
 const sendMessage = async () => {
@@ -456,6 +590,68 @@ const getMessageClass = (messageType?: string) => {
     cond =!cond;
   }
   return cond ? 'message-fan' : 'message-model'
+}
+
+// Tool trace helper functions
+const getToolName = (trace: ToolTraceMessage): string => {
+  return trace.toolName || 'Unknown Tool'
+}
+
+const getToolTraceStatus = (trace: ToolTraceMessage): string => {
+  if (trace.toolError) return 'Error'
+  if (trace.toolResult) return 'Success'
+  return 'Unknown'
+}
+
+const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
+  if (trace.toolError) return 'status-error'
+  if (trace.toolResult) return 'status-success'
+  return 'status-unknown'
+}
+
+const showToolTraceDetails = (trace: ToolTraceMessage) => {
+  selectedToolTrace.value = trace
+  showToolTracePopup.value = true
+}
+
+const closeToolTracePopup = () => {
+  showToolTracePopup.value = false
+  selectedToolTrace.value = null
+}
+
+// Fetch tool traces for inverted mode
+const fetchToolTraces = async (nuxtApp: NuxtApp, limit?: number): Promise<ToolTraceMessage[]> => {
+  if (!isInvertedMode.value || !clientIdentifier.value || !widgetConfig.value.apiToken) {
+    return []
+  }
+
+  try {
+    console.log('Fetching tool traces from server...')
+    const res = await nuxtApp.$sp.toolTrace.find({
+      client: clientIdentifier.value,
+      product: widgetConfig.value.apiToken
+    }, {
+      orderBy: { createdAt: 'asc' },
+      limit: limit || undefined
+    })
+
+    const rawTraces = res?.data || []
+    console.log(`Fetched ${rawTraces.length} tool traces from server.`)
+
+    // Convert to ToolTraceMessage format
+    const traceMessages: ToolTraceMessage[] = rawTraces.map(trace => ({
+      ...trace,
+      type: 'tool-trace' as const
+    }))
+
+    addMockToolTraces(traceMessages)
+
+
+    return traceMessages
+  } catch (error) {
+    console.error('Failed to load tool traces:', error)
+    return []
+  }
 }
 
 // --- Markdown Rendering using marked + DOMPurify ---
@@ -1033,4 +1229,186 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 /* SVG avatar wrapper */
 .avatar-svg-wrapper { display:inline-flex; width:28px; height:28px; color:#fff; align-items:center; justify-content:center; }
 .avatar-svg-wrapper svg { width:100%; height:100%; display:block; fill:currentColor; }
+
+/* Tool Trace Styles */
+.tool-trace-message {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem;
+  max-width: 90%;
+  align-self: flex-end;
+}
+
+.dark-mode .tool-trace-message {
+  background: #2a2a31;
+  border-color: #3a3a42;
+}
+
+.tool-trace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tool-trace-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.tool-trace-icon {
+  font-size: 1.2rem;
+}
+
+.tool-trace-name {
+  font-weight: 600;
+  color: #495057;
+}
+
+.dark-mode .tool-trace-name {
+  color: #e9ecef;
+}
+
+.tool-trace-status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.status-unknown {
+  background: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
+}
+
+.dark-mode .status-success {
+  background: #155724;
+  color: #d4edda;
+  border-color: #0f4419;
+}
+
+.dark-mode .status-error {
+  background: #721c24;
+  color: #f8d7da;
+  border-color: #5a161c;
+}
+
+.dark-mode .status-unknown {
+  background: #495057;
+  color: #e9ecef;
+  border-color: #3a3a42;
+}
+
+.tool-trace-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tool-trace-details-btn {
+  background: var(--primary-color, #667eea);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tool-trace-details-btn:hover {
+  background: var(--primary-color-hover, #5a6fd8);
+}
+
+/* Tool Trace Popup Styles */
+.tool-trace-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tool-trace-detail-section {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.dark-mode .tool-trace-detail-section {
+  border-color: #3a3a42;
+  background: #2a2a31;
+}
+
+.tool-trace-detail-section h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-color, #667eea);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.tool-trace-detail-item {
+  margin-bottom: 0.75rem;
+}
+
+.tool-trace-detail-item:last-child {
+  margin-bottom: 0;
+}
+
+.tool-trace-detail-item strong {
+  color: #495057;
+  margin-right: 0.5rem;
+}
+
+.dark-mode .tool-trace-detail-item strong {
+  color: #e9ecef;
+}
+
+.tool-trace-code {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dark-mode .tool-trace-code {
+  background: #1e1e22;
+  border-color: #3a3a42;
+  color: #e9ecef;
+}
+
+.tool-trace-code.error {
+  background: #fff5f5;
+  border-color: #fed7d7;
+  color: #c53030;
+}
+
+.dark-mode .tool-trace-code.error {
+  background: #2d1b1b;
+  border-color: #742a2a;
+  color: #fed7d7;
+}
 </style>

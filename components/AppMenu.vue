@@ -136,8 +136,20 @@
         <li>
           <NuxtLink to="/account" @click="closeMobileMenu">
             <AppIcon name="user" size="md" class="nav-icon" />
-            Account Settings
+            <span style="max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom;">
+              {{ useNuxtApp().$userEmail || 'Account Settings' }}
+            </span>
           </NuxtLink>
+        </li>
+        <li>
+          <a 
+            href="#"
+            @click="handleLogout($event)"
+            class="nav-link logout-link"
+          >
+            <AppIcon name="logout" size="md" class="nav-icon" />
+            Logout
+          </a>
         </li>
       </ul>
     </nav>
@@ -196,6 +208,25 @@ const handleClientSelected = (clientData: { guestId?: string, userToken?: string
     
     const url = `/test-chat${params.toString() ? '?' + params.toString() : ''}`
     window.open(url, '_blank')
+  }
+}
+
+const handleLogout = async (event: Event) => {
+  event.preventDefault()
+  closeMobileMenu()
+  
+  const nuxtApp = useNuxtApp()
+  
+  try {
+    const confirmed = await nuxtApp.$confirmPopup.show('Are you sure you want to logout?')
+    
+    if (confirmed) {
+      await nuxtApp.$sp.user.logout()
+      // Redirect to login page or home page after logout
+      await navigateTo('/login')
+    }
+  } catch (error) {
+    console.error('Logout failed:', error)
   }
 }
 
@@ -422,6 +453,15 @@ onMounted(async () => {
   height: 20px;
   margin-right: 0.75rem;
   stroke-width: 2;
+}
+
+.logout-link {
+  color: $error !important;
+  
+  &:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: $error;
+  }
 }
 
 .nav-link-with-warning {
