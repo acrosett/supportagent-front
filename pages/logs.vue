@@ -219,8 +219,28 @@
               <span>{{ selectedLog.userId || 'System' }}</span>
             </div>
             <div class="detail-item">
+              <label>Product ID:</label>
+              <span>{{ selectedLog.productId || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <label>IP Address:</label>
+              <span>{{ selectedLog.ip || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Current Microservice:</label>
+              <span>{{ selectedLog.currentMs || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
               <label>Created:</label>
               <span>{{ formatFullDate(selectedLog.createdAt) }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Updated:</label>
+              <span>{{ formatFullDate(selectedLog.updatedAt) }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Expires At:</label>
+              <span>{{ selectedLog.expireAt ? formatFullDate(selectedLog.expireAt) : 'Never' }}</span>
             </div>
             <div class="detail-item">
               <label>Fail Notification:</label>

@@ -35,6 +35,7 @@
               color="secondary"
               size="sm"
               margin="left"
+              @click="openEmailChangePopup"
             />
         </div>
 
@@ -104,26 +105,27 @@
       </div>
 
       <MegaForm
-        :formClass="ChangePasswordFormDto"
+        :formClass="ChangePasswordDto"
         v-model="passwordFormData"
-        :includeFields="['currentPassword', 'newPassword', 'confirmPassword']"
+        :includeFields="['oldPassword', 'newPassword']"
         :fieldOverrides="passwordFieldOverrides"
         :actions="passwordFormActions"
       />
     </div>
 
     <!-- Delete Account Section -->
-    <div class="content-section danger-section">
+    <div class="content-section" :class="{ 'danger-section': product?.flaggedForDeletion }">
       <div class="section-header">
         <h2>Delete Account</h2>
         <p class="section-description">Permanently delete your account and all associated data</p>
       </div>
 
       <div class="danger-content">
-        <div class="danger-warning">
-          <AppIcon name="info" size="md" class="danger-icon" />
-          <div class="danger-text">
-            <h3>This action cannot be undone</h3>
+        <!-- Account deletion process info (only when not flagged) -->
+        <div v-if="!product?.flaggedForDeletion" class="info-warning">
+          <AppIcon name="info" size="md" class="info-icon" />
+          <div class="info-text">
+            <h3>Account Deletion Process</h3>
             <p>Deleting your account will permanently remove all your data, including:</p>
             <ul>
               <li>All chat conversations and messages</li>
@@ -133,6 +135,12 @@
             </ul>
             <p><strong>Your account will be deleted 30 days after confirmation.</strong></p>
           </div>
+        </div>
+
+        <!-- Deletion countdown message (only when flagged) -->
+        <div v-if="product?.flaggedForDeletion" class="deletion-countdown-message">
+          <AppIcon name="info" size="md" class="countdown-icon" />
+          <span>Your account will be deleted in {{ getDeletionCountdown(product.flaggedForDeletion).toLowerCase() }}</span>
         </div>
 
         <div class="danger-actions">
@@ -145,34 +153,52 @@
           <AppButton
             v-else
             label="Cancel Account Deletion"
-            color="secondary"
+            color="ok"
             @click="handleCancelDeletion"
           />
         </div>
       </div>
     </div>
+
+    <!-- Email Change Popup -->
+    <AppPopup 
+      :show="showEmailChangePopup"
+      title="Change Email Address"
+      @close="closeEmailChangePopup"
+    >
+      <div class="popup-description">
+        <p>Enter your new email address and current password to send a verification email.</p>
+      </div>
+      
+      <MegaForm
+        :formClass="SendVerificationEmailDto"
+        v-model="emailChangeFormData"
+        :fieldOverrides="emailChangeFieldOverrides"
+        :actions="emailChangeActions"
+      />
+    </AppPopup>
   </section>
 </template>
 
 <script setup lang="ts">
 import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
-import { ChangePasswordDto as ApiChangePasswordDto } from '~/eicrud_exports/services/user/cmds/change_password/change_password.dto'
+import { ChangePasswordDto } from '~/eicrud_exports/services/user/cmds/change_password/change_password.dto'
+import { SendVerificationEmailDto } from '~/eicrud_exports/services/user/cmds/send_verification_email/send_verification_email.dto'
+import { DeleteAccountDto } from '~/eicrud_exports/services/user/cmds/delete_account/delete_account.dto'
 import MegaForm, { type MegaFormAction, type OverrideRecord } from '~/components/MegaForm.vue'
 import AppButton from '~/components/AppButton.vue'
 import AppIcon from '~/components/AppIcon.vue'
+import AppPopup from '~/components/AppPopup.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
-
-// Define DTOs for form handling
-class ChangePasswordFormDto {
-  currentPassword: string = ''
-  newPassword: string = ''
-  confirmPassword: string = ''
-}
 
 // Reactive data
 const product = ref<Product | null>(null)
 const userEmail = ref<string>('')
-const passwordFormData = ref<ChangePasswordFormDto>(new ChangePasswordFormDto())
+const passwordFormData = ref<ChangePasswordDto>({
+  oldPassword: '',
+  newPassword: '',
+  logMeIn: false
+} as ChangePasswordDto)
 
 // Email verification state
 const emailVerified = ref<boolean>(false)
@@ -181,6 +207,13 @@ const isLoadingVerification = ref<boolean>(false)
 // Two-factor authentication state
 const twoFactorEnabled = ref<boolean>(false)
 const isLoadingTwoFactor = ref<boolean>(false)
+
+// Email change popup state
+const showEmailChangePopup = ref<boolean>(false)
+const emailChangeFormData = ref<SendVerificationEmailDto>({
+  newEmail: '',
+  password: ''
+})
 
 // Load product data
 const fetchProduct = async () => {
@@ -222,15 +255,15 @@ const getDeletionCountdown = (flaggedDate: Date): string => {
   if (daysLeft <= 0) {
     return 'Account deletion is overdue'
   } else if (daysLeft === 1) {
-    return '1 day remaining'
+    return '1 day'
   } else {
-    return `${daysLeft} days remaining`
+    return `${daysLeft} days`
   }
 }
 
 // Form configurations
 const passwordFieldOverrides: OverrideRecord = {
-  currentPassword: {
+  oldPassword: {
     label: 'Current Password',
     type: 'password',
     placeholder: 'Enter your current password'
@@ -239,12 +272,8 @@ const passwordFieldOverrides: OverrideRecord = {
     label: 'New Password',
     type: 'password',
     placeholder: 'Enter your new password',
-    description: 'Must be at least 8 characters long'
-  },
-  confirmPassword: {
-    label: 'Confirm New Password',
-    type: 'password',
-    placeholder: 'Confirm your new password'
+    description: 'Must be at least 8 characters long',
+    doubleCheck: true
   }
 }
 
@@ -254,11 +283,11 @@ const sendVerificationEmail = async () => {
     isLoadingVerification.value = true
     const nuxtApp = useNuxtApp()
     
-    // TODO: Implement send verification email API call
-    // await nuxtApp.$sp.user.send_verification_email({})
+    // Call send_verification_email with empty optional fields for current email verification
+    const verifyEmailData = new SendVerificationEmailDto()
+    await nuxtApp.$sp.user.send_verification_email(verifyEmailData)
     
-    // For now, just show a placeholder message
-    nuxtApp.$toast.show('Verification email functionality coming soon', 'info')
+    nuxtApp.$toast.show('Verification email has been sent to your current email address', 'success')
   } catch (error) {
     console.error('Failed to send verification email:', error)
     useNuxtApp().$toast.show('Failed to send verification email', 'error')
@@ -266,6 +295,63 @@ const sendVerificationEmail = async () => {
     isLoadingVerification.value = false
   }
 }
+
+// Email change functions
+const openEmailChangePopup = () => {
+  // Reset form data
+  emailChangeFormData.value = {
+    newEmail: '',
+    password: ''
+  }
+  showEmailChangePopup.value = true
+}
+
+const closeEmailChangePopup = () => {
+  showEmailChangePopup.value = false
+}
+
+// Email change form configuration
+const emailChangeFieldOverrides: OverrideRecord<SendVerificationEmailDto> = {
+  newEmail: {
+    type: 'email',
+    doubleCheck: true,
+    label: 'New Email Address',
+    placeholder: 'Enter your new email address',
+    description: 'Enter the new email address you want to use for your account'
+  },
+  password: {
+    type: 'password',
+    label: 'Current Password',
+    placeholder: 'Enter your current password',
+    description: 'Confirm your identity with your current password'
+  }
+}
+
+const emailChangeActions: MegaFormAction[] = [
+  {
+    label: 'Send Verification Email',
+    color: 'primary',
+    callback: async (data: SendVerificationEmailDto) => {
+      try {
+        const nuxtApp = useNuxtApp()
+        
+        await nuxtApp.$sp.user.send_verification_email(data)
+        
+        nuxtApp.$toast.show(
+          'Verification email sent to your new email address. Please check your inbox and follow the instructions.',
+          'success'
+        )
+        
+        // Close popup and reset form
+        closeEmailChangePopup()
+        
+      } catch (error) {
+        console.error('Failed to send email change verification:', error)
+        throw new Error('Failed to send verification email. Please check your password and try again.')
+      }
+    }
+  }
+]
 
 // Two-factor authentication functions
 const handleTwoFactorToggle = async (enabled: boolean) => {
@@ -301,25 +387,23 @@ const passwordFormActions: MegaFormAction[] = [
   {
     label: 'Update Password',
     color: 'primary',
-    callback: async (formData: ChangePasswordFormDto) => {
+    callback: async (formData: ChangePasswordDto) => {
       try {
-        if (formData.newPassword !== formData.confirmPassword) {
-          throw new Error('Passwords do not match')
-        }
-        
         const nuxtApp = useNuxtApp()
         
-        // Use the correct API method with proper field mapping
+        // Set logMeIn to false for the API call
         const changePasswordData = {
-          oldPassword: formData.currentPassword,
-          newPassword: formData.newPassword,
-          logMeIn: false
-        } as ApiChangePasswordDto
+          ...formData,
+          logMeIn: true
+        } as ChangePasswordDto
         
         await nuxtApp.$sp.user.change_password(changePasswordData)
         
         nuxtApp.$toast.show('Password updated successfully', 'success')
-        passwordFormData.value = new ChangePasswordFormDto()
+        passwordFormData.value = {
+          oldPassword: '',
+          newPassword: '',
+        } as ChangePasswordDto
       } catch (error) {
         console.error('Failed to change password:', error)
         useNuxtApp().$toast.show('Failed to update password', 'error')
@@ -340,11 +424,8 @@ const handleDeleteAccount = async () => {
     
     if (!confirmed) return
     
-    // TODO: Implement flag for deletion API call
-    await nuxtApp.$sp.product.patch(
-      { id: nuxtApp.$userProductId },
-      { flaggedForDeletion: new Date() }
-    )
+    // Use delete_account API call to flag for deletion
+    await nuxtApp.$sp.user.delete_account({ delete: true } as DeleteAccountDto)
     
     // Refresh product data to show the warning
     await fetchProduct()
@@ -366,11 +447,8 @@ const handleCancelDeletion = async () => {
     
     if (!confirmed) return
     
-    // TODO: Implement cancel deletion API call
-    await nuxtApp.$sp.product.patch(
-      { id: nuxtApp.$userProductId },
-      { flaggedForDeletion: null }
-    )
+    // Use delete_account API call to unflag for deletion
+    await nuxtApp.$sp.user.delete_account({ delete: false } as DeleteAccountDto)
     
     // Refresh product data to hide the warning
     await fetchProduct()
@@ -586,6 +664,72 @@ onMounted(() => {
   gap: 1.5rem;
 }
 
+.info-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba($muted, 0.05);
+  border: 1px solid rgba($muted, 0.2);
+  border-radius: $radius;
+  
+  .info-icon {
+    color: $muted;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+  }
+  
+  .info-text {
+    flex: 1;
+    
+    h3 {
+      margin: 0 0 0.5rem 0;
+      color: $text;
+      font-size: 1.1rem;
+    }
+    
+    p {
+      margin: 0 0 0.75rem 0;
+      color: $text;
+      line-height: 1.5;
+      
+      &:last-of-type {
+        margin-bottom: 0;
+        font-weight: 600;
+      }
+    }
+    
+    ul {
+      margin: 0.75rem 0;
+      padding-left: 1.5rem;
+      color: $text;
+      
+      li {
+        margin-bottom: 0.25rem;
+        line-height: 1.4;
+      }
+    }
+  }
+}
+
+.deletion-countdown-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: rgba($error, 0.1);
+  border: 2px solid rgba($error, 0.3);
+  border-radius: $radius;
+  color: $error;
+  font-weight: 600;
+  font-size: 1rem;
+  
+  .countdown-icon {
+    color: $error;
+    flex-shrink: 0;
+  }
+}
+
 .danger-warning {
   display: flex;
   align-items: flex-start;
@@ -637,6 +781,17 @@ onMounted(() => {
 .danger-actions {
   display: flex;
   justify-content: flex-start;
+}
+
+.popup-description {
+  margin-bottom: 1.5rem;
+  
+  p {
+    margin: 0;
+    color: $muted;
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
 }
 
 // Mobile responsive

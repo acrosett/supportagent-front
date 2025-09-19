@@ -134,11 +134,16 @@
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/account" @click="closeMobileMenu">
-            <AppIcon name="user" size="md" class="nav-icon" />
-            <span style="max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom;">
-              {{ useNuxtApp().$userEmail || 'Account Settings' }}
-            </span>
+          <NuxtLink to="/account" @click="closeMobileMenu" class="nav-link-with-warning">
+            <div class="nav-link-content">
+              <AppIcon name="user" size="md" class="nav-icon" />
+              <span style="max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom;">
+                {{ useNuxtApp().$userEmail || 'Account Settings' }}
+              </span>
+            </div>
+            <div v-if="showAccountWarning" class="warning-indicator">
+              <AppIcon name="info" size="sm" />
+            </div>
           </NuxtLink>
         </li>
         <li>
@@ -177,6 +182,7 @@ const isAdmin = ref(false)
 const currentProduct = ref<Product | null>(null)
 const showBillingWarning = ref(false)
 const showEditProductWarning = ref(false)
+const showAccountWarning = ref(false)
 const notificationCount = ref(0)
 
 // Test client selector state
@@ -249,6 +255,7 @@ const fetchProduct = async () => {
 const checkWarnings = () => {
   checkBillingWarning()
   checkEditProductWarning()
+  checkAccountWarning()
   checkNotificationCount()
 }
 
@@ -273,6 +280,17 @@ const checkEditProductWarning = () => {
   const hasAiOff = !currentProduct.value.chatOn
   
   showEditProductWarning.value = hasAiOff
+}
+
+const checkAccountWarning = () => {
+  if (!currentProduct.value) {
+    showAccountWarning.value = false
+    return
+  }
+  
+  const isFlaggedForDeletion = !!currentProduct.value.flaggedForDeletion
+  
+  showAccountWarning.value = isFlaggedForDeletion
 }
 
 const checkNotificationCount = () => {
@@ -456,11 +474,11 @@ onMounted(async () => {
 }
 
 .logout-link {
-  color: $error !important;
+  color: color.scale($warning, $lightness: -30%) !important;
   
   &:hover {
     background-color: rgba(220, 53, 69, 0.1);
-    color: $error;
+    color: $warning;
   }
 }
 

@@ -23,6 +23,7 @@ import { SpendClient } from './services/BANK-ms/spend/spend.client';
 import { ProductVaultClient } from './services/BANK-ms/product-vault/product-vault.client';
 import { DepositClient } from './services/BANK-ms/deposit/deposit.client';
 import { TokenClient } from './services/AUTH-ms/token/token.client';
+import { AccountDeletionClient } from './services/AUTH-ms/account-deletion/account-deletion.client';
 import { TaskClient } from './services/AI-ms/task/task.client';
 import { StaffContactAgentClient } from './services/AI-ms/staff-contact-agent/staff-contact-agent.client';
 import { LlmProviderClient } from './services/AI-ms/llm-provider/llm-provider.client';
@@ -62,6 +63,7 @@ export class SuperClient {
         this.productVault = new ProductVaultClient(config);
         this.deposit = new DepositClient(config);
         this.token = new TokenClient(config);
+        this.accountDeletion = new AccountDeletionClient(config);
         this.task = new TaskClient(config);
         this.staffContactAgent = new StaffContactAgentClient(config);
         this.llmProvider = new LlmProviderClient(config);
@@ -97,6 +99,7 @@ export class SuperClient {
     productVault: ProductVaultClient;
     deposit: DepositClient;
     token: TokenClient;
+    accountDeletion: AccountDeletionClient;
     task: TaskClient;
     staffContactAgent: StaffContactAgentClient;
     llmProvider: LlmProviderClient;

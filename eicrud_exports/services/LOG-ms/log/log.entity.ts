@@ -21,6 +21,12 @@ export class Log {
     message: string;
 
     @IsString()
+    ip: string;
+
+    @IsString()
+    currentMs: string;
+
+    @IsString()
     data: string;
 
     @IsString()
@@ -38,6 +44,9 @@ export class Log {
 
     @IsString()
     userId: string;
+ 
+    @IsString()
+    productId: string;
 
     @IsBoolean()
     failNotif = false;

@@ -5,6 +5,7 @@ import { SendPasswordResetEmailDto } from './cmds/send_password_reset_email/send
 import { ResetPasswordDto } from './cmds/reset_password/reset_password.dto';
 import { LogoutEverywhereDto } from './cmds/logout_everywhere/logout_everywhere.dto';
 import { GetUserRoleDto, GetUserRoleReturnDto } from './cmds/get_user_role/get_user_role.dto';
+import { DeleteAccountDto, DeleteAccountReturnDto } from './cmds/delete_account/delete_account.dto';
 import { CreateAccountExtendedDto, CreateAccountExtendedReturnDto } from './cmds/create_account_extended/create_account_extended.dto';
 import { CreateAccountDto, CreateAccountReturnDto } from './cmds/create_account/create_account.dto';
 import { CheckJwtExtendedDto, CheckJwtExtendedReturnDto } from './cmds/check_jwt_extended/check_jwt_extended.dto';
@@ -241,6 +242,38 @@ export class UserClient extends CrudClient<User> {
       copts?: ClientOptions,
     ): Promise<GetUserRoleReturnDto> {
       return super.cmdSL('get_user_role', dto, options, copts) as any;
+  }
+
+  async delete_account(
+      dto: DeleteAccountDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<DeleteAccountReturnDto> {
+      return super.cmd('delete_account', dto, options, copts);
+  }
+
+  async delete_accountS(
+      dto: DeleteAccountDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<DeleteAccountReturnDto> {
+      return super.cmdS('delete_account', dto, options, copts);
+  }
+
+  async delete_accountL(
+      dto: DeleteAccountDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<DeleteAccountReturnDto> {
+      return super.cmdL('delete_account', dto, options, copts) as any;
+  }
+
+  async delete_accountSL(
+      dto: DeleteAccountDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<DeleteAccountReturnDto> {
+      return super.cmdSL('delete_account', dto, options, copts) as any;
   }
 
   async create_account_extended(

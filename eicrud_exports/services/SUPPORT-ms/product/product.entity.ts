@@ -105,6 +105,9 @@ export class Product {
     @IsOptional()
     flaggedForDeletion?: Date;
 
+
+    accountDeleteNotifSent: boolean = false;
+
     createdAt: Date;
 
     updatedAt: Date;
