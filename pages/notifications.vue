@@ -108,8 +108,11 @@ const loadNotifications = async (reset = true) => {
     
     const newNotifications = result.data || []
     
+    // Add mock notifications (comment out this function to remove)
+    const mockNotifications = addMockNotifications(productId, reset)
+    
     if (reset) {
-      notifications.value = newNotifications
+      notifications.value = [...mockNotifications, ...newNotifications]
     } else {
       notifications.value = [...notifications.value, ...newNotifications]
     }
@@ -129,6 +132,62 @@ const loadNotifications = async (reset = true) => {
     isLoading.value = false
     isLoadingMore.value = false
   }
+}
+
+// Mock notifications function - COMMENT OUT THIS ENTIRE FUNCTION TO REMOVE MOCK DATA
+const addMockNotifications = (productId: string, reset: boolean): Notification[] => {
+  if (!reset) return [] // Only add mocks on initial load
+  return [];
+  return [
+    {
+      id: 'mock-1',
+      product: productId,
+      message: 'Your chat widget has received 15 new conversations in the last hour. Customer engagement is up 23% today!',
+      read: false,
+      createdAt: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+      updatedAt: new Date(Date.now() - 5 * 60 * 1000)
+    },
+    {
+      id: 'mock-2', 
+      product: productId,
+      message: 'Account balance is running low ($2.50 remaining). Consider adding funds to ensure uninterrupted service.',
+      read: false,
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+      updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000)
+    },
+    {
+      id: 'mock-3',
+      product: productId, 
+      message: 'Your AI assistant successfully resolved 8 customer inquiries without human intervention today.',
+      read: true,
+      createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
+      updatedAt: new Date(Date.now() - 6 * 60 * 60 * 1000)
+    },
+    {
+      id: 'mock-4',
+      product: productId,
+      message: 'Security alert: Multiple failed login attempts detected from IP 192.168.1.100. Account has been temporarily locked.',
+      read: false,
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+      updatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 'mock-5',
+      product: productId,
+      message: 'Weekly report: Your chat widget handled 147 conversations with a 94% customer satisfaction rate.',
+      read: true,
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+    },
+    {
+      id: 'mock-6',
+      product: productId,
+      message: 'New feature available: Advanced analytics dashboard is now live! Check out detailed conversation insights.',
+      read: false,
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+      updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+    }
+  ] as Notification[]
 }
 
 // Mark notification as read

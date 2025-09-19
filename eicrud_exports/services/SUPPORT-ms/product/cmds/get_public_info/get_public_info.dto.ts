@@ -17,4 +17,5 @@ export type GetPublicInfoReturnDto = {
     productName: string;
     chatOn: boolean;
     quotasExceeded: boolean;
+    productDeleted: boolean;
 };

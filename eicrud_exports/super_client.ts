@@ -15,6 +15,7 @@ import { DomainClient } from './services/SUPPORT-ms/domain/domain.client';
 import { CustomToolClient } from './services/SUPPORT-ms/custom-tool/custom-tool.client';
 import { ClientClient } from './services/SUPPORT-ms/client/client.client';
 import { NotificationClient } from './services/notification/notification.client';
+import { ProductStatClient } from './services/LOG-ms/product-stat/product-stat.client';
 import { LogClient } from './services/LOG-ms/log/log.client';
 import { LlmTrainingDataClient } from './services/LOG-ms/llm-training-data/llm-training-data.client';
 import { AdminNotifClient } from './services/LOG-ms/admin-notif/admin-notif.client';
@@ -55,6 +56,7 @@ export class SuperClient {
         this.customTool = new CustomToolClient(config);
         this.client = new ClientClient(config);
         this.notification = new NotificationClient(config);
+        this.productStat = new ProductStatClient(config);
         this.log = new LogClient(config);
         this.llmTrainingData = new LlmTrainingDataClient(config);
         this.adminNotif = new AdminNotifClient(config);
@@ -91,6 +93,7 @@ export class SuperClient {
     customTool: CustomToolClient;
     client: ClientClient;
     notification: NotificationClient;
+    productStat: ProductStatClient;
     log: LogClient;
     llmTrainingData: LlmTrainingDataClient;
     adminNotif: AdminNotifClient;

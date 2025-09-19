@@ -29,7 +29,7 @@ export class NotificationConfig {
 
     @IsOptional()
     lowBalance: NotificationSubConfig = new NotificationSubConfig();
-
+ 
     @IsOptional()
     newIssues: NotificationSubConfig = new NotificationSubConfig();
 

@@ -7,6 +7,7 @@ export class Notification {
     @IsOptional()
     id: string;
 
+    @IsString()
     product: Product | string;
 
     @IsString()

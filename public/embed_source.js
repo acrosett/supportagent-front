@@ -429,12 +429,15 @@ const createWidget = (config) => {
       const productInfo = await getProductPublicInfo(backEndDomain, productId);
       config.debug && console.log('Product Info:', productInfo);
       // Hide widget if chat is disabled or quotas exceeded (unless debug mode is enabled)
-      if (!config.debug && (!productInfo.chatOn || productInfo.quotasExceeded)) {
+      if (!config.debug && (!productInfo.chatOn || productInfo.quotasExceeded || productInfo.productDeleted)) {
         if (!productInfo.chatOn) {
           console.warn(`AI Support Widget: Chat functionality is disabled for product ${productId}. Widget will not be displayed. Please enable AI chat in your product settings.`);
         }
         if (productInfo.quotasExceeded) {
           console.warn(`AI Support Widget: Usage quotas have been exceeded for product ${productId}. Widget will not be displayed. Please check your billing and usage limits.`);
+        }
+        if (productInfo.productDeleted) {
+          console.warn(`AI Support Widget: The product ${productId} has been flagged for deletion. Widget will not be displayed.`);
         }
         return;
       }
