@@ -19,6 +19,7 @@ export class CreateAccountExtendedDto {
     role: RoleType;
 
     @Equals(true)
+    @IsBoolean()
     acceptedEula: boolean;
 
     @IsBoolean()

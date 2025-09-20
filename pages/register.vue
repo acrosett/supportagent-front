@@ -9,7 +9,7 @@
       <p class="auth-subtitle">Join us to start automating your customer support</p>
     </div>
     <MegaForm
-      :formClass="CreateAccountDto"
+      :formClass="CreateAccountExtendedDto"
       v-model="formData"
       :fieldOverrides="fieldOverrides"
       :excludeFields="['logMeIn', 'role', 'username']"
@@ -19,7 +19,7 @@
 </template>
 <script setup lang="ts">
 import MegaForm, { MegaFormAction } from '~/components/MegaForm.vue'
-import { CreateAccountDto } from '~/eicrud_exports/services/user/cmds/create_account/create_account.dto'
+import { CreateAccountExtendedDto } from '~/eicrud_exports/services/user/cmds/create_account_extended/create_account_extended.dto'
 import { ref } from 'vue'
 
 definePageMeta({ layout: 'bare' })
@@ -29,7 +29,9 @@ const formData = ref({
   username: '',
   password: '',
   role: '',
-  logMeIn: false
+  logMeIn: false,
+  acceptedEula: false,
+  acceptedMarketing: false
 })
 
 const fieldOverrides = {
@@ -42,6 +44,14 @@ const fieldOverrides = {
     type: 'email',
     label: 'Email'
   },
+  acceptedEula: {
+    type: 'checkbox',
+    label: 'I accept the [End User License Agreement](https://directsupport.ai/eula)'
+  },
+  acceptedMarketing: {
+    type: 'checkbox',
+    label: 'I agree to receive marketing communications'
+  }
 }
 
 const actions: MegaFormAction[] = [
@@ -49,12 +59,12 @@ const actions: MegaFormAction[] = [
     label: 'Register',
     color: 'primary',
     margin: 'right',
-    callback: async (data: CreateAccountDto) => {
+    callback: async (data: CreateAccountExtendedDto) => {
       // TODO: handle registration
       data.logMeIn = true;
       data.role = "product_owner";
 
-      const { userId, accessToken } = await useNuxtApp().$sp.user.create_accountS(data);
+      const { userId, accessToken } = await useNuxtApp().$sp.user.create_account_extendedS(data);
       await useNuxtApp().$sp.user.setJwt(accessToken as string, 3600 * 30); // 30 minutes
       useNuxtApp().$userId = userId;
             

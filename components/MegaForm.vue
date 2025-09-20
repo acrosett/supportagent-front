@@ -341,6 +341,12 @@ function getLabelStyle(field: any) {
   return color ? { color } : {};
 }
 
+// Function to parse markdown links in labels
+function parseMarkdownLinks(text: string): string {
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  return text.replace(linkRegex, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+
 // Helper function to handle array item input (handles both objects and primitives)
 function handleArrayItemInput(fieldKey: string, index: number, event: Event) {
   const target = event.target as HTMLInputElement
@@ -432,7 +438,7 @@ defineExpose({
                 class="megaform-required"
                 title="Required"
               >*</span>
-              {{ field.label }}
+              <span v-html="parseMarkdownLinks(field.label)"></span>
               <FieldTooltip
                 v-if="fieldOverrides?.[field.key]?.description"
                 :text="fieldOverrides?.[field.key]?.description || ''"
@@ -647,7 +653,7 @@ defineExpose({
 </template>
 <style lang="scss" scoped>
 @use "~/assets/_variables.scss" as *;
-
+@use "sass:color";
 
 .megaform-array-add {
   margin-left: 0.5em;
@@ -973,5 +979,22 @@ defineExpose({
   margin-top: 0.3em;
 }
 
+.megaform-label-text {
+  a {
+    color: $brand;
+    text-decoration: underline;
+    
+    &:hover {
+      color: color.adjust($brand, $lightness: -10%);
+      text-decoration: none;
+    }
+    
+    &:focus {
+      outline: 2px solid rgba($brand, 0.3);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+}
 
 </style>

@@ -26,7 +26,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return
   }
   // Require login for all other pages
-  if (!loggedIn && !["/login", "/register"].includes(to.path)) {
+  if (!loggedIn && !["/login", "/register", "/reset-password", "/verify-email"].includes(to.path)) {
     return navigateTo("/login")
   }
 })

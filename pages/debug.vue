@@ -52,15 +52,96 @@
           </div>
         </div>
       </div>
+
+      <!-- Effective Delete Account Section -->
+      <div class="debug-section">
+        <div class="section-header">
+          <h2>Effective Account Deletion</h2>
+          <p class="warning-text">⚠️ DANGER: Permanently delete an account and all associated data. This action cannot be undone!</p>
+        </div>
+        
+        <div class="section-content">
+          <MegaForm
+            :formClass="EffectiveDeleteAccountDto"
+            v-model="deleteAccountFormData"
+            :fieldOverrides="deleteAccountFieldOverrides"
+            :actions="deleteAccountActions"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import AppButton from '~/components/AppButton.vue'
+import MegaForm from '~/components/MegaForm.vue'
+import type { MegaFormAction, OverrideRecord } from '~/components/MegaForm.vue'
+import { EffectiveDeleteAccountDto } from '~/eicrud_exports/services/AUTH-ms/account-deletion/cmds/effective_delete_account/effective_delete_account.dto'
+
 const trainingLogId = ref('')
 const isReplaying = ref(false)
 const replayResult = ref<any>(null)
 const replayError = ref<string | null>(null)
+
+// Effective Delete Account form data
+const deleteAccountFormData = ref<EffectiveDeleteAccountDto>({
+  productId: '',
+  reason: ''
+})
+
+// Form configuration
+const deleteAccountFieldOverrides: OverrideRecord<EffectiveDeleteAccountDto> = {
+  productId: {
+    label: 'Product ID',
+    placeholder: 'Enter the product ID to delete...',
+    description: 'The ID of the product/account to be permanently deleted'
+  },
+  reason: {
+    label: 'Deletion Reason',
+    type: 'textarea',
+    placeholder: 'Enter the reason for deletion...',
+    description: 'Explain why this account is being deleted (required for audit trail)'
+  }
+}
+
+// Form actions
+const deleteAccountActions: MegaFormAction[] = [
+  {
+    label: 'Execute Account Deletion',
+    color: 'error',
+    callback: async (data: EffectiveDeleteAccountDto) => {
+      try {
+        const nuxtApp = useNuxtApp()
+        
+        const confirmed = await nuxtApp.$confirmPopup.show(
+          `Are you sure you want to PERMANENTLY DELETE the account with Product ID: ${data.productId}?\n\nThis action CANNOT be undone and will immediately delete all associated data.\n\nReason: ${data.reason}`
+        )
+        
+        if (!confirmed) return
+        
+        nuxtApp.$toast.show('Executing account deletion...', 'info')
+        
+        const result = await nuxtApp.$sp.accountDeletion.effective_delete_account(data)
+        
+        nuxtApp.$toast.show('Account deletion executed successfully', 'success')
+        
+        // Reset form
+        deleteAccountFormData.value = {
+          productId: '',
+          reason: ''
+        }
+        
+        console.log('Deletion result:', result)
+        
+      } catch (error) {
+        console.error('Failed to delete account:', error)
+        useNuxtApp().$toast.show('Failed to execute account deletion', 'error')
+        throw error
+      }
+    }
+  }
+]
 
 // Check admin access on page load
 onMounted(async () => {
@@ -113,7 +194,7 @@ const replayLLMParsing = async () => {
 @use '~/assets/variables' as *;
 
 .debug-page {
-
+  // Uses global .page-container for sizing
 }
 
 .page-header {
@@ -158,6 +239,15 @@ const replayLLMParsing = async () => {
     p {
       margin: 0;
       color: $muted;
+    }
+    
+    .warning-text {
+      color: $error;
+      font-weight: 600;
+      background: rgba($error, 0.1);
+      padding: 0.75rem;
+      border-radius: 6px;
+      border: 1px solid rgba($error, 0.2);
     }
   }
   

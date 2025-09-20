@@ -583,7 +583,7 @@
 import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
 import { Deposit } from '~/eicrud_exports/services/BANK-ms/deposit/deposit.entity'
 import { Spend } from '~/eicrud_exports/services/BANK-ms/spend/spend.entity'
-import { StripeDepositDto } from '~/eicrud_exports/services/BANK-ms/product-vault/cmds/stripe_deposit/stripe_deposit.dto'
+import { CheckoutMode, StripeDepositDto } from '~/eicrud_exports/services/BANK-ms/product-vault/cmds/stripe_deposit/stripe_deposit.dto'
 import MegaForm, { MegaFormAction } from '~/components/MegaForm.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
 import FieldTooltip from '~/components/FieldTooltip.vue'
@@ -812,6 +812,7 @@ const handleAddFunds = async () => {
   try {
     const depositDto: StripeDepositDto = {
       amount: depositAmount.value * 100, // Convert to cents
+      mode: CheckoutMode.PAYMENT,
     }
     
     const result = await $sp.productVault.stripe_deposit(depositDto)

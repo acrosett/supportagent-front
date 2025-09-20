@@ -1,6 +1,5 @@
 import { IsString, IsOptional } from "class-validator";
 
-
 export class AccountDeletion {
 
     @IsString()
@@ -8,7 +7,7 @@ export class AccountDeletion {
     id: string;
 
     @IsString()
-    deletedUserId: string;
+    deletedUserId: string | ObjectId;
 
     @IsString()
     hashedEmail: string;
@@ -21,7 +20,7 @@ export class AccountDeletion {
     stripeCustomerId?: string;
 
     @IsString()
-    productId: string;
+    productId: string | ObjectId;
 
     @IsOptional()
     errors?: string[];
