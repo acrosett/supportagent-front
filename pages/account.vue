@@ -463,6 +463,29 @@ const handleCancelDeletion = async () => {
 // Load data on mount
 onMounted(() => {
   fetchProduct()
+  
+  // Check for Stripe payment result in URL parameters
+  const route = useRoute()
+  const stripeResult = route.query.stripe_result as string
+  
+  if (stripeResult) {
+    const nuxtApp = useNuxtApp()
+    
+    switch (stripeResult) {
+      case 'success':
+        nuxtApp.$toast.show('Payment completed successfully!', 'success')
+        break
+      case 'error':
+        nuxtApp.$toast.show('Payment failed. Please try again.', 'error')
+        break
+    }
+    
+    // Clean up the URL parameter after showing the toast
+    const router = useRouter()
+    const cleanQuery = { ...route.query }
+    delete cleanQuery.stripe_result
+    router.replace({ query: cleanQuery })
+  }
 })
 </script>
 

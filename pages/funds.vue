@@ -270,6 +270,7 @@
           <AppButton
             label="Add Funds"
             color="primary"
+            margin="left"
             :disabled="!depositAmount || depositAmount < 1"
             :loading="depositLoading"
             @click="handleAddFunds"
