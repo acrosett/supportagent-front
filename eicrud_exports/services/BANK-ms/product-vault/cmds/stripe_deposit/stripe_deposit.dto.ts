@@ -13,8 +13,7 @@ export class StripeDepositDto {
     amount: number; // Amount in cents
 
     @IsString()
-    @IsOptional()
-    mode?: CheckoutMode = CheckoutMode.PAYMENT;
+    mode: CheckoutMode = CheckoutMode.PAYMENT;
 }
 
 //used by super-client, update me here

@@ -27,7 +27,9 @@
       <div class="balance-display section-card">
         <div class="balance-amount">
           <span class="currency">$</span>
-          <span class="amount">{{ formatBalance(currentProduct?.balance || 0) }}</span>
+          <span :class="['amount', { 'low-balance': (currentProduct?.balance || 0) < 1 }]">
+            {{ formatBalance(currentProduct?.balance || 0) }}
+          </span>
         </div>
         <p class="balance-subtitle" v-if="currentProduct?.lastComputedBalance">
           Last verified {{ formatDate(currentProduct.lastComputedBalance) }}
@@ -41,7 +43,7 @@
       </div>
 
       <!-- Auto Top-up Status -->
-      <div v-if="currentProduct?.autoTopUpEnabled" class="auto-topup-status">
+      <div v-if="currentProduct?.autoTopUpAmount" class="auto-topup-status">
         <div class="auto-topup-info">
           <div class="auto-topup-header">
             <AppIcon name="check" size="sm" />
@@ -585,9 +587,12 @@ import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.en
 import { Deposit } from '~/eicrud_exports/services/BANK-ms/deposit/deposit.entity'
 import { Spend } from '~/eicrud_exports/services/BANK-ms/spend/spend.entity'
 import { CheckoutMode, StripeDepositDto } from '~/eicrud_exports/services/BANK-ms/product-vault/cmds/stripe_deposit/stripe_deposit.dto'
+import { ToggleAutoTopUpDto } from '~/eicrud_exports/services/BANK-ms/spend/cmds/toggle_auto_top_up/toggle_auto_top_up.dto'
 import MegaForm, { MegaFormAction } from '~/components/MegaForm.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
 import FieldTooltip from '~/components/FieldTooltip.vue'
+import AppPagination from '~/components/AppPagination.vue'
+import { CrudOptions } from '~/eicrud_exports/CrudOptions'
 
 definePageMeta({
   layout: 'default'
@@ -664,10 +669,47 @@ const spendingLimitActions: MegaFormAction[] = [
 
 // Load initial data
 onMounted(async () => {
+  // Check for Stripe payment result in URL
+  await checkStripeResult()
+  
   await loadProduct()
   await loadTransactions()
   loading.value = false
 })
+
+const checkStripeResult = async () => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const stripeResult = urlParams.get('stripe_result')
+  const setupIntent = urlParams.get('setup_intent')
+  
+  if (stripeResult === 'success') {
+    if (setupIntent) {
+      $toast.show('Auto top-up setup completed successfully!', 'success')
+      // Reload product data to get updated auto top-up settings
+      await loadProduct()
+    } else {
+      $toast.show('Payment successful! Funds have been added to your account.', 'success')
+      // Reload product data to get updated balance
+      await loadProduct()
+    }
+    // Clean up URL parameters
+    const url = new URL(window.location.href)
+    url.searchParams.delete('stripe_result')
+    url.searchParams.delete('setup_intent')
+    window.history.replaceState({}, '', url.toString())
+  } else if (stripeResult === 'error') {
+    if (setupIntent) {
+      $toast.show('Auto top-up setup failed. Please try again or contact support.', 'error')
+    } else {
+      $toast.show('Payment failed. Please try again or contact support.', 'error')
+    }
+    // Clean up URL parameters
+    const url = new URL(window.location.href)
+    url.searchParams.delete('stripe_result')
+    url.searchParams.delete('setup_intent')
+    window.history.replaceState({}, '', url.toString())
+  }
+}
 
 const loadProduct = async () => {
   try {
@@ -692,113 +734,56 @@ const loadTransactions = async () => {
   if (!currentProduct.value) return
   
   try {
-    // For now, create mock data until the proper API endpoints are available
-    const mockTransactions = [
-      // Deposit transaction
-      {
-        id: '1',
-        type: 'deposit' as const,
-        amount: 50.00,
-        currency: 'USD',
-        isAutoTopUp: false,
-        status: 'completed',
-        source: 'stripe_card',
-        stripePaymentIntentId: 'pi_1ABC123def456',
-        stripeChargeId: 'ch_1ABC123def456',
-        createdAt: new Date('2024-12-01'),
-        updatedAt: new Date('2024-12-01')
-      },
-      // Auto top-up deposit
-      {
-        id: '2',
-        type: 'deposit' as const,
-        amount: 100.00,
-        currency: 'USD',
-        isAutoTopUp: true,
-        status: 'completed',
-        source: 'stripe_card',
-        stripePaymentIntentId: 'pi_2ABC123def456',
-        createdAt: new Date('2024-11-28'),
-        updatedAt: new Date('2024-11-28')
-      },
-      // Spend transaction with AI thinking
-      {
-        id: '3',
-        type: 'spend' as const,
-        amount: 12.50,
-        spendType: 'AI_THINKING',
-        agentType: 'CLIENT_FACING',
-        clientPriority: 'HIGH',
-        think: {
-          agentType: 'CLIENT_FACING',
-          inputBaseTokenCount: 1250,
-          inputProductConfigTokenCount: 850,
-          inputHistoryTokenCount: 2100,
-          outputTokenCount: 680,
-          outputType: 'send_result',
-          modelType: 'smart'
-        },
-        createdAt: new Date('2024-12-02'),
-        updatedAt: new Date('2024-12-02')
-      },
-      // WhatsApp spend transaction
-      {
-        id: '4',
-        type: 'spend' as const,
-        amount: 3.25,
-        spendType: 'WHATSAPP',
-        createdAt: new Date('2024-12-03'),
-        updatedAt: new Date('2024-12-03')
-      },
-      // AI Summary spend
-      {
-        id: '5',
-        type: 'spend' as const,
-        amount: 8.75,
-        spendType: 'AI_SUMMARY',
-        agentType: 'FAQ_EDITOR',
-        think: {
-          agentType: 'FAQ_EDITOR',
-          inputBaseTokenCount: 950,
-          inputProductConfigTokenCount: 450,
-          inputHistoryTokenCount: 1800,
-          outputTokenCount: 420,
-          outputType: 'use_tools',
-          modelType: 'fast'
-        },
-        createdAt: new Date('2024-12-04'),
-        updatedAt: new Date('2024-12-04')
-      },
-      // Refunded deposit
-      {
-        id: '6',
-        type: 'deposit' as const,
-        amount: 25.00,
-        currency: 'USD',
-        isAutoTopUp: false,
-        status: 'refunded',
-        source: 'stripe_card',
-        stripePaymentIntentId: 'pi_3ABC123def456',
-        stripeRefundId: 'rf_1ABC123def456',
-        refundedAmount: 25.00,
-        refundedAt: new Date('2024-11-30'),
-        createdAt: new Date('2024-11-25'),
-        updatedAt: new Date('2024-11-30')
-      },
-      // Subscription spend
-      {
-        id: '7',
-        type: 'spend' as const,
-        amount: 5.00,
-        spendType: 'SUBSCRIPTION',
-        createdAt: new Date('2024-12-01'),
-        updatedAt: new Date('2024-12-01')
-      }
-    ]
+    const itemsPerPage = 20
+    const skip = (currentPage.value - 1) * itemsPerPage
     
-    transactions.value = mockTransactions
-    totalTransactions.value = mockTransactions.length
-    totalPages.value = Math.ceil(totalTransactions.value / 20)
+    // Base query for product
+    const baseQuery = {
+      product: currentProduct.value.id
+    }
+    
+    const options: CrudOptions = {
+      orderBy: { createdAt: 'DESC' as const },
+      limit: itemsPerPage,
+      offset: skip
+    }
+    
+    let deposits: any[] = []
+    let spends: any[] = []
+    
+    // Load deposits and spends based on filter
+    if (activeFilter.value === 'all' || activeFilter.value === 'deposits') {
+      const depositResult = await $sp.deposit.find(baseQuery, options)
+      const depositData = Array.isArray(depositResult) ? depositResult : (depositResult?.data || [])
+      deposits = depositData.map((deposit: any) => ({
+        ...deposit,
+        type: 'deposit' as const
+      }))
+    }
+    
+    if (activeFilter.value === 'all' || activeFilter.value === 'spending') {
+      const spendResult = await $sp.spend.find(baseQuery, options)
+      const spendData = Array.isArray(spendResult) ? spendResult : (spendResult?.data || [])
+      spends = spendData.map((spend: any) => ({
+        ...spend,
+        type: 'spend' as const,
+        spendType: spend.type // Map spend.type to spendType to avoid confusion
+      }))
+    }
+    
+    // Combine and sort by date
+    const allTransactions = [...deposits, ...spends]
+    allTransactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    
+    // Apply pagination to combined results
+    const startIndex = (currentPage.value - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    transactions.value = allTransactions.slice(startIndex, endIndex)
+    
+    // For total count, we need to get counts from both endpoints
+    // This is a simplified approach - in production you might want separate count endpoints
+    totalTransactions.value = allTransactions.length
+    totalPages.value = Math.ceil(totalTransactions.value / itemsPerPage)
     
   } catch (error) {
     console.error('Failed to load transactions:', error)
@@ -841,16 +826,22 @@ const handleSaveAutoTopUp = async () => {
   
   autoTopUpLoading.value = true
   try {
-    // Mock implementation - replace with actual API call
-    currentProduct.value.autoTopUpEnabled = true
-    currentProduct.value.autoTopUpAmount = autoTopUpAmount.value
+    // Create Stripe setup session for auto top-up
+    const depositDto: StripeDepositDto = {
+      amount: autoTopUpAmount.value * 100, // Convert to cents
+      mode: CheckoutMode.SETUP, // Setup mode for payment method setup
+    }
     
-    $toast.show('Auto top-up settings saved', 'success')
-    showAutoTopUpPopup.value = false
+    const result = await $sp.productVault.stripe_deposit(depositDto)
+    
+    // Redirect to Stripe setup page
+    if (result.sessionUrl) {
+      window.location.href = result.sessionUrl
+    }
     
   } catch (error) {
-    console.error('Failed to save auto top-up settings:', error)
-    $toast.show('Failed to save settings', 'error')
+    console.error('Failed to setup auto top-up:', error)
+    $toast.show('Failed to setup auto top-up', 'error')
   } finally {
     autoTopUpLoading.value = false
   }
@@ -880,13 +871,15 @@ const handleAutoTopUpToggle = async (enabled: boolean) => {
   if (!currentProduct.value) return
   
   try {
-    // Mock implementation - replace with actual API call
+    // Update the product's autoTopUpEnabled property via API
+    await $sp.spend.toggle_auto_top_up({
+      enable: enabled,
+      product: currentProduct.value.id
+    })
+    
+    // Update local state
     currentProduct.value.autoTopUpEnabled = enabled
     autoTopUpEnabled.value = enabled
-    
-    if (!enabled) {
-      currentProduct.value.autoTopUpAmount = undefined
-    }
     
     $toast.show(
       enabled ? 'Auto top-up enabled' : 'Auto top-up disabled', 
@@ -1027,14 +1020,18 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
   margin-bottom: 0.5rem;
   
   .currency {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: $text-muted;
   }
   
   .amount {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 600;
-    color: $text;
+    color: $brand;
+    
+    &.low-balance {
+      color: $warning;
+    }
   }
 }
 
@@ -1062,7 +1059,7 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  background: color.scale($ok, $lightness: -10%);
+  background: $text-white;
   border-radius: $radius-small;
   margin-top: 1rem;
 }

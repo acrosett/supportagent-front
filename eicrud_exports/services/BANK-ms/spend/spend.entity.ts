@@ -54,6 +54,7 @@ export class Spend {
   @IsNumber()
   amount: number;
 
+  @IsString()
   product: Product | string;
 
   @IsOptional()

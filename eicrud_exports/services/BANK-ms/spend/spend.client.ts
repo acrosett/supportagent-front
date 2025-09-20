@@ -1,4 +1,5 @@
 import { TrySpendDto, TrySpendReturnDto } from './cmds/try_spend/try_spend.dto';
+import { ToggleAutoTopUpDto, ToggleAutoTopUpReturnDto } from './cmds/toggle_auto_top_up/toggle_auto_top_up.dto';
 import { SpendWhatsappDto, SpendWhatsappReturnDto } from './cmds/spend_whatsapp/spend_whatsapp.dto';
 import { SpendThinkDto, SpendThinkReturnDto } from './cmds/spend_think/spend_think.dto';
 import { ComputeBalanceDto, ComputeBalanceReturnDto } from './cmds/compute_balance/compute_balance.dto';
@@ -44,6 +45,38 @@ export class SpendClient extends CrudClient<Spend> {
       copts?: ClientOptions,
     ): Promise<TrySpendReturnDto> {
       return super.cmdSL('try_spend', dto, options, copts) as any;
+  }
+
+  async toggle_auto_top_up(
+      dto: ToggleAutoTopUpDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ToggleAutoTopUpReturnDto> {
+      return super.cmd('toggle_auto_top_up', dto, options, copts);
+  }
+
+  async toggle_auto_top_upS(
+      dto: ToggleAutoTopUpDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ToggleAutoTopUpReturnDto> {
+      return super.cmdS('toggle_auto_top_up', dto, options, copts);
+  }
+
+  async toggle_auto_top_upL(
+      dto: ToggleAutoTopUpDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ToggleAutoTopUpReturnDto> {
+      return super.cmdL('toggle_auto_top_up', dto, options, copts) as any;
+  }
+
+  async toggle_auto_top_upSL(
+      dto: ToggleAutoTopUpDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ToggleAutoTopUpReturnDto> {
+      return super.cmdSL('toggle_auto_top_up', dto, options, copts) as any;
   }
 
   async spend_whatsapp(

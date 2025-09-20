@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsBoolean, IsEnum } from "class-validator";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
+import { User } from "../../user/user.entity";
 
 export enum DepositStatus {
     COMPLETED = 'completed',
@@ -36,10 +37,11 @@ export class Deposit {
     @IsEnum(DepositSource)
     source: DepositSource;
 
+    @IsString()
     product: Product | string;
 
     @IsString()
-    userId: string;
+    user: User |string;
 
     // Stripe-related fields for refunds, disputes, etc.
     @IsOptional()
