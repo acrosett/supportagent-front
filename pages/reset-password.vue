@@ -76,7 +76,7 @@ const sendResetActions: MegaFormAction[] = [
     margin: 'right',
     callback: async (data: SendPasswordResetEmailDto) => {
       try {
-        await useNuxtApp().$sp.user.send_password_reset_email(data)
+        await useNuxtApp().$sp.user.send_password_reset_emailS(data)
         
         useNuxtApp().$toast.show(
           'Password reset instructions have been sent to your email address', 
@@ -146,7 +146,7 @@ const resetPasswordActions: MegaFormAction[] = [
           token_id: tokenId.value || '',
         }
         
-        const res = await useNuxtApp().$sp.user.reset_password(resetData)
+        const res = await useNuxtApp().$sp.user.reset_passwordS(resetData)
         
         if (!res) {
           throw new Error("Password reset failed")

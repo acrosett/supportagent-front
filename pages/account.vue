@@ -182,6 +182,7 @@
 
 <script setup lang="ts">
 import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
+import { User } from '~/eicrud_exports/services/user/user.entity'
 import { ChangePasswordDto } from '~/eicrud_exports/services/user/cmds/change_password/change_password.dto'
 import { SendVerificationEmailDto } from '~/eicrud_exports/services/user/cmds/send_verification_email/send_verification_email.dto'
 import { DeleteAccountDto } from '~/eicrud_exports/services/user/cmds/delete_account/delete_account.dto'
@@ -193,6 +194,7 @@ import ToggleSwitch from '~/components/ToggleSwitch.vue'
 
 // Reactive data
 const product = ref<Product | null>(null)
+const user = ref<User | null>(null)
 const userEmail = ref<string>('')
 const passwordFormData = ref<ChangePasswordDto>({
   oldPassword: '',
@@ -201,7 +203,6 @@ const passwordFormData = ref<ChangePasswordDto>({
 } as ChangePasswordDto)
 
 // Email verification state
-const emailVerified = ref<boolean>(false)
 const isLoadingVerification = ref<boolean>(false)
 
 // Two-factor authentication state
@@ -213,6 +214,11 @@ const showEmailChangePopup = ref<boolean>(false)
 const emailChangeFormData = ref<SendVerificationEmailDto>({
   newEmail: '',
   password: ''
+})
+
+// Computed properties
+const emailVerified = computed(() => {
+  return user.value?.isEmailVerified || user.value?.emailVerified || user.value?.isVerified || false
 })
 
 // Load product data
@@ -229,6 +235,20 @@ const fetchProduct = async () => {
     
     product.value = result
     userEmail.value = nuxtApp.$userEmail || ''
+    
+    // Fetch user data to get email verification status
+    if (nuxtApp.$userId) {
+      const userData = await nuxtApp.$sp.user.findOne({ 
+        id: nuxtApp.$userId 
+      })
+      user.value = userData
+      
+      // Update email verification status from user data
+      // Try common field names for email verification
+      if (userData) {
+        user.value = userData
+      }
+    }
   } catch (error) {
     console.error('Failed to fetch product:', error)
     useNuxtApp().$toast.show('Failed to load account data', 'error')
@@ -285,7 +305,7 @@ const sendVerificationEmail = async () => {
     
     // Call send_verification_email with empty optional fields for current email verification
     const verifyEmailData = new SendVerificationEmailDto()
-    await nuxtApp.$sp.user.send_verification_email(verifyEmailData)
+    await nuxtApp.$sp.user.send_verification_emailS(verifyEmailData)
     
     nuxtApp.$toast.show('Verification email has been sent to your current email address', 'success')
   } catch (error) {
@@ -335,7 +355,7 @@ const emailChangeActions: MegaFormAction[] = [
       try {
         const nuxtApp = useNuxtApp()
         
-        await nuxtApp.$sp.user.send_verification_email(data)
+        await nuxtApp.$sp.user.send_verification_emailS(data)
         
         nuxtApp.$toast.show(
           'Verification email sent to your new email address. Please check your inbox and follow the instructions.',
@@ -397,7 +417,7 @@ const passwordFormActions: MegaFormAction[] = [
           logMeIn: true
         } as ChangePasswordDto
         
-        await nuxtApp.$sp.user.change_password(changePasswordData)
+        await nuxtApp.$sp.user.change_passwordS(changePasswordData)
         
         nuxtApp.$toast.show('Password updated successfully', 'success')
         passwordFormData.value = {

@@ -5,6 +5,7 @@ export default defineNuxtPlugin(nuxtApp => {
   const confirmPopupState = reactive({
     visible: false,
     message: '',
+    singleButton: false,
     resolvePromise: null as ((value: boolean) => void) | null
   })
 
@@ -14,6 +15,15 @@ export default defineNuxtPlugin(nuxtApp => {
       return new Promise((resolve) => {
         confirmPopupState.message = message
         confirmPopupState.visible = true
+        confirmPopupState.singleButton = false
+        confirmPopupState.resolvePromise = resolve
+      })
+    },
+    showInfo(message: string): Promise<boolean> {
+      return new Promise((resolve) => {
+        confirmPopupState.message = message
+        confirmPopupState.visible = true
+        confirmPopupState.singleButton = true
         confirmPopupState.resolvePromise = resolve
       })
     },

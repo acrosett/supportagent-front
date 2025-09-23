@@ -89,6 +89,7 @@ const subtitleText = computed(() => {
 const verifyEmail = async () => {
   if (!tokenId.value) {
     console.warn('No token_id found, redirecting to home')
+    await useNuxtApp().$confirmPopup.showInfo('No verification token found. You will be redirected to the homepage.')
     await router.push('/')
     return
   }
@@ -103,7 +104,7 @@ const verifyEmail = async () => {
       logMeIn: false // Don't log in automatically, just verify
     }
 
-    const result = await useNuxtApp().$sp.user.verify_email(verifyData)
+    const result = await useNuxtApp().$sp.user.verify_emailS(verifyData)
     
     if (result) {
       verificationResult.value = 'success'
@@ -160,6 +161,7 @@ const resendVerification = async () => {
 onMounted(async () => {
   if (!tokenId.value) {
     console.warn('No token_id provided, redirecting to home')
+    await useNuxtApp().$confirmPopup.showInfo('No verification token found. You will be redirected to the homepage.')
     await router.push('/')
     return
   }

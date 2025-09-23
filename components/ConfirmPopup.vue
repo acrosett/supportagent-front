@@ -7,14 +7,15 @@
         </div>
         <div class="confirm-actions">
           <AppButton
+            v-if="!confirmPopup?.state.singleButton"
             label="No"
             color="secondary"
             @click="confirmPopup?.reject()"
           />
           <AppButton
-            label="Yes"
-            color="warning"
-            margin="left"
+            :label="confirmPopup?.state.singleButton ? 'OK' : 'Yes'"
+            :color="confirmPopup?.state.singleButton ? 'primary' : 'warning'"
+            :margin="confirmPopup?.state.singleButton ? undefined : 'left'"
             @click="confirmPopup?.confirm()"
           />
         </div>
@@ -29,8 +30,13 @@ import AppButton from '~/components/AppButton.vue'
 const confirmPopup = useNuxtApp().$confirmPopup
 
 const handleOverlayClick = () => {
-  // Close popup when clicking overlay (acts as "No")
-  confirmPopup?.reject()
+  // For single button mode, clicking overlay acts as OK
+  // For confirmation mode, clicking overlay acts as "No"
+  if (confirmPopup?.state.singleButton) {
+    confirmPopup?.confirm()
+  } else {
+    confirmPopup?.reject()
+  }
 }
 </script>
 

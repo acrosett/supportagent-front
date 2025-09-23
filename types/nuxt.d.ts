@@ -20,9 +20,11 @@ declare module 'nuxt/app' {
       state: { 
         visible: boolean
         message: string
+        singleButton: boolean
         resolvePromise: ((value: boolean) => void) | null
       }
       show: (message: string) => Promise<boolean>
+      showInfo: (message: string) => Promise<boolean>
       confirm: () => void
       reject: () => void
     }
