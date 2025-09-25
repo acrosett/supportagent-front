@@ -1,3 +1,4 @@
+import { UpdateCustomerInvoiceEmailDto, UpdateCustomerInvoiceEmailReturnDto } from './cmds/update_customer_invoice_email/update_customer_invoice_email.dto';
 import { StripeDepositAsyncDto, StripeDepositAsyncReturnDto } from './cmds/stripe_deposit_async/stripe_deposit_async.dto';
 import { StripeDepositDto, StripeDepositReturnDto } from './cmds/stripe_deposit/stripe_deposit.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
@@ -10,6 +11,38 @@ export class ProductVaultClient extends CrudClient<ProductVault> {
     super({...config, serviceName: 'product-vault'});
   }
   // GENERATED START
+  async update_customer_invoice_email(
+      dto: UpdateCustomerInvoiceEmailDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<UpdateCustomerInvoiceEmailReturnDto> {
+      return super.cmd('update_customer_invoice_email', dto, options, copts);
+  }
+
+  async update_customer_invoice_emailS(
+      dto: UpdateCustomerInvoiceEmailDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<UpdateCustomerInvoiceEmailReturnDto> {
+      return super.cmdS('update_customer_invoice_email', dto, options, copts);
+  }
+
+  async update_customer_invoice_emailL(
+      dto: UpdateCustomerInvoiceEmailDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<UpdateCustomerInvoiceEmailReturnDto> {
+      return super.cmdL('update_customer_invoice_email', dto, options, copts) as any;
+  }
+
+  async update_customer_invoice_emailSL(
+      dto: UpdateCustomerInvoiceEmailDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<UpdateCustomerInvoiceEmailReturnDto> {
+      return super.cmdSL('update_customer_invoice_email', dto, options, copts) as any;
+  }
+
   async stripe_deposit_async(
       dto: StripeDepositAsyncDto,
       options: ICrudOptions = undefined,

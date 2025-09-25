@@ -330,34 +330,28 @@ import MegaForm, { type MegaFormAction, type OverrideRecord } from '~/components
 import { PhoneNumber } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/phone-number.entity'
 import { ContactConfig } from '~/eicrud_exports/services/WHATSAPP-ms/contact-config/contact-config.entity'
 import { VerifyCodeDto } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/cmds/verify_code/verify_code.dto'
+import { SendVerifyDto } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/cmds/send_verify/send_verify.dto'
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import { getPriorityEmoji, formatPriority } from '~/utils/priority'
 
-// Demo data - replace with API calls
-const phoneNumbers = ref<PhoneNumber[]>([
-  {
-    id: '1',
-    owner: 'user1',
-    number: '+1234567890',
-    name: 'Primary Support',
-    product: {} as any,
-    isVerified: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    id: '2',
-    owner: 'user1',
-    number: '+1987654321',
-    name: 'Documentation Line',
-    product: {} as any,
-    isVerified: false,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }
-])
+const phoneNumbers = ref<PhoneNumber[]>([])
 
 const contactConfigs = ref<ContactConfig[]>([])
+
+// Fetch phone numbers from API
+const fetchPhoneNumbers = async () => {
+  try {
+    const nuxtApp = useNuxtApp()
+    const result = await nuxtApp.$sp.phoneNumber.find({
+      product: nuxtApp.$userProductId as string,
+    })
+    phoneNumbers.value = Array.isArray(result) ? result : (result?.data || [])
+  } catch (error) {
+    console.error('Failed to fetch phone numbers:', error)
+    useNuxtApp().$toast.show('Failed to load phone numbers', 'error')
+    phoneNumbers.value = []
+  }
+}
 
 // Fetch contact configurations from API
 const fetchContactConfigs = async () => {
@@ -376,6 +370,7 @@ const fetchContactConfigs = async () => {
 
 // Fetch data on component mount
 onMounted(() => {
+  fetchPhoneNumbers()
   fetchContactConfigs()
 })
 
@@ -454,7 +449,7 @@ const confirmPhoneNumber = (phone: PhoneNumber) => {
   verificationFormData.value = {
     code: '',
     numberId: phone.id,
-    productId: '' // Will be set from user context
+    productId: useNuxtApp().$userProductId as string
   }
   showVerificationPopup.value = true
 }
@@ -475,14 +470,26 @@ const closeDeleteConfirmation = () => {
   deletingPhone.value = null
 }
 
-const confirmDeletePhone = () => {
-  if (deletingPhone.value) {
+const confirmDeletePhone = async () => {
+  if (!deletingPhone.value) return
+  
+  try {
+    const nuxtApp = useNuxtApp()
+    
+    await nuxtApp.$sp.phoneNumber.delete({ id: deletingPhone.value.id })
+    
+    // Remove from local state
     const index = phoneNumbers.value.findIndex(p => p.id === deletingPhone.value!.id)
     if (index !== -1) {
       phoneNumbers.value.splice(index, 1)
     }
+    
+    nuxtApp.$toast.show('Phone number deleted successfully', 'success')
+    closeDeleteConfirmation()
+  } catch (error) {
+    console.error('Failed to delete phone number:', error)
+    useNuxtApp().$toast.show(error, 'error')
   }
-  closeDeleteConfirmation()
 }
 
 // Contact config functions
@@ -533,29 +540,46 @@ const phoneFormActions = computed<MegaFormAction[]>(() => [
     color: 'primary',
     margin: 'left',
     callback: async (formData: any) => {
-      if (editingPhone.value) {
-        // Update existing phone number
-        const index = phoneNumbers.value.findIndex(p => p.id === editingPhone.value!.id)
-        if (index !== -1) {
-          phoneNumbers.value[index] = {
-            ...phoneNumbers.value[index],
-            ...formData,
-            updatedAt: new Date()
+      try {
+        const nuxtApp = useNuxtApp()
+        
+        if (editingPhone.value) {
+          // Update existing phone number
+          await nuxtApp.$sp.phoneNumber.patchOne(
+            { id: editingPhone.value.id },
+            formData
+          )
+          
+          // Update local state
+          const index = phoneNumbers.value.findIndex(p => p.id === editingPhone.value!.id)
+          if (index !== -1) {
+            phoneNumbers.value[index] = {
+              ...phoneNumbers.value[index],
+              ...formData,
+              updatedAt: new Date()
+            }
           }
+          
+          nuxtApp.$toast.show('Phone number updated successfully', 'success')
+        } else {
+          // Create new phone number
+          const newPhoneData: Partial<PhoneNumber> = {
+            ...formData,
+            product: nuxtApp.$userProductId as string,
+            isVerified: undefined
+          }
+          
+          const createdPhone = await nuxtApp.$sp.phoneNumber.create(newPhoneData)
+          phoneNumbers.value.push(createdPhone)
+          
+          nuxtApp.$toast.show('Phone number added successfully', 'success')
         }
-      } else {
-        // Add new phone number
-        const newPhone: PhoneNumber = {
-          id: crypto.randomUUID(),
-          owner: 'current-user',
-          product: {} as any,
-          ...formData,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }
-        phoneNumbers.value.push(newPhone)
+        
+        closePhonePopup()
+      } catch (error) {
+        console.error('Failed to save phone number:', error)
+        useNuxtApp().$toast.show(error, 'error')
       }
-      closePhonePopup()
     }
   }
 ])
@@ -575,9 +599,20 @@ const verificationFormActions: MegaFormAction[] = [
     margin: 'no-margins',
     skipValidation: true,
     callback: async () => {
-      // TODO: Implement send verification code API call
-      console.log('Sending WhatsApp verification code to:', verifyingPhone.value?.number)
-      // API call would go here
+      try {
+        if (!verifyingPhone.value) return
+        
+        const nuxtApp = useNuxtApp()
+        await nuxtApp.$sp.phoneNumber.send_verify({
+          number: verifyingPhone.value.number,
+          productId: nuxtApp.$userProductId as string
+        })
+        
+        nuxtApp.$toast.show('Verification code sent to WhatsApp number', 'success')
+      } catch (error) {
+        console.error('Failed to send verification code:', error)
+        useNuxtApp().$toast.show(error, 'error')
+      }
     }
   },
   {
@@ -586,18 +621,31 @@ const verificationFormActions: MegaFormAction[] = [
     margin: 'left',
     callback: async (formData: VerifyCodeDto) => {
       try {
-        // TODO: Implement verification API call
-        console.log('Verifying code:', formData)
+        if (!verifyingPhone.value) return
         
-        // For demo, mark as verified
+        const nuxtApp = useNuxtApp()
+        await nuxtApp.$sp.phoneNumber.verify_code({
+          code: formData.code,
+          numberId: verifyingPhone.value.id,
+          productId: nuxtApp.$userProductId as string
+        })
+        
+        // Mark as verified in local state and refresh data
         if (verifyingPhone.value) {
           verifyingPhone.value.isVerified = true
+          
+          // Update the phone number in the list
+          const index = phoneNumbers.value.findIndex(p => p.id === verifyingPhone.value!.id)
+          if (index !== -1 && phoneNumbers.value[index]) {
+            phoneNumbers.value[index].isVerified = true
+          }
         }
         
+        nuxtApp.$toast.show('WhatsApp number verified successfully!', 'success')
         closeVerificationPopup()
       } catch (error) {
         console.error('Verification failed:', error)
-        throw error
+        useNuxtApp().$toast.show(error, 'error')
       }
     }
   }

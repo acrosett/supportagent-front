@@ -41,7 +41,8 @@ export class Deposit {
     product: Product | string;
 
     @IsString()
-    user: User |string;
+    @IsOptional()
+    user?: User |string;
 
     // Stripe-related fields for refunds, disputes, etc.
     @IsOptional()

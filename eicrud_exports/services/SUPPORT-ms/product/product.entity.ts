@@ -105,8 +105,15 @@ export class Product {
     @IsOptional()
     flaggedForDeletion?: Date;
 
-
     accountDeleteNotifSent: boolean = false;
+
+    @IsNumber()
+    @Min(0)
+    @IsOptional()
+    whatsappNewConvThisWeek: number = 0;
+
+    @IsOptional()
+    whatsappNewConvLastCheck?: Date;
 
     createdAt: Date;
 

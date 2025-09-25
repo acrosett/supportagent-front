@@ -1,14 +1,12 @@
 import { IsString, IsOptional, IsBoolean, IsPhoneNumber } from "class-validator";
-import { User } from "../../user/user.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
+import { ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 
 export class PhoneNumber {
 
     @IsString()
     @IsOptional()
     id: string;
-
-    
 
     @IsPhoneNumber()
     number: string;
@@ -17,7 +15,7 @@ export class PhoneNumber {
     @IsOptional()
     name?: string;
 
-    product: Product;
+    product: Product | string;
 
     @IsBoolean()
     isVerified: boolean;
@@ -28,6 +26,10 @@ export class PhoneNumber {
 
     @IsOptional()
     lastVerifySentDate?: Date;
+
+    // Map of client priority to the last date a message was sent
+    @IsOptional()
+    lastMessageNewConvo?: Partial<Record<ClientPriority, Date>>;
 
     createdAt: Date;
 

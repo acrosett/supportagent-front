@@ -11,3 +11,10 @@ nuxtApp.$confirmPopup
 When a toast notification is needed use
 nuxtApp.$toast
 
+when api call, catch the error and pass the error object to the $toast function (it will determine the message automatically)
+
+when making API call you will use nuxtApp.$sp.<service>.<method>
+for exemple phoneNumber service dto for basic operations (find, create,delete batch) will be in the file phone-number.entity.ts
+
+for non base operations (cmds) you will find a dto in <method>.dto.ts
+
