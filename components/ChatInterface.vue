@@ -168,6 +168,16 @@ import DOMPurify from 'dompurify'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-trace.entity'
 
+// Global reCAPTCHA declaration
+declare global {
+  interface Window {
+    grecaptcha: {
+      ready: (callback: () => void) => void
+      execute: (siteKey: string, options: { action: string }) => Promise<string>
+    }
+  }
+}
+
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };
 type ChatItem = ChatMessage | ToolTraceMessage;
@@ -207,6 +217,7 @@ const widgetConfig = ref<any>({
 const clientIdentifier = ref('')
 const isInvertedMode = ref(false)
 const aiEnabled = ref(true)
+const isNewGuest = ref(false) // Track if this is a new guest
 
 // Refs
 const messagesContainer = ref<HTMLElement>()
@@ -502,12 +513,25 @@ const sendMessage = async () => {
   scrollToBottom()
 
   try {
-    await useNuxtApp().$sp.message.send_client_message({
+    // Prepare message data
+    const messageData: any = {
       identifier: identifier,
       content: messageContent,
       apiKey: widgetConfig.value.apiToken || '',
       inverted: isInvertedMode.value
-    })
+    }
+
+    // If this is a new guest's first message, get reCAPTCHA token
+    if (isNewGuest.value) {
+      const recaptchaToken = await getRecaptchaToken()
+      if (recaptchaToken) {
+        messageData.recaptchaToken = recaptchaToken
+      }
+      // Mark guest as no longer new after first message
+      isNewGuest.value = false
+    }
+
+    await useNuxtApp().$sp.message.send_client_message(messageData)
 
     // Update sessionStorage cache with the new message
     const cacheKey = `${cachePrefix}chat-messages-${identifier}`;
@@ -776,6 +800,26 @@ const initAudioContext = async () => {
       console.log('Audio context creation failed:', error)
     }
   }
+}
+
+// Get reCAPTCHA token for new guests
+const getRecaptchaToken = async (): Promise<string | null> => {
+  return new Promise((resolve) => {
+    if (typeof window.grecaptcha === 'undefined' || typeof window.grecaptcha.ready !== 'function') {
+      console.warn('reCAPTCHA not available')
+      resolve(null)
+      return
+    }
+    
+    window.grecaptcha.ready(() => {
+      window.grecaptcha.execute('reCAPTCHA_site_key', { action: 'submit' }).then((token: string) => {
+        resolve(token)
+      }).catch((error: any) => {
+        console.error('reCAPTCHA execution failed:', error)
+        resolve(null)
+      })
+    })
+  })
 }
 
 // Play a smooth bip sound
