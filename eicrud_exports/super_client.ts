@@ -11,7 +11,6 @@ import { IssueCommentClient } from './services/SUPPORT-ms/issue-comment/issue-co
 import { IssueClient } from './services/SUPPORT-ms/issue/issue.client';
 import { FaqClient } from './services/SUPPORT-ms/faq/faq.client';
 import { EventClient } from './services/SUPPORT-ms/event/event.client';
-import { EditorTaskClient } from './services/SUPPORT-ms/editor-task/editor-task.client';
 import { DomainClient } from './services/SUPPORT-ms/domain/domain.client';
 import { CustomToolClient } from './services/SUPPORT-ms/custom-tool/custom-tool.client';
 import { ClientClient } from './services/SUPPORT-ms/client/client.client';
@@ -28,6 +27,7 @@ import { TokenClient } from './services/AUTH-ms/token/token.client';
 import { AccountDeletionClient } from './services/AUTH-ms/account-deletion/account-deletion.client';
 import { StaffContactAgentClient } from './services/AI-ms/staff-contact-agent/staff-contact-agent.client';
 import { LlmProviderClient } from './services/AI-ms/llm-provider/llm-provider.client';
+import { EditorTaskClient } from './services/AI-ms/editor-task/editor-task.client';
 import { EditorAgentClient } from './services/AI-ms/editor-agent/editor-agent.client';
 import { DigestorClient } from './services/AI-ms/digestor/digestor.client';
 import { ChatAgentClient } from './services/AI-ms/chat-agent/chat-agent.client';
@@ -52,7 +52,6 @@ export class SuperClient {
         this.issue = new IssueClient(config);
         this.faq = new FaqClient(config);
         this.event = new EventClient(config);
-        this.editorTask = new EditorTaskClient(config);
         this.domain = new DomainClient(config);
         this.customTool = new CustomToolClient(config);
         this.client = new ClientClient(config);
@@ -69,6 +68,7 @@ export class SuperClient {
         this.accountDeletion = new AccountDeletionClient(config);
         this.staffContactAgent = new StaffContactAgentClient(config);
         this.llmProvider = new LlmProviderClient(config);
+        this.editorTask = new EditorTaskClient(config);
         this.editorAgent = new EditorAgentClient(config);
         this.digestor = new DigestorClient(config);
         this.chatAgent = new ChatAgentClient(config);
@@ -89,7 +89,6 @@ export class SuperClient {
     issue: IssueClient;
     faq: FaqClient;
     event: EventClient;
-    editorTask: EditorTaskClient;
     domain: DomainClient;
     customTool: CustomToolClient;
     client: ClientClient;
@@ -106,6 +105,7 @@ export class SuperClient {
     accountDeletion: AccountDeletionClient;
     staffContactAgent: StaffContactAgentClient;
     llmProvider: LlmProviderClient;
+    editorTask: EditorTaskClient;
     editorAgent: EditorAgentClient;
     digestor: DigestorClient;
     chatAgent: ChatAgentClient;
