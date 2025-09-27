@@ -61,21 +61,25 @@
         You are about to upload <strong>{{ pendingFile?.name || 'your file' }}</strong>
         ({{ (pendingSizeKB || 0).toFixed(1) }} KB).
       </p>
-      <p>
-        Estimated cost at $0.01/KB: <strong>${{ estimatedCost.toFixed(2) }}</strong>
+      <div v-if="isCalculatingCost" class="calculating-cost">
+        <div class="mini-spinner"></div>
+        Calculating estimated cost...
+      </div>
+      <p v-else>
+        Estimated processing cost: <strong>${{ estimatedCost.toFixed(2) }}</strong>
       </p>
     </div>
     <template #footer>
       <div class="confirm-footer">
         <AppButton label="Cancel" color="secondary" @click="cancelConfirm" />
-        <AppButton label="Confirm Upload" color="primary" @click="confirmUpload" />
+        <AppButton label="Confirm Upload" margin="left" color="primary" @click="confirmUpload" />
       </div>
     </template>
   </AppPopup>
 </template>
 
 <script setup lang="ts">
-
+import { estimateFullDigestCost } from '~/eicrud_exports/services/AI-ms/digestor/shared.utils'
 
 interface Props {
   modelValue?: string
@@ -101,6 +105,8 @@ const processedText = ref(props.modelValue || '')
 // Upload confirmation state
 const showConfirm = ref(false)
 const pendingFile = ref<File | null>(null)
+const estimatedCost = ref(0)
+const isCalculatingCost = ref(false)
 
 // Watch for external changes
 watch(() => props.modelValue, (newValue) => {
@@ -118,12 +124,19 @@ const triggerFileSelect = () => {
   fileInput.value?.click()
 }
 
-const handleFileSelect = (event: Event) => {
+const handleFileSelect = async (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   if (file) {
     pendingFile.value = file
-    showConfirm.value = true
+    try {
+      estimatedCost.value = await calculateEstimatedCost(file)
+      showConfirm.value = true
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to process file'
+      error.value = errorMessage
+      resetUpload()
+    }
   }
 }
 
@@ -135,12 +148,19 @@ const handleDragLeave = (event: DragEvent) => {
   isDragOver.value = false
 }
 
-const handleDrop = (event: DragEvent) => {
+const handleDrop = async (event: DragEvent) => {
   isDragOver.value = false
   const file = event.dataTransfer?.files[0]
   if (file) {
     pendingFile.value = file
-    showConfirm.value = true
+    try {
+      estimatedCost.value = await calculateEstimatedCost(file)
+      showConfirm.value = true
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to process file'
+      error.value = errorMessage
+      resetUpload()
+    }
   }
 }
 
@@ -150,6 +170,8 @@ const resetUpload = () => {
   error.value = ''
   showConfirm.value = false
   pendingFile.value = null
+  estimatedCost.value = 0
+  isCalculatingCost.value = false
   if (fileInput.value) {
     fileInput.value.value = ''
   }
@@ -159,9 +181,61 @@ const resetUpload = () => {
 const pendingSizeKB = computed(() => {
   return pendingFile.value ? (pendingFile.value.size / 1024) : 0
 })
-const estimatedCost = computed(() => {
-  return pendingSizeKB.value;
-})
+
+// Shared function to extract and validate text with size limits
+const extractAndValidateText = async (file: File): Promise<{ text: string; cost: number }> => {
+  const fileType = file.type || getFileTypeFromExtension(file.name)
+  
+  // Try processing without removing images first
+  let extractedText = await extractTextByType(file, fileType, false)
+  
+  // Check size limit
+  let textSizeBytes = new TextEncoder().encode(extractedText).length
+  if (textSizeBytes > MAX_SIZE_BYTES) {
+    // Try again without images if the text is too large
+    console.log('Text too large, attempting to remove images and retry...')
+    
+    try {
+      extractedText = await extractTextByType(file, fileType, true)
+      const newTextSizeBytes = new TextEncoder().encode(extractedText).length
+      
+      if (newTextSizeBytes > MAX_SIZE_BYTES) {
+        throw new Error(`Extracted text is still too large after removing images (${formatFileSize(newTextSizeBytes)}). Try using a shorter document.`)
+      } else {
+        console.log(`✅ Successfully reduced file size from ${formatFileSize(textSizeBytes)} to ${formatFileSize(newTextSizeBytes)} by removing images.`)
+      }
+    } catch (retryError) {
+      // If retry fails or file type doesn't support image removal, throw original size error
+      throw new Error(`Extracted text is too large (${formatFileSize(textSizeBytes)}). Try using a shorter document.`)
+    }
+  }
+  
+  // Calculate cost
+  const cost = await estimateFullDigestCost(extractedText)
+  
+  return {
+    text: extractedText.trim(),
+    cost: cost > 0 ? cost : 0
+  }
+}
+
+const calculateEstimatedCost = async (file: File) => {
+  if (!file) return 0
+  
+  try {
+    isCalculatingCost.value = true
+    const { cost } = await extractAndValidateText(file)
+    return cost
+  } catch (error) {
+    console.error('Failed to estimate cost:', error)
+    // If file is too large or processing fails, show error in UI
+    const errorMessage = error instanceof Error ? error.message : 'Failed to process file'
+    // You might want to show this error to user in the confirmation dialog
+    throw error // Re-throw to handle in calling function
+  } finally {
+    isCalculatingCost.value = false
+  }
+}
 
 
 const confirmUpload = () => {
@@ -182,33 +256,8 @@ const processFile = async (file: File) => {
   isProcessing.value = true
   
   try {
-    const fileType = file.type || getFileTypeFromExtension(file.name)
-    
-    // Try processing without removing images first
-    let extractedText = await extractTextByType(file, fileType, false)
-    
-    // Check size limit
-    let textSizeBytes = new TextEncoder().encode(extractedText).length
-    if (textSizeBytes > MAX_SIZE_BYTES) {
-      // Try again without images if the text is too large
-      console.log('Text too large, attempting to remove images and retry...')
-      
-      try {
-        extractedText = await extractTextByType(file, fileType, true)
-        const newTextSizeBytes = new TextEncoder().encode(extractedText).length
-        
-        if (newTextSizeBytes > MAX_SIZE_BYTES) {
-          throw new Error(`Extracted text is still too large after removing images (${formatFileSize(newTextSizeBytes)}). Try using a shorter document.`)
-        } else {
-          console.log(`✅ Successfully reduced file size from ${formatFileSize(textSizeBytes)} to ${formatFileSize(newTextSizeBytes)} by removing images.`)
-        }
-      } catch (retryError) {
-        // If retry fails or file type doesn't support image removal, throw original size error
-        throw new Error(`Extracted text is too large (${formatFileSize(textSizeBytes)}). Try using a shorter document.`)
-      }
-    }
-    
-    processedText.value = extractedText.trim()
+    const { text } = await extractAndValidateText(file)
+    processedText.value = text
     
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Failed to process file'
@@ -619,5 +668,22 @@ const formatFileSize = (bytes: number): string => {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+}
+
+.calculating-cost {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $muted;
+  font-style: italic;
+}
+
+.mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($brand-2, 0.3);
+  border-top: 2px solid $brand-2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 </style>

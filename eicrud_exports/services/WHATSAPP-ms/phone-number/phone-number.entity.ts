@@ -15,20 +15,18 @@ export class PhoneNumber {
     @IsOptional()
     name?: string;
 
+    @IsString()
     product: Product | string;
 
-    @IsBoolean()
     isVerified: boolean;
 
-    @IsString()
-    @IsOptional()
     verifyCode?: string;
 
-    @IsOptional()
     lastVerifySentDate?: Date;
 
+    verifyFailedCount: number = 0;
+
     // Map of client priority to the last date a message was sent
-    @IsOptional()
     lastMessageNewConvo?: Partial<Record<ClientPriority, Date>>;
 
     createdAt: Date;

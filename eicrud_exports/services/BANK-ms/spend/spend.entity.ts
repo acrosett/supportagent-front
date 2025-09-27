@@ -4,6 +4,7 @@ import { WhatsappMessage } from "../../WHATSAPP-ms/whatsapp-message/whatsapp-mes
 import { Product } from "../../SUPPORT-ms/product/product.entity";
 import { Client, ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 import { Digestor } from "../../AI-ms/digestor/digestor.entity";
+import { EditorTask } from "../../SUPPORT-ms/editor-task/editor-task.entity";
 
 export enum SpendType {
   AI_THINKING = 'ai_thinking',
@@ -62,6 +63,10 @@ export class Spend {
 
   @IsOptional()
   digestor?: Digestor | string;
+
+  @IsOptional()
+  @IsString()
+  editorTask?: EditorTask | string;
 
   @IsOptional()
   @IsEnum(ClientPriority)

@@ -15,9 +15,13 @@ export class SendWhatsappMessageDto {
     message: string;
 
     @IsEnum(ClientPriority)
-    clientPriority: ClientPriority;
+    clientPriority?: ClientPriority;
 
-    product: Product;
+    @IsString()
+    destinationNumber?: string;
+
+    @IsString()
+    productId: string;
 
     @IsEnum(WhatsappTemplate)
     template?: WhatsappTemplate;

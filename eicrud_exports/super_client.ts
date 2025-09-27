@@ -11,6 +11,7 @@ import { IssueCommentClient } from './services/SUPPORT-ms/issue-comment/issue-co
 import { IssueClient } from './services/SUPPORT-ms/issue/issue.client';
 import { FaqClient } from './services/SUPPORT-ms/faq/faq.client';
 import { EventClient } from './services/SUPPORT-ms/event/event.client';
+import { EditorTaskClient } from './services/SUPPORT-ms/editor-task/editor-task.client';
 import { DomainClient } from './services/SUPPORT-ms/domain/domain.client';
 import { CustomToolClient } from './services/SUPPORT-ms/custom-tool/custom-tool.client';
 import { ClientClient } from './services/SUPPORT-ms/client/client.client';
@@ -25,7 +26,6 @@ import { ProductVaultClient } from './services/BANK-ms/product-vault/product-vau
 import { DepositClient } from './services/BANK-ms/deposit/deposit.client';
 import { TokenClient } from './services/AUTH-ms/token/token.client';
 import { AccountDeletionClient } from './services/AUTH-ms/account-deletion/account-deletion.client';
-import { TaskClient } from './services/AI-ms/task/task.client';
 import { StaffContactAgentClient } from './services/AI-ms/staff-contact-agent/staff-contact-agent.client';
 import { LlmProviderClient } from './services/AI-ms/llm-provider/llm-provider.client';
 import { EditorAgentClient } from './services/AI-ms/editor-agent/editor-agent.client';
@@ -52,6 +52,7 @@ export class SuperClient {
         this.issue = new IssueClient(config);
         this.faq = new FaqClient(config);
         this.event = new EventClient(config);
+        this.editorTask = new EditorTaskClient(config);
         this.domain = new DomainClient(config);
         this.customTool = new CustomToolClient(config);
         this.client = new ClientClient(config);
@@ -66,7 +67,6 @@ export class SuperClient {
         this.deposit = new DepositClient(config);
         this.token = new TokenClient(config);
         this.accountDeletion = new AccountDeletionClient(config);
-        this.task = new TaskClient(config);
         this.staffContactAgent = new StaffContactAgentClient(config);
         this.llmProvider = new LlmProviderClient(config);
         this.editorAgent = new EditorAgentClient(config);
@@ -89,6 +89,7 @@ export class SuperClient {
     issue: IssueClient;
     faq: FaqClient;
     event: EventClient;
+    editorTask: EditorTaskClient;
     domain: DomainClient;
     customTool: CustomToolClient;
     client: ClientClient;
@@ -103,7 +104,6 @@ export class SuperClient {
     deposit: DepositClient;
     token: TokenClient;
     accountDeletion: AccountDeletionClient;
-    task: TaskClient;
     staffContactAgent: StaffContactAgentClient;
     llmProvider: LlmProviderClient;
     editorAgent: EditorAgentClient;
