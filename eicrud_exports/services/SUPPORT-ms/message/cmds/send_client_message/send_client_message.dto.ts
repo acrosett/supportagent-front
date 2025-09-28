@@ -15,6 +15,11 @@ export class SendClientMessageDto {
     @MaxLength(2000)
     content: string;
 
+    @IsOptional()
+    @IsString()
+    @MaxLength(1000)
+    recaptchaToken?: string;
+
     @IsBoolean()
     inverted = false;
 

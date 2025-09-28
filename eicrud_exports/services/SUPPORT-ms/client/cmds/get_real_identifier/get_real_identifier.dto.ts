@@ -1,6 +1,7 @@
-import { IsString, IsOptional } from "class-validator";
+import { IsString, IsOptional, MaxLength } from "class-validator";
 import { Product } from "../../../product/product.entity";
 import { Client } from "../../client.entity";
+import { CheckMessageQuotaReturnDto } from "../check_message_quota/check_message_quota.dto";
 
 
 export class GetRealIdentifierDto {
@@ -9,6 +10,11 @@ export class GetRealIdentifierDto {
     identifier: string;
 
     product: Product;
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(1000)
+    recaptchaToken?: string;
 
 }
 

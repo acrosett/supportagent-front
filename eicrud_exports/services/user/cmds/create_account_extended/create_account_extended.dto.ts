@@ -25,6 +25,10 @@ export class CreateAccountExtendedDto {
     @IsBoolean()
     acceptedMarketing: boolean;
 
+    @IsOptional()
+    @IsString()
+    recaptchaToken?: string;
+
 }
 
 //used by super-client, update me here

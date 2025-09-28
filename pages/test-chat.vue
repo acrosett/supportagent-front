@@ -13,6 +13,17 @@ definePageMeta({
   // Exclude heavy plugins except essential ones
   plugins: ['sp', 'toast'] // Only load super client and toast plugins
 })
+
+// Add reCAPTCHA v3 script
+useHead({
+  script: [
+    {
+      src: 'https://www.google.com/recaptcha/api.js?render=reCAPTCHA_site_key',
+      async: true,
+      defer: true
+    }
+  ]
+})
 </script>
 
 <style lang="scss">

@@ -21,8 +21,23 @@
 import MegaForm, { MegaFormAction } from '~/components/MegaForm.vue'
 import { CreateAccountExtendedDto } from '~/eicrud_exports/services/user/cmds/create_account_extended/create_account_extended.dto'
 import { ref } from 'vue'
+import { useRecaptcha } from '~/composables/useRecaptcha'
 
 definePageMeta({ layout: 'bare' })
+
+// Add reCAPTCHA v3 script
+useHead({
+  script: [
+    {
+      src: 'https://www.google.com/recaptcha/api.js?render=reCAPTCHA_site_key',
+      async: true,
+      defer: true
+    }
+  ]
+})
+
+// Composables
+const { getRecaptchaToken } = useRecaptcha()
 
 const formData = ref({
   email: '',
@@ -60,17 +75,28 @@ const actions: MegaFormAction[] = [
     color: 'primary',
     margin: 'right',
     callback: async (data: CreateAccountExtendedDto) => {
-      // TODO: handle registration
-      data.logMeIn = true;
-      data.role = "product_owner";
+      try {
+        // Get reCAPTCHA token for account creation
+        const recaptchaToken = await getRecaptchaToken('account_creation')
+        if (!recaptchaToken) {
+          useNuxtApp().$toast.show('reCAPTCHA verification failed. Please try again.', 'error')
+          return
+        }
 
-      const { userId, accessToken } = await useNuxtApp().$sp.user.create_account_extendedS(data);
-      await useNuxtApp().$sp.user.setJwt(accessToken as string, 3600 * 30); // 30 minutes
-      useNuxtApp().$userId = userId;
-            
-      // Navigate to /
-      await useRouter().push('/');
+        // Prepare registration data
+        data.logMeIn = true;
+        data.role = "product_owner";
+        (data as any).recaptchaToken = recaptchaToken;
 
+        const { userId, accessToken } = await useNuxtApp().$sp.user.create_account_extendedS(data);
+        await useNuxtApp().$sp.user.setJwt(accessToken as string, 3600 * 30); // 30 minutes
+        useNuxtApp().$userId = userId;
+              
+        // Navigate to /
+        await useRouter().push('/');
+      } catch (error) {
+        useNuxtApp().$toast.show(error, 'error')
+      }
     }
   },
 

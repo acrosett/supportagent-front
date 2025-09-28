@@ -20,6 +20,7 @@ import { LogClient } from './services/LOG-ms/log/log.client';
 import { LlmTrainingDataClient } from './services/LOG-ms/llm-training-data/llm-training-data.client';
 import { AdminNotifClient } from './services/LOG-ms/admin-notif/admin-notif.client';
 import { EmailClient } from './services/email/email.client';
+import { CaptchaClient } from './services/captcha/captcha.client';
 import { SpendClient } from './services/BANK-ms/spend/spend.client';
 import { ProductVaultClient } from './services/BANK-ms/product-vault/product-vault.client';
 import { DepositClient } from './services/BANK-ms/deposit/deposit.client';
@@ -61,6 +62,7 @@ export class SuperClient {
         this.llmTrainingData = new LlmTrainingDataClient(config);
         this.adminNotif = new AdminNotifClient(config);
         this.email = new EmailClient(config);
+        this.captcha = new CaptchaClient(config);
         this.spend = new SpendClient(config);
         this.productVault = new ProductVaultClient(config);
         this.deposit = new DepositClient(config);
@@ -98,6 +100,7 @@ export class SuperClient {
     llmTrainingData: LlmTrainingDataClient;
     adminNotif: AdminNotifClient;
     email: EmailClient;
+    captcha: CaptchaClient;
     spend: SpendClient;
     productVault: ProductVaultClient;
     deposit: DepositClient;

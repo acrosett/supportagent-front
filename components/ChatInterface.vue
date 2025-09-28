@@ -167,16 +167,7 @@ import { marked, Renderer } from 'marked'
 import DOMPurify from 'dompurify'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-trace.entity'
-
-// Global reCAPTCHA declaration
-declare global {
-  interface Window {
-    grecaptcha: {
-      ready: (callback: () => void) => void
-      execute: (siteKey: string, options: { action: string }) => Promise<string>
-    }
-  }
-}
+import { useRecaptcha } from '~/composables/useRecaptcha'
 
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };
@@ -218,6 +209,9 @@ const clientIdentifier = ref('')
 const isInvertedMode = ref(false)
 const aiEnabled = ref(true)
 const isNewGuest = ref(false) // Track if this is a new guest
+
+// Composables
+const { getRecaptchaToken } = useRecaptcha()
 
 // Refs
 const messagesContainer = ref<HTMLElement>()
@@ -523,7 +517,7 @@ const sendMessage = async () => {
 
     // If this is a new guest's first message, get reCAPTCHA token
     if (isNewGuest.value) {
-      const recaptchaToken = await getRecaptchaToken()
+      const recaptchaToken = await getRecaptchaToken('guest_creation')
       if (recaptchaToken) {
         messageData.recaptchaToken = recaptchaToken
       }
@@ -802,25 +796,7 @@ const initAudioContext = async () => {
   }
 }
 
-// Get reCAPTCHA token for new guests
-const getRecaptchaToken = async (): Promise<string | null> => {
-  return new Promise((resolve) => {
-    if (typeof window.grecaptcha === 'undefined' || typeof window.grecaptcha.ready !== 'function') {
-      console.warn('reCAPTCHA not available')
-      resolve(null)
-      return
-    }
-    
-    window.grecaptcha.ready(() => {
-      window.grecaptcha.execute('reCAPTCHA_site_key', { action: 'submit' }).then((token: string) => {
-        resolve(token)
-      }).catch((error: any) => {
-        console.error('reCAPTCHA execution failed:', error)
-        resolve(null)
-      })
-    })
-  })
-}
+
 
 // Play a smooth bip sound
 const playBipSound = async () => {
