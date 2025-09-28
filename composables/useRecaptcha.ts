@@ -28,7 +28,7 @@ export const useRecaptcha = () => {
       
       window.grecaptcha.ready(() => {
         // TODO: Replace 'reCAPTCHA_site_key' with actual site key from config
-        window.grecaptcha.execute('reCAPTCHA_site_key', { action: v3Action }).then((token: string) => {
+        window.grecaptcha.execute('6Ld0ANcrAAAAAB5t0TU3wifH5jwD29wSzyk3604H', { action: v3Action }).then((token: string) => {
           resolve(token)
         }).catch((error: any) => {
           console.error('reCAPTCHA execution failed:', error)

@@ -18,7 +18,7 @@ definePageMeta({
 useHead({
   script: [
     {
-      src: 'https://www.google.com/recaptcha/api.js?render=reCAPTCHA_site_key',
+      src: 'https://www.google.com/recaptcha/api.js?render=6Ld0ANcrAAAAAB5t0TU3wifH5jwD29wSzyk3604H',
       async: true,
       defer: true
     }
