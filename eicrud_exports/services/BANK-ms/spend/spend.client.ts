@@ -5,6 +5,7 @@ import { SpendThinkDto, SpendThinkReturnDto } from './cmds/spend_think/spend_thi
 import { ComputeBalanceDto, ComputeBalanceReturnDto } from './cmds/compute_balance/compute_balance.dto';
 import { CheckAutoTopUpDto, CheckAutoTopUpReturnDto } from './cmds/check_auto_top_up/check_auto_top_up.dto';
 import { CheckActiveSubscriptionDto, CheckActiveSubscriptionReturnDto } from './cmds/check_active_subscription/check_active_subscription.dto';
+import { ActivateSubscriptionDto, ActivateSubscriptionReturnDto } from './cmds/activate_subscription/activate_subscription.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
 import { ICrudOptions } from "@eicrud/shared/interfaces";
 import { Spend } from "./spend.entity";
@@ -237,6 +238,38 @@ export class SpendClient extends CrudClient<Spend> {
       copts?: ClientOptions,
     ): Promise<CheckActiveSubscriptionReturnDto> {
       return super.cmdSL('check_active_subscription', dto, options, copts) as any;
+  }
+
+  async activate_subscription(
+      dto: ActivateSubscriptionDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ActivateSubscriptionReturnDto> {
+      return super.cmd('activate_subscription', dto, options, copts);
+  }
+
+  async activate_subscriptionS(
+      dto: ActivateSubscriptionDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ActivateSubscriptionReturnDto> {
+      return super.cmdS('activate_subscription', dto, options, copts);
+  }
+
+  async activate_subscriptionL(
+      dto: ActivateSubscriptionDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ActivateSubscriptionReturnDto> {
+      return super.cmdL('activate_subscription', dto, options, copts) as any;
+  }
+
+  async activate_subscriptionSL(
+      dto: ActivateSubscriptionDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ActivateSubscriptionReturnDto> {
+      return super.cmdSL('activate_subscription', dto, options, copts) as any;
   }
 
 }

@@ -7,6 +7,48 @@
       </div>
     </header>
 
+    <!-- Getting Started Section -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Getting Started</h2>
+        <p class="section-description">Quick setup steps to get the most out of DirectSupport.ai. Click on any step below to get started, or ask the chat support for any details.</p>
+      </div>
+      
+      <div class="getting-started-container">
+        <div class="step-card" @click="navigateTo('/edit-product')" style="cursor: pointer;">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Configure Your Product</h3>
+            <p>Set up your product information and AI assistant instructions.</p>
+          </div>
+        </div>
+        
+        <div class="step-card" @click="navigateTo('/contact-priority')" style="cursor: pointer;">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Assign Your Phone Number</h3>
+            <p>Assign your phone number to receive client updates and notifications.</p>
+          </div>
+        </div>
+        
+        <div class="step-card" @click="navigateTo('/document-upload')" style="cursor: pointer;">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Upload Your Documentation</h3>
+            <p>Upload your documentation files to generate your FAQ automatically.</p>
+          </div>
+        </div>
+        
+        <div class="step-card" @click="navigateTo('/widget')" style="cursor: pointer;">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Install Widget</h3>
+            <p>Add the chat widget to your website to start receiving customer messages.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Current Balance Section -->
     <div class="content-section">
       <div class="section-header">
@@ -51,40 +93,6 @@
           class="chart-canvas"
           :style="{ display: chartLoading ? 'none' : 'block' }"
         ></canvas>
-      </div>
-    </div>
-
-    <!-- Getting Started Section -->
-    <div class="content-section">
-      <div class="section-header">
-        <h2>Getting Started</h2>
-        <p class="section-description">Quick setup steps to get the most out of DirectSupport.ai</p>
-      </div>
-      
-      <div class="getting-started-container">
-        <div class="step-card">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h3>Configure Your Product</h3>
-            <p>Set up your product information and AI assistant instructions.</p>
-          </div>
-        </div>
-        
-        <div class="step-card">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h3>Install Widget</h3>
-            <p>Add the chat widget to your website to start receiving customer messages.</p>
-          </div>
-        </div>
-        
-        <div class="step-card">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <h3>Monitor Conversations</h3>
-            <p>View and manage customer conversations from your dashboard.</p>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -554,12 +562,20 @@ onUnmounted(() => {
   border: 1px solid rgba($brand, 0.1);
   border-radius: $radius;
   transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  
   
   &:hover {
-    background: rgba($brand, 0.05);
-    border-color: rgba($brand, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba($brand, 0.1);
+    background: rgba($brand, 0.08);
+    border-color: rgba($brand, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba($brand, 0.15);
+    
+
+    .step-content h3 {
+      color: $brand;
+    }
   }
 }
 

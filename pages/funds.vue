@@ -200,6 +200,8 @@
                 <span class="transaction-type">
                   {{ transaction.type === 'deposit' ? 'Deposit' : 'Spending' }}
                   <span v-if="transaction.isAutoTopUp" class="auto-badge">Auto</span>
+                  <span v-if="transaction.type === 'spend' && transaction.spendType == 'subscription'" class="spend-type-badge">{{ transaction.spendType }}</span>
+                  <span v-if="transaction.type === 'spend' && transaction.spendType != 'subscription'" class="spend-type-grey">({{ transaction.spendType }})</span>
                 </span>
                 <span :class="['transaction-amount', transaction.type]">
                   {{ transaction.type === 'deposit' ? '+' : '-' }}${{ formatBalance(transaction.amount) }}
@@ -723,6 +725,7 @@ const loadProduct = async () => {
     if (currentProduct.value) {
       autoTopUpAmount.value = currentProduct.value.autoTopUpAmount
       autoTopUpEnabled.value = currentProduct.value.autoTopUpEnabled || false
+      autoRenewEnabled.value = currentProduct.value.autoRenewSubscription || false
     }
   } catch (error) {
     console.error('Failed to load product:', error)
@@ -909,16 +912,21 @@ const handleActivateSubscription = async () => {
   
   subscriptionLoading.value = true
   try {
-    // Mock implementation - replace with actual API call
-    currentProduct.value.subscriptionActive = true
-    currentProduct.value.lastSubscriptionChecked = new Date()
+    // Use the activate_subscription command from the spend service
+    await $sp.spend.activate_subscription({
+      productId: currentProduct.value.id
+    })
+    
+    // Reload the product to get updated subscription status
+    await loadProduct()
+    await loadTransactions()
     
     $toast.show('Subscription activated successfully', 'success')
     showSubscriptionPopup.value = false
     
   } catch (error) {
     console.error('Failed to activate subscription:', error)
-    $toast.show('Failed to activate subscription', 'error')
+    $toast.show(error)
   } finally {
     subscriptionLoading.value = false
   }
@@ -938,7 +946,15 @@ const handleAutoRenewToggle = async (enabled: boolean) => {
   }
   
   try {
-    // Mock implementation - replace with actual API call
+    // Update the product's autoRenewSubscription property via API
+    await $sp.product.patch({
+      id: currentProduct.value.id
+    }, {
+      autoRenewSubscription: enabled
+    })
+    
+    // Update local state
+    currentProduct.value.autoRenewSubscription = enabled
     autoRenewEnabled.value = enabled
     
     $toast.show(
@@ -1406,6 +1422,21 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
     font-size: 0.75rem;
     margin-left: 0.5rem;
   }
+  
+  .spend-type-badge {
+    background: color.scale($brand-2, $lightness: 80%);
+    color: color.scale($brand-2, $lightness: -20%);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-left: 0.5rem;
+  }
+
+  .spend-type-grey {
+    color: color.scale($text-muted, $lightness: 30%);
+  }
 }
 
 .transaction-amount {
@@ -1416,7 +1447,7 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
   }
   
   &.spend {
-    color: $warning;
+    color: $brand-2;
   }
 }
 

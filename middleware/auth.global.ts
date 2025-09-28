@@ -1,5 +1,6 @@
 import { SuperClient } from "~/eicrud_exports/super_client"
 import { PUBLIC_PATHS, isPublicPath } from "../utils/auth-config"
+import { isValidRedirect } from "../utils/redirect-validation"
 import { NuxtApp } from "nuxt/app";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
@@ -17,8 +18,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return
   }
   
-  // Redirect logged-in users away from login page only
+  // Redirect logged-in users away from login page
   if (to.path === "/login" && loggedIn) {
+    const redirectTo = to.query.redirectTo as string
+    if (redirectTo && isValidRedirect(redirectTo)) {
+      return navigateTo(redirectTo)
+    }
     return navigateTo("/")
   }
   // Allow access to public paths without authentication
@@ -27,7 +32,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
   // Require login for all other pages
   if (!loggedIn && !["/login", "/register", "/reset-password", "/verify-email"].includes(to.path)) {
-    return navigateTo("/login")
+    // Use relative path only (path + query + hash) to prevent open redirect attacks
+    const queryString = Object.keys(to.query).length > 0 ? '?' + new URLSearchParams(to.query as Record<string, string>).toString() : ''
+    const relativePath = to.path + queryString + (to.hash || '')
+    return navigateTo(`/login?redirectTo=${encodeURIComponent(relativePath)}`)
   }
 })
 

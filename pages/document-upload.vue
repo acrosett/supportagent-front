@@ -22,8 +22,9 @@
         </p>
         <DigestFile v-model="processedText" @error="handleError" />
         
-        <div v-if="processedText" class="processed-result">
-          <h3>Processed Text Content</h3>
+        <!-- Admin Text Preview - Only for admins -->
+        <div v-if="processedText && isAdmin" class="admin-text-preview">
+          <h3>Raw Text Content (Admin Only)</h3>
           <div class="text-preview">
             <div class="text-stats">
               <span class="text-size">{{ textSizeFormatted }}</span>
@@ -178,6 +179,7 @@ import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
 import { EditorTask, EditorTaskStatus, EditorTaskInitiator } from '~/eicrud_exports/services/SUPPORT-ms/editor-task/editor-task.entity'
 
 const processedText = ref('')
+const isAdmin = ref(false)
 
 // Editor Tasks State
 const editorTasks = ref<EditorTask[]>([])
@@ -219,6 +221,8 @@ const formatFileSize = (bytes: number): string => {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
+
+
 
 // Editor Tasks Functions
 const loadEditorTasks = async (reset = true) => {
@@ -439,6 +443,10 @@ const formatDate = (date?: Date | string) => {
 
 // Lifecycle
 onMounted(() => {
+  // Check if user is admin
+  const nuxtApp = useNuxtApp()
+  isAdmin.value = nuxtApp.$userRole === 'admin'
+  
   loadEditorTasks(true)
   
   // Set up auto-refresh for tasks (every 30 seconds)
@@ -586,6 +594,17 @@ definePageMeta({
   
   &:focus {
     outline: none;
+  }
+}
+
+.admin-text-preview {
+  margin-top: 2rem;
+  
+  h3 {
+    margin-bottom: 1rem;
+    color: $text;
+    font-size: 1.1rem;
+    opacity: 0.8;
   }
 }
 

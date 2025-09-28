@@ -73,7 +73,7 @@ const loadProduct = async () => {
         description: product.description || '',
         webhookUrl: product.webhookUrl || '',
         sharedSecret: product.sharedSecret || '',
-        chatOn: product.chatOn ?? true,
+        chatOn: product.chatOn || false,
       }
     }
   } catch (error) {
@@ -98,7 +98,6 @@ const fieldOverrides: OverrideRecord<Product> = {
   },
   chatOn: {
     label: 'AI Chat Feature',
-
     description: 'Enable or disable AI chat functionality for this product',
     titleColor: () => !formData.value.chatOn ? colors.error() : undefined,
   },

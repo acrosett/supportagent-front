@@ -22,6 +22,7 @@
 <script setup lang="ts">
 import MegaForm, { MegaFormAction, OverrideRecord } from '~/components/MegaForm.vue'
 import { LoginDto } from '~/eicrud_exports/services/user/cmds/login/login.dto'
+import { isValidRedirect } from '~/utils/redirect-validation'
 import { ref } from 'vue'
 
 definePageMeta({ layout: 'bare' })
@@ -75,8 +76,14 @@ const actions: MegaFormAction[] = [
       await useNuxtApp().$sp.user.setJwt(accessToken as string, jwtExpiration);
       useNuxtApp().$userId = userId;
 
-      // Navigate to /
-      await useRouter().push('/');
+      // Check for redirectTo parameter and navigate accordingly
+      const route = useRoute()
+      const redirectTo = route.query.redirectTo as string
+      if (redirectTo && isValidRedirect(redirectTo)) {
+        await useRouter().push(redirectTo)
+      } else {
+        await useRouter().push('/')
+      }
 
     }
   },

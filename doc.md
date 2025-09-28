@@ -148,6 +148,74 @@ The FAQ system automatically generates responses based on your uploaded document
 
 ---
 
+## User Authentication & Priority Management
+
+### Default Guest Behavior
+
+By default, our chat system handles any new user as a **guest** with the **lowest priority** level. This ensures immediate support availability while maintaining resource management.
+
+### Authenticated User Setup
+
+To treat users with their assigned priority levels, you can implement user authentication using tokens:
+
+#### Frontend Integration
+
+After your page loads, call the widget API to set the user token:
+
+```javascript
+window['AISupportWidget'].setUserToken(token)
+```
+
+This token will be sent back to your webhook for validation and user identification.
+
+#### Webhook Configuration
+
+Set up authentication in the **Edit Product** page:
+
+1. **Webhook URL**: Your endpoint for user token validation
+2. **Shared Secret**: Security key for webhook authentication
+
+#### Webhook Validation Process
+
+Our AI queries your webhook with the following request:
+
+```javascript
+const validateUrl = `${webhookUrl}?userToken=${encodeURIComponent(token)}&sharedSecret=${encodeURIComponent(sharedSecret)}`;
+
+const response = await fetch(validateUrl, {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'SupportAgent/1.0',
+    },
+});
+```
+
+#### Expected Webhook Response
+
+Your webhook should return the following JSON structure:
+
+```typescript
+interface WebhookValidationResponse {
+    valid: boolean;
+    userInfo?: {
+        name?: string; 
+        email?: string;
+        unique_id: string; // Static unique identifier, sent back in custom tools calls
+        priority?: 'lowest' | 'regular' | 'high';
+    };
+    tokenExpiresMin?: number; // Default 30 min (minimum 5)
+}
+```
+
+#### Priority Management
+
+- **Priority Levels**: 'lowest', 'regular', 'high'
+- **Quota Configuration**: Edit priority quotas and limits in the **Contact Priority** page
+- **Resource Allocation**: Different priorities receive different service levels and message limits
+
+---
+
 ## Widget Configuration
 
 Customize your support widget's appearance and behavior before embedding it on your website.

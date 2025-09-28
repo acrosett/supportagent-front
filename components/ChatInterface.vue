@@ -1081,9 +1081,9 @@ onMounted(() => {
           break
         case 'user-token':
           // Handle API token from embed.js (initial setup)
-          console.log('User token received:', token)
+          console.log('User token received')
           if (token) {
-            clientIdentifier.value = token
+            clientIdentifier.value = "user_" + token
             // Initialize chat with the received token
             const nuxtApp = useNuxtApp()
             initializeChat(nuxtApp)

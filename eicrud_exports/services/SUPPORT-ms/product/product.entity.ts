@@ -78,6 +78,10 @@ export class Product {
 
     lastSubscriptionChecked?: Date;
 
+    @IsBoolean()
+    @IsOptional()
+    autoRenewSubscription?: boolean = false;
+
     // Auto top-up configuration
     autoTopUpEnabled: boolean = false;
 

@@ -272,13 +272,14 @@ const checkBillingWarning = () => {
 }
 
 const checkEditProductWarning = () => {
+  console.log('Current product:', currentProduct.value)
   if (!currentProduct.value) {
     showEditProductWarning.value = false
     return
   }
   
   const hasAiOff = !currentProduct.value.chatOn
-  
+  console.log('hasAiOff:', hasAiOff)
   showEditProductWarning.value = hasAiOff
 }
 

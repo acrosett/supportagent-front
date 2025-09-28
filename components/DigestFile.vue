@@ -1,6 +1,6 @@
 <template>
   <div class="digest-file">
-    <div class="upload-area" :class="{ 'drag-over': isDragOver, 'has-error': error }">
+    <div class="upload-area" :class="{ 'drag-over': isDragOver }">
       <input
         ref="fileInput"
         type="file"
@@ -43,10 +43,7 @@
       </div>
     </div>
     
-    <div v-if="error" class="error-message">
-      <AppIcon name="close" size="md" />
-      {{ error }}
-    </div>
+
   </div>
   
   <!-- Confirm price popup -->
@@ -72,7 +69,7 @@
     <template #footer>
       <div class="confirm-footer">
         <AppButton label="Cancel" color="secondary" @click="cancelConfirm" />
-        <AppButton label="Confirm Upload" margin="left" color="primary" @click="confirmUpload" />
+        <AppButton label="Process with AI" margin="left" color="primary" @click="confirmUpload" />
       </div>
     </template>
   </AppPopup>
@@ -133,8 +130,7 @@ const handleFileSelect = async (event: Event) => {
       estimatedCost.value = await calculateEstimatedCost(file)
       showConfirm.value = true
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to process file'
-      error.value = errorMessage
+      useNuxtApp().$toast.show(err, 'error');
       resetUpload()
     }
   }
@@ -167,7 +163,6 @@ const handleDrop = async (event: DragEvent) => {
 const resetUpload = () => {
   processedText.value = ''
   currentFileName.value = ''
-  error.value = ''
   showConfirm.value = false
   pendingFile.value = null
   estimatedCost.value = 0
@@ -238,12 +233,40 @@ const calculateEstimatedCost = async (file: File) => {
 }
 
 
-const confirmUpload = () => {
+const confirmUpload = async () => {
   if (!pendingFile.value) return
   const file = pendingFile.value
   showConfirm.value = false
   pendingFile.value = null
-  processFile(file)
+  
+  try {
+    // Process file to extract text first
+    await processFile(file)
+    
+    // Then call digest_file with the extracted text
+    if (processedText.value) {
+      await callDigestFile()
+    }
+  } catch (err) {
+    useNuxtApp().$toast.show(err, 'error')
+    resetUpload()
+  }
+}
+
+const callDigestFile = async () => {
+  const { $sp } = useNuxtApp()
+  const productId = useNuxtApp().$userProductId
+  
+  if (!productId) {
+    throw new Error('Product ID not found')
+  }
+  
+  await $sp.digestor.digest_file({
+    fileText: processedText.value,
+    productId: productId
+  })
+  
+  useNuxtApp().$toast.show('Document processing started successfully', 'success')
 }
 const cancelConfirm = () => {
   // Clear selection to avoid accidental upload
@@ -251,7 +274,6 @@ const cancelConfirm = () => {
 }
 
 const processFile = async (file: File) => {
-  error.value = ''
   currentFileName.value = file.name
   isProcessing.value = true
   
@@ -261,7 +283,6 @@ const processFile = async (file: File) => {
     
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Failed to process file'
-    error.value = errorMessage
     emit('error', errorMessage)
     resetUpload()
   } finally {
@@ -544,10 +565,7 @@ const formatFileSize = (bytes: number): string => {
     border-color: $brand-2;
     background-color: rgba($brand-2, 0.05);
   }
-  
-  &.has-error {
-    border-color: $brand-2;
-  }
+
 }
 
 .file-input {
@@ -638,19 +656,6 @@ const formatFileSize = (bytes: number): string => {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: rgba($brand-2, 0.1);
-  border: 1px solid rgba($brand-2, 0.3);
-  border-radius: $radius;
-  color: $brand-2;
-  font-size: 0.95rem;
 }
 
 @media (max-width: 768px) {
