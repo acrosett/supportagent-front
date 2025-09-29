@@ -201,7 +201,7 @@
                   {{ transaction.type === 'deposit' ? 'Deposit' : 'Spending' }}
                   <span v-if="transaction.isAutoTopUp" class="auto-badge">Auto</span>
                   <span v-if="transaction.type === 'spend' && transaction.spendType == 'subscription'" class="spend-type-badge">{{ transaction.spendType }}</span>
-                  <span v-if="transaction.type === 'spend' && transaction.spendType != 'subscription'" class="spend-type-grey">({{ transaction.spendType }})</span>
+                  <span v-if="transaction.type === 'spend' && transaction.spendType != 'subscription'" class="spend-type-grey">({{ transaction.think?.agentType }})</span>
                 </span>
                 <span :class="['transaction-amount', transaction.type]">
                   {{ transaction.type === 'deposit' ? '+' : '-' }}${{ formatBalance(transaction.amount) }}
@@ -507,9 +507,9 @@
               <span class="detail-label">Priority:</span>
               <span class="detail-value priority">{{ selectedTransaction.clientPriority }}</span>
             </div>
-            <div v-if="selectedTransaction.agentType" class="detail-item">
+            <div v-if="selectedTransaction.think?.agentType" class="detail-item">
               <span class="detail-label">Agent Type:</span>
-              <span class="detail-value">{{ selectedTransaction.agentType }}</span>
+              <span class="detail-value">{{ selectedTransaction.think.agentType }}</span>
             </div>
           </div>
 
@@ -971,7 +971,7 @@ const handleAutoRenewToggle = async (enabled: boolean) => {
 }
 
 const formatBalance = (amount: number): string => {
-  return amount.toFixed(2)
+  return amount.toFixed(4).replace(/\.?0+$/, '')
 }
 
 const formatDate = (date: Date | string): string => {
@@ -1532,7 +1532,7 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
       }
       
       &.spend {
-        color: $error;
+        color: $brand-2;
       }
     }
     
