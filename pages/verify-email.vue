@@ -104,7 +104,7 @@ const verifyEmail = async () => {
       logMeIn: false // Don't log in automatically, just verify
     }
 
-    const result = await useNuxtApp().$sp.user.verify_emailS(verifyData)
+    const result = await useNuxtApp().$sp.user.verify_email_extendedS(verifyData)
     
     if (result) {
       verificationResult.value = 'success'
