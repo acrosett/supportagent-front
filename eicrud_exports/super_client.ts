@@ -23,6 +23,7 @@ import { EmailClient } from './services/email/email.client';
 import { CaptchaClient } from './services/captcha/captcha.client';
 import { SpendClient } from './services/BANK-ms/spend/spend.client';
 import { ProductVaultClient } from './services/BANK-ms/product-vault/product-vault.client';
+import { FreeCreditClient } from './services/BANK-ms/free-credit/free-credit.client';
 import { DepositClient } from './services/BANK-ms/deposit/deposit.client';
 import { TokenClient } from './services/AUTH-ms/token/token.client';
 import { AccountDeletionClient } from './services/AUTH-ms/account-deletion/account-deletion.client';
@@ -65,6 +66,7 @@ export class SuperClient {
         this.captcha = new CaptchaClient(config);
         this.spend = new SpendClient(config);
         this.productVault = new ProductVaultClient(config);
+        this.freeCredit = new FreeCreditClient(config);
         this.deposit = new DepositClient(config);
         this.token = new TokenClient(config);
         this.accountDeletion = new AccountDeletionClient(config);
@@ -103,6 +105,7 @@ export class SuperClient {
     captcha: CaptchaClient;
     spend: SpendClient;
     productVault: ProductVaultClient;
+    freeCredit: FreeCreditClient;
     deposit: DepositClient;
     token: TokenClient;
     accountDeletion: AccountDeletionClient;

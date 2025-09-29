@@ -1,3 +1,4 @@
+import { VerifyEmailExtendedDto, VerifyEmailExtendedReturnDto } from './cmds/verify_email_extended/verify_email_extended.dto';
 import { VerifyEmailDto } from './cmds/verify_email/verify_email.dto';
 import { TimeoutUserDto } from './cmds/timeout_user/timeout_user.dto';
 import { SendVerificationEmailDto } from './cmds/send_verification_email/send_verification_email.dto';
@@ -20,6 +21,38 @@ export class UserClient extends CrudClient<User> {
     super({...config, serviceName: 'user'});
   }
   // GENERATED START
+  async verify_email_extended(
+      dto: VerifyEmailExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<VerifyEmailExtendedReturnDto> {
+      return super.cmd('verify_email_extended', dto, options, copts);
+  }
+
+  async verify_email_extendedS(
+      dto: VerifyEmailExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<VerifyEmailExtendedReturnDto> {
+      return super.cmdS('verify_email_extended', dto, options, copts);
+  }
+
+  async verify_email_extendedL(
+      dto: VerifyEmailExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<VerifyEmailExtendedReturnDto> {
+      return super.cmdL('verify_email_extended', dto, options, copts) as any;
+  }
+
+  async verify_email_extendedSL(
+      dto: VerifyEmailExtendedDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<VerifyEmailExtendedReturnDto> {
+      return super.cmdSL('verify_email_extended', dto, options, copts) as any;
+  }
+
   async verify_email(
       dto: VerifyEmailDto,
       options: ICrudOptions = undefined,

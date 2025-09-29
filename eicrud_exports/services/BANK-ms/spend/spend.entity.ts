@@ -9,8 +9,8 @@ import { EditorTask } from "../../AI-ms/editor-task/editor-task.entity";
 export enum SpendType {
   AI_THINKING = 'ai_thinking',
   AI_SUMMARY = 'ai_summary',
-  WHATSAPP = 'whatsapp',
   SUBSCRIPTION = 'subscription',
+  UNKNOWN = 'unknown',
 }
 
 export enum AgentType {

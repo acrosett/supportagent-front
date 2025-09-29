@@ -1,6 +1,7 @@
 import { IsString, IsOptional, IsObject, IsEnum } from "class-validator";
 import { Product } from "../../../SUPPORT-ms/product/product.entity";
 import { ContactConfig } from "../../../WHATSAPP-ms/contact-config/contact-config.entity";
+import { ClientPriority } from "../../../SUPPORT-ms/client/client.entity";
 
 export enum NotificationType {
     SYSTEM = 'SYSTEM',
@@ -15,6 +16,9 @@ export class NotifyDto {
     product: Product;
 
     @IsString()
+    title: string;
+
+    @IsString()
     message: string;
 
     @IsEnum(NotificationType)
@@ -22,7 +26,7 @@ export class NotifyDto {
 
     @IsObject()
     @IsOptional()
-    contactConfig?: ContactConfig;
+    clientPriority?: ClientPriority;
 
 }
 

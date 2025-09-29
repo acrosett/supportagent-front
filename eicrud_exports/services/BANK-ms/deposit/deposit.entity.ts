@@ -12,6 +12,7 @@ export enum DepositSource {
     STRIPE_CARD = 'stripe_card',
     STRIPE_SEPA = 'stripe_sepa',
     STRIPE_ACH = 'stripe_ach',
+    FREE_CREDITS = 'free_credits',
     MANUAL = 'manual',
     ADMIN = 'admin'
 }

@@ -11,6 +11,9 @@ export class Notification {
     product: Product | string;
 
     @IsString()
+    title: string;
+
+    @IsString()
     message: string;
 
     @IsBoolean()

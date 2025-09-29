@@ -120,6 +120,7 @@
               'completed': task.status === EditorTaskStatus.COMPLETED,
               'failed': task.status === EditorTaskStatus.FAILED
             }"
+            @click="openTaskDetail(task)"
           >
             <div class="task-header">
               <div class="task-info">
@@ -169,12 +170,77 @@
         </div>
       </div>
     </div>
+
+    <!-- Task Detail Popup -->
+    <AppPopup
+      v-if="showTaskDetail && selectedTask"
+      @close="closeTaskDetail"
+      title="Task Details"
+      :show="showTaskDetail"
+    >
+      <div class="task-detail-content">
+        <div class="task-detail-header">
+          <div class="task-detail-info">
+            <h3>{{ getTaskTitle(selectedTask) }}</h3>
+            <p class="task-detail-id">ID: {{ selectedTask.id?.substring(0, 8) || 'Unknown' }}...</p>
+            <div class="task-detail-badges">
+              <span
+                class="status-badge"
+                :class="getStatusClass(selectedTask.status)"
+              >
+                <AppIcon :name="getStatusIcon(selectedTask.status)" size="sm" />
+                {{ getStatusLabel(selectedTask.status) }}
+              </span>
+              
+              <span
+                class="initiator-badge"
+                :class="getInitiatorClass(selectedTask.initiator)"
+              >
+                <AppIcon :name="getInitiatorIcon(selectedTask.initiator)" size="sm" />
+                {{ getInitiatorLabel(selectedTask.initiator) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="task-detail-dates">
+            <div class="date-item">
+              <span class="date-label">Created:</span>
+              <span class="date-value">{{ formatDate(selectedTask.createdAt) }}</span>
+            </div>
+            <div class="date-item">
+              <span class="date-label">Updated:</span>
+              <span class="date-value">{{ formatDate(selectedTask.updatedAt) }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Admin Retry Button -->
+        <div v-if="true && (selectedTask.status === EditorTaskStatus.FAILED)" class="admin-actions">
+          <AppButton
+            label="Retry Processing"
+            color="secondary"
+            size="sm"
+            margin="both"
+            :loading="isRetrying"
+            @click="retryTask"
+          />
+        </div>
+
+        <div class="knowledge-content">
+          <h4>Knowledge Content</h4>
+          <div class="knowledge-text">
+            {{ selectedTask.newKnowledge || 'No content available' }}
+          </div>
+        </div>
+      </div>
+    </AppPopup>
   </div>
 </template>
 
 <script setup lang="ts">
 import AppButton from '~/components/AppButton.vue'
 import AppIcon from '~/components/AppIcon.vue'
+import AppPopup from '~/components/AppPopup.vue'
 import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
 import { EditorTask, EditorTaskStatus, EditorTaskInitiator } from '~/eicrud_exports/services/SUPPORT-ms/editor-task/editor-task.entity'
 
@@ -189,6 +255,11 @@ const searchQuery = ref('')
 const hasMoreData = ref(true)
 const currentPage = ref(0)
 const pageSize = 20
+
+// Task Detail Popup State
+const showTaskDetail = ref(false)
+const selectedTask = ref<EditorTask | null>(null)
+const isRetrying = ref(false)
 
 // Filter state
 const filters = ref({
@@ -438,6 +509,53 @@ const formatDate = (date?: Date | string) => {
     return `${hours}h ago`
   } else {
     return `${days}d ago`
+  }
+}
+
+const openTaskDetail = (task: EditorTask) => {
+  selectedTask.value = task
+  showTaskDetail.value = true
+}
+
+const closeTaskDetail = () => {
+  showTaskDetail.value = false
+  selectedTask.value = null
+}
+
+const retryTask = async () => {
+  if (!selectedTask.value || !selectedTask.value.id) return
+  
+  // Show confirmation popup about costs
+  const confirmed = await useNuxtApp().$confirmPopup.show(
+    'This will reprocess the task and may incur additional AI processing costs. Do you want to continue?'
+  )
+  
+  if (!confirmed) return
+  
+  try {
+    isRetrying.value = true
+    
+    const { $sp } = useNuxtApp()
+    
+    // Use retry_task command to reprocess the task
+    await $sp.editorTask.retry_task({
+      taskId: selectedTask.value.id,
+      productId: useNuxtApp().$userProductId
+    })
+    
+    // Update the selected task status
+    selectedTask.value.status = EditorTaskStatus.NEW
+    
+    // Refresh the tasks list to show updated status
+    await loadEditorTasks(true)
+    
+    useNuxtApp().$toast.show('Task queued for reprocessing', 'success')
+    
+  } catch (error) {
+    console.error('Failed to retry task:', error)
+    useNuxtApp().$toast.show(error, 'error')
+  } finally {
+    isRetrying.value = false
   }
 }
 
@@ -965,6 +1083,136 @@ definePageMeta({
     align-items: flex-start;
     flex-direction: row;
     gap: 0.5rem;
+  }
+}
+
+// Task Detail Popup Styles
+.task-detail-content {
+  max-width: 800px;
+  width: 100%;
+}
+
+.task-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba($muted, 0.3);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.task-detail-info {
+  flex: 1;
+  
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: $text;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .task-detail-id {
+    margin: 0 0 1rem 0;
+    color: $muted;
+    font-family: monospace;
+    font-size: 0.9rem;
+  }
+}
+
+.task-detail-badges {
+  display: flex;
+  gap: 0.75rem;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.task-detail-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+  
+  @media (max-width: 768px) {
+    text-align: left;
+  }
+  
+  .date-item {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    
+    .date-label {
+      color: $muted;
+      font-weight: 500;
+    }
+    
+    .date-value {
+      color: $text;
+    }
+  }
+}
+
+.knowledge-content {
+  h4 {
+    margin: 0 0 1rem 0;
+    color: $text;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+}
+
+.knowledge-text {
+  background: rgba($muted, 0.05);
+  border: 1px solid rgba($muted, 0.2);
+  border-radius: $radius;
+  padding: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: $text;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 400px;
+  overflow-y: auto;
+  
+  &:empty::before {
+    content: 'No content available';
+    color: $muted;
+    font-style: italic;
+  }
+}
+
+// Admin Actions
+.admin-actions {
+  padding: 1rem;
+  background: rgba($brand, 0.05);
+  border: 1px solid rgba($brand, 0.2);
+  border-radius: $radius;
+  margin-bottom: 2rem;
+  
+  display: flex;
+  justify-content: flex-end;
+  
+  @media (max-width: 480px) {
+    justify-content: stretch;
+  }
+}
+
+// Add cursor pointer for task cards
+.task-card {
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow;
   }
 }
 </style>

@@ -43,7 +43,13 @@
       </div>
 
       <!-- Messages Area -->
-      <div class="messages-container" ref="messagesContainer">
+      <div class="messages-container" ref="messagesContainer" @scroll="handleScroll">
+        <!-- Loading More Messages Indicator -->
+        <div v-if="isLoadingMoreMessages" class="loading-more-indicator">
+          <div class="spinner-small"></div>
+          <span>Loading older messages...</span>
+        </div>
+        
         <div v-for="message in messages" :key="message.id" class="message-wrapper">
           <!-- Regular chat message -->
           <div v-if="message.type !== 'tool-trace'" :class="['message', getMessageClass(message.type)]">
@@ -192,6 +198,13 @@ const showSidebar = ref(false)
 // Message count tracking for training data reload optimization
 const lastMessageCount = ref(0)
 
+// Pagination state for message loading
+const messageOffset = ref(0)
+const toolTraceOffset = ref(0)
+const messagesPerPage = 20
+const isLoadingMoreMessages = ref(false)
+const hasMoreMessages = ref(true)
+
 // Widget configuration state
 const widgetConfig = ref<any>({
   welcomeMessage: '',
@@ -277,11 +290,17 @@ function shadeColor(col: string, percent: number) {
 }
 
 const initializeChat = async (nuxtApp: NuxtApp) => {
-  isLoading.value = false
+  isLoading.value = true
 
   try {
+    // Reset pagination state
+    messageOffset.value = 0
+    toolTraceOffset.value = 0
+    hasMoreMessages.value = true
+    isLoadingMoreMessages.value = false
+    
     // Load initial messages
-    await refreshMessages(nuxtApp)
+    await refreshMessages(nuxtApp, messagesPerPage)
     
     // Fetch AI status if in inverted mode
     if (isInvertedMode.value) {
@@ -301,82 +320,86 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
 
 
 // Loads messages and builds ChatMessage[]
-const refreshMessages = async (nuxtApp: NuxtApp, limit?: number) => {
+const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean = false) => {
   // Use client identifier from variable
   if (!clientIdentifier.value) {
     return;
   }
+  
   try {
+    const effectiveLimit = limit || messagesPerPage
+    const currentMessageOffset = append ? messageOffset.value : 0
+    const currentToolTraceOffset = append ? toolTraceOffset.value : 0
 
-    const cacheKey = `${cachePrefix}chat-messages-${clientIdentifier.value}`;
-    const cachedMessages = limit ? null : sessionStorage.getItem(cacheKey);
-    let allMessages: ChatItem[] | null = cachedMessages ? JSON.parse(cachedMessages) as ChatItem[] : null;
-    if (!allMessages || limit) {
+    console.log(`Fetching messages from server... offset: ${currentMessageOffset}, limit: ${effectiveLimit}`);
 
-      console.log('Fetching messages from server...');
-      const res = await nuxtApp.$sp.message.get_client_messagesL({
-        identifier: clientIdentifier.value,
-        apiKey: widgetConfig.value.apiToken || '',
-        inverted: isInvertedMode.value
-      },
-      {
-        orderBy: { createdAt: 'asc' },
-        limit: limit || undefined
-      });
-      const rawMessages = res?.data || []
-      console.log(`Fetched ${rawMessages.length} messages from server.`);
-      
-      // Fetch tool traces if in inverted mode
-      let toolTraceMessages: ToolTraceMessage[] = []
-      if (isInvertedMode.value) {
-        toolTraceMessages = await fetchToolTraces(nuxtApp, limit)
-      }
-      
-      // Sort messages by createdAt
-      const newMessages = rawMessages.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-      
-      // Remove temporary messages (messages without proper server IDs)
-      messages.value = messages.value.filter(msg => !msg.id?.startsWith('temp-'))
-      
-      // Merge messages based on ID to avoid duplicates
-      const existingIds = new Set(messages.value.map(msg => msg.id))
-      const uniqueNewMessages = newMessages.filter((msg: any) => !existingIds.has(msg.id))
-
-      
-      // Combine existing messages, new messages, and tool traces, then sort by createdAt
-      allMessages = [...messages.value, ...uniqueNewMessages, ...toolTraceMessages].sort((a: any, b: any) => 
-        new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
-      )
-
-      // Cache messages in sessionStorage
-      sessionStorage.setItem(cacheKey, JSON.stringify(allMessages));
+    const res = await nuxtApp.$sp.message.get_client_messagesL({
+      identifier: clientIdentifier.value,
+      apiKey: widgetConfig.value.apiToken || '',
+      inverted: isInvertedMode.value
+    },
+    {
+      orderBy: { createdAt: 'desc' }, // Get newest first, then reverse
+      limit: effectiveLimit,
+      offset: currentMessageOffset
+    });
+    
+    const rawMessages = res?.data || []
+    console.log(`Fetched ${rawMessages.length} messages from server.`);
+    
+    // Check if we got fewer messages than requested (no more messages)
+    if (rawMessages.length < effectiveLimit) {
+      hasMoreMessages.value = false
     }
     
-    const newMessageCount = allMessages?.length || 0
+    // Fetch tool traces if in inverted mode
+    let toolTraceMessages: ToolTraceMessage[] = []
+    if (isInvertedMode.value) {
+      toolTraceMessages = await fetchToolTraces(nuxtApp, effectiveLimit, currentToolTraceOffset)
+    }
     
-    // Check if new messages arrived
+    // For initial loads, preserve temp messages; for append, just add to existing
+    const baseMessages = messages.value.filter(msg => msg.id?.startsWith('temp-'))
+
+    // Combine all messages and sort by date
+    let allMessages = [...baseMessages, ...rawMessages, ...toolTraceMessages].sort((a: any, b: any) => 
+      new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+    )
+
+    //Make unique
+    const existingIds = new Set(allMessages.map(msg => msg.id))
+    allMessages = allMessages.filter((msg: any) => !existingIds.has(msg.id))
+
+    const newMessageCount = allMessages.length
     const hasNewMessages = newMessageCount > lastMessageCount.value
     
-    // Update messages
-    messages.value = allMessages || []
-    
-    // Auto-scroll to bottom if new messages arrived
-    if (hasNewMessages) {
+    // Update messages and offset
+    messages.value = allMessages
+    messageOffset.value = allMessages.filter(msg => msg.type != 'tool-trace').length
+    toolTraceOffset.value = allMessages.filter(msg => msg.type === 'tool-trace').length
+
+    // Only scroll to bottom for initial loads/refreshes, not appends
+    if (!append && hasNewMessages) {
       await nextTick()
       scrollToBottom()
     }
     
-    // Update message count tracking
+    // Update tracking and trigger panel refresh (initial loads only)
     lastMessageCount.value = newMessageCount
     
-    // Trigger training data panel refresh when messages are updated
     if (hasNewMessages && trainingDataPanel.value) {
       await trainingDataPanel.value.refreshData()
     }
+    
+    // Cache messages in sessionStorage
+    const cacheKey = `${cachePrefix}chat-messages-${clientIdentifier.value}`;
+    sessionStorage.setItem(cacheKey, JSON.stringify(allMessages));
+  
+    
   } catch (error: any) {
     console.error('Failed to load messages:', error)
-  console.error(error)
-  nuxtApp.$toast.show(error, 'error')
+    console.error(error)
+    nuxtApp.$toast.show(error, 'error')
   }
 }
 
@@ -589,6 +612,54 @@ const scrollToBottom = () => {
   }
 }
 
+// Load more messages when scrolling near the top
+const loadMoreMessages = async () => {
+  if (isLoadingMoreMessages.value || !hasMoreMessages.value || !clientIdentifier.value) {
+    return
+  }
+  
+  isLoadingMoreMessages.value = true
+  
+  try {
+    // Store current scroll position and height to maintain position after loading
+    const container = messagesContainer.value
+    if (!container) return
+    
+    const oldScrollHeight = container.scrollHeight
+    const oldScrollTop = container.scrollTop
+    
+    const nuxtApp = useNuxtApp()
+    await refreshMessages(nuxtApp, messagesPerPage, true) // append = true
+    
+    // Restore scroll position relative to new content
+    await nextTick()
+    if (container.scrollHeight > oldScrollHeight) {
+      const newScrollHeight = container.scrollHeight
+      const scrollDiff = newScrollHeight - oldScrollHeight
+      container.scrollTop = oldScrollTop + scrollDiff
+    }
+    
+  } catch (error) {
+    console.error('Failed to load more messages:', error)
+  } finally {
+    isLoadingMoreMessages.value = false
+  }
+}
+
+// Handle scroll events for pagination
+const handleScroll = () => {
+  if (!messagesContainer.value || isLoadingMoreMessages.value || !hasMoreMessages.value) {
+    return
+  }
+  
+  const container = messagesContainer.value
+  const scrollThreshold = 100 // Load more when within 100px of top
+  
+  if (container.scrollTop <= scrollThreshold) {
+    loadMoreMessages()
+  }
+}
+
 const formatTime = (date?: Date | string | null) => {
   if (!date) return ''
   const d = date instanceof Date ? date : new Date(date)
@@ -638,19 +709,20 @@ const closeToolTracePopup = () => {
 }
 
 // Fetch tool traces for inverted mode
-const fetchToolTraces = async (nuxtApp: NuxtApp, limit?: number): Promise<ToolTraceMessage[]> => {
+const fetchToolTraces = async (nuxtApp: NuxtApp, limit?: number, offset?: number): Promise<ToolTraceMessage[]> => {
   if (!isInvertedMode.value || !clientIdentifier.value || !widgetConfig.value.apiToken) {
     return []
   }
 
   try {
-    console.log('Fetching tool traces from server...')
+    console.log(`Fetching tool traces from server... offset: ${offset || 0}, limit: ${limit || 'unlimited'}`)
     const res = await nuxtApp.$sp.toolTrace.find({
       client: clientIdentifier.value,
       product: widgetConfig.value.apiToken
     }, {
-      orderBy: { createdAt: 'asc' },
-      limit: limit || undefined
+      orderBy: { createdAt: 'desc' },
+      limit: limit || undefined,
+      offset: offset || undefined
     })
 
     const rawTraces = res?.data || []
@@ -662,8 +734,10 @@ const fetchToolTraces = async (nuxtApp: NuxtApp, limit?: number): Promise<ToolTr
       type: 'tool-trace' as const
     }))
 
-    addMockToolTraces(traceMessages)
-
+    // Only add mock traces for initial load (no offset)
+    if (!offset) {
+      addMockToolTraces(traceMessages)
+    }
 
     return traceMessages
   } catch (error) {
@@ -883,8 +957,8 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
         
         switch (message.type) {
           case 'new_message':
-            // Refresh messages when server tells us to
-            await refreshMessages(nuxtApp, 10)
+            // Refresh messages when server tells us to (just get latest, don't append)
+            await refreshMessages(nuxtApp, 9)
             // Play bip sound for new message if enabled
             if (widgetConfig.value.soundOn) playBipSound()
             break
@@ -1154,7 +1228,11 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .loading-state { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#666; }
 
 .spinner { width:32px; height:32px; border:3px solid #f3f3f3; border-top:3px solid var(--primary-color, #667eea); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:1rem; }
+.spinner-small { width:16px; height:16px; border:2px solid #f3f3f3; border-top:2px solid var(--primary-color, #667eea); border-radius:50%; animation:spin 1s linear infinite; }
 @keyframes spin { 0% {transform:rotate(0deg);} 100% {transform:rotate(360deg);} }
+
+.loading-more-indicator { display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.75rem; color:#666; font-size:0.875rem; margin-bottom:1rem; }
+.dark-mode .loading-more-indicator { color:#ccc; }
 
 .chat-container { display:flex; flex-direction:column; height:100%; overflow:hidden; }
 .chat-header { padding:1rem; border-bottom:1px solid #e1e5e9; background:#f8f9fa; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; }

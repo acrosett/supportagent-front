@@ -74,6 +74,8 @@ export class Product {
 
     lastComputedBalance?: Date;
 
+    lowBalanceNotified: boolean = false;
+
     subscriptionActive: boolean;
 
     lastSubscriptionChecked?: Date;

@@ -6,8 +6,6 @@ export class TrySpendDto {
 
     product: Product;
 
-    amount: number;
-
     bTest?: boolean;
 
     spend: Partial<Spend>;

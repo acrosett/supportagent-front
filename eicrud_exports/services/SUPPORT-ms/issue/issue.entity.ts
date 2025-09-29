@@ -2,6 +2,7 @@ import { IsString, IsOptional, IsEnum, IsArray, IsBoolean } from "class-validato
 import { User } from "../../user/user.entity";
 import { Product } from "../product/product.entity";
 import { IssueComment } from "../issue-comment/issue-comment.entity";
+import { ClientPriority } from "../client/client.entity";
 
 export enum IssueStatus {
   OPEN = 'open',
@@ -25,6 +26,10 @@ export class Issue {
 
     @IsEnum(IssueStatus)
     status: IssueStatus = IssueStatus.OPEN;
+
+    @IsEnum(ClientPriority)
+    @IsOptional()
+    clientPriority: ClientPriority;
 
     @IsOptional()
     @IsBoolean()

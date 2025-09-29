@@ -239,6 +239,8 @@ const confirmUpload = async () => {
   showConfirm.value = false
   pendingFile.value = null
   
+  isProcessing.value = true
+  
   try {
     // Process file to extract text first
     await processFile(file)
@@ -250,6 +252,8 @@ const confirmUpload = async () => {
   } catch (err) {
     useNuxtApp().$toast.show(err, 'error')
     resetUpload()
+  } finally {
+    isProcessing.value = false
   }
 }
 
@@ -275,7 +279,6 @@ const cancelConfirm = () => {
 
 const processFile = async (file: File) => {
   currentFileName.value = file.name
-  isProcessing.value = true
   
   try {
     const { text } = await extractAndValidateText(file)
@@ -284,9 +287,7 @@ const processFile = async (file: File) => {
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Failed to process file'
     emit('error', errorMessage)
-    resetUpload()
-  } finally {
-    isProcessing.value = false
+    throw err // Re-throw to be handled by confirmUpload
   }
 }
 
