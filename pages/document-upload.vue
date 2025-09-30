@@ -18,7 +18,7 @@
     <div class="upload-content">
       <div class="upload-section">
         <p class="ai-note">
-          The AI will use this file to update the FAQ.
+          The AI will use this content to update the FAQ.
         </p>
         <DigestFile
           v-model="processedText"

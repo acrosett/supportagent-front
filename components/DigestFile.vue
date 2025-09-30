@@ -1,62 +1,100 @@
 <template>
   <div class="digest-file">
-    <div class="upload-area" :class="{ 'drag-over': isDragOver }">
-      <input
-        ref="fileInput"
-        type="file"
-        accept=".html,.htm,.pdf,.doc,.docx,.xml,.txt,.md,.json,.csv,text/html,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/xml,application/xml,text/plain,text/markdown,application/json,text/csv"
-        @change="handleFileSelect"
-        class="file-input"
-        id="file-upload"
-      />
-      
-      <div 
-        class="drop-zone"
-        @dragover.prevent="handleDragOver"
-        @dragleave.prevent="handleDragLeave" 
-        @drop.prevent="handleDrop"
-        @click="triggerFileSelect"
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button 
+        class="tab-button"
+        :class="{ active: activeTab === 'upload' }"
+        @click="activeTab = 'upload'"
       >
-        <div v-if="!isProcessing && !processedText" class="upload-prompt">
-          <AppIcon name="document" size="xl" class="upload-icon" />
-          <h3>Upload Document</h3>
-          <p>Drop your file here or click to browse</p>
-          <p class="file-types">Supports: HTML, PDF, Word (.doc, .docx), XML, Text (.txt), Markdown (.md), JSON, CSV</p>
-        </div>
+        <AppIcon name="document" size="sm" />
+        Upload File
+      </button>
+      <button 
+        class="tab-button"
+        :class="{ active: activeTab === 'paste' }"
+        @click="activeTab = 'paste'"
+      >
+        <AppIcon name="edit" size="sm" />
+        Paste Text
+      </button>
+    </div>
+
+    <!-- Upload Tab -->
+    <div v-show="activeTab === 'upload'" class="tab-content">
+      <div class="upload-area" :class="{ 'drag-over': isDragOver }">
+        <input
+          ref="fileInput"
+          type="file"
+          accept=".html,.htm,.pdf,.doc,.docx,.xml,.txt,.md,.json,.csv,text/html,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/xml,application/xml,text/plain,text/markdown,application/json,text/csv"
+          @change="handleFileSelect"
+          class="file-input"
+          id="file-upload"
+        />
         
-        <div v-else-if="isProcessing" class="processing-state">
-          <div class="spinner"></div>
-          <p>Processing {{ currentFileName }}...</p>
-        </div>
-        
-        <div v-else class="success-state">
-          <AppIcon name="check" size="lg" class="success-icon" />
-          <h4>{{ currentFileName }}</h4>
-          <p>Successfully processed</p>
-          <AppButton 
-            @click.stop="resetUpload"
-            label="Upload Another File"
-            color="secondary"
-            size="sm"
-          />
+        <div 
+          class="drop-zone"
+          @dragover.prevent="handleDragOver"
+          @dragleave.prevent="handleDragLeave" 
+          @drop.prevent="handleDrop"
+          @click="triggerFileSelect"
+        >
+          <div v-if="!isProcessing && !processedText" class="upload-prompt">
+            <AppIcon name="document" size="xl" class="upload-icon" />
+            <h3>Upload Document</h3>
+            <p>Drop your file here or click to browse</p>
+            <p class="file-types">Supports: HTML, PDF, Word (.doc, .docx), XML, Text (.txt), Markdown (.md), JSON, CSV</p>
+          </div>
+          
+          <div v-else-if="isProcessing" class="processing-state">
+            <div class="spinner"></div>
+            <p>Processing {{ currentFileName }}...</p>
+          </div>
+          
+          <div v-else class="success-state">
+            <AppIcon name="check" size="lg" class="success-icon" />
+            <h4>{{ currentFileName }}</h4>
+            <p>Successfully processed</p>
+            <AppButton 
+              @click.stop="resetUpload"
+              label="Upload Another File"
+              color="secondary"
+              size="sm"
+            />
+          </div>
         </div>
       </div>
     </div>
-    
 
+    <!-- Paste Tab -->
+    <div v-show="activeTab === 'paste'" class="tab-content">
+      <div class="paste-area">
+        <MegaForm
+          :formClass="DigestFileDto"
+          v-model="pasteFormData"
+          :fieldOverrides="pasteFieldOverrides"
+          :includeFields="['fileText']"
+          :actions="pasteActions"
+        />
+      </div>
+    </div>
   </div>
   
   <!-- Confirm price popup -->
   <AppPopup
     :show="showConfirm"
-    title="Confirm Upload"
+    :title="activeTab === 'upload' ? 'Confirm Upload' : 'Confirm Processing'"
     size="sm"
     @close="cancelConfirm"
   >
     <div class="confirm-content">
-      <p>
+      <p v-if="activeTab === 'upload'">
         You are about to upload <strong>{{ pendingFile?.name || 'your file' }}</strong>
         ({{ (pendingSizeKB || 0).toFixed(1) }} KB).
+      </p>
+      <p v-else>
+        You are about to process <strong>{{ currentFileName }}</strong>
+        ({{ Math.ceil((processedText.length || 0) / 1024) }} KB of text).
       </p>
       <div v-if="isCalculatingCost" class="calculating-cost">
         <div class="mini-spinner"></div>
@@ -76,7 +114,9 @@
 </template>
 
 <script setup lang="ts">
-import { estimateFullDigestCost } from '~/eicrud_exports/services/AI-ms/digestor/shared.utils'
+import { estimateFullDigestCost, FILE_MAX_SIZE } from '~/eicrud_exports/services/AI-ms/digestor/shared.utils'
+import MegaForm, { type MegaFormAction, type OverrideRecord } from './MegaForm.vue'
+import { DigestFileDto } from '~/eicrud_exports/services/AI-ms/digestor/cmds/digest_file/digest_file.dto'
 
 interface Props {
   modelValue?: string
@@ -94,6 +134,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
+// Tab state
+const activeTab = ref<'upload' | 'paste'>('upload')
+
+// File upload state
 const fileInput = ref<HTMLInputElement>()
 const isDragOver = ref(false)
 const isProcessing = ref(false)
@@ -106,6 +150,12 @@ const pendingFile = ref<File | null>(null)
 const estimatedCost = ref(0)
 const isCalculatingCost = ref(false)
 
+// Paste text state
+const pasteFormData = ref({
+  fileText: '',
+  productId: ''
+})
+
 // Watch for external changes
 watch(() => props.modelValue, (newValue) => {
   processedText.value = newValue || ''
@@ -114,6 +164,13 @@ watch(() => props.modelValue, (newValue) => {
 // Watch for internal changes
 watch(processedText, (newValue) => {
   emit('update:modelValue', newValue)
+})
+
+// Watch for paste form changes to sync with processedText
+watch(() => pasteFormData.value.fileText, (newValue) => {
+  if (activeTab.value === 'paste' && newValue !== processedText.value) {
+    processedText.value = newValue
+  }
 })
 
 const MAX_SIZE_BYTES = 900 * 1024 // 900KB limit
@@ -168,10 +225,49 @@ const resetUpload = () => {
   pendingFile.value = null
   estimatedCost.value = 0
   isCalculatingCost.value = false
+  pasteFormData.value.fileText = ''
   if (fileInput.value) {
     fileInput.value.value = ''
   }
 }
+
+// Paste text form configuration
+const pasteFieldOverrides: OverrideRecord = {
+  fileText: {
+    type: 'richtext',
+    label: 'Paste your text content',
+    placeholder: 'Paste or type your content here...',
+    maxChars: Math.floor(FILE_MAX_SIZE * 0.8) // 80% of max to give margin
+  }
+}
+
+const pasteActions: MegaFormAction[] = [
+  {
+    label: 'Process Text',
+    margin: 'left',
+    color: 'primary',
+    callback: async (formData: any) => {
+      if (!formData.fileText?.trim()) return
+      
+      try {
+        // Calculate cost estimation for the pasted text
+        const cost = await estimateFullDigestCost(formData.fileText)
+        estimatedCost.value = cost > 0 ? cost : 0
+        
+        // Store the pasted text as "pending"
+        processedText.value = formData.fileText
+        currentFileName.value = 'Pasted Text'
+        
+        // Show confirmation popup
+        showConfirm.value = true
+        
+      } catch (err) {
+        useNuxtApp().$toast.show(err, 'error')
+        resetUpload()
+      }
+    }
+  }
+]
 
 // Confirmation helpers
 const pendingSizeKB = computed(() => {
@@ -235,18 +331,27 @@ const calculateEstimatedCost = async (file: File) => {
 
 
 const confirmUpload = async () => {
-  if (!pendingFile.value) return
-  const file = pendingFile.value
   showConfirm.value = false
-  pendingFile.value = null
-  
   isProcessing.value = true
   
   try {
-    // Process file to extract text first
-    await processFile(file)
+    // Check which tab is active to determine flow
+    if (activeTab.value === 'upload') {
+      // File upload flow - process file first
+      if (!pendingFile.value) return
+      const file = pendingFile.value
+      pendingFile.value = null
+      
+      await processFile(file)
+    } else if (activeTab.value === 'paste') {
+      // Text paste flow - text is already in processedText from paste action
+      currentFileName.value = 'Pasted Text'
+      
+      // Clear the paste form
+      pasteFormData.value.fileText = ''
+    }
     
-    // Then call digest_file with the extracted text
+    // Call digest_file with the processed text (both flows converge here)
     if (processedText.value) {
       await callDigestFile()
     }
@@ -275,8 +380,20 @@ const callDigestFile = async () => {
   emit('processed')
 }
 const cancelConfirm = () => {
-  // Clear selection to avoid accidental upload
-  resetUpload()
+  showConfirm.value = false
+  estimatedCost.value = 0
+  
+  if (activeTab.value === 'upload') {
+    // Clear file selection
+    pendingFile.value = null
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
+  } else if (activeTab.value === 'paste') {
+    // Clear processed text but keep form data
+    processedText.value = ''
+    currentFileName.value = ''
+  }
 }
 
 const processFile = async (file: File) => {
@@ -557,6 +674,55 @@ const formatFileSize = (bytes: number): string => {
 
 .digest-file {
   width: 100%;
+}
+
+.tab-navigation {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid $muted;
+  padding-bottom: 0;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: $muted;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  
+  &:hover {
+    color: $text;
+    background: rgba($brand, 0.05);
+  }
+  
+  &.active {
+    color: $brand;
+    border-bottom-color: $brand;
+    background: rgba($brand, 0.05);
+  }
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.paste-area {
+  background: $panel;
+
+  min-height: 400px;
 }
 
 .upload-area {

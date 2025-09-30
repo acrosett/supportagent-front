@@ -14,7 +14,8 @@ export class Faq {
     @IsString()
     question: string;
 
-    product: Product;
+    @IsString()
+    product: Product | string;
 
     @IsString()
     answer: string;

@@ -122,6 +122,7 @@ watch(() => props.modelValue, (newValue) => {
 .easymde-wrapper .CodeMirror {
   height: 310px;
   max-height: inherit;
+  line-break: anywhere;
 }
 
 .easymde-wrapper .CodeMirror-scroll {
