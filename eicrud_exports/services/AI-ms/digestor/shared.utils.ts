@@ -10,12 +10,12 @@ export const FAQ_SPLIT_TOKENS = 50000;
  * Estimate digest price based on token count.
  * Returns -1 if token length exceeds MAX_DIGEST_TOKENS.
  */
-export async function estimateStringTokenPrice(fileText: string, aiModelType: AiModelType = AiModelType.FAST): Promise<{
+export async function estimateStringTokenPrice(fileText: string, aiModelType: AiModelType = AiModelType.FAST, checkMax: boolean = false): Promise<{
       tokenCount: number;
       exceedsMax: boolean;
       price: number;
 }> {
-      if(fileText.length > FILE_MAX_SIZE) {
+      if(checkMax && fileText.length > FILE_MAX_SIZE) {
             return {
                   tokenCount: fileText.length*4,
                   exceedsMax: true,
@@ -43,7 +43,7 @@ export async function estimateFullDigestCost(fileText: string) {
 
       const aiModelType = AiModelType.FAST;
       let price = 0;
-      const firstStep = await estimateStringTokenPrice(fileText, aiModelType);
+      const firstStep = await estimateStringTokenPrice(fileText, aiModelType, true);
 
       if (firstStep.exceedsMax) {
             return -1;

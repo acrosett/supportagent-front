@@ -42,18 +42,12 @@
       </div>
     </div>
 
-    <!-- Create form -->
-    <div v-if="mode === 'create'" class="faq-editor">
-      <input v-model="draft.question" class="faq-input" placeholder="Question" />
-      <textarea v-model="draft.answer" class="faq-textarea" placeholder="Answer"></textarea>
-      <div class="editor-actions">
-        <AppButton label="Save" color="ok" @click="saveCreate" />
-        <AppButton label="Cancel" color="secondary" @click="cancelEdit" />
-      </div>
-    </div>
-
     <!-- List -->
-    <div v-if="paginated.length === 0" class="empty-state">
+    <div v-if="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading FAQs...</p>
+    </div>
+    <div v-else-if="paginated.length === 0" class="empty-state">
       <p>No FAQs match your search.</p>
     </div>
     <ul v-else class="faq-list">
@@ -67,7 +61,7 @@
             <button class="icon-btn" title="Edit" @click="openEditPopup(item)">
               <AppIcon name="edit" size="sm" />
             </button>
-            <button class="icon-btn" title="Delete" @click="openDeleteConfirmation(item)">
+            <button class="icon-btn" title="Delete" @click="confirmDelete(item)">
               <AppIcon name="delete" size="sm" />
             </button>
           </div>
@@ -89,6 +83,23 @@
       </button>
     </div>
   </section>
+
+  <!-- Create FAQ Popup -->
+  <AppPopup
+    :show="showCreatePopup"
+    title="New FAQ"
+    size="lg"
+    @close="closeCreatePopup"
+  >
+    <MegaForm
+      v-if="showCreatePopup"
+      :formClass="Faq"
+      v-model="createFormData"
+      :fieldOverrides="createFieldOverrides"
+      :excludeFields="['id', 'owner', 'product', 'createdAt', 'updatedAt']"
+      :actions="createActions"
+    />
+  </AppPopup>
   
   <!-- Edit FAQ Popup -->
   <AppPopup
@@ -106,76 +117,54 @@
       :actions="editActions"
     />
   </AppPopup>
-
-  <!-- Delete Confirmation Popup -->
-  <AppPopup
-    :show="showDeleteConfirmation"
-    title="Delete FAQ"
-    size="sm"
-    @close="closeDeleteConfirmation"
-  >
-    <div class="delete-confirmation">
-      <p>Are you sure you want to delete this FAQ?</p>
-      <div class="delete-question">
-        <strong>"{{ deletingFaq?.question }}"</strong>
-      </div>
-      <p class="delete-warning">This action cannot be undone.</p>
-    </div>
-    <template #footer>
-      <div class="delete-footer">
-        <AppButton label="Cancel" color="secondary" @click="closeDeleteConfirmation" />
-        <AppButton label="Delete FAQ" color="error" @click="confirmDelete" />
-      </div>
-    </template>
-  </AppPopup>
-  
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
 import AppButton from './AppButton.vue'
 import AppIcon from './AppIcon.vue'
 import AppPopup from './AppPopup.vue'
-import MegaForm, { type FieldOverride, type MegaFormAction, type OverrideRecord } from './MegaForm.vue'
+import MegaForm, { type MegaFormAction, type OverrideRecord } from './MegaForm.vue'
 import { Faq } from '~/eicrud_exports/services/SUPPORT-ms/faq/faq.entity'
+import type { SearchDto, SearchReturnDto } from '~/eicrud_exports/services/SUPPORT-ms/faq/cmds/search/search.dto'
+import type { CrudOptions } from '~/eicrud_exports/CrudOptions'
 
-type FaqItem = {
-  id: string
-  question: string
-  answer: string
-  updatedAt: string
-}
+const { $sp, $toast, $confirmPopup, $userProductId } = useNuxtApp()
 
-// Local demo data; replace with server data when wiring API
-const items = ref<FaqItem[]>([
-  { id: crypto.randomUUID(), question: 'How do I reset my password?', answer: 'Go to Account Settings > Security and click “Reset Password”.', updatedAt: new Date().toISOString() },
-  { id: crypto.randomUUID(), question: 'Can I export my data?', answer: 'Yes, visit Account > Data Export to download your data.', updatedAt: new Date().toISOString() },
-])
+type FaqFormModel = Partial<Omit<Faq, 'tags'>> & { tags: string }
+
+const items = ref<Faq[]>([])
+const loading = ref(false)
 
 const query = ref('')
 const page = ref(1)
 const pageSize = ref(10)
 
-const mode = ref<'idle' | 'create' | 'edit'>('idle')
-const editingId = ref<string | null>(null)
-const draft = reactive({ question: '', answer: '' })
-
 // Collapsible FAQ items
 const expandedItems = ref<Set<string>>(new Set())
 
+// Create popup state
+const showCreatePopup = ref(false)
+const createFormData = ref<FaqFormModel>({
+  question: '',
+  answer: '',
+  tags: ''
+})
+
 // Edit popup state
 const showEditPopup = ref(false)
-const editingFaq = ref<FaqItem | null>(null)
-const editFormData = ref({})
-
-// Delete confirmation state
-const showDeleteConfirmation = ref(false)
-const deletingFaq = ref<FaqItem | null>(null)
+const editingFaq = ref<Faq | null>(null)
+const editFormData = ref<FaqFormModel>({
+  question: '',
+  answer: '',
+  tags: ''
+})
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase()
   if (!q) return items.value
   return items.value.filter(i =>
-    i.question.toLowerCase().includes(q) || i.answer.toLowerCase().includes(q)
+    i.question?.toLowerCase().includes(q) || i.answer?.toLowerCase().includes(q)
   )
 })
 
@@ -186,54 +175,54 @@ const paginated = computed(() => {
   return filtered.value.slice(start, start + pageSize.value)
 })
 
-function resetDraft() {
-  draft.question = ''
-  draft.answer = ''
+const loadFaqs = async () => {
+  if (!$userProductId) {
+    items.value = []
+    return
+  }
+
+  try {
+    loading.value = true
+    const trimmedQuery = query.value.trim()
+    const searchDto: SearchDto = {
+      product: $userProductId,
+      text: trimmedQuery || undefined
+    }
+    const options: CrudOptions = {
+      orderBy: {
+        updatedAt: 'desc'
+      },
+      limit: 200
+    }
+    const result = await $sp.faq.search(searchDto, options) as SearchReturnDto | Faq[]
+    const data = Array.isArray(result) ? result : (result?.data ?? [])
+    items.value = data
+    page.value = 1
+    expandedItems.value.clear()
+  } catch (error) {
+    console.error('Failed to load FAQs:', error)
+    $toast.show(error, 'error')
+  } finally {
+    loading.value = false
+  }
 }
 
 function startCreate() {
-  resetDraft()
-  editingId.value = null
-  mode.value = 'create'
-}
-
-function startEdit(item: FaqItem) {
-  draft.question = item.question
-  draft.answer = item.answer
-  editingId.value = item.id
-  mode.value = 'edit'
-}
-
-function cancelEdit() {
-  resetDraft()
-  editingId.value = null
-  mode.value = 'idle'
-}
-
-function saveCreate() {
-  if (!draft.question.trim() || !draft.answer.trim()) return
-  items.value.unshift({
-    id: crypto.randomUUID(),
-    question: draft.question.trim(),
-    answer: draft.answer.trim(),
-    updatedAt: new Date().toISOString()
-  })
-  cancelEdit()
-}
-
-function saveEdit() {
-  if (!editingId.value) return
-  const idx = items.value.findIndex(i => i.id === editingId.value)
-  const current = idx >= 0 ? items.value[idx] : undefined
-  if (current) {
-    items.value[idx] = {
-      id: current.id,
-      question: draft.question.trim(),
-      answer: draft.answer.trim(),
-      updatedAt: new Date().toISOString()
-    }
+  createFormData.value = {
+    question: '',
+    answer: '',
+    tags: ''
   }
-  cancelEdit()
+  showCreatePopup.value = true
+}
+
+function closeCreatePopup() {
+  showCreatePopup.value = false
+  createFormData.value = {
+    question: '',
+    answer: '',
+    tags: ''
+  }
 }
 
 // Collapsible FAQ functions
@@ -245,20 +234,26 @@ function toggleAnswer(id: string) {
   }
 }
 
-// Edit popup functions
-function openEditPopup(item: FaqItem) {
+function openEditPopup(item: Faq) {
   editingFaq.value = item
-  editFormData.value = { ...item }
+  editFormData.value = {
+    ...item,
+    tags: Array.isArray(item.tags) ? item.tags.join(', ') : ''
+  }
   showEditPopup.value = true
 }
 
 function closeEditPopup() {
   showEditPopup.value = false
   editingFaq.value = null
-  editFormData.value = {}
+  editFormData.value = {
+    question: '',
+    answer: '',
+    tags: ''
+  }
 }
 
-const editFieldOverrides: OverrideRecord = {
+const sharedFieldOverrides: OverrideRecord = {
   answer: {
     type: 'richtext',
     label: 'Answer',
@@ -267,9 +262,43 @@ const editFieldOverrides: OverrideRecord = {
   tags: {
     label: 'Tags (comma-separated)',
     placeholder: 'Enter tags separated by commas',
-    type: 'textarea'
+    type: 'textarea',
+    isArray: false
   }
 }
+
+const createFieldOverrides = sharedFieldOverrides
+const editFieldOverrides = sharedFieldOverrides
+
+const createActions: MegaFormAction[] = [
+  {
+    label: 'Cancel',
+    color: 'secondary',
+    callback: async () => {
+      closeCreatePopup()
+    }
+  },
+  {
+    label: 'Create FAQ',
+    color: 'primary',
+    callback: async (formData: any) => {
+      if (!$userProductId) return
+      try {
+        const payload = normalizeFaqPayload(formData)
+        await $sp.faq.create({
+          ...payload,
+          product: { id: $userProductId } as any
+        })
+        $toast.show('FAQ created successfully', 'success')
+        closeCreatePopup()
+        await loadFaqs()
+      } catch (error) {
+        console.error('Failed to create FAQ:', error)
+        $toast.show(error, 'error')
+      }
+    }
+  }
+]
 
 const editActions: MegaFormAction[] = [
   {
@@ -283,43 +312,64 @@ const editActions: MegaFormAction[] = [
     label: 'Save Changes',
     color: 'primary',
     callback: async (formData: any) => {
-      // Update the FAQ item
-      const index = items.value.findIndex(item => item.id === editingFaq.value?.id)
-      if (index !== -1 && editingFaq.value) {
-        items.value[index] = {
-          id: editingFaq.value.id,
-          question: formData.question,
-          answer: formData.answer,
-          updatedAt: new Date().toISOString()
-        }
+      if (!editingFaq.value) return
+      try {
+        const { id, product, createdAt, updatedAt, ...rest } = normalizeFaqPayload(formData)
+        await $sp.faq.patch({ id: editingFaq.value.id }, rest)
+        $toast.show('FAQ updated successfully', 'success')
+        closeEditPopup()
+        await loadFaqs()
+      } catch (error) {
+        console.error('Failed to update FAQ:', error)
+        $toast.show(error, 'error')
       }
-      closeEditPopup()
     }
   }
 ]
 
-// Delete confirmation functions
-function openDeleteConfirmation(item: FaqItem) {
-  deletingFaq.value = item
-  showDeleteConfirmation.value = true
+function normalizeFaqPayload(formData: any) {
+  const payload = { ...formData }
+  if (typeof payload.tags === 'string') {
+    payload.tags = payload.tags
+      .split(',')
+      .map((tag: string) => tag.trim())
+      .filter((tag: string) => tag.length > 0)
+  }
+  return payload
 }
 
-function closeDeleteConfirmation() {
-  showDeleteConfirmation.value = false
-  deletingFaq.value = null
-}
+async function confirmDelete(item: Faq) {
+  const confirmed = await $confirmPopup.show(
+    'Deleting this FAQ cannot be undone. Do you want to continue?'
+  )
 
-function confirmDelete() {
-  if (deletingFaq.value) {
-    items.value = items.value.filter(i => i.id !== deletingFaq.value!.id)
-    closeDeleteConfirmation()
+  if (!confirmed) return
+
+  try {
+    await $sp.faq.delete({ id: item.id })
+    $toast.show('FAQ deleted successfully', 'success')
+    await loadFaqs()
+  } catch (error) {
+    console.error('Failed to delete FAQ:', error)
+    $toast.show(error, 'error')
   }
 }
 
-// Navigation functions
 function navigateToDocumentUpload() {
   navigateTo('/document-upload')
 }
+
+watch(query, () => {
+  page.value = 1
+})
+
+watch(pageSize, () => {
+  page.value = 1
+})
+
+onMounted(() => {
+  loadFaqs()
+})
 </script>
 
 <style scoped lang="scss">
