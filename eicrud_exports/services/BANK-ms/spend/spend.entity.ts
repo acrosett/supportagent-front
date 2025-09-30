@@ -5,6 +5,7 @@ import { Product } from "../../SUPPORT-ms/product/product.entity";
 import { Client, ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 import { Digestor } from "../../AI-ms/digestor/digestor.entity";
 import { EditorTask } from "../../AI-ms/editor-task/editor-task.entity";
+import { AiModelType } from "./cmds/shared.utils";
 
 export enum SpendType {
   AI_THINKING = 'ai_thinking',
@@ -40,7 +41,7 @@ export class Think {
   @IsString()
   outputType?: 'use_tools' | 'send_result' | 'throw_error';
 
-  modelType?: 'smart' | 'fast' ;
+  modelType?: AiModelType ;
 }
 
 export class Spend {

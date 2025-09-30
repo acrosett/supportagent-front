@@ -4,6 +4,7 @@ AppIcon.vue
 
 When a form is needed use
 MegaForm.vue
+use it with the includeFields option (not excludeFields)
 
 When a confirmation dialog is needed use
 nuxtApp.$confirmPopup

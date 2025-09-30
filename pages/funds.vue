@@ -28,7 +28,7 @@
         <div class="balance-amount">
           <span class="currency">$</span>
           <span :class="['amount', { 'low-balance': (currentProduct?.balance || 0) < 1 }]">
-            {{ formatBalance(currentProduct?.balance || 0) }}
+            {{ formatBalance(currentProduct?.balance || 0, 2) }}
           </span>
         </div>
         <p class="balance-subtitle" v-if="currentProduct?.lastComputedBalance">
@@ -970,8 +970,8 @@ const handleAutoRenewToggle = async (enabled: boolean) => {
   }
 }
 
-const formatBalance = (amount: number): string => {
-  return amount.toFixed(4).replace(/\.?0+$/, '')
+const formatBalance = (amount: number, toFixed = 4): string => {
+  return amount.toFixed(toFixed).replace(/\.?0+$/, '')
 }
 
 const formatDate = (date: Date | string): string => {

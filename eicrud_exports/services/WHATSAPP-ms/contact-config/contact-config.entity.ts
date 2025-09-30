@@ -2,11 +2,8 @@ import { IsString, IsOptional, IsBoolean, IsEnum, IsNumber, Min } from "class-va
 import { ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
 import { PhoneNumber } from "../phone-number/phone-number.entity";
+import { AiModelType } from "../../BANK-ms/spend/cmds/shared.utils";
 
-export enum AIType {
-    FAST = 'fast',
-    SMART = 'smart'
-}
 
 export class ContactConfig {
 
@@ -60,11 +57,11 @@ export class ContactConfig {
     @IsBoolean()
     hasBeenNotifiedWeeklyGlobal: boolean;
 
-    @IsEnum(AIType)
-    clientFacingAiType: AIType = AIType.FAST;
+    @IsEnum(AiModelType)
+    clientFacingAiType: AiModelType = AiModelType.FAST;
 
-    @IsEnum(AIType)
-    staffFacingAiType: AIType = AIType.FAST;
+    @IsEnum(AiModelType)
+    staffFacingAiType: AiModelType = AiModelType.FAST;
 
     @IsNumber()
     @Min(12)

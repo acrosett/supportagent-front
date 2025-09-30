@@ -20,6 +20,7 @@ export class Faq {
     answer: string;
 
     @IsArray()
+    @IsString({ each: true })
     @IsOptional()
     tags: string[];
 

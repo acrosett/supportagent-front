@@ -20,7 +20,11 @@
         <p class="ai-note">
           The AI will use this file to update the FAQ.
         </p>
-        <DigestFile v-model="processedText" @error="handleError" />
+        <DigestFile
+          v-model="processedText"
+          @error="handleError"
+          @processed="handleProcessingComplete"
+        />
         
         <!-- Admin Text Preview - Only for admins -->
         <div v-if="processedText && isAdmin" class="admin-text-preview">
@@ -279,6 +283,10 @@ const textSizeFormatted = computed(() => {
 const handleError = (error: string) => {
   // Handle errors from the DigestFile component
   console.error('File processing error:', error)
+}
+
+const handleProcessingComplete = async () => {
+  await loadEditorTasks(true)
 }
 
 const navigateToFAQ = () => {

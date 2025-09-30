@@ -85,6 +85,7 @@ interface Props {
 interface Emits {
   (e: 'update:modelValue', value: string): void
   (e: 'error', error: string): void
+  (e: 'processed'): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -271,6 +272,7 @@ const callDigestFile = async () => {
   })
   
   useNuxtApp().$toast.show('Document processing started successfully', 'success')
+  emit('processed')
 }
 const cancelConfirm = () => {
   // Clear selection to avoid accidental upload

@@ -96,7 +96,7 @@
       :formClass="Faq"
       v-model="createFormData"
       :fieldOverrides="createFieldOverrides"
-      :excludeFields="['id', 'owner', 'product', 'createdAt', 'updatedAt']"
+      :includeFields="['question', 'answer', 'tags']"
       :actions="createActions"
     />
   </AppPopup>
@@ -113,7 +113,7 @@
       :formClass="Faq"
       v-model="editFormData"
       :fieldOverrides="editFieldOverrides"
-      :excludeFields="['id', 'owner', 'product', 'createdAt', 'updatedAt']"
+      :includeFields="['question', 'answer', 'tags']"
       :actions="editActions"
     />
   </AppPopup>
@@ -131,8 +131,6 @@ import type { CrudOptions } from '~/eicrud_exports/CrudOptions'
 
 const { $sp, $toast, $confirmPopup, $userProductId } = useNuxtApp()
 
-type FaqFormModel = Partial<Omit<Faq, 'tags'>> & { tags: string }
-
 const items = ref<Faq[]>([])
 const loading = ref(false)
 
@@ -145,19 +143,19 @@ const expandedItems = ref<Set<string>>(new Set())
 
 // Create popup state
 const showCreatePopup = ref(false)
-const createFormData = ref<FaqFormModel>({
+const createFormData = ref<Partial<Faq>>({
   question: '',
   answer: '',
-  tags: ''
+  tags: []
 })
 
 // Edit popup state
 const showEditPopup = ref(false)
 const editingFaq = ref<Faq | null>(null)
-const editFormData = ref<FaqFormModel>({
+const editFormData = ref<Partial<Faq>>({
   question: '',
   answer: '',
-  tags: ''
+  tags: []
 })
 
 const filtered = computed(() => {
@@ -211,7 +209,7 @@ function startCreate() {
   createFormData.value = {
     question: '',
     answer: '',
-    tags: ''
+    tags: []
   }
   showCreatePopup.value = true
 }
@@ -221,7 +219,7 @@ function closeCreatePopup() {
   createFormData.value = {
     question: '',
     answer: '',
-    tags: ''
+    tags: []
   }
 }
 
@@ -238,7 +236,7 @@ function openEditPopup(item: Faq) {
   editingFaq.value = item
   editFormData.value = {
     ...item,
-    tags: Array.isArray(item.tags) ? item.tags.join(', ') : ''
+    tags: Array.isArray(item.tags) ? [...item.tags] : []
   }
   showEditPopup.value = true
 }
@@ -249,7 +247,7 @@ function closeEditPopup() {
   editFormData.value = {
     question: '',
     answer: '',
-    tags: ''
+    tags: []
   }
 }
 
@@ -260,10 +258,8 @@ const sharedFieldOverrides: OverrideRecord = {
     placeholder: 'Enter the FAQ answer...'
   },
   tags: {
-    label: 'Tags (comma-separated)',
-    placeholder: 'Enter tags separated by commas',
-    type: 'textarea',
-    isArray: false
+    label: 'Tags',
+    placeholder: 'Add tags and press Enter'
   }
 }
 
@@ -281,13 +277,18 @@ const createActions: MegaFormAction[] = [
   {
     label: 'Create FAQ',
     color: 'primary',
-    callback: async (formData: any) => {
+    callback: async (formData: Partial<Faq>) => {
       if (!$userProductId) return
       try {
-        const payload = normalizeFaqPayload(formData)
+        const payload = {
+          ...formData,
+          tags: Array.isArray(formData.tags)
+            ? formData.tags.filter(tag => typeof tag === 'string' && tag.trim().length > 0)
+            : []
+        }
         await $sp.faq.create({
           ...payload,
-          product: { id: $userProductId } as any
+          product: $userProductId as any
         })
         $toast.show('FAQ created successfully', 'success')
         closeCreatePopup()
@@ -311,11 +312,18 @@ const editActions: MegaFormAction[] = [
   {
     label: 'Save Changes',
     color: 'primary',
-    callback: async (formData: any) => {
+    margin: 'left',
+    callback: async (formData: Partial<Faq>) => {
       if (!editingFaq.value) return
       try {
-        const { id, product, createdAt, updatedAt, ...rest } = normalizeFaqPayload(formData)
-        await $sp.faq.patch({ id: editingFaq.value.id }, rest)
+        const { id, product, createdAt, updatedAt, ...rest } = formData
+        const payload = {
+          ...rest,
+          tags: Array.isArray(formData.tags)
+            ? formData.tags.filter(tag => typeof tag === 'string' && tag.trim().length > 0)
+            : []
+        }
+        await $sp.faq.patch({ id: editingFaq.value.id, product: useNuxtApp().$userProductId as any }, payload)
         $toast.show('FAQ updated successfully', 'success')
         closeEditPopup()
         await loadFaqs()
@@ -327,17 +335,6 @@ const editActions: MegaFormAction[] = [
   }
 ]
 
-function normalizeFaqPayload(formData: any) {
-  const payload = { ...formData }
-  if (typeof payload.tags === 'string') {
-    payload.tags = payload.tags
-      .split(',')
-      .map((tag: string) => tag.trim())
-      .filter((tag: string) => tag.length > 0)
-  }
-  return payload
-}
-
 async function confirmDelete(item: Faq) {
   const confirmed = await $confirmPopup.show(
     'Deleting this FAQ cannot be undone. Do you want to continue?'
@@ -346,7 +343,7 @@ async function confirmDelete(item: Faq) {
   if (!confirmed) return
 
   try {
-    await $sp.faq.delete({ id: item.id })
+    await $sp.faq.delete({ id: item.id, product: useNuxtApp().$userProductId as any })
     $toast.show('FAQ deleted successfully', 'success')
     await loadFaqs()
   } catch (error) {
