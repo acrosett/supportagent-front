@@ -1,21 +1,10 @@
 # DirectSupport.ai - User Guide
 
-## Table of Contents
+## What is DirectSupport.ai
 
-1. [Getting Started](#getting-started)
-2. [Dashboard Overview](#dashboard-overview)
-3. [Product Configuration](#product-configuration)
-4. [WhatsApp Setup & Contact Priority](#whatsapp-setup--contact-priority)
-5. [Documentation & FAQ Management](#documentation--faq-management)
-6. [Widget Configuration](#widget-configuration)
-7. [Custom Tools & Integrations](#custom-tools--integrations)
-8. [Conversations Management](#conversations-management)
-9. [Issues Tracking](#issues-tracking)
-10. [Notifications](#notifications)
-11. [Funds & Billing](#funds--billing)
-12. [Account Settings](#account-settings)
+DirectSupport.ai is a SAAS that can provide your website with an embedded AI chat. This chat provide your visitor with a direct access to your extensive documentation and can answer any question the visitor has. If the chat agent cannot answer a vistor's issue, it can contact you directly on whatsapp (via the staff-facing agent) to get the missing information. Your documentation is automatically updated in the process.
 
----
+In addition, the Chat AI Agent can call customs tools that you configured. This way it can perform tasks on behalf of the user, that impacts your application directly. Like a real support Agent.
 
 ## Getting Started
 
@@ -23,7 +12,103 @@ Welcome to DirectSupport.ai! This platform helps you create AI-powered customer 
 
 ### Quick Setup Flow
 
-1. **Configure Your Product** - Set up basic product information and AI behavior
+#### 1. **Configure Your Product** - Set up basic product information on the [product](/edit-product) page. 
+
+Your product configuration has the following **fields**:
+
+a. **Product Name** should reflect your brand and what your clients are used to.
+
+b. In **product description** you should put the following info:
+--
+
+1. What your product is and does.  
+   *Example: Our app helps small businesses manage invoices quickly and securely.*  
+
+2. A few marketing arguments to sell the product + your pricing model.  
+   *Example: Save time, reduce errors, and scale your business — all for just $19/month.*  
+
+3. A general overview on how to use your product.  
+   *Example:  
+   - Go to the **Sign Up** page and create your account.  
+   - Verify your email through the confirmation link.  
+   - Log in and head to the **Dashboard**.  
+   - Navigate to the **Settings** page to connect your bank account.  
+   - Go to the **Invoices** page to create your first invoice.  
+   - Use the **Reports** page to track payments and business performance.*  
+
+--
+
+This information will always be available to the Client Facing Agent. Since this information is always available, its size also impact your AI Thinking costs directly. For that reason you should not put detailled documentation here, instead integrate your full documentation in the [FAQ](/faq) page.
+
+If you want to tell the chat agent to behave a certain way, do it in the **Additional Instructions** field of the [custom tools](/custom-tools) page.
+
+c. The **Webhook URL** input is for an optional webhook url that point to your application's server.
+
+By default, the DirectSupport.ai chat will treat all users as "guests" with "lowest priority". For better integration and individually tailored support you can provide a webhook to help identify users.
+
+To identify users you must first provide the embedded chat widget with a token identifier (for example an authentication JWT, or anything that can let you retreived the user from your DB).
+
+```javascript
+window['AISupportWidget'].setUserToken(token) // call this after page load / user login
+```
+This token will be sent back to your webhook for validation and user identification.
+
+Our AI queries your **Webhook URL** with the following request:
+
+```javascript
+const validateUrl = `${webhookUrl}?userToken=${encodeURIComponent(token)}&sharedSecret=${encodeURIComponent(sharedSecret)}`;
+
+const response = await fetch(validateUrl, {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'SupportAgent/1.0',
+    },
+});
+```
+
+Then, your webhook should return the following JSON structure:
+
+```typescript
+interface WebhookValidationResponse {
+    valid: boolean;
+    userInfo?: {
+        name?: string; 
+        email?: string;
+        uniqueId: string; // Static unique identifier, sent back in custom tools calls
+        priority?: 'lowest' | 'regular' | 'high';
+    };
+    tokenExpiresMin?: number; // Default 30 min (minimum 5)
+}
+```
+
+valid indicates that the identification is successfull
+
+name and email will help you identify the client when browsing conversations on DirectSupport.ai or when talking to the staff-facing AI agent.
+
+The uniqueId should let you retreive the user in your database. Ex: id column in user table. If you configure custom tools, this uniqueId will be send back to you so you can identify who is the call for.
+
+priority, defines the level of support this user should be assigned. In [contact & priority](/contact-priority) you can set up different quotas/ message limits for each level of priority, allowing great control over your costs. In addition you can provide different [custom tools](/custom-tools) to each priorities. Also the staff-facing AI agent will contact you on a different channel for each priority (allowing for easy prioritising of answering on your end).
+
+tokenExpiresMin tell us how long we should cache this token on our end (how long it stays valid), this helps reduce the number of time we call your webhook.
+
+d. The **Shared Secret** is a password of your choosing, that is sent along webhook URL requests so you can confirm that the query is coming from us.
+
+
+#### 2. **Configure Your Contact & Priorities** on the [Contact & Priority](/contact-priority) page. 
+
+
+Our AI Agents filters trivial support request and will be autonomous most of the time. However when documentation information is missing, or when a client issue cannot be resolved by the AI it will escalate and contact you via whatsapp. You will be talking with Staff-facing agents who oversee every Client-facing agent of their priority.
+
+To 
+
+
+
+
+
+
+
+
 2. **Add WhatsApp Numbers** - Connect and verify WhatsApp numbers for customer communication
 3. **Configure Client Priorities** - Assign WhatsApp numbers to different customer priority levels
 4. **Upload Documentation** - Provide documentation files to auto-generate FAQ responses
