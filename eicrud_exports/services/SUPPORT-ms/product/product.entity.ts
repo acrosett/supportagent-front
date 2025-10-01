@@ -68,6 +68,10 @@ export class Product {
     @IsOptional()
     chatOn: boolean;
 
+    @IsBoolean()
+    @IsOptional()
+    disableGuests: boolean = false;
+
     // Start vault properties, do not put class-validator decorators on these,
     // it keeps them from being set through the API
     balance: number;

@@ -28,9 +28,9 @@ export interface FieldOverride<T = any> {
   doubleCheck?: boolean;
   isArray?: boolean;
   mapObjectField?: string; // Field to display from objects (e.g. "name") while keeping full objects
-  conditionsFields?: (keyof T)[]; // Only show if all these fields are truthy
-  invertedConditionsFields?: (keyof T)[]; // Only show if all these fields are falsy
-  conditionsFieldsIfValue?: Array<{ field: keyof T; value: any }>; // Only show if specific field equals specific value
+  conditionsFields?: (keyof T)[]; // Conditions the following fields (on truthy)
+  invertedConditionsFields?: (keyof T)[]; 
+  conditionsFieldsIfValue?: Array<{ field: keyof T; value: any }>; 
   maxHeight?: string; // CSS max-height value (e.g. "500px", "20rem")
   maxChars?: number; // Maximum character count for input fields
   selectOptions?: Array<{ label: string; value: any }>; // Options for select dropdown

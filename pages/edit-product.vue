@@ -44,7 +44,7 @@ const currentProduct = ref<Product | null>(null)
 
 // Include fields we want to show in the form
 const includeFields = computed(() => {
-  return ['name', 'description', 'webhookUrl', 'sharedSecret','chatOn', 'version']
+  return ['name', 'description', 'webhookUrl', 'sharedSecret','chatOn', 'disableGuests']
 })
 
 const formData = ref({
@@ -101,6 +101,11 @@ const fieldOverrides: OverrideRecord<Product> = {
     description: 'Enable or disable AI chat functionality for this product',
     titleColor: () => !formData.value.chatOn ? colors.error() : undefined,
   },
+  disableGuests: {
+    label: 'Disable Guest Access',
+    description: 'Block guest (non-logged users) access to the embeddable chat. Disable if you are handling guests in your webhook.',
+    
+  },
   description: {
     maxChars: 4000,
     label: 'Product Description',
@@ -113,7 +118,7 @@ const fieldOverrides: OverrideRecord<Product> = {
   webhookUrl: {
     label: 'Webhook URL',
     placeholder: 'https://yoursite.com/api/validate-token',
-    description: 'URL endpoint for validating user tokens for authenticated users'
+    description: 'URL endpoint for validating user tokens for authenticated users',
   },
   sharedSecret: {
     label: 'Shared Secret',

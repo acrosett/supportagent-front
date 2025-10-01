@@ -67,7 +67,7 @@
           </div>
         </div>
         <div v-show="expandedItems.has(item.id)" class="faq-answer-container">
-          <p class="faq-answer">{{ item.answer }}</p>
+          <div class="faq-answer" v-html="renderMarkdown(item.answer || '')"></div>
         </div>
       </li>
     </ul>
@@ -128,8 +128,10 @@ import MegaForm, { type MegaFormAction, type OverrideRecord } from './MegaForm.v
 import { Faq } from '~/eicrud_exports/services/SUPPORT-ms/faq/faq.entity'
 import type { SearchDto, SearchReturnDto } from '~/eicrud_exports/services/SUPPORT-ms/faq/cmds/search/search.dto'
 import type { CrudOptions } from '~/eicrud_exports/CrudOptions'
+import { useMarkdown } from '~/composables/useMarkdown'
 
 const { $sp, $toast, $confirmPopup, $userProductId } = useNuxtApp()
+const { renderMarkdown, highlightCodeBlocks } = useMarkdown()
 
 const items = ref<Faq[]>([])
 const loading = ref(false)
@@ -364,6 +366,11 @@ watch(pageSize, () => {
   page.value = 1
 })
 
+// Apply code highlighting when FAQ answers are expanded
+watch(expandedItems, () => {
+  highlightCodeBlocks('.faq-answer pre')
+}, { deep: true })
+
 onMounted(() => {
   loadFaqs()
 })
@@ -465,7 +472,93 @@ onMounted(() => {
   gap: 0.75rem;
 }
 .faq-question { color: $brand-2; margin: 0; font-size: 1.1rem; }
-.faq-answer { color: $text; margin: 0.5rem 0 0 0; white-space: pre-wrap; }
+
+.faq-answer { 
+  color: $text; 
+  margin: 0.5rem 0 0 0; 
+  
+  // Basic typography
+  p { margin: 0.5rem 0; line-height: 1.5; }
+  ul, ol { margin: 0.5rem 0; padding-left: 1.5rem; }
+  li { margin: 0.25rem 0; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  
+  // Code blocks styling
+  pre { 
+    position: relative;
+    background: #1e1e22;
+    color: #f5f5f5;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    overflow: auto;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin: 1rem 0;
+    
+    code { 
+      background: transparent; 
+      padding: 0; 
+      display: block; 
+      font-family: 'Courier New', Courier, monospace; 
+    }
+    
+    // Copy button
+    .code-copy-btn { 
+      position: absolute; 
+      top: 6px; 
+      right: 6px; 
+      background: #2d2d33; 
+      color: #ddd; 
+      border: 1px solid #3a3a42; 
+      font-size: 0.65rem; 
+      padding: 0.25rem 0.5rem; 
+      border-radius: 4px; 
+      cursor: pointer; 
+      opacity: 0.85; 
+      transition: background 0.15s, opacity 0.15s; 
+      
+      &:hover { 
+        background: #3a3a42; 
+        opacity: 1; 
+      }
+      
+      &.copied { 
+        background: $brand; 
+        color: #fff; 
+        border-color: $brand; 
+      }
+    }
+  }
+  
+  // Inline code
+  code { 
+    background: rgba($muted, 0.1); 
+    padding: 0.125rem 0.25rem; 
+    border-radius: 3px; 
+    font-size: 0.875em; 
+    font-family: 'Courier New', Courier, monospace; 
+  }
+  
+  // Links
+  a { 
+    color: $brand; 
+    text-decoration: none;
+    
+    &:hover { 
+      text-decoration: underline; 
+    }
+  }
+  
+  // Blockquotes
+  blockquote { 
+    border-left: 4px solid $brand; 
+    padding-left: 1rem; 
+    margin: 1rem 0; 
+    font-style: italic; 
+    color: $muted; 
+  }
+}
 
 .item-actions { display: inline-flex; gap: 0.25rem; }
 .icon-btn {

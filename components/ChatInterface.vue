@@ -168,12 +168,10 @@
 <script setup lang="ts">
 import { NuxtApp } from 'nuxt/app'
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import hljs from 'highlight.js'
-import { marked, Renderer } from 'marked'
-import DOMPurify from 'dompurify'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-trace.entity'
 import { useRecaptcha } from '~/composables/useRecaptcha'
+import { useMarkdown } from '~/composables/useMarkdown'
 
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };
@@ -225,6 +223,7 @@ const isNewGuest = ref(false) // Track if this is a new guest
 
 // Composables
 const { getRecaptchaToken } = useRecaptcha()
+const { renderMarkdown, highlightCodeBlocks } = useMarkdown()
 
 // Refs
 const messagesContainer = ref<HTMLElement>()
@@ -424,7 +423,7 @@ const addWelcomeMessage = () => {
     // Scroll to bottom to show welcome message
     nextTick(() => {
       scrollToBottom()
-  highlightAllDeferred()
+      highlightCodeBlocks()
     })
   }
   
@@ -589,7 +588,7 @@ const sendMessage = async () => {
     }
     useNuxtApp().$toast.show(err, 'error')
   }
-  highlightAllDeferred()
+  highlightCodeBlocks()
 }
 
 const handleShiftEnter = (event: KeyboardEvent) => {
@@ -746,67 +745,7 @@ const fetchToolTraces = async (nuxtApp: NuxtApp, limit?: number, offset?: number
   }
 }
 
-// --- Markdown Rendering using marked + DOMPurify ---
-// Configure marked with custom renderer for code highlighting
-const renderer = new Renderer()
-const originalCode = renderer.code.bind(renderer)
-renderer.code = (code: string, infostring: string | undefined, escaped: boolean) => {
-  const lang = (infostring || '').match(/^[^\s]+/)?.[0]
-  let highlighted = code
-  if (lang && hljs.getLanguage(lang)) {
-    try { highlighted = hljs.highlight(code, { language: lang }).value } catch {}
-  } else {
-    try { highlighted = hljs.highlightAuto(code).value } catch {}
-  }
-  return `<pre><code class="hljs language-${lang || 'plaintext'}">${highlighted}</code></pre>`
-}
-// Override link rendering to force new tab + security rel
-const escapeAttr = (s: string) => s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-renderer.link = (href: string | null, title: string | null, text: string) => {
-  const safeHref = escapeAttr(href || '')
-  const titleAttr = title ? ` title="${escapeAttr(title)}"` : ''
-  return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`
-}
-marked.setOptions({ gfm: true, breaks: true, renderer })
-
-function renderMarkdown(raw: string): string {
-  if (!raw) return ''
-  const dirty = marked.parse(raw) as string
-  // Sanitize HTML output
-  return DOMPurify.sanitize(dirty, { USE_PROFILES: { html: true }, ADD_ATTR: ['target','rel'] })
-}
-
-function highlightAllDeferred() {
-  nextTick(() => {
-    document.querySelectorAll('.message-content pre').forEach(pre => {
-      const code = pre.querySelector('code') as HTMLElement | null
-      if (code) {
-        try { hljs.highlightElement(code) } catch { /* ignore */ }
-      }
-      // Add copy button if not present
-      if (!pre.querySelector('.code-copy-btn')) {
-        const btn = document.createElement('button')
-        btn.type = 'button'
-        btn.className = 'code-copy-btn'
-        btn.setAttribute('aria-label', 'Copy code to clipboard')
-        btn.textContent = 'Copy'
-        btn.addEventListener('click', () => {
-          const raw = code?.textContent || ''
-            ;(navigator.clipboard?.writeText(raw) || Promise.reject()).then(() => {
-              const orig = btn.textContent
-              btn.textContent = 'Copied!'
-              btn.classList.add('copied')
-              setTimeout(() => { btn.textContent = orig || 'Copy'; btn.classList.remove('copied') }, 1600)
-            }).catch(() => {
-              btn.textContent = 'Failed'
-              setTimeout(() => { btn.textContent = 'Copy' }, 1600)
-            })
-        })
-        pre.appendChild(btn)
-      }
-    })
-  })
-}
+// Markdown rendering is now handled by the useMarkdown composable
 
 // AI management functions for inverted mode
 const fetchAIStatus = async (nuxtApp: NuxtApp) => {
@@ -1036,7 +975,7 @@ watch(isTyping, (newIsTyping) => {
 // Re-highlight & ensure copy buttons whenever messages list changes
 // (Removed direct messages watch; using length watcher below)
 watch(() => messages.value.length, () => {
-  highlightAllDeferred()
+  highlightCodeBlocks()
 })
 
 
@@ -1060,7 +999,7 @@ onMounted(() => {
   });
   
   // Initial highlight attempt (preloaded messages)
-  highlightAllDeferred()
+  highlightCodeBlocks()
   // Handle URL parameters for testing
   const route = useRoute()
   

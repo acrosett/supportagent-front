@@ -12,6 +12,10 @@ Welcome to DirectSupport.ai! This platform helps you create AI-powered customer 
 
 ### Quick Setup Flow
 
+#### 0. **Enable subscription** on [Funds & Billing](/funds) page.
+- Deposit funds if needed (add Funds button).
+- Click on Activate subscription, this will use $5 from your balance (renewed each months) and activate your services.
+
 #### 1. **Configure Your Product** - Set up basic product information on the [product](/edit-product) page. 
 
 Your product configuration has the following **fields**:
@@ -94,218 +98,64 @@ tokenExpiresMin tell us how long we should cache this token on our end (how long
 
 d. The **Shared Secret** is a password of your choosing, that is sent along webhook URL requests so you can confirm that the query is coming from us.
 
+e. The **AI Chat Feature** switch enable or disable the embedded chat globally.
 
 #### 2. **Configure Your Contact & Priorities** on the [Contact & Priority](/contact-priority) page. 
 
 
 Our AI Agents filters trivial support request and will be autonomous most of the time. However when documentation information is missing, or when a client issue cannot be resolved by the AI it will escalate and contact you via whatsapp. You will be talking with Staff-facing agents who oversee every Client-facing agent of their priority.
 
-To 
+To enable communication with the staff-facing agent and receive whatsapp message first add and verify your number.
+- First make sure you have an existing whatsapp account for this number, you can download it on the playstore or applestore.
+- Add your number and click on confirm number -> send whatsapp code. Then on the same page enter the code received.
+- Once your number is verified, associate it to each priority configuration (lowest, regular and high). 
 
-
-
-
-
-
-
-
-2. **Add WhatsApp Numbers** - Connect and verify WhatsApp numbers for customer communication
-3. **Configure Client Priorities** - Assign WhatsApp numbers to different customer priority levels
-4. **Upload Documentation** - Provide documentation files to auto-generate FAQ responses
-5. **Configure Widget** - Customize and embed the support widget on your website
-
----
-
-## Dashboard Overview
-
-The dashboard provides a central view of your support operations:
-
-- **Account Balance**: Monitor your current balance and usage
-- **Message Activity**: View 14-day activity charts showing customer message volume by priority level
-- **Quick Access**: Navigate to key features and settings
-
-**Key Actions:**
-- Go to Billing to manage funds
-- Monitor message volume trends
-- Track account balance and usage
-
----
-
-## Product Configuration
-
-Configure your product's core settings and AI behavior.
-
-### Basic Information
-
-- **Product Name**: Display name for your support service
-- **Description**: Detailed product description including:
-  - What your product does
-  - Marketing arguments and pricing model
-  - General usage overview
-- **AI Chat Feature**: Enable/disable AI chat functionality
-
-### Security Settings
-
-- **Webhook URL**: Endpoint for validating user tokens (for authenticated users)
-- **Shared Secret**: Secret key to secure webhook requests between systems
-
-### Additional AI Instructions
-
-Provide custom instructions that the AI should follow when assisting customers. This helps tailor the AI's responses to your specific business needs.
-
----
-
-## WhatsApp Setup & Contact Priority
-
-### WhatsApp Number Management
-
-**Adding WhatsApp Numbers:**
-1. Click "Add Number" in the WhatsApp Numbers section
-2. Enter a display name and phone number (format: +1234567890)
-3. Save the number
-
-**Verifying WhatsApp Numbers:**
-1. Click "Confirm Number" on an unverified number
-2. Click "Send WhatsApp Code" to receive verification via WhatsApp
-3. Enter the received code and click "Confirm Number"
-4. Only verified numbers can be assigned to priority configurations
-
-### Client Priority Configuration
-
-Configure different service levels for different types of customers:
-
-#### Priority Levels
-- **⚪ Lowest Priority**: Basic service level
-- **🔵 Regular Priority**: Standard service level  
-- **🟡 High Priority**: Premium service level
-
-#### Configuration Options
-
-**WhatsApp Assignment:**
-- Assign verified WhatsApp numbers to each priority level
-- Each priority can use a different WhatsApp number for communication
+Each of these priority can be edited with the following:
 
 **AI Model Selection:**
 - **Client-Facing AI**: Choose between Fast (standard) or Smart (2.5x cost, higher reasoning)
 - **Staff-Facing AI**: Choose AI model for WhatsApp communication with your staff
 
 **Message Limits:**
+
 - **Daily Global**: Maximum total messages per day across all users
 - **Weekly Global**: Maximum total messages per week across all users  
 - **Daily Per User**: Maximum messages per day per individual user
 - **Weekly Per User**: Maximum messages per week per individual user
 
+These are essentials to control your costs, guest/non identified users are of the "lowest priority", so take notes of these limits to prevent abuse. When limit are reached the use of the embedded chat is disabled for users of that priority.
+
+(We directsupport.ai runs security checks on guest users with google recaptcha V3 to minimize abuse, however we cannot completely stop ill-intentioned use of your embedded chat. 
+You can run your own checks for better filtering:
+- 1. Disable the Allow Guests proprety on /edit-product 
+- 2. Enable your own verification (ex: captcha) on visitors of your site.
+- 3. provide a token to our widget (like for identified users) which hold that verification proof
+- 4. verify in your webhook the validity of the token, return priority: "lowest"
+) 
+
 **Notification Settings:**
-- **Documentation Updates**: AI asks for documentation updates when needed
-- **Issue Contacts**: AI requests support assistance for complex issues
+- **Documentation Updates**: AI will contact you on whatsapp for documentation updates when needed
+- **Issue Contacts**: AI will contact you on whatsapp for assistance on complex issues
 
 **Advanced Settings:**
-- **Max History Pages**: Number of chat history pages AI retains before summarizing
+- **Max History Pages**: Number of chat history pages AI retains before summarizing. Increasing this will improve the memory of the AI, but it will increase your costs.
 
----
+Once you assigned your verified whatsapp number to each priority you will receive messages from the staff-facing agent, and will be able to assists them whenever they are missing information. They will also alert you if high priority customers are in trouble.
 
-## Documentation & FAQ Management
 
-### Document Upload & Processing
+#### 3. **Upload documents to populate your Q&A databse for the AIs to access** on the [Faq](/faq) page. 
 
-Upload documentation files to automatically generate FAQ responses:
+The client-facing AIs (embedded chat AI Agents) will get extensive knowledge about your product from this Q&A database. To populate it effortlesly, click on "Upload Document" (/document-upload page), you can upload documents that will be processed by the AI (this have costs on your balance) to build the Q&A. Split it into smaller files, or use the Paste Text tab so you can copy paste relevent pages to be processed. 
 
-**Supported Formats:**
-- PDF documents
-- Word documents (.docx)
-- Text files
-- Images with text (OCR processing)
+You can also create/edit Q&As manually (/faq page). The quality of your Q&As will directly improve the quality of the AI chat support. You create as many Q&A as needed since it will not impact your AI Thinking costs.
 
-**Process:**
-1. Navigate to FAQ Management page
-2. Click on Document Upload
-3. Upload your documentation files
-4. The AI processes the content and extracts text
-5. Use processed content to update FAQ responses
 
-### FAQ Management
-
-The FAQ system automatically generates responses based on your uploaded documentation:
-
-- **Auto-Generated FAQs**: AI creates FAQ entries from your documentation
-- **Manual Editing**: Edit and refine FAQ responses as needed
-- **Content Updates**: Regular updates ensure FAQ stays current
-
----
-
-## User Authentication & Priority Management
-
-### Default Guest Behavior
-
-By default, our chat system handles any new user as a **guest** with the **lowest priority** level. This ensures immediate support availability while maintaining resource management.
-
-### Authenticated User Setup
-
-To treat users with their assigned priority levels, you can implement user authentication using tokens:
-
-#### Frontend Integration
-
-After your page loads, call the widget API to set the user token:
-
-```javascript
-window['AISupportWidget'].setUserToken(token)
-```
-
-This token will be sent back to your webhook for validation and user identification.
-
-#### Webhook Configuration
-
-Set up authentication in the **Edit Product** page:
-
-1. **Webhook URL**: Your endpoint for user token validation
-2. **Shared Secret**: Security key for webhook authentication
-
-#### Webhook Validation Process
-
-Our AI queries your webhook with the following request:
-
-```javascript
-const validateUrl = `${webhookUrl}?userToken=${encodeURIComponent(token)}&sharedSecret=${encodeURIComponent(sharedSecret)}`;
-
-const response = await fetch(validateUrl, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'SupportAgent/1.0',
-    },
-});
-```
-
-#### Expected Webhook Response
-
-Your webhook should return the following JSON structure:
-
-```typescript
-interface WebhookValidationResponse {
-    valid: boolean;
-    userInfo?: {
-        name?: string; 
-        email?: string;
-        unique_id: string; // Static unique identifier, sent back in custom tools calls
-        priority?: 'lowest' | 'regular' | 'high';
-    };
-    tokenExpiresMin?: number; // Default 30 min (minimum 5)
-}
-```
-
-#### Priority Management
-
-- **Priority Levels**: 'lowest', 'regular', 'high'
-- **Quota Configuration**: Edit priority quotas and limits in the **Contact Priority** page
-- **Resource Allocation**: Different priorities receive different service levels and message limits
-
----
-
-## Widget Configuration
+#### 4. **Configure Widget** on the [Widget Builder](/widget) page. 
+Here your can customize the embedded support widget and copy its code.
 
 Customize your support widget's appearance and behavior before embedding it on your website.
 
-### Appearance Settings
+Appearance Settings
 
 - **Position**: Choose widget position (bottom-right, bottom-left, etc.)
 - **Size**: Set width and height (default: 400px × 600px)
@@ -315,7 +165,7 @@ Customize your support widget's appearance and behavior before embedding it on y
 - **Icon**: Choose from available widget icons
 - **Dark Mode**: Enable/disable dark theme
 
-### Behavior Settings
+Behavior Settings
 
 - **Welcome Message**: Customize the initial greeting (default: "👋 Welcome! How can I help you today?")
 - **Start Open**: Widget opens automatically when page loads
@@ -325,202 +175,70 @@ Customize your support widget's appearance and behavior before embedding it on y
   - Bounce after init: Delay before initial bounce animation
   - Periodic bounce: Interval for periodic bounce reminders
 
-### Embedding the Widget
+Embedding the Widget
 
 After configuration:
 1. Copy the provided embed snippet
 2. Paste it into your website's HTML
 3. The widget will appear with your configured settings
 
----
+##  Pricing
+Complete AI Support
+$5/month
+Base subscription includes all core features
 
-## Custom Tools & Integrations
+Service	Price
+AI thinking (input)	$0.0005/1K tokens
+AI thinking (output)	$0.004/1K tokens
 
-### Domain Verification
+$10 free credit awarded when verifying email address, limited stock (not garanteed).
 
-Verify domains to enable custom tool integrations:
 
-**Verification Methods:**
-1. **DNS TXT Record**: Add TXT record with verification string
-2. **Webhook Endpoint**: Create endpoint returning verification string
+## Other pages in Depth
 
-**Setup Process:**
-1. Add domain in Custom Tools section
-2. Choose verification method:
-   - **DNS**: Add TXT record `direct-support-ai-verify=VERIFICATION_STRING`
-   - **Webhook**: Create endpoint at `https://yourdomain.com/direct-support-ai-verify-domain`
-3. Click "Verify Domain" to confirm setup
+### /account — Account Settings
+The Account page is where individual users manage personal settings and profile details. Key features:
+- Profile: Update email; enable 2FA.
+- Password: Change your password securely (current password required).
 
-### Custom Tool Development
 
-Once domains are verified, you can create custom tools that integrate with your existing systems, allowing the AI to:
-- Fetch real-time data from your APIs
-- Perform actions on behalf of customers
-- Access customer-specific information
-
----
-
-## Conversations Management
-
-Monitor and manage all customer chat interactions.
-
-### Conversation Overview
-
-- **Real-time Chat Monitoring**: View all active customer conversations
-- **Message History**: Access complete conversation histories
-- **AI Status**: See whether AI is active or disabled for each conversation
-- **Read Status**: Track which conversations have been reviewed
-
-### Filtering Options
-
-- **Read Status**: Filter by read/unread conversations
-- **Conversation Status**: Active vs. resolved conversations
-- **AI Status**: AI enabled vs. disabled conversations
-- **Priority Levels**: Filter by customer priority (Lowest, Regular, High)
-- **Search**: Text search across conversation content
-
-### Conversation Actions
-
-- **Mark as Read/Unread**: Manage conversation status
-- **Enable/Disable AI**: Control AI participation in specific conversations
-- **Archive Conversations**: Move resolved conversations to archive
-- **Direct Messaging**: Join conversations to assist customers directly
+### /conversations — Conversations List
+The Conversations page lists all conversations across priorities and clients. Key features:
+- Filters and search by client identifier, priority, date or status.
+- Quick peek into last messages and conversation status (open/closed/awaiting-staff).
+- Disable the AI on a conversation and take over to speak to the client.
 
 ---
 
-## Issues Tracking
-
-Track and manage support issues that require staff attention.
-
-### Issue Management
-
-- **Issue Status**: Open vs. Resolved issues
-- **Tag System**: Organize issues with colored tags
-- **Search & Filter**: Find issues quickly using filters and search
-- **Archive System**: Keep resolved issues organized
-
-### Issue Workflow
-
-1. **AI Detection**: AI identifies complex issues requiring human attention
-2. **Issue Creation**: Automatic or manual issue creation
-3. **Staff Assignment**: Issues routed to appropriate staff members
-4. **Resolution Tracking**: Track progress from open to resolved
-5. **Archive Management**: Maintain historical issue records
+### /custom-tools — Custom Tools Manager
+Custom Tools let you extend the AI with application-specific actions (e.g., fetch order status, create invoices).
+Features:
+- Configure API/FETCH tools that the AI can call during conversations.
+- Set which priority levels can access which tools.
+- Add security checks (only allow tools for verified users, etc.).
 
 ---
 
-## Notifications
+### /edit-notifications — Notification Settings
+Manage notification settings (that the system sends to you).
 
-Stay updated with important alerts and system messages.
 
-### Notification Types
+### /funds — Funds & Billing (/funds)
+The Funds page manages your billing and subscription state. Core features:
+- Add funds to your account using supported payment methods.
+- View transaction history and usage summary (AI tokens used).
+- Set auto-top-up thresholds and low-balance alerts.
 
-- **System Alerts**: Platform updates and maintenance notifications
-- **Balance Warnings**: Low balance and payment alerts
-- **Issue Notifications**: New issues requiring attention
-- **Configuration Updates**: Changes to product or AI settings
-- **Performance Alerts**: Usage and performance notifications
 
-### Notification Management
+### /login — Login (/login)
+Authentication page for staff and admins. Supports:
+- Email/password sign-in and password reset flows..
 
-- **Read Status**: Mark notifications as read
-- **Preferences**: Configure which notifications to receive
-- **Email Integration**: Receive notifications via email
-- **Real-time Updates**: Instant notifications for critical events
 
----
-
-## Funds & Billing
-
-Manage your account balance and billing settings.
-
-### Account Balance
-
-- **Current Balance**: View real-time account balance
-- **Low Balance Warnings**: Alerts when balance is low
-- **Usage Tracking**: Monitor spending across different services
-- **Balance History**: Track balance changes over time
-
-### Adding Funds
-
-- **Manual Top-up**: Add funds as needed
-- **Auto Top-up**: Automatic balance replenishment
-  - Set trigger threshold (default: 10% of top-up amount)
-  - Configure auto top-up amount
-  - Enable/disable auto top-up
-
-### Subscription Management
-
-- **Monthly Subscription**: $5/month base subscription
-- **Activation**: Enable recurring monthly billing
-- **Status Tracking**: Monitor subscription status
-- **Automatic Renewal**: Hassle-free recurring payments
-
-### Transaction History
-
-- **Detailed Records**: Complete transaction history
-- **Spending Analytics**: Breakdown of costs by service type
-- **Receipt Management**: Download receipts and invoices
-- **Usage Reports**: Detailed usage and cost analysis
+### /register — Register (/register)
+Sign-up page for new admin or staff users.
 
 ---
 
-## Account Settings
-
-Manage your personal account settings and security.
-
-### Email Management
-
-- **Email Verification**: Verify your email address for security
-- **Email Updates**: Change your account email address
-- **Verification Status**: Track email verification status
-
-### Security Settings
-
-- **Password Management**: Update account password
-- **Two-Factor Authentication**: Enhanced account security
-- **Session Management**: Monitor active login sessions
-- **Security Alerts**: Notifications for account security events
-
-### Account Status
-
-- **Deletion Warnings**: Notifications if account is scheduled for deletion
-- **Account Recovery**: Options for account restoration
-- **Data Export**: Download your account data
-- **Support Contact**: Get help with account issues
-
----
-
-## Best Practices
-
-### Getting the Most from DirectSupport.ai
-
-1. **Complete Setup**: Follow all setup steps for optimal performance
-2. **Quality Documentation**: Upload comprehensive, well-organized documentation
-3. **Regular Updates**: Keep FAQ and documentation current
-4. **Monitor Conversations**: Regularly review AI interactions for improvement opportunities
-5. **Balance Management**: Maintain adequate account balance for uninterrupted service
-6. **Priority Configuration**: Set appropriate limits for different customer tiers
-7. **Custom Instructions**: Provide clear, specific AI guidelines for your business
-
-### Troubleshooting Common Issues
-
-- **WhatsApp Verification Fails**: Ensure WhatsApp is properly configured on the number
-- **Widget Not Appearing**: Check embed code placement and syntax
-- **AI Not Responding**: Verify account balance and AI chat feature is enabled
-- **Domain Verification Issues**: Confirm DNS records or webhook endpoints are correctly configured
-
----
-
-## Support & Resources
-
-- **Documentation Updates**: This documentation is regularly updated with new features
-- **Issue Reporting**: Use the Issues section to report problems or request features
-- **Community Support**: Connect with other users through the platform
-- **Direct Support**: Contact support team for technical assistance
-
-For additional help, please use the support widget on this platform or contact our support team directly.
-
----
-
-*Last Updated: September 2025*
+### /reset-password — Reset Password (/reset-password)
+Password reset flow for staff/users. Initiate a reset via email, then follow the confirmation link to set a new password.
