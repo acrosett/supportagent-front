@@ -1448,4 +1448,8 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
   border-color: #742a2a;
   color: #fed7d7;
 }
+
+.grecaptcha-badge { 
+    visibility: hidden !important;
+}
 </style>

@@ -12,7 +12,7 @@
       :formClass="CreateAccountExtendedDto"
       v-model="formData"
       :fieldOverrides="fieldOverrides"
-      :excludeFields="['logMeIn', 'role', 'username']"
+      :includeFields="['email', 'password', 'acceptedEula', 'acceptedMarketing']"
       :actions="actions"
     />
   </div>
