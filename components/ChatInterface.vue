@@ -321,7 +321,7 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
 // Loads messages and builds ChatMessage[]
 const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean = false) => {
   // Use client identifier from variable
-  if (!clientIdentifier.value) {
+  if (!clientIdentifier.value || isNewGuest.value) {
     return;
   }
   
@@ -346,6 +346,7 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
     const rawMessages = res?.data || []
     console.log(`Fetched ${rawMessages.length} messages from server.`);
     
+    
     // Check if we got fewer messages than requested (no more messages)
     if (rawMessages.length < effectiveLimit) {
       hasMoreMessages.value = false
@@ -365,9 +366,15 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
       new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
     )
 
-    //Make unique
-    const existingIds = new Set(allMessages.map(msg => msg.id))
-    allMessages = allMessages.filter((msg: any) => !existingIds.has(msg.id))
+    // Make unique - remove duplicates by ID
+    const seenIds = new Set()
+    allMessages = allMessages.filter((msg: any) => {
+      if (seenIds.has(msg.id)) {
+        return false
+      }
+      seenIds.add(msg.id)
+      return true
+    })
 
     const newMessageCount = allMessages.length
     const hasNewMessages = newMessageCount > lastMessageCount.value
@@ -537,17 +544,19 @@ const sendMessage = async () => {
       inverted: isInvertedMode.value
     }
 
+
     // If this is a new guest's first message, get reCAPTCHA token
     if (isNewGuest.value) {
       const recaptchaToken = await getRecaptchaToken('guest_creation')
+      console.log('reCAPTCHA token for guest creation:', recaptchaToken)
       if (recaptchaToken) {
         messageData.recaptchaToken = recaptchaToken
       }
-      // Mark guest as no longer new after first message
-      isNewGuest.value = false
     }
 
     await useNuxtApp().$sp.message.send_client_message(messageData)
+
+    isNewGuest.value = false
 
     // Update sessionStorage cache with the new message
     const cacheKey = `${cachePrefix}chat-messages-${identifier}`;
@@ -574,7 +583,11 @@ const sendMessage = async () => {
 
     // Notify parent window about user message (for guest ID storage)
     if (window.parent !== window) {
-      window.parent.postMessage({ type: 'user-message' }, '*')
+      console.log('Notifying parent window about user message')
+      window.parent.postMessage({ 
+        type: 'user-message', 
+        data: { identifier } 
+      }, '*')
     }
 
     // Socket will handle message updates automatically
@@ -866,7 +879,7 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     
     // Use reactive variables instead of sessionStorage
     const identifier = clientIdentifier.value
-    const apikey = widgetConfig.value.apiToken
+    const apiKey = widgetConfig.value.apiToken
     
     if (!identifier) {
       console.warn('Missing client identifier for socket connection')
@@ -877,10 +890,10 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     const config = useRuntimeConfig()
     const wsBaseUrl = config.public.socketBaseUrl || 'ws://localhost:3200'
     
-    // Create WebSocket connection with identifier and apikey
+    // Create WebSocket connection with identifier and apiKey
     const socketData = {
       identifier: identifier,
-      apikey: apikey || '',
+      apiKey: apiKey || '',
       inverted: isInvertedMode.value
     }
     const wsUrl = `${wsBaseUrl}/chat-socket?data=${encodeURIComponent(JSON.stringify(socketData))}`
@@ -1090,6 +1103,8 @@ onMounted(() => {
           // Handle guest ID provided specifically for sending a message
           console.log('Guest ID for message received:', guestId)
           clientIdentifier.value = guestId
+
+          isNewGuest.value = isNew
           // Continue with pending message send if any
           break
         case 'user-token':

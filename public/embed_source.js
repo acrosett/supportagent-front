@@ -349,22 +349,21 @@ const createWidget = (config) => {
 
 
   // Store guest ID permanently (called when user sends first message)
-  const storeGuestId = () => {
+  const storeGuestId = (identifier) => {
     const GUEST_ID_KEY = 'ai-support-guest-id';
     const existingGuestId = sessionStorage.getItem(GUEST_ID_KEY);
     
     if (!existingGuestId) {
       // Generate and store the guest ID permanently
-      const guestId = "guest_" + generateObjectId();
-      sessionStorage.setItem(GUEST_ID_KEY, guestId);
+      sessionStorage.setItem(GUEST_ID_KEY, identifier);
       
       // Notify iframe of the stored guest ID
       sendMessage({
         type: 'guest-id-stored',
-        guestId: guestId
+        guestId: identifier
       });
       
-      return guestId;
+      return identifier;
     }
     
     return existingGuestId;
@@ -688,7 +687,7 @@ const createWidget = (config) => {
             break;
           case 'user-message':
             // User sent a message - store the guest ID permanently on first message
-            storeGuestId();
+            storeGuestId(data?.identifier);
             break;
           case 'request-guest-id':
             // Iframe requests guest ID for sending a message
