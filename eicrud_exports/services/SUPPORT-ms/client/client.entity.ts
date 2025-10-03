@@ -76,6 +76,10 @@ export class Client {
     @IsBoolean()
     lastMessageReadByStaff: boolean = false;
 
+    @IsBoolean()
+    @IsOptional()
+    anonymized: boolean;
+
     createdAt: Date;
 
     updatedAt: Date;

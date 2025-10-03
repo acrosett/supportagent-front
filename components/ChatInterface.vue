@@ -172,6 +172,7 @@ import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.en
 import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-trace.entity'
 import { useRecaptcha } from '~/composables/useRecaptcha'
 import { useMarkdown } from '~/composables/useMarkdown'
+import { SendClientMessageDto } from '~/eicrud_exports/services/SUPPORT-ms/message/cmds/send_client_message/send_client_message.dto'
 
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };
@@ -184,6 +185,12 @@ const messageText = ref('')
 const isTyping = ref(false)
 
 const socket = ref<WebSocket | null>(null)
+
+// Socket reconnection state
+const reconnectAttempts = ref(0)
+const maxReconnectAttempts = 5
+const baseReconnectDelay = 1000 // 1 second
+const reconnectTimeoutId = ref<number | null>(null)
 
 // Tool trace state
 const toolTraces = ref<ToolTraceMessage[]>([])
@@ -298,6 +305,8 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
     hasMoreMessages.value = true
     isLoadingMoreMessages.value = false
     
+    openSocketConnection(nuxtApp);
+
     // Load initial messages
     await refreshMessages(nuxtApp, messagesPerPage)
     
@@ -305,9 +314,6 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
     if (isInvertedMode.value) {
       await fetchAIStatus(nuxtApp)
     }
-    
-    // Open socket connection for real-time updates
-    await openSocketConnection(nuxtApp)
 
   } catch (error: any) {
     console.error('Failed to initialize chat:', error)
@@ -436,63 +442,11 @@ const addWelcomeMessage = () => {
   
 }
 
-// Add mock tool traces for testing
-const addMockToolTraces = (messages: any[]) => {
-  const mockTraces: ToolTraceMessage[] = [
-    {
-      id: 'mock-trace-1',
-      type: 'tool-trace',
-      toolName: 'web_search',
-      toolInput: JSON.stringify({
-        query: 'latest cryptocurrency prices',
-        max_results: 5
-      }, null, 2),
-      toolResult: JSON.stringify({
-        results: [
-          { title: 'Bitcoin Price Today', url: 'https://example.com/btc', snippet: 'Bitcoin is trading at $45,000...' },
-          { title: 'Ethereum Latest News', url: 'https://example.com/eth', snippet: 'Ethereum shows strong momentum...' }
-        ]
-      }, null, 2),
-      createdAt: new Date(Date.now() - 5000),
-      updatedAt: new Date(Date.now() - 5000)
-    },
-    {
-      id: 'mock-trace-2',
-      type: 'tool-trace',
-      toolName: 'calculate',
-      toolInput: JSON.stringify({
-        expression: '(45000 * 0.1) + 2500',
-        precision: 2
-      }, null, 2),
-      toolResult: JSON.stringify({
-        result: 7000,
-        formatted: '$7,000.00'
-      }, null, 2),
-      createdAt: new Date(Date.now() - 3000),
-      updatedAt: new Date(Date.now() - 3000)
-    },
-    {
-      id: 'mock-trace-3',
-      type: 'tool-trace',
-      toolName: 'send_email',
-      toolInput: JSON.stringify({
-        to: 'user@example.com',
-        subject: 'Investment Summary',
-        body: 'Here is your portfolio update...'
-      }, null, 2),
-      toolError: 'Failed to send email: SMTP server connection timeout',
-      createdAt: new Date(Date.now() - 1000),
-      updatedAt: new Date(Date.now() - 1000)
-    }
-  ]
-  
-  // Add mock traces to messages
-  //essages.push(...mockTraces)
-}
 
 const sendMessage = async () => {
   console.log('Sending message:', messageText.value)
   if (!messageText.value.trim()) return
+  const nuxtApp = useNuxtApp()
 
   // Initialize audio context on first user interaction
   await initAudioContext()
@@ -537,11 +491,12 @@ const sendMessage = async () => {
 
   try {
     // Prepare message data
-    const messageData: any = {
+    const messageData: SendClientMessageDto = {
       identifier: identifier,
       content: messageContent,
       apiKey: widgetConfig.value.apiToken || '',
-      inverted: isInvertedMode.value
+      inverted: isInvertedMode.value,
+      customerCurrentPageUrl: window.location.href
     }
 
 
@@ -554,7 +509,11 @@ const sendMessage = async () => {
       }
     }
 
-    await useNuxtApp().$sp.message.send_client_message(messageData)
+    await nuxtApp.$sp.message.send_client_message(messageData)
+
+    if(isNewGuest.value || !socket.value){
+      openSocketConnection(nuxtApp)
+    }
 
     isNewGuest.value = false
 
@@ -746,11 +705,6 @@ const fetchToolTraces = async (nuxtApp: NuxtApp, limit?: number, offset?: number
       type: 'tool-trace' as const
     }))
 
-    // Only add mock traces for initial load (no offset)
-    if (!offset) {
-      addMockToolTraces(traceMessages)
-    }
-
     return traceMessages
   } catch (error) {
     console.error('Failed to load tool traces:', error)
@@ -897,10 +851,14 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
       inverted: isInvertedMode.value
     }
     const wsUrl = `${wsBaseUrl}/chat-socket?data=${encodeURIComponent(JSON.stringify(socketData))}`
+    
+    console.log(`Opening socket connection (attempt ${reconnectAttempts.value + 1}/${maxReconnectAttempts})...`)
     socket.value = new WebSocket(wsUrl)
     
     socket.value.onopen = () => {
       console.log('Socket connected with data:', socketData)
+      // Reset reconnection attempts on successful connection
+      reconnectAttempts.value = 0
     }
     
     socket.value.onmessage = async (event) => {
@@ -931,48 +889,76 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     
     socket.value.onerror = (error) => {
       console.error('Socket error:', error)
+      // Error will be handled in onclose for reconnection
     }
     
-    socket.value.onclose = () => {
-      console.log('Socket disconnected')
+    socket.value.onclose = (event) => {
+      console.log('Socket disconnected, code:', event.code, 'reason:', event.reason)
       socket.value = null
+      
+      // Only attempt reconnection if we have a client identifier and haven't exceeded max attempts
+      if (clientIdentifier.value && reconnectAttempts.value < maxReconnectAttempts) {
+        scheduleReconnect(nuxtApp)
+      } else if (reconnectAttempts.value >= maxReconnectAttempts) {
+        console.warn('Max socket reconnection attempts reached, giving up')
+        reconnectAttempts.value = 0 // Reset for future connections
+      }
     }
     
   } catch (error) {
     console.error('Failed to open socket connection:', error)
+    // Schedule reconnection on connection failure
+    if (clientIdentifier.value && reconnectAttempts.value < maxReconnectAttempts) {
+      scheduleReconnect(nuxtApp)
+    }
   }
 }
 
+// Schedule reconnection with exponential backoff
+const scheduleReconnect = (nuxtApp: NuxtApp) => {
+  // Clear any existing reconnect timeout
+  if (reconnectTimeoutId.value) {
+    clearTimeout(reconnectTimeoutId.value)
+  }
+  
+  reconnectAttempts.value++
+  
+  // Calculate exponential backoff delay: baseDelay * 2^(attempts - 1) + jitter
+  const exponentialDelay = baseReconnectDelay * Math.pow(2, reconnectAttempts.value - 1)
+  const jitter = Math.random() * 1000 // Add up to 1 second of jitter
+  const totalDelay = Math.min(exponentialDelay + jitter, 300000) // Cap at 5 minutes
+  
+  console.log(`Scheduling socket reconnection in ${Math.round(totalDelay)}ms (attempt ${reconnectAttempts.value}/${maxReconnectAttempts})`)
+  
+  reconnectTimeoutId.value = setTimeout(() => {
+    // Only reconnect if we still have a client identifier and socket is not connected
+    if (clientIdentifier.value && !socket.value) {
+      openSocketConnection(nuxtApp)
+    }
+  }, totalDelay) as unknown as number
+}
+
 const closeSocketConnection = () => {
+  // Clear any pending reconnection
+  if (reconnectTimeoutId.value) {
+    clearTimeout(reconnectTimeoutId.value)
+    reconnectTimeoutId.value = null
+  }
+  
   if (socket.value) {
     socket.value.close()
     socket.value = null
   }
+  
+  // Reset reconnection attempts when manually closing
+  reconnectAttempts.value = 0
 }
 
-// Setup listeners for socket management
-const setupSocketListeners = (nuxtApp: NuxtApp) => {
-  // Track window focus - ensure socket is connected
-  const handleFocus = () => {
-    if (!socket.value && clientIdentifier.value) {
-      openSocketConnection(nuxtApp)
-    }
-  }
-  
-  // Track window blur - socket stays connected
-  const handleBlur = () => {
-    // Socket stays connected for real-time updates
-  }
-  
-  // Add event listeners for socket management
-  window.addEventListener('focus', handleFocus)
-  window.addEventListener('blur', handleBlur)
-  
-  // Cleanup function
+// Setup listeners for socket management  
+const setupSocketListeners = () => {
+  // Cleanup function - close socket on cleanup
   return () => {
-    window.removeEventListener('focus', handleFocus)
-    window.removeEventListener('blur', handleBlur)
-    closeSocketConnection() // Close socket on cleanup
+    closeSocketConnection()
   }
 }
 
@@ -990,7 +976,6 @@ watch(isTyping, (newIsTyping) => {
 watch(() => messages.value.length, () => {
   highlightCodeBlocks()
 })
-
 
 const cachePrefix = 'direct-support-ai-cache-'
 
@@ -1047,7 +1032,7 @@ onMounted(() => {
   }
   
   // Set up socket listeners
-  const cleanup = setupSocketListeners(nuxtApp)
+  const cleanup = setupSocketListeners()
   
   // Widget communication with parent window (for embedded iframe)
   const isEmbedded = window.self !== window.top
@@ -1076,11 +1061,7 @@ onMounted(() => {
           // Handle visibility change from embed.js
           console.log('Widget visibility changed:', visible)
           if (visible) {
-            // Widget became visible - ensure socket connection
-            if (!socket.value && clientIdentifier.value) {
-              const nuxtApp = useNuxtApp()
-              openSocketConnection(nuxtApp)
-            }
+            // Widget became visible - socket will be managed by clientIdentifier watcher
           } else {
             // Widget became hidden - keep socket alive for real-time updates
           }
@@ -1217,6 +1198,8 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .message-time { font-size:.7rem; }
 .message-content p { margin:0; line-height:1.4; }
 .message-content { display:flex; flex-direction:column; gap:.5rem; }
+.message-content ul, .message-content ol { margin:0; padding-left:1.5rem; line-height:1.4; }
+.message-content li { margin-bottom:0.25rem; }
 .message-content pre { position:relative; background:#1e1e22; color:#f5f5f5; padding:.75rem 1rem; border-radius:8px; overflow:auto; font-size:.75rem; line-height:1.4; }
 .message-content pre { scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.25) transparent; }
 .message-content pre::-webkit-scrollbar { height:8px; width:8px; }

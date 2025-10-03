@@ -38,6 +38,10 @@ export class Message {
     @IsOptional()
     metadata?: any;
 
+    @IsOptional()
+    @IsString()
+    customerCurrentPageUrl?: string;
+
     createdAt: Date;
 
     updatedAt: Date;

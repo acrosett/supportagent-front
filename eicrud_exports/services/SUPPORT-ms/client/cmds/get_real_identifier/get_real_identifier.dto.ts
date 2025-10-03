@@ -13,7 +13,6 @@ export class GetRealIdentifierDto {
 
     @IsOptional()
     @IsString()
-    @MaxLength(1000)
     recaptchaToken?: string;
 
 }

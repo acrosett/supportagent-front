@@ -17,7 +17,11 @@ export class SendClientMessageDto {
 
     @IsOptional()
     @IsString()
-    @MaxLength(1000)
+    @MaxLength(500)
+    customerCurrentPageUrl?: string;
+
+    @IsOptional()
+    @IsString()
     recaptchaToken?: string;
 
     @IsBoolean()
