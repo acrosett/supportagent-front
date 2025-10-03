@@ -90,7 +90,7 @@
             <span></span>
             <span></span>
           </div>
-          <span class="typing-text">Support agent is thinking...</span>
+          <!-- <span class="typing-text">Support agent is thinking...</span> -->
         </div>
       </div>
 
@@ -365,7 +365,7 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
     }
     
     // For initial loads, preserve temp messages; for append, just add to existing
-    const baseMessages = messages.value.filter(msg => msg.id?.startsWith('temp-'))
+    const baseMessages = messages.value.filter(msg => !msg.id?.startsWith('temp-'))
 
     // Combine all messages and sort by date
     let allMessages = [...baseMessages, ...rawMessages, ...toolTraceMessages].sort((a: any, b: any) => 
@@ -496,7 +496,7 @@ const sendMessage = async () => {
       content: messageContent,
       apiKey: widgetConfig.value.apiToken || '',
       inverted: isInvertedMode.value,
-      customerCurrentPageUrl: window.location.href
+      customerCurrentPageUrl: window.location.hostname + window.location.pathname
     }
 
 
