@@ -179,7 +179,7 @@
     <AppPopup
       v-if="showCreateTool"
       :show="showCreateTool"
-      title="Custom Tool"
+      title="Custom Tool (our chatbot can create them for you)"
       @close="closeToolForm"
     >
       <CustomToolForm
@@ -402,7 +402,7 @@ async function verifyDomain(domain: Domain) {
       return
     }
 
-    await nuxtApp.$sp.domain.verify_domain({
+    await nuxtApp.$sp.domain.verify_domainS({
       domainId: domain.id,
       productId: nuxtApp.$userProductId
     })
@@ -416,7 +416,7 @@ async function verifyDomain(domain: Domain) {
     
     if (!domain.isVerified && domain.randomString) {
       useNuxtApp().$toast.show(
-        `${errorMessage}. Please create a webhook at https://${domain.domain}/direct-support-ai-verify-domain that returns the verification string: ${domain.randomString}`, 
+       error,
         'error'
       )
     } else {

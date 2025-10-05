@@ -13,7 +13,7 @@ const componentTypeMap: Record<string, any> = {
   'checklist': ChecklistInput
 }
 
-export interface FieldOverride<T = any> {
+export interface FieldOverride<T = any, V = any> {
   type?: string;
   label?: string;
   placeholder?: string;
@@ -38,8 +38,8 @@ export interface FieldOverride<T = any> {
   offLabel?: string; // Label for toggle switch "OFF" state
   mapValue?: Record<string, any>; // Map form values before validation (e.g. {true: 123, false: undefined})
   titleColor?: string | (() => string | undefined); // Color for the field title/label
-  nestedClass?: new () => any; // Class for nested MegaForm
-  nestedFieldOverrides?: OverrideRecord<any>; // Field overrides for nested MegaForm
+  nestedClass?: new () => V; // Class for nested MegaForm
+  nestedFieldOverrides?: OverrideRecord<V>; // Field overrides for nested MegaForm
   nestedIncludeFields?: string[]; // Only include these fields in nested MegaForm
 }
 
@@ -53,7 +53,7 @@ export interface MegaFormAction {
   skipValidation?: boolean;
 }
 
-export type OverrideRecord<T = any> = Partial<Record<keyof T, FieldOverride<T>>>;
+export type OverrideRecord<T = any, V = any> = Partial<Record<keyof T, FieldOverride<T, V>>>;
 
 export interface MegaFormProps<T = any> {
   formClass: new () => any;

@@ -69,7 +69,7 @@ watch(() => props.tool, (newTool) => {
 }, { immediate: true })
 
 // Field overrides
-const fieldOverrides: OverrideRecord<CustomTool> = {
+const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
     clientPriorities: {
         type: 'checklist',
         isArray: false,
@@ -159,6 +159,8 @@ const fieldOverrides: OverrideRecord<CustomTool> = {
                 conditionsFieldsIfValue: [
                     { field: 'constantValue', value: ArgumentValueType.CONSTANT },
                     { field: 'defaultValue', value: ArgumentValueType.SET_BY_AI },
+                    { field: 'required', value: ArgumentValueType.SET_BY_AI },
+                    { field: 'description', value: ArgumentValueType.SET_BY_AI },
                 ],
                 description: 'How the parameter value should be determined'
             },
