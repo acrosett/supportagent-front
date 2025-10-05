@@ -159,7 +159,7 @@
               </span>
             </div>
             <div v-if="tool.arguments && tool.arguments.length > 0" class="tool-arguments">
-              <strong>Arguments:</strong>
+              <strong>Arguments: </strong>
               <span class="argument-count">{{ tool.arguments.length }} parameter(s)</span>
             </div>
           </div>

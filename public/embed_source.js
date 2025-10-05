@@ -369,13 +369,30 @@ const createWidget = (config) => {
     return existingGuestId;
   };
 
+  // Widget ready state
+  let isWidgetReady = false;
+  let tokenUpdateTimeout = null;
+
   // Update chat token dynamically
   const updateChatToken = (token) => {
-    // Send token update to iframe
-    sendMessage({
-      type: 'user-token',
-      token: token
-    });
+    // Clear any existing timeout
+    if (tokenUpdateTimeout) {
+      clearTimeout(tokenUpdateTimeout);
+      tokenUpdateTimeout = null;
+    }
+
+    if (isWidgetReady) {
+      // Widget is ready, send token immediately
+      sendMessage({
+        type: 'user-token',
+        token: token
+      });
+    } else {
+      // Widget not ready yet, set timeout to try again
+      tokenUpdateTimeout = setTimeout(() => {
+        updateChatToken(token);
+      }, 100);
+    }
   };
 
   // Global API
@@ -680,6 +697,9 @@ const createWidget = (config) => {
               type: 'set-config',
               data: { config: { ...config, icons: ICON_SVGS } }
             });
+
+            // Mark widget as ready after config is sent
+            isWidgetReady = true;
 
             // Initialize guest ID when widget is ready (but don't store yet)
             getGuestId();

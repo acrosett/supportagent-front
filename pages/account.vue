@@ -241,6 +241,7 @@ const fetchProduct = async () => {
       const userData = await nuxtApp.$sp.user.findOne({ 
         id: nuxtApp.$userId 
       })
+      console.log('Fetched user data:', userData)
       user.value = userData
       
       // Update email verification status from user data

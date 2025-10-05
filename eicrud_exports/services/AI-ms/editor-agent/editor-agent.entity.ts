@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsDate } from "class-validator";
+import { IsString, IsOptional, IsDate, IsBoolean } from "class-validator";
 import { ContextPiece } from "../shared";
 
 
@@ -16,16 +16,26 @@ export class EditorAgent {
 
     @IsDate()
     date: Date;
-
-    @IsString()
-    origin: string;
     
     @IsDate()
     @IsOptional()
     expiryDate?: Date;
-
+    
+    @IsDate()
     createdAt: Date;
 
+    @IsDate()
     updatedAt: Date;
+
+    @IsBoolean()
+    isSummary?: boolean;
+
+    @IsBoolean()
+    isEphemeral?: boolean;
+
+    @IsString()
+    origin: string;
+
+    metadata?: string;
 
 }

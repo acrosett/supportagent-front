@@ -53,6 +53,25 @@
         </div>
       </div>
 
+      <!-- Delete Client Data Section -->
+      <div class="debug-section">
+        <div class="section-header">
+          <h2>Delete Client Data</h2>
+          <p class="warning-text">⚠️ WARNING: Delete all client messages and data for the current user. This action cannot be undone!</p>
+        </div>
+        
+        <div class="section-content">
+          <div class="action-buttons">
+            <AppButton
+              label="Delete My Client Data"
+              color="error"
+              :loading="isDeletingClientData"
+              @click="deleteClientData"
+            />
+          </div>
+        </div>
+      </div>
+
       <!-- Effective Delete Account Section -->
       <div class="debug-section">
         <div class="section-header">
@@ -83,6 +102,9 @@ const trainingLogId = ref('')
 const isReplaying = ref(false)
 const replayResult = ref<any>(null)
 const replayError = ref<string | null>(null)
+
+// Delete client data state
+const isDeletingClientData = ref(false)
 
 // Effective Delete Account form data
 const deleteAccountFormData = ref<EffectiveDeleteAccountDto>({
@@ -159,6 +181,34 @@ onMounted(async () => {
   }
 })
 
+const deleteClientData = async () => {
+  try {
+    const nuxtApp = useNuxtApp()
+    
+    const confirmed = await nuxtApp.$confirmPopup.show(
+      'Are you sure you want to DELETE ALL your client data and messages?\n\nThis action CANNOT be undone and will permanently remove all your chat history and client information.'
+    )
+    
+    if (!confirmed) return
+    
+    isDeletingClientData.value = true
+    nuxtApp.$toast.show('Deleting client data...', 'info')
+    
+    await nuxtApp.$sp.message.admin_delete_client({
+      clientUniqueId: nuxtApp.$userId,
+      productId: nuxtApp.$userProductId
+    })
+    
+    nuxtApp.$toast.show('Client data deleted successfully', 'success')
+    
+  } catch (error) {
+    console.error('Failed to delete client data:', error)
+    useNuxtApp().$toast.show(error, 'error')
+  } finally {
+    isDeletingClientData.value = false
+  }
+}
+
 const replayLLMParsing = async () => {
   if (!trainingLogId.value.trim()) {
     useNuxtApp().$toast.show('Please enter a training log ID', 'error')
@@ -193,9 +243,7 @@ const replayLLMParsing = async () => {
 <style scoped lang="scss">
 @use '~/assets/variables' as *;
 
-.debug-page {
-  // Uses global .page-container for sizing
-}
+// Uses global .page-container for sizing
 
 .page-header {
   margin-bottom: 3rem;

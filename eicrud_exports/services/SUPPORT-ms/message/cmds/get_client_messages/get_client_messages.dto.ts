@@ -5,11 +5,9 @@ import { Message } from "../../message.entity";
 export class GetClientMessagesDto {
 
     @IsString()
-    @MaxLength(100)
     identifier: string;
 
     @IsString()
-    @MaxLength(200)
     apiKey: string;
 
     @IsBoolean()

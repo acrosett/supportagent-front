@@ -4,7 +4,6 @@ import { IsString, IsOptional, IsNumber, MaxLength } from "class-validator";
 export class VerifyRecaptchaDto {
 
     @IsString()
-    @MaxLength(1000)
     token: string;
 
     @IsOptional()
@@ -17,7 +16,6 @@ export class VerifyRecaptchaDto {
 
     @IsOptional()
     @IsString()
-    @MaxLength(100)
     expectedAction?: string;
 
 }

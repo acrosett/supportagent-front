@@ -180,7 +180,7 @@ type ChatItem = ChatMessage | ToolTraceMessage;
 
 // State
 const isLoading = ref(true)
-const messages = ref<ChatItem[]>([])
+const messages = ref<(ChatItem & Partial<{ clientIdentifier: string }>)[]>([])
 const messageText = ref('')
 const isTyping = ref(false)
 
@@ -297,13 +297,16 @@ function shadeColor(col: string, percent: number) {
 
 const initializeChat = async (nuxtApp: NuxtApp) => {
   isLoading.value = true
-
+  messages.value = []
   try {
     // Reset pagination state
     messageOffset.value = 0
     toolTraceOffset.value = 0
     hasMoreMessages.value = true
     isLoadingMoreMessages.value = false
+    
+    // Reset socket connection for new session
+    resetSocketConnection()
     
     openSocketConnection(nuxtApp);
 
@@ -330,7 +333,9 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
   if (!clientIdentifier.value || isNewGuest.value) {
     return;
   }
-  
+
+  const savedClientIdentifier = clientIdentifier.value;
+
   try {
     const effectiveLimit = limit || messagesPerPage
     const currentMessageOffset = append ? messageOffset.value : 0
@@ -339,7 +344,7 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
     console.log(`Fetching messages from server... offset: ${currentMessageOffset}, limit: ${effectiveLimit}`);
 
     const res = await nuxtApp.$sp.message.get_client_messagesL({
-      identifier: clientIdentifier.value,
+      identifier: savedClientIdentifier,
       apiKey: widgetConfig.value.apiToken || '',
       inverted: isInvertedMode.value
     },
@@ -349,7 +354,10 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
       offset: currentMessageOffset
     });
     
-    const rawMessages = res?.data || []
+    const rawMessages = (res?.data || []).map(msg => ({
+      ...msg,
+      clientIdentifier: savedClientIdentifier,
+    }));
     console.log(`Fetched ${rawMessages.length} messages from server.`);
     
     
@@ -365,12 +373,14 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
     }
     
     // For initial loads, preserve temp messages; for append, just add to existing
-    const baseMessages = messages.value.filter(msg => !msg.id?.startsWith('temp-'))
+    const baseMessages = messages.value.filter(msg => !msg.id?.startsWith('temp-') 
+    && msg.clientIdentifier == savedClientIdentifier)
 
     // Combine all messages and sort by date
     let allMessages = [...baseMessages, ...rawMessages, ...toolTraceMessages].sort((a: any, b: any) => 
       new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
     )
+    
 
     // Make unique - remove duplicates by ID
     const seenIds = new Set()
@@ -404,9 +414,12 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
     }
     
     // Cache messages in sessionStorage
-    const cacheKey = `${cachePrefix}chat-messages-${clientIdentifier.value}`;
+    const cacheKey = `${cachePrefix}chat-messages-${savedClientIdentifier}`;
     sessionStorage.setItem(cacheKey, JSON.stringify(allMessages));
   
+    if(!messages.value.length){
+      addWelcomeMessage()
+    }
     
   } catch (error: any) {
     console.error('Failed to load messages:', error)
@@ -503,7 +516,6 @@ const sendMessage = async () => {
     // If this is a new guest's first message, get reCAPTCHA token
     if (isNewGuest.value) {
       const recaptchaToken = await getRecaptchaToken('guest_creation')
-      console.log('reCAPTCHA token for guest creation:', recaptchaToken)
       if (recaptchaToken) {
         messageData.recaptchaToken = recaptchaToken
       }
@@ -856,7 +868,7 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     socket.value = new WebSocket(wsUrl)
     
     socket.value.onopen = () => {
-      console.log('Socket connected with data:', socketData)
+      console.log('Socket connected successfully')
       // Reset reconnection attempts on successful connection
       reconnectAttempts.value = 0
     }
@@ -950,7 +962,12 @@ const closeSocketConnection = () => {
     socket.value = null
   }
   
-  // Reset reconnection attempts when manually closing
+  // Don't reset reconnection attempts here - let them persist across connection attempts
+}
+
+// Reset socket connection entirely (for new sessions)
+const resetSocketConnection = () => {
+  closeSocketConnection()
   reconnectAttempts.value = 0
 }
 

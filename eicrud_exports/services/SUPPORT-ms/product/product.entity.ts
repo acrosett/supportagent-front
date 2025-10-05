@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MinLength, IsNumber, IsBoolean, IsEnum, Min } from "class-validator";
+import { IsString, IsOptional, MinLength, IsNumber, IsBoolean, IsEnum, Min, Matches } from "class-validator";
 import { User } from "../../user/user.entity";
 
 export class NotificationSubConfig {
@@ -58,6 +58,7 @@ export class Product {
 
     @IsString()
     @IsOptional()
+    @Matches(/^https/, { message: 'URL must start with https' })
     webhookUrl?: string;
 
     @IsString()

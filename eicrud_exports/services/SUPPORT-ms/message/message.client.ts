@@ -1,6 +1,7 @@
 import { SendClientMessageDto, SendClientMessageReturnDto } from './cmds/send_client_message/send_client_message.dto';
 import { GetClientMessagesDto, GetClientMessagesReturnDto } from './cmds/get_client_messages/get_client_messages.dto';
 import { DeleteClientDto, DeleteClientReturnDto } from './cmds/delete_client/delete_client.dto';
+import { AdminDeleteClientDto, AdminDeleteClientReturnDto } from './cmds/admin_delete_client/admin_delete_client.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
 import { ICrudOptions } from "@eicrud/shared/interfaces";
 import { Message } from "./message.entity";
@@ -105,6 +106,38 @@ export class MessageClient extends CrudClient<Message> {
       copts?: ClientOptions,
     ): Promise<DeleteClientReturnDto> {
       return super.cmdSL('delete_client', dto, options, copts) as any;
+  }
+
+  async admin_delete_client(
+      dto: AdminDeleteClientDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<AdminDeleteClientReturnDto> {
+      return super.cmd('admin_delete_client', dto, options, copts);
+  }
+
+  async admin_delete_clientS(
+      dto: AdminDeleteClientDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<AdminDeleteClientReturnDto> {
+      return super.cmdS('admin_delete_client', dto, options, copts);
+  }
+
+  async admin_delete_clientL(
+      dto: AdminDeleteClientDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<AdminDeleteClientReturnDto> {
+      return super.cmdL('admin_delete_client', dto, options, copts) as any;
+  }
+
+  async admin_delete_clientSL(
+      dto: AdminDeleteClientDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<AdminDeleteClientReturnDto> {
+      return super.cmdSL('admin_delete_client', dto, options, copts) as any;
   }
 
 }
