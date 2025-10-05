@@ -270,23 +270,40 @@ onMounted(async () => {
 // AI Instructions Methods
 async function loadAiInstructions() {
   try {
-    // TODO: Load current product's additional instructions
-    // This would typically come from your API
-    console.log('Loading AI instructions...')
+    const nuxtApp = useNuxtApp()
+    if (!nuxtApp.$userProductId) return
+    
+    const result = await nuxtApp.$sp.product.findOne({
+      id: nuxtApp.$userProductId
+    })
+    
+    if (result) {
+      aiInstructions.additionalInstructions = result.additionalInstructions || ''
+    }
   } catch (error) {
     console.error('Error loading AI instructions:', error)
-    useNuxtApp().$toast.show('Failed to load AI instructions', 'error')
+    useNuxtApp().$toast.show(error, 'error')
   }
 }
 
 async function saveAiInstructions(data: any) {
   try {
-    console.log('Saving AI instructions:', data)
-    // TODO: Save to your API
+    const nuxtApp = useNuxtApp()
+    if (!nuxtApp.$userProductId) {
+      useNuxtApp().$toast.show('Product ID not found', 'error')
+      return
+    }
+    
+    await nuxtApp.$sp.product.patch({
+      id: nuxtApp.$userProductId
+    }, {
+      additionalInstructions: data.additionalInstructions
+    })
+    
     useNuxtApp().$toast.show('AI instructions saved successfully', 'success')
   } catch (error) {
     console.error('Error saving AI instructions:', error)
-    useNuxtApp().$toast.show('Failed to save AI instructions', 'error')
+    useNuxtApp().$toast.show(error, 'error')
     throw error
   }
 }
@@ -294,13 +311,17 @@ async function saveAiInstructions(data: any) {
 // Custom Tools Methods
 async function loadCustomTools() {
   try {
-    // TODO: Load custom tools from your API
-    console.log('Loading custom tools...')
-    // Mock data for now
-    customTools.value = []
+    const nuxtApp = useNuxtApp()
+    if (!nuxtApp.$userProductId) return
+    
+    const result = await nuxtApp.$sp.customTool.find({
+      product: nuxtApp.$userProductId
+    })
+    
+    customTools.value = result.data || []
   } catch (error) {
     console.error('Error loading custom tools:', error)
-    useNuxtApp().$toast.show('Failed to load custom tools', 'error')
+    useNuxtApp().$toast.show(error, 'error')
   }
 }
 
@@ -316,15 +337,18 @@ async function deleteTool(toolId: string) {
   }
 
   try {
-    console.log('Deleting tool:', toolId)
-    // TODO: Delete from your API
+    const nuxtApp = useNuxtApp()
+    await nuxtApp.$sp.customTool.deleteOne({
+      id: toolId,
+      product: nuxtApp.$userProductId
+    })
     
     // Remove from local list
     customTools.value = customTools.value.filter(t => t.id !== toolId)
     useNuxtApp().$toast.show('Custom tool deleted successfully', 'success')
   } catch (error) {
     console.error('Error deleting custom tool:', error)
-    useNuxtApp().$toast.show('Failed to delete custom tool', 'error')
+    useNuxtApp().$toast.show(error, 'error')
   }
 }
 
@@ -349,26 +373,35 @@ async function handleToolSave(tool: CustomTool) {
       }
     }
 
-    console.log('Saving tool:', tool)
-    // TODO: Save to your API
+    const nuxtApp = useNuxtApp()
     
-    if (tool.id) {
+    if (selectedTool.value?.id) {
       // Update existing tool
+      await nuxtApp.$sp.customTool.patch({
+        id: selectedTool.value.id,
+        product: nuxtApp.$userProductId
+      }, tool)
+      
       const index = customTools.value.findIndex(t => t.id === tool.id)
       if (index !== -1) {
         customTools.value[index] = { ...tool }
       }
     } else {
-      // Add new tool
-      const newTool = { ...tool, id: Date.now().toString() } // Mock ID
-      customTools.value.push(newTool)
+      // Create new tool
+      const savedTool = await nuxtApp.$sp.customTool.create({
+        ...tool,
+        product: nuxtApp.$userProductId
+      })
+      
+      customTools.value.push(savedTool)
     }
     
     closeToolForm()
     useNuxtApp().$toast.show('Custom tool saved successfully', 'success')
+    loadCustomTools()
   } catch (error) {
     console.error('Error saving custom tool:', error)
-    useNuxtApp().$toast.show('Failed to save custom tool', 'error')
+    useNuxtApp().$toast.show(error, 'error')
     throw error
   }
 }

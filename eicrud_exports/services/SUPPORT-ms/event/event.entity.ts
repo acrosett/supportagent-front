@@ -10,7 +10,6 @@ export class Event {
     id: string;
 
     
-
     @IsString()
     name: string;
 

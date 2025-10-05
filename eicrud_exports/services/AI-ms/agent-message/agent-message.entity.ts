@@ -1,11 +1,12 @@
 import { IsString, IsOptional, IsEnum } from "class-validator";
 import { User } from "../../user/user.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
+import { Client } from "../../SUPPORT-ms/client/client.entity";
+import { ContactConfig } from "../../WHATSAPP-ms/contact-config/contact-config.entity";
 
 
 export enum AgentRole {
   CHAT_AGENT = 'chat_agent',
-  EDITOR_AGENT = 'editor_agent',
   STAFF_CONTACT_AGENT = 'staff_contact_agent'
 }
 
@@ -14,8 +15,6 @@ export class AgentMessage {
     @IsString()
     @IsOptional()
     id: string;
-
-    
 
     @IsString()
     content: string;
@@ -26,11 +25,11 @@ export class AgentMessage {
     @IsEnum(AgentRole)
     toAgent: AgentRole;
 
-    @IsString()
-    @IsOptional()
-    contextId?: string;
+    product: Product | string;    
+    
+    client: Client | string;
 
-    product: Product;
+    contactConfig: ContactConfig | string;
 
     createdAt: Date;
 

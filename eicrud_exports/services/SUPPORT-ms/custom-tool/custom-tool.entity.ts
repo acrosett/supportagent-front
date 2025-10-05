@@ -91,7 +91,7 @@ export class CustomTool {
     @IsOptional()
     description?: string;
 
-    @IsUrl()
+    @IsUrl({require_tld: false})
     @Matches(/^https/, { message: 'URL must start with https' })
     url: string;
 
@@ -113,15 +113,15 @@ export class CustomTool {
 
     @IsBoolean()
     @IsOptional()
-    enabled?: boolean = true;
+    enabled?: boolean;
 
     @IsArray()
     @IsEnum(ClientPriority, { each: true })
     @ArrayMinSize(1)
     clientPriorities?: ClientPriority[] = [ClientPriority.LOWEST, ClientPriority.REGULAR, ClientPriority.HIGH];
 
-    @IsBoolean()
-    provideToolToGuests: boolean = true;
+    // @IsBoolean()
+    // provideToolToGuests: boolean = true;
 
     @IsOptional()
     version: number = 1;

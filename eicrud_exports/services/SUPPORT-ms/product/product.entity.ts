@@ -66,7 +66,7 @@ export class Product {
 
     @IsBoolean()
     @IsOptional()
-    chatOn: boolean;
+    chatOn: boolean = true;
 
     @IsBoolean()
     @IsOptional()

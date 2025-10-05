@@ -235,8 +235,7 @@ const actions = computed(() => [
 async function handleSave(data: any) {
     try {
         const toolData = {
-            ...data,
-            id: props.tool?.id || undefined
+            ...data
         }
         emit('save', toolData)
     } catch (error) {
