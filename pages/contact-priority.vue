@@ -124,11 +124,11 @@
             <div class="config-row">
               <span class="config-label">WhatsApp Number:</span>
               <span class="config-value">
-                <span v-if="typeof config.phoneNumber === 'object' && config.phoneNumber?.number" class="phone-number-set">
-                  {{ config.phoneNumber.number }}
+                <span v-if="config.phoneNumber && phoneNumbers.find(p => p.id === config.phoneNumber)" class="phone-number-set">
+                  {{ phoneNumbers.find(p => p.id === config.phoneNumber)?.number }}
                 </span>
                 <span v-else class="phone-not-set">Not set</span>
-                <span v-if="typeof config.phoneNumber === 'object' && config.phoneNumber && !config.phoneNumber.isVerified" class="unverified-note">
+                <span v-if="config.phoneNumber && phoneNumbers.find(p => p.id === config.phoneNumber) && !phoneNumbers.find(p => p.id === config.phoneNumber)?.isVerified" class="unverified-note">
                   (Unverified)
                 </span>
               </span>
@@ -376,7 +376,7 @@ onMounted(() => {
 
 // Computed property to check which phone numbers are not assigned to any config
 const isPhoneNumberAssigned = (phoneId: string): boolean => {
-  return contactConfigs.value.some(config => config.phoneNumber == phoneId)
+  return contactConfigs.value.some(config => config.phoneNumber === phoneId)
 }
 
 // Computed property to sort configs by priority (lowest first)
@@ -476,15 +476,13 @@ const confirmDeletePhone = async () => {
   try {
     const nuxtApp = useNuxtApp()
     
-    await nuxtApp.$sp.phoneNumber.delete({ id: deletingPhone.value.id })
+    await nuxtApp.$sp.phoneNumber.delete({ id: deletingPhone.value.id, product: nuxtApp.$userProductId as string })
     
-    // Remove from local state
-    const index = phoneNumbers.value.findIndex(p => p.id === deletingPhone.value!.id)
-    if (index !== -1) {
-      phoneNumbers.value.splice(index, 1)
-    }
+    
     
     nuxtApp.$toast.show('Phone number deleted successfully', 'success')
+    await fetchPhoneNumbers();
+    await fetchContactConfigs();
     closeDeleteConfirmation()
   } catch (error) {
     console.error('Failed to delete phone number:', error)
@@ -546,21 +544,13 @@ const phoneFormActions = computed<MegaFormAction[]>(() => [
         if (editingPhone.value) {
           // Update existing phone number
           await nuxtApp.$sp.phoneNumber.patchOne(
-            { id: editingPhone.value.id },
+            { id: editingPhone.value.id, product: nuxtApp.$userProductId as string },
             formData
           )
+    
           
-          // Update local state
-          const index = phoneNumbers.value.findIndex(p => p.id === editingPhone.value!.id)
-          if (index !== -1) {
-            phoneNumbers.value[index] = {
-              ...phoneNumbers.value[index],
-              ...formData,
-              updatedAt: new Date()
-            }
-          }
-          
-          nuxtApp.$toast.show('Phone number updated successfully', 'success')
+          nuxtApp.$toast.show('Phone number updated successfully', 'success');
+          await fetchPhoneNumbers();
         } else {
           // Create new phone number
           const newPhoneData: Partial<PhoneNumber> = {
@@ -638,6 +628,26 @@ const verificationFormActions: MegaFormAction[] = [
           const index = phoneNumbers.value.findIndex(p => p.id === verifyingPhone.value!.id)
           if (index !== -1 && phoneNumbers.value[index]) {
             phoneNumbers.value[index].isVerified = true
+          }
+          
+          // Auto-assign this verified number to contact configs without a phone number
+          const configsWithoutPhone = contactConfigs.value.filter(config => !config.phoneNumber)
+          if (configsWithoutPhone.length > 0 && verifyingPhone.value) {
+            for (const config of configsWithoutPhone) {
+              try {
+                await nuxtApp.$sp.contactConfig.patchOne({
+                  id: config.id,
+                  product: nuxtApp.$userProductId as string
+                }, {
+                  phoneNumber: verifyingPhone.value.id
+                })
+              } catch (error) {
+                console.error('Failed to auto-assign phone number to config:', error)
+              }
+            }
+            
+            // Refresh contact configs to show the updated assignments
+            await fetchContactConfigs()
           }
         }
         
@@ -736,26 +746,27 @@ const configFormActions: MegaFormAction[] = [
     color: 'primary',
     margin: 'left',
     callback: async (formData: any) => {
-      if (editingConfig.value) {
-        const index = contactConfigs.value.findIndex(c => c.id === editingConfig.value!.id)
-        if (index !== -1) {
-          // Handle phoneNumber conversion from ID to full object
-          const updatedData = { ...formData }
-          if (formData.phoneNumber && typeof formData.phoneNumber === 'string') {
-            const selectedPhone = phoneNumbers.value.find(p => p.id === formData.phoneNumber)
-            if (selectedPhone) {
-              updatedData.phoneNumber = selectedPhone
-            }
-          }
-          
-          contactConfigs.value[index] = {
-            ...contactConfigs.value[index],
-            ...updatedData,
-            updatedAt: new Date()
-          }
-        }
+      try {
+        if (!editingConfig.value) return
+        
+        const nuxtApp = useNuxtApp()
+        
+        // Update the contact config via API
+        await nuxtApp.$sp.contactConfig.patch({
+          id: editingConfig.value.id,
+          product: nuxtApp.$userProductId as string
+
+        }, formData)
+        
+        // Re-fetch the data to get the latest state
+        await fetchContactConfigs()
+        
+        nuxtApp.$toast.show('Configuration saved successfully', 'success')
+        closeConfigPopup()
+      } catch (error) {
+        console.error('Failed to save configuration:', error)
+        useNuxtApp().$toast.show(error, 'error')
       }
-      closeConfigPopup()
     }
   }
 ]

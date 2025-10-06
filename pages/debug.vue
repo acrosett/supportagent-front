@@ -224,7 +224,7 @@ const replayLLMParsing = async () => {
     
     // For now, we'll just try to find and display the training data
     // You can replace this with the actual replay endpoint when available
-    replayResult.value =  await useNuxtApp().$sp.chatAgent.debug_llm_result_parsing({
+    replayResult.value =  await useNuxtApp().$sp.debug.debug_llm_result_parsing({
       trainingLogId: trainingLogId.value.trim()
     })
   

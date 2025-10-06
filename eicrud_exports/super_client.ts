@@ -18,6 +18,7 @@ import { NotificationClient } from './services/notification/notification.client'
 import { ProductStatClient } from './services/LOG-ms/product-stat/product-stat.client';
 import { LogClient } from './services/LOG-ms/log/log.client';
 import { LlmTrainingDataClient } from './services/LOG-ms/llm-training-data/llm-training-data.client';
+import { DebugClient } from './services/LOG-ms/debug/debug.client';
 import { AdminNotifClient } from './services/LOG-ms/admin-notif/admin-notif.client';
 import { EmailClient } from './services/email/email.client';
 import { CaptchaClient } from './services/captcha/captcha.client';
@@ -61,6 +62,7 @@ export class SuperClient {
         this.productStat = new ProductStatClient(config);
         this.log = new LogClient(config);
         this.llmTrainingData = new LlmTrainingDataClient(config);
+        this.debug = new DebugClient(config);
         this.adminNotif = new AdminNotifClient(config);
         this.email = new EmailClient(config);
         this.captcha = new CaptchaClient(config);
@@ -100,6 +102,7 @@ export class SuperClient {
     productStat: ProductStatClient;
     log: LogClient;
     llmTrainingData: LlmTrainingDataClient;
+    debug: DebugClient;
     adminNotif: AdminNotifClient;
     email: EmailClient;
     captcha: CaptchaClient;
