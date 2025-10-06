@@ -9,6 +9,26 @@
 <script setup>
 import Toast from '~/components/Toast.vue'
 import ConfirmPopup from '~/components/ConfirmPopup.vue'
+
+// Get current route
+const route = useRoute()
+
+// Add cookie banner script to the head (except on test-chat page) - DISABLED
+// useHead({
+//   script: computed(() => {
+//     // Don't add the script on the test-chat page
+//     if (route.path === '/test-chat') {
+//       return []
+//     }
+//     
+//     return [
+//       // Cookie consent banner
+//       {
+//         src: '/banner_source.js'
+//       }
+//     ]
+//   })
+// })
 </script>
 
 <style scoped lang="scss">

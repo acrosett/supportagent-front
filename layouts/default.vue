@@ -17,15 +17,20 @@ import ConfirmPopup from '~/components/ConfirmPopup.vue'
 // Get current route
 const route = useRoute()
 
-// Add the embed script to the head (except on /widget page)
+// Add scripts to the head (except on /widget page)
 useHead({
   script: computed(() => {
-    // Don't add the script on the widget page
+    // Don't add scripts on the widget page
     if (route.path === '/widget') {
       return []
     }
     
     return [
+      // Cookie consent banner - DISABLED
+      // {
+      //   src: '/banner_source.js'
+      // },
+      // AI Support widget
       {
         src: 'http://localhost:3000/embed.js',
         'data-api-token': '68ce983b17ff8a182e27c4c7',
