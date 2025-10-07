@@ -166,22 +166,20 @@ const loadChartData = async () => {
     
     const options: any = {
       orderBy: { startDate: 'asc' },
-      limit: 1000 // High limit to get all buckets in the 14-day period
+      limit: 14 * 24 * 4 // 4 buckets per hour * 24 hours * 14 days
     }
     
     const result = await nuxtApp.$sp.productStat.find({
       product: productId
     }, options)
     
-    // Filter to the desired date range
+    // Filter to the desired date range since buckets are ordered by startDate
     const filteredStats = (result.data || []).filter(stat => {
       const statDate = new Date(stat.startDate)
       return statDate >= startDate && statDate <= endDate
     })
     
-    // Add mock data if no real data exists
-    const mockData = addMockChartData(productId, startDate, endDate)
-    productStats.value = [...filteredStats, ...mockData]
+    productStats.value = filteredStats
     
     // Use nextTick to ensure DOM is updated before creating chart
     await nextTick()
@@ -197,49 +195,7 @@ const loadChartData = async () => {
   }
 }
 
-// Add mock chart data - COMMENT OUT THIS FUNCTION TO REMOVE MOCK DATA
-const addMockChartData = (productId: string, startDate: Date, endDate: Date): ProductStat[] => {
-  const mockData: ProductStat[] = []
-  const currentDate = new Date(startDate)
-  
-  // Generate data points every 1 hour for 14 days
-  while (currentDate <= endDate) {
-    // Create mock data for each priority level
-    Object.values(ClientPriority).forEach(priority => {
-      // Simulate varying message counts based on time of day and priority
-      const hour = currentDate.getHours()
-      let baseCount = 0
-      
-      // Business hours (9-17) have more activity
-      if (hour >= 9 && hour <= 17) {
-        baseCount = priority === ClientPriority.HIGH ? Math.floor(Math.random() * 32) + 8 :
-                   priority === ClientPriority.REGULAR ? Math.floor(Math.random() * 60) + 20 :
-                   Math.floor(Math.random() * 12) + 4
-      } else {
-        baseCount = priority === ClientPriority.HIGH ? Math.floor(Math.random() * 12) :
-                   priority === ClientPriority.REGULAR ? Math.floor(Math.random() * 20) :
-                   Math.floor(Math.random() * 8)
-      }
-      
-      mockData.push({
-        id: `mock-${currentDate.getTime()}-${priority}`,
-        product: productId,
-        owner: '',
-        startDate: new Date(currentDate),
-        messageCount: baseCount,
-        customToolUsedCount: Math.floor(Math.random() * 12),
-        clientPriority: priority,
-        createdAt: new Date(currentDate),
-        updatedAt: new Date(currentDate)
-      } as ProductStat)
-    })
-    
-    // Move to next 1-hour bucket
-    currentDate.setHours(currentDate.getHours() + 1)
-  }
-  
-  return mockData
-}
+
 
 // Create chart
 const createChart = async (retryCount = 0) => {
