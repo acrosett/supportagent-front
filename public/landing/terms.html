@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - DirectSupport.ai</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Main Content */
+        .terms-content {
+            margin-top: 100px;
+            padding: 60px 0;
+            background: #f8fafc;
+            min-height: calc(100vh - 100px);
+        }
+
+        .terms-container {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .terms-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .terms-title {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .terms-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .company-info {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .company-info p {
+            margin: 0.5rem 0;
+            color: #2d3748;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section h3 {
+            color: #2d3748;
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        .section p {
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .section ul {
+            margin: 1rem 0 1rem 2rem;
+            color: #555;
+        }
+
+        .section li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Highlighted sections */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box p {
+            margin: 0.5rem 0;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .contact-section h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .contact-email {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+
+        /* Links */
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .terms-container {
+                padding: 2rem 1.5rem;
+                margin: 0 1rem 2rem;
+            }
+
+            .terms-title {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .terms-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .terms-title {
+                font-size: 1.8rem;
+            }
+
+            .section h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-file-contract"></i>
+                DirectSupport.ai
+            </div>
+            <a href="./index.html" class="back-button">← Back to Home</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="terms-content">
+        <div class="container">
+            <div class="terms-container fade-in">
+                <div class="terms-header">
+                    <h1 class="terms-title">Terms of Service</h1>
+                    <p class="terms-subtitle">Last updated: October 2025</p>
+                </div>
+
+                <div class="company-info fade-in">
+                    <p><strong>Company:</strong> COPPER HEART FACTORY SAS</p>
+                    <p><strong>Registered office:</strong> Bonne 74380, France</p>
+                    <p><strong>Contact:</strong> 
+                        <a href="mailto:legal@directsupport.ai" class="contact-email">legal@directsupport.ai</a> | 
+                        <a href="mailto:privacy@directsupport.ai" class="contact-email">privacy@directsupport.ai</a>
+                    </p>
+                    <p><strong>Website:</strong> <a href="https://directsupport.ai">https://directsupport.ai</a></p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>1. Definitions</h2>
+                    <p><strong>"Service"</strong> means the Direct Support AI SaaS platform, related APIs, dashboard, and embedded chat components.</p>
+                    <p><strong>"Client"</strong> means any organization or individual who creates an account to use the Service.</p>
+                    <p><strong>"End User"</strong> means a visitor or customer interacting with a Client's website via our chat widget.</p>
+                    <p><strong>"Credits"</strong> means prepaid usage units applied to features within the platform.</p>
+                    <p><strong>"Custom Tools"</strong> means any external integration, API, or dataset the Client connects to the Service.</p>
+                    
+                    <div class="highlight-box">
+                        <p>We provide AI-powered infrastructure, not human support or the content of Client documentation.</p>
+                    </div>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>2. Acceptance of Terms</h2>
+                    <p>By creating an account, accessing the dashboard, using the API, or embedding the chat widget, you agree to be bound by these Terms of Service and our <a href="privacy.html">Privacy Policy</a>, which forms an integral part of these Terms.</p>
+                    <p>If you represent a company, you confirm that you have authority to bind that company.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>3. Description of the Service</h2>
+                    <p>Direct Support AI provides hosted tools to integrate AI chat assistants into Client websites and systems.</p>
+                    <p>We may update or modify the Service at any time, including features, pricing, or interface, without materially reducing its core functionality without notice.</p>
+                    <p>No specific uptime or performance level is guaranteed; we operate on a best-effort basis.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>4. Accounts and Access</h2>
+                    <p>Clients must:</p>
+                    <ul>
+                        <li>Provide accurate registration information</li>
+                        <li>Secure their credentials and API keys</li>
+                        <li>Be responsible for all activity under their account</li>
+                    </ul>
+                    <p>We may suspend or terminate access in case of suspected abuse, fraud, or security risk.</p>
+                    <p>End Users do not have a direct contractual relationship with us.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>5. Credits, Free Credits & Payments</h2>
+                    
+                    <h3>5.1 Free Credits</h3>
+                    <ul>
+                        <li>Upon verified email signup, limited free credits may be granted</li>
+                        <li>Free credits are first-come, first-served, may be restocked periodically, and can be modified or withdrawn at any time</li>
+                    </ul>
+
+                    <h3>5.2 Paid Credits</h3>
+                    <ul>
+                        <li>Credits have a fixed accounting value (1 credit = 1 USD)</li>
+                        <li>Credits are non-refundable, non-transferable, and expire 24 months after purchase</li>
+                        <li>Pricing and consumption rates are displayed on the Pricing Page and may vary</li>
+                        <li>If underlying provider costs change (e.g., OpenAI API pricing), we may adjust credit consumption rates with at least 15 days' notice via dashboard or email</li>
+                    </ul>
+
+                    <h3>5.3 Payments</h3>
+                    <ul>
+                        <li>Payments are processed by Stripe in accordance with French accounting law</li>
+                        <li>Invoices and taxes are handled by Stripe on our behalf</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>6. Client Responsibilities</h2>
+                    <p>Clients must:</p>
+                    <ul>
+                        <li>Configure integrations and tools safely and lawfully</li>
+                        <li>Obtain End User consent (or another valid legal basis) for data processed via the chat widget</li>
+                        <li>Comply with GDPR and any other applicable data-protection laws</li>
+                    </ul>
+                    <p>We are not responsible for issues, breaches, or damages caused by Client-supplied integrations, data, or configuration errors.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>7. Our Responsibilities</h2>
+                    <p>We will:</p>
+                    <ul>
+                        <li>Operate the Service using reasonable technical and organizational efforts ("best-effort uptime")</li>
+                        <li>Maintain security, monitoring, and data-retention limits</li>
+                        <li>Provide notice before major updates that materially affect usage</li>
+                    </ul>
+                    <p>We do not guarantee uninterrupted or error-free service. We may suspend or restrict usage to protect the system, comply with law, or prevent abuse.</p>
+                    <p>No Service-Level Agreement applies unless separately signed.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>8. Third-Party & AI Providers</h2>
+                    <p>We may use subprocessors including OpenAI LLC (US) and others for AI generation. Some data may transit outside the EEA under EU Standard Contractual Clauses (SCCs).</p>
+                    <p>By using the Service, the Client authorizes such subcontracting and data transfers as described in the <a href="privacy.html">Privacy Policy</a>.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>9. Data & Privacy</h2>
+                    <ul>
+                        <li>We act as <strong>Data Controller</strong> for Client account and billing data</li>
+                        <li>We act as <strong>Data Processor</strong> for End User chat data; the Client remains the Data Controller</li>
+                    </ul>
+
+                    <h3>Retention</h3>
+                    <ul>
+                        <li><strong>Chat messages:</strong> deleted after 6 months of inactivity or earlier on Client deletion/API request</li>
+                        <li><strong>Logs:</strong> deleted after 6 months</li>
+                        <li><strong>Accounts:</strong> permanently deleted 30 days after flag for deletion</li>
+                        <li><strong>Billing data:</strong> retained 10 years (legal obligation)</li>
+                        <li><strong>Hashed emails:</strong> retained indefinitely for fraud prevention (legitimate interest)</li>
+                    </ul>
+                    
+                    <p>Full GDPR details are available in the <a href="privacy.html">Privacy Policy</a>.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>10. Prohibited Use</h2>
+                    <p>Clients shall not:</p>
+                    <ul>
+                        <li>Use the Service for unlawful, abusive, or discriminatory purposes</li>
+                        <li>Transmit malicious code or spam</li>
+                        <li>Attempt to reverse-engineer or bypass quotas or limits</li>
+                        <li>Resell or sublicense the Service without prior written consent</li>
+                    </ul>
+                    <p>We may suspend or terminate any account violating this section.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>11. Liability & Indemnification</h2>
+                    <p>To the maximum extent permitted by law:</p>
+                    <ul>
+                        <li>Our total aggregate liability for any claim arising from or related to the Service is limited to the total amount paid by the Client in the twelve (12) months preceding the event giving rise to the claim</li>
+                        <li>We are not liable for any indirect, incidental, consequential, special, or punitive damages, including lost profits or data</li>
+                        <li>The Client shall indemnify and hold harmless COPPER HEART FACTORY SAS from claims or damages arising from the Client's misuse, integrations, or End User data</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>12. Service Modifications & Termination</h2>
+                    <ul>
+                        <li>We may modify, suspend, or discontinue any feature at any time with reasonable notice</li>
+                        <li>Either party may terminate the account at any time</li>
+                        <li>When an account is flagged for deletion, data is removed after 30 days in accordance with our deletion schedule</li>
+                        <li>Unused credits are subject to the expiry rules stated above and are not refundable</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>13. Intellectual Property</h2>
+                    <ul>
+                        <li>All intellectual-property rights in the Service, code, design, and brand belong to COPPER HEART FACTORY SAS</li>
+                        <li>Clients retain ownership of their own data, documentation, and content processed through the Service</li>
+                        <li>You grant us a limited license to process that content solely to provide the Service</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>14. Export Control & Sanctions</h2>
+                    <p>The Service is not available to users or entities located in or ordinarily resident of countries subject to EU, UN, or US sanctions, including but not limited to Iran, North Korea, Syria, and the Crimea regions.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>15. Amendments</h2>
+                    <ul>
+                        <li>We may update these Terms from time to time</li>
+                        <li>Material changes will be notified via dashboard or email</li>
+                        <li>Continued use of the Service after such notice constitutes acceptance of the updated Terms</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>16. Governing Law & Jurisdiction</h2>
+                    <ul>
+                        <li>These Terms are governed by French law</li>
+                        <li>Any dispute shall be submitted to the competent courts of Thonon-les-Bains, France, subject to mandatory local law for consumers where applicable</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>17. Contact</h2>
+                    <div class="contact-section">
+                        <h3>For questions about these Terms or legal matters:</h3>
+                        <p><a href="mailto:legal@directsupport.ai" class="contact-email">legal@directsupport.ai</a></p>
+                        <p style="margin-top: 1rem; color: #666;">
+                            COPPER HEART FACTORY SAS<br>
+                            Bonne 74380, France
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 DirectSupport.ai. All rights reserved.</p>
+            <p style="margin-top: 1rem; opacity: 0.8;">
+                <a href="./index.html" style="color: white;">Back to Home</a> |
+                <a href="privacy.html" style="color: white;">Privacy Policy</a> |
+                <a href="mailto:legal@directsupport.ai" style="color: white;">Contact Legal</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

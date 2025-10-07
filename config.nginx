@@ -6,10 +6,10 @@ upstream api  { server 127.0.0.1:4000; }  # API container/port
 # If Nginx runs in the same Docker network, use service names:
 # upstream api { server api:4000; }
 
-# --- api.xxx.com (WebSockets + HTTP API) ---
+# --- api.directsupport.ai (WebSockets + HTTP API) ---
 server {
   listen 80; listen 443 ssl http2;
-  server_name api.xxx.com;
+  server_name api.directsupport.ai;
 
   # Common proxy headers
   location / {
@@ -30,10 +30,10 @@ server {
   }
 }
 
-# --- admin.xxx.com → Nuxt SPA (admin + /test-chat) ---
+# --- app.directsupport.ai → Nuxt SPA (admin + /test-chat) ---
 server {
   listen 80; listen 443 ssl http2;
-  server_name admin.xxx.com;
+  server_name app.directsupport.ai;
 
   location / {
     proxy_pass http://nuxt;
@@ -46,10 +46,10 @@ server {
   }
 }
 
-# --- cdn.xxx.com → /embed.js from Nuxt (short TTL set by Nuxt) ---
+# --- cdn.directsupport.ai → /embed.js from Nuxt (short TTL set by Nuxt) ---
 server {
   listen 80; listen 443 ssl http2;
-  server_name cdn.xxx.com;
+  server_name cdn.directsupport.ai;
 
   location = /embed.js {
     proxy_pass http://nuxt/embed.js;
@@ -69,14 +69,29 @@ server {
   location / { return 404; }
 }
 
-# --- xxx.com → serve /landing/index.html from Nuxt (marketing page) ---
+# --- directsupport.ai → serve /landing/index.html from Nuxt (marketing page) ---
 server {
   listen 80; listen 443 ssl http2;
-  server_name xxx.com;
+  server_name directsupport.ai;
 
   # root path → fetch the static file inside Nuxt public/
   location = / {
     proxy_pass http://nuxt/landing/index.html;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # legal pages → serve from landing directory
+  location = /privacy.html {
+    proxy_pass http://nuxt/landing/privacy.html;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location = /terms.html {
+    proxy_pass http://nuxt/landing/terms.html;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;

@@ -31,7 +31,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return
   }
   // Require login for all other pages
-  if (!loggedIn && !["/login", "/register", "/reset-password", "/verify-email"].includes(to.path)) {
+  if (!loggedIn) {
     // Use relative path only (path + query + hash) to prevent open redirect attacks
     const queryString = Object.keys(to.query).length > 0 ? '?' + new URLSearchParams(to.query as Record<string, string>).toString() : ''
     const relativePath = to.path + queryString + (to.hash || '')

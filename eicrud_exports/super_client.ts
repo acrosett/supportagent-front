@@ -1,6 +1,7 @@
 import { WhatsappMessageClient } from './services/WHATSAPP-ms/whatsapp-message/whatsapp-message.client';
 import { PhoneNumberClient } from './services/WHATSAPP-ms/phone-number/phone-number.client';
 import { ContactConfigClient } from './services/WHATSAPP-ms/contact-config/contact-config.client';
+import { WaitingListClient } from './services/waiting-list/waiting-list.client';
 import { UserClient } from './services/user/user.client';
 import { WidgetConfigClient } from './services/SUPPORT-ms/widget-config/widget-config.client';
 import { ToolTraceClient } from './services/SUPPORT-ms/tool-trace/tool-trace.client';
@@ -45,6 +46,7 @@ export class SuperClient {
         this.whatsappMessage = new WhatsappMessageClient(config);
         this.phoneNumber = new PhoneNumberClient(config);
         this.contactConfig = new ContactConfigClient(config);
+        this.waitingList = new WaitingListClient(config);
         this.user = new UserClient(config);
         this.widgetConfig = new WidgetConfigClient(config);
         this.toolTrace = new ToolTraceClient(config);
@@ -85,6 +87,7 @@ export class SuperClient {
     whatsappMessage: WhatsappMessageClient;
     phoneNumber: PhoneNumberClient;
     contactConfig: ContactConfigClient;
+    waitingList: WaitingListClient;
     user: UserClient;
     widgetConfig: WidgetConfigClient;
     toolTrace: ToolTraceClient;

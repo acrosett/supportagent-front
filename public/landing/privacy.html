@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - DirectSupport.ai</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Main Content */
+        .privacy-content {
+            margin-top: 100px;
+            padding: 60px 0;
+            background: #f8fafc;
+            min-height: calc(100vh - 100px);
+        }
+
+        .privacy-container {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .privacy-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .privacy-title {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .privacy-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .company-info {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .company-info p {
+            margin: 0.5rem 0;
+            color: #2d3748;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section h3 {
+            color: #2d3748;
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        .section p {
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .section ul {
+            margin: 1rem 0 1rem 2rem;
+            color: #555;
+        }
+
+        .section li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+        }
+
+        .data-table td {
+            color: #2d3748;
+        }
+
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .contact-section h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .contact-email {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .privacy-container {
+                padding: 2rem 1.5rem;
+                margin: 0 1rem 2rem;
+            }
+
+            .privacy-title {
+                font-size: 2rem;
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .privacy-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .privacy-title {
+                font-size: 1.8rem;
+            }
+
+            .section h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                DirectSupport.ai
+            </div>
+            <a href="./index.html" class="back-button">← Back to Home</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="privacy-content">
+        <div class="container">
+            <div class="privacy-container fade-in">
+                <div class="privacy-header">
+                    <h1 class="privacy-title">Privacy Policy</h1>
+                    <p class="privacy-subtitle">Last updated: October 2025</p>
+                </div>
+
+                <div class="company-info fade-in">
+                    <p><strong>Company:</strong> COPPER HEART FACTORY SAS</p>
+                    <p><strong>Registered office:</strong> Bonne 74380, France</p>
+                    <p><strong>Contact:</strong> <a href="mailto:privacy@directsupport.ai" class="contact-email">privacy@directsupport.ai</a></p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>1. Introduction</h2>
+                    <p>This Privacy Policy describes how COPPER HEART FACTORY SAS ("we", "our", "us") collects, uses, and protects personal data in connection with the website directsupport.ai, the SaaS platform app.directsupport.ai, and any chat widgets powered by our technology (together, the "Service").</p>
+                    <p>We comply with the EU General Data Protection Regulation (GDPR) and French data-protection law.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>2. Data Controller and Processor Roles</h2>
+                    <p>For the directsupport.ai website and our SaaS platform (client accounts), we act as <strong>data controller</strong>.</p>
+                    <p>For embedded chat widgets installed on our clients' websites, we act as a <strong>data processor</strong>; the site owner (our client) is the data controller responsible for informing end-users and managing their data rights.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>3. Data We Collect</h2>
+                    
+                    <h3>a. From visitors to directsupport.ai</h3>
+                    <ul>
+                        <li>Technical and security logs (IP address, user agent, timestamps)</li>
+                        <li>Information you submit voluntarily (e.g., contact forms, waiting-list email)</li>
+                        <li>Chat messages sent through the chat widget on our own site</li>
+                    </ul>
+
+                    <h3>b. From SaaS clients (account holders)</h3>
+                    <ul>
+                        <li>Account data (name, email, company information)</li>
+                        <li>Billing information (handled by Stripe)</li>
+                        <li>Authentication data and usage logs</li>
+                    </ul>
+
+                    <h3>c. From chat end-users (on client websites)</h3>
+                    <ul>
+                        <li>Conversation content and metadata necessary to operate the chat</li>
+                        <li>No cookies or trackers are set by our widget beyond those required for functionality</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>4. Purposes and Legal Bases</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Purpose</th>
+                                <th>Legal basis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Operating and securing the Service</td>
+                                <td>Legitimate interest</td>
+                            </tr>
+                            <tr>
+                                <td>Providing the chat functionality to end-users</td>
+                                <td>Contract performance</td>
+                            </tr>
+                            <tr>
+                                <td>Managing client accounts and billing</td>
+                                <td>Contract performance</td>
+                            </tr>
+                            <tr>
+                                <td>Sending service or launch notifications</td>
+                                <td>Consent (waiting list)</td>
+                            </tr>
+                            <tr>
+                                <td>Preventing repeated free-credit abuse</td>
+                                <td>Legitimate interest</td>
+                            </tr>
+                            <tr>
+                                <td>Complying with legal obligations (accounting, security)</td>
+                                <td>Legal obligation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>5. Data Retention</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data type</th>
+                                <th>Retention period</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Chat messages (end-users)</td>
+                                <td>Deleted after 6 months of inactivity, or sooner if our client deletes their account or calls the deletion API</td>
+                            </tr>
+                            <tr>
+                                <td>Logs (technical, security)</td>
+                                <td>Up to 6 months, then automatically deleted</td>
+                            </tr>
+                            <tr>
+                                <td>Client accounts</td>
+                                <td>Deleted 30 days after flag for deletion; data erased or anonymized afterwards</td>
+                            </tr>
+                            <tr>
+                                <td>Billing data (Stripe)</td>
+                                <td>Retained as required by law (10 years under French law)</td>
+                            </tr>
+                            <tr>
+                                <td>Waiting-list emails</td>
+                                <td>Used once for launch notification then deleted</td>
+                            </tr>
+                            <tr>
+                                <td>Hashed emails (anti-abuse)</td>
+                                <td>Retained indefinitely in irreversible form for fraud prevention</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>6. Sub-Processors and Partners</h2>
+                    <p>We use trusted service providers to deliver the Service:</p>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Partner</th>
+                                <th>Purpose</th>
+                                <th>Location / Policy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Stripe, Inc.</td>
+                                <td>Payments and billing</td>
+                                <td>USA – Standard Contractual Clauses, <a href="https://stripe.com/privacy" target="_blank" style="color: #667eea;">https://stripe.com/privacy</a></td>
+                            </tr>
+                            <tr>
+                                <td>Amazon Web Services (AWS)</td>
+                                <td>Hosting, email delivery</td>
+                                <td>EU / USA – SCCs, <a href="https://aws.amazon.com/privacy/" target="_blank" style="color: #667eea;">https://aws.amazon.com/privacy/</a></td>
+                            </tr>
+                            <tr>
+                                <td>Google reCAPTCHA v3</td>
+                                <td>Bot detection and security</td>
+                                <td>USA – SCCs, <a href="https://policies.google.com/privacy" target="_blank" style="color: #667eea;">https://policies.google.com/privacy</a></td>
+                            </tr>
+                            <tr>
+                                <td>Meta (WhatsApp Business API)</td>
+                                <td>Client chat integration</td>
+                                <td>USA – SCCs, <a href="https://www.whatsapp.com/legal/privacy-policy" target="_blank" style="color: #667eea;">https://www.whatsapp.com/legal/privacy-policy</a></td>
+                            </tr>
+                            <tr>
+                                <td>OpenAI, L.L.C.</td>
+                                <td>AI language model processing for chat responses</td>
+                                <td>USA – SCCs, <a href="https://openai.com/privacy" target="_blank" style="color: #667eea;">https://openai.com/privacy</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>Use of these partners is necessary to provide and secure our services. Some data may be transferred outside the EEA under approved EU Standard Contractual Clauses ensuring adequate protection.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>6.1. Large Language Model (LLM) Providers</h2>
+                    <p>To generate AI-based responses within the chat feature, we use one or more Large Language Model (LLM) providers (for example, OpenAI, L.L.C. (USA) and other similar vendors).</p>
+                    <p>Chat messages and related context are securely transmitted to these providers' APIs for processing and returned to produce AI-generated answers.</p>
+                    <p>LLM providers process this data solely for the purpose of generating the requested output and are not permitted to use it for training their public models or for any marketing purposes.</p>
+                    <p>All such providers operate under appropriate data-processing agreements and, where data may be transferred outside the European Economic Area, under EU Standard Contractual Clauses (SCCs) or other safeguards ensuring GDPR-level protection.</p>
+                    <p>We transmit only the minimum information necessary to perform each operation, and no chat data is shared for advertising, profiling, or unrelated analytics.</p>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>7. Data Security</h2>
+                    <p>We implement appropriate technical and organizational measures, including:</p>
+                    <ul>
+                        <li>Encryption in transit (https, wss)</li>
+                        <li>Strict access controls and authentication</li>
+                        <li>Logging and monitoring of infrastructure</li>
+                        <li>Automatic data-retention limits and deletion</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>8. User Rights (GDPR Articles 15–22)</h2>
+                    <p>You have the right to:</p>
+                    <ul>
+                        <li>Access your personal data</li>
+                        <li>Request correction or deletion</li>
+                        <li>Restrict or object to processing</li>
+                        <li>Receive a copy (data portability)</li>
+                        <li>Withdraw consent (where applicable)</li>
+                    </ul>
+                    <p>To exercise your rights, contact <a href="mailto:privacy@directsupport.ai" class="contact-email">privacy@directsupport.ai</a>.</p>
+                    <p>If we process data on behalf of a client (chat widget), please contact the relevant website owner directly.</p>
+                    <p>You also have the right to lodge a complaint with the CNIL (<a href="https://www.cnil.fr" target="_blank" style="color: #667eea;">www.cnil.fr</a>).</p>
+
+                    <div class="highlight-box">
+                        <p><strong>For Client Data Controllers:</strong> When your customers request deletion of their chat data, you must use our API endpoint: <code>PATCH /crud/s/message/cmd/delete_client</code> with a JSON body containing: productId, clientUniqueId, and sharedSecret.</p>
+                    </div>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>9. Cookies and Trackers</h2>
+                    <ul>
+                        <li>We do not use tracking cookies</li>
+                        <li>Essential technical cookies may be set for session and security purposes only</li>
+                        <li>Google reCAPTCHA v3 may use cookies strictly necessary for spam and abuse prevention</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>10. International Data Transfers</h2>
+                    <p>Where data is transferred outside the European Economic Area, we rely on:</p>
+                    <ul>
+                        <li>European Commission adequacy decisions, or</li>
+                        <li>Standard Contractual Clauses (SCCs) with appropriate safeguards</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>11. Updates</h2>
+                    <ul>
+                        <li>We may update this Privacy Policy to reflect legal or service changes</li>
+                        <li>Users will be notified of material updates via the Service or by email</li>
+                    </ul>
+                </div>
+
+                <div class="section fade-in">
+                    <h2>12. Contact</h2>
+                    <div class="contact-section">
+                        <h3>For any questions or to exercise your rights:</h3>
+                        <p><a href="mailto:privacy@directsupport.ai" class="contact-email">privacy@directsupport.ai</a></p>
+                        <p style="margin-top: 1rem; color: #666;">
+                            COPPER HEART FACTORY SAS<br>
+                            Bonne 74380, France
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 DirectSupport.ai. All rights reserved.</p>
+            <p style="margin-top: 1rem; opacity: 0.8;">
+                <a href="./index.html" style="color: white;">Back to Home</a> |
+                <a href="mailto:privacy@directsupport.ai" style="color: white;">Contact Us</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

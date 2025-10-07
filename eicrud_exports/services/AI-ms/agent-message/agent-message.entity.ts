@@ -29,6 +29,14 @@ export class AgentMessage {
     
     client: Client | string;
 
+    @IsString()
+    @IsOptional()
+    clientName?: string;
+
+    @IsString()
+    @IsOptional()
+    clientEmail?: string;
+
     contactConfig: ContactConfig | string;
 
     createdAt: Date;
