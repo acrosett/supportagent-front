@@ -1,5 +1,4 @@
 import { IsString, IsOptional, IsBoolean, IsDate } from "class-validator";
-import { ContextPiece } from "../shared";
 
 
 export class ChatAgent {

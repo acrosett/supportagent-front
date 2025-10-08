@@ -1,5 +1,4 @@
 import { IsString, IsOptional, IsDate, IsBoolean } from "class-validator";
-import { ContextPiece } from "../shared";
 
 
 export class StaffContactAgent {

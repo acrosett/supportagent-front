@@ -1,6 +1,12 @@
 (function() {
   'use strict';
   
+  // Check if chat parameter is enabled in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('chat') !== 'true') {
+    return;
+  }
+  
   console.log('AI Support Widget: CURRENT_VERSION_STRING');
   // Configuration defaults
   const DEFAULT_CONFIG = {

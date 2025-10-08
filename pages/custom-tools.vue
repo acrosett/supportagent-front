@@ -226,7 +226,7 @@ import { CustomTool } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/cus
 import { Domain } from '~/eicrud_exports/services/SUPPORT-ms/domain/domain.entity'
 
 // AI Instructions
-const aiInstructions = reactive({
+let aiInstructions = reactive({
   additionalInstructions: ''
 })
 
@@ -247,7 +247,7 @@ const selectedTool = ref<CustomTool | null>(null)
 // Domain management
 const verifiedDomains = ref<Domain[]>([])
 const showAddDomain = ref(false)
-const newDomain = reactive({
+let newDomain = reactive({
   domain: ''
 })
 

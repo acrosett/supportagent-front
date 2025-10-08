@@ -1,9 +1,10 @@
 export default defineNuxtPlugin(async () => {
-  console.log('AI Support Widget: CURRENT_VERSION_STRING');
-  
-  // Get API base URL from runtime config
+  // Get runtime config
   const config = useRuntimeConfig()
+  const appVersion = config.public.appVersion
   const apiBaseUrl = config.public.apiBaseUrl
+  
+  console.log('AI Support Widget:', appVersion);
   
   try {
     console.log('Making request to API:', apiBaseUrl);

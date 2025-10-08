@@ -4,10 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "postbuild": "node ./scripts/compile-embed.mjs",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "postgenerate": "node ./scripts/compile-embed.mjs",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "build:cdn": "node ./scripts/build-cdn.mjs"

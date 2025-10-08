@@ -1,0 +1,42 @@
+# /opt/myapp/docker-compose.yml
+# Host Nginx proxies api.directsupport.ai -> 127.0.0.1:4000
+# Frontend is deployed as static files to /var/www/app (no container needed).
+
+services:
+  api:
+    image: xxx.com:5000/backend:CHANGE_ME_TAG   # deploy script will override this tag
+    container_name: directsupport-api
+    env_file: .env                               # runtime secrets live here (on the VM)
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4000:4000"                    # only expose to localhost for Nginx
+    depends_on:
+      redis:
+        condition: service_started
+      mongo-logs:
+        condition: service_started
+    healthcheck:
+      # Assumes curl is present in the backend image (add it in your Dockerfile)
+      test: ["CMD", "curl", "-fsS", "http://localhost:4000/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: directsupport-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+  mongo-logs:
+    image: mongo:7
+    container_name: directsupport-mongo-logs
+    restart: unless-stopped
+    volumes:
+      - mongo-logs:/data/db
+
+volumes:
+  redis-data: {}
+  mongo-logs: {}

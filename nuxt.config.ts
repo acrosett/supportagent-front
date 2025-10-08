@@ -32,7 +32,7 @@ export default defineNuxtConfig({
     }
   },
   build: {
-    transpile: ['tslib']
+    transpile: ['tslib', 'eicrud_exports']
   },
   runtimeConfig: {
     // Private keys (only available on server-side)
@@ -40,7 +40,8 @@ export default defineNuxtConfig({
     // Public keys (exposed to client-side)
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3200',
-      socketBaseUrl: process.env.NUXT_PUBLIC_SOCKET_BASE_URL || 'ws://localhost:3200'
+      socketBaseUrl: process.env.NUXT_PUBLIC_SOCKET_BASE_URL || 'ws://localhost:3200',
+      appVersion: process.env.APP_VERSION || 'dev'
     }
   },
   typescript: {
@@ -77,7 +78,29 @@ export default defineNuxtConfig({
   },
   // Chunk splitting configuration
   vite: {
+    optimizeDeps: {
+      include: ['eicrud_exports/**/*'],
+      esbuildOptions: {
+        target: 'esnext',
+        tsconfigRaw: {
+          compilerOptions: {
+            experimentalDecorators: true,
+            useDefineForClassFields: false
+          }
+        }
+      }
+    },
+    esbuild: {
+      target: 'esnext',
+      tsconfigRaw: {
+        compilerOptions: {
+          experimentalDecorators: true,
+          useDefineForClassFields: false
+        }
+      }
+    },
     build: {
+      target: 'esnext',
       rollupOptions: {
         output: {
           manualChunks: {

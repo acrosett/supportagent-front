@@ -20,7 +20,7 @@ const props = defineProps<Props>()
 const emit = defineEmits(['save', 'cancel'])
 
 // Form data
-const formData = reactive<Record<string, any>>({
+let formData = reactive<Record<string, any>>({
     name: '',
     description: '',
     url: '',

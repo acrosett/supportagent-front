@@ -7,6 +7,13 @@ import { fileURLToPath } from 'node:url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+// Get version from command line argument
+const version = process.argv[2]
+if (!version) {
+  console.error('[compile-embed] Usage: node compile-embed.mjs <version>')
+  process.exit(1)
+}
+
 // Resolve inputs/outputs
 const repoRoot = path.resolve(__dirname, '..')
 const publicDir = path.join(repoRoot, 'public')
@@ -58,7 +65,12 @@ async function runClosure() {
   }
 
   await fs.mkdir(path.dirname(outFile), { recursive: true })
-  await fs.writeFile(outFile, result.stdOut, 'utf8')
+  
+  // Replace CURRENT_VERSION_STRING with actual version
+  const finalOutput = result.stdOut.replace(/CURRENT_VERSION_STRING/g, version)
+  await fs.writeFile(outFile, finalOutput, 'utf8')
+  
+  console.log(`[compile-embed] Replaced CURRENT_VERSION_STRING with ${version}`)
   
   // Show size comparison
   const sourceStats = await fs.stat(sourceFile)
