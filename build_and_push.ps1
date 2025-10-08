@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 param(
     [string]$REGISTRY = "feelsthegame.com:5000",
-    [string]$IMAGE_NAME = $null,
+    [string]$IMAGE_NAME = "frontend",
     [string]$VERSION_FILE = "VERSION",
     [string]$SRC_DIR = "."
 )
@@ -9,15 +9,6 @@ param(
 # Set error action preference to stop on errors
 $ErrorActionPreference = "Stop"
 
-# Get image name from git repo if not provided
-if (-not $IMAGE_NAME) {
-    try {
-        $gitRoot = git rev-parse --show-toplevel
-        $IMAGE_NAME = Split-Path -Leaf $gitRoot
-    } catch {
-        $IMAGE_NAME = Split-Path -Leaf (Get-Location)
-    }
-}
 
 Write-Host "Registry: $REGISTRY"
 Write-Host "Image Name: $IMAGE_NAME"
