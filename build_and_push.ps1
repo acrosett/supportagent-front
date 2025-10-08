@@ -37,8 +37,11 @@ $env:APP_VERSION = $NEW_VER
 
 # 2.1) Compile embed script with version replacement
 Write-Host "Compiling embed script with version $NEW_VER..."
+Write-Host "DEBUG: NEW_VER variable contains: '$NEW_VER'"
+Write-Host "DEBUG: NEW_VER length: $($NEW_VER.Length)"
 if (Test-Path "scripts\compile-embed.mjs") {
-    node "scripts\compile-embed.mjs" $NEW_VER
+    Write-Host "DEBUG: About to run: node scripts\compile-embed.mjs `"$NEW_VER`""
+    node "scripts\compile-embed.mjs" "`"$NEW_VER`""
     if ($LASTEXITCODE -ne 0) {
         throw "Embed script compilation failed"
     }

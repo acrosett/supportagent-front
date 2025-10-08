@@ -6,17 +6,23 @@ import { NuxtApp } from "nuxt/app";
 export default defineNuxtRouteMiddleware(async (to, from) => {
 
   const nuxtApp = useNuxtApp()
-  const jwt = nuxtApp.$sp.user.config.storage?.get(nuxtApp.$sp.user.JWT_STORAGE_KEY);
-
-  const loggedIn = jwt && await checkLogin(nuxtApp).catch((e) => {
- 
-    return false;
-  });
-
-    // Run redirect logic only on client side
+  
+  // Run redirect logic only on client side
   if (import.meta.server) {
     return
   }
+
+  // Allow access to public paths without authentication first (before any API calls)
+  if (isPublicPath(to.path)) {
+    return
+  }
+
+  const jwt = nuxtApp.$sp.user.config.storage?.get(nuxtApp.$sp.user.JWT_STORAGE_KEY);
+
+  const loggedIn = jwt && await checkLogin(nuxtApp).catch((e) => {
+    console.warn('Login check failed:', e);
+    return false;
+  });
   
   // Redirect logged-in users away from login page
   if (to.path === "/login" && loggedIn) {
@@ -26,10 +32,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
     return navigateTo("/")
   }
-  // Allow access to public paths without authentication
-  if (isPublicPath(to.path)) {
-    return
-  }
+  
   // Require login for all other pages
   if (!loggedIn) {
     // Use relative path only (path + query + hash) to prevent open redirect attacks
