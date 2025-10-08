@@ -10,12 +10,18 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import AppMenu from '~/components/AppMenu.vue'
 import Toast from '~/components/Toast.vue'
 import ConfirmPopup from '~/components/ConfirmPopup.vue'
 
 // Get current route
 const route = useRoute()
+
+// Version logging
+onMounted(() => {
+  console.log('AI Support Widget: CURRENT_VERSION_STRING');
+})
 
 // Add scripts to the head (except on /widget page)
 useHead({

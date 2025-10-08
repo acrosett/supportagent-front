@@ -1,6 +1,7 @@
 (function() {
   'use strict';
   
+  console.log('AI Support Widget: CURRENT_VERSION_STRING');
   // Configuration defaults
   const DEFAULT_CONFIG = {
     width: '400px',
