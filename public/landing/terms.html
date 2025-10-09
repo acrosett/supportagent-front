@@ -307,6 +307,7 @@
                     <h2>2. Acceptance of Terms</h2>
                     <p>By creating an account, accessing the dashboard, using the API, or embedding the chat widget, you agree to be bound by these Terms of Service and our <a href="privacy.html">Privacy Policy</a>, which forms an integral part of these Terms.</p>
                     <p>If you represent a company, you confirm that you have authority to bind that company.</p>
+                    <p><em>Business Customers.</em> The Service is intended for business use only. By using the Service, the Client represents that it acts for professional purposes and not as a consumer.</p>
                 </div>
 
                 <div class="section fade-in">
@@ -324,12 +325,13 @@
                         <li>Secure their credentials and API keys</li>
                         <li>Be responsible for all activity under their account</li>
                     </ul>
+                    <p><em>Credentials &amp; Shared Secrets.</em> The Client must keep any key or password confidential and rotate compromised keys immediately. The Client is responsible for usage executed with its credentials.</p>
                     <p>We may suspend or terminate access in case of suspected abuse, fraud, or security risk.</p>
                     <p>End Users do not have a direct contractual relationship with us.</p>
                 </div>
 
                 <div class="section fade-in">
-                    <h2>5. Credits, Free Credits & Payments</h2>
+                    <h2>5. Credits, Free Credits &amp; Payments</h2>
                     
                     <h3>5.1 Free Credits</h3>
                     <ul>
@@ -346,11 +348,35 @@
                         <li>If underlying provider costs change (e.g., OpenAI API pricing), we may adjust credit consumption rates with at least 15 days' notice via dashboard or email</li>
                     </ul>
 
-                    <h3>5.3 Payments</h3>
+                    <!-- NEW 5.3 -->
+                    <h3>5.3 Wallet &amp; Auto-Top-Up</h3>
+                    <p>
+                      The Service operates on a <strong>prepaid wallet</strong> basis. Credits are deducted in real time as features are used. 
+                      The Client may enable an <strong>auto-top-up</strong> option to automatically purchase additional credits when the wallet balance falls below a chosen threshold.
+                    </p>
+                    <ul>
+                      <li>The Client is solely responsible for configuring auto-top-up and its associated <strong>monthly deposit limit</strong>.</li>
+                      <li>Top-ups executed within the configured limit are final, non-refundable, and considered Client-authorized.</li>
+                      <li>If the Client disables auto-top-up or reaches the monthly limit, the Service may pause or reject new requests until additional funds are manually added.</li>
+                      <li>We are not liable for credit consumption caused by End User or automated interactions that occur within the configured wallet and limit settings.</li>
+                    </ul>
+                    <p>
+                      In the event of a verifiable system malfunction causing charges to exceed the <strong>explicitly configured monthly deposit limit</strong>, 
+                      our sole obligation is to credit the Client’s account for the amount exceeding that limit. 
+                      This credit constitutes the Client’s exclusive remedy, subject to the aggregate liability cap in Section&nbsp;11.
+                    </p>
+
+                    <!-- RENAMED original 5.3 to 5.4 -->
+                    <h3>5.4 Payments</h3>
                     <ul>
                         <li>Payments are processed by Stripe in accordance with French accounting law</li>
                         <li>Invoices and taxes are handled by Stripe on our behalf</li>
                     </ul>
+
+                    <!-- Spending Controls note -->
+                    <p><em>Spending Controls.</em> The Client may configure an auto-top-up limit and monthly cap in the dashboard. 
+                    Unless such a cap is properly enabled and active, credit purchases and usage will continue automatically while funds are available. 
+                    The Client is responsible for monitoring consumption, available balance, and configuration of spending controls.</p>
                 </div>
 
                 <div class="section fade-in">
@@ -362,6 +388,35 @@
                         <li>Comply with GDPR and any other applicable data-protection laws</li>
                     </ul>
                     <p>We are not responsible for issues, breaches, or damages caused by Client-supplied integrations, data, or configuration errors.</p>
+                </div>
+
+                <!-- NEW 6bis -->
+                <div class="section fade-in">
+                    <h2>6bis. Abuse, Overuse &amp; Shared Responsibility</h2>
+                    <p>
+                        The Service includes optional anti-abuse controls (e.g., CAPTCHA, rate limits, per-period message caps, spending controls). 
+                        These controls are provided on a <strong>best-effort</strong> basis and are not a guarantee against automated traffic, spam, or malicious use by third parties.
+                    </p>
+
+                    <h3>6bis.1 Client Responsibility for Traffic</h3>
+                    <ul>
+                        <li>The Client is solely responsible for all interactions with the embedded widget on its properties, including messages generated by End Users, bots, or third parties.</li>
+                        <li>The Client must configure available controls appropriate to its risk profile (e.g., enabling monthly deposit limits, gating access behind authentication where feasible, and monitoring usage dashboards).</li>
+                        <li>The Client remains responsible for fees and credit consumption incurred within the configured wallet balance and auto-top-up limits.</li>
+                        <li>If the Client fails to configure or maintain a monthly limit, the wallet may continue topping up automatically; all such transactions are considered authorized and non-refundable.</li>
+                    </ul>
+
+                    <h3>6bis.2 No Abuse-Protection Guarantee</h3>
+                    <p>
+                        While we may provide tools (e.g., CAPTCHA, rate limiting) to mitigate abusive traffic, we do not guarantee prevention of automated or fraudulent interactions. 
+                        The Client is responsible for implementing additional measures as needed (e.g., session gating, identity checks, geo/IP rules).
+                    </p>
+
+                    <h3>6bis.3 Credits &amp; Overuse</h3>
+                    <ul>
+                        <li>Credits consumed due to End User or third-party activity are non-refundable, except as provided in Section 11.4 (Service Faults exceeding the configured monthly deposit limit).</li>
+                        <li>Chargebacks or disputes relating to consumption within configured limits or absent a monthly cap are a breach of these Terms.</li>
+                    </ul>
                 </div>
 
                 <div class="section fade-in">
@@ -377,13 +432,13 @@
                 </div>
 
                 <div class="section fade-in">
-                    <h2>8. Third-Party & AI Providers</h2>
+                    <h2>8. Third-Party &amp; AI Providers</h2>
                     <p>We may use subprocessors including OpenAI LLC (US) and others for AI generation. Some data may transit outside the EEA under EU Standard Contractual Clauses (SCCs).</p>
                     <p>By using the Service, the Client authorizes such subcontracting and data transfers as described in the <a href="privacy.html">Privacy Policy</a>.</p>
                 </div>
 
                 <div class="section fade-in">
-                    <h2>9. Data & Privacy</h2>
+                    <h2>9. Data &amp; Privacy</h2>
                     <ul>
                         <li>We act as <strong>Data Controller</strong> for Client account and billing data</li>
                         <li>We act as <strong>Data Processor</strong> for End User chat data; the Client remains the Data Controller</li>
@@ -411,20 +466,90 @@
                         <li>Resell or sublicense the Service without prior written consent</li>
                     </ul>
                     <p>We may suspend or terminate any account violating this section.</p>
+
+                    <h3>10.1 Fair Use &amp; Automated Traffic</h3>
+                    <p>
+                      The Client must not deliberately generate artificial traffic for the purpose of inflating usage or testing beyond reasonable load. 
+                      Automated traffic for legitimate QA or testing must use separate environments and respect configured limits. 
+                      We may throttle, block, or suspend usage to protect the Service or other customers.
+                    </p>
                 </div>
 
                 <div class="section fade-in">
-                    <h2>11. Liability & Indemnification</h2>
+                    <h2>11. Liability &amp; Indemnification</h2>
                     <p>To the maximum extent permitted by law:</p>
                     <ul>
                         <li>Our total aggregate liability for any claim arising from or related to the Service is limited to the total amount paid by the Client in the twelve (12) months preceding the event giving rise to the claim</li>
                         <li>We are not liable for any indirect, incidental, consequential, special, or punitive damages, including lost profits or data</li>
                         <li>The Client shall indemnify and hold harmless COPPER HEART FACTORY SAS from claims or damages arising from the Client's misuse, integrations, or End User data</li>
                     </ul>
+
+                    <h3>11.4 Overuse Caused by Service Faults</h3>
+                    <p>
+                      If (and only if) the Client has properly configured a monthly deposit limit and the Service fails to enforce it due to a verifiable defect solely attributable to us, 
+                      our sole obligation is to credit the Client’s account for the <em>amount of charges exceeding that monthly deposit limit</em>. 
+                      This credit is the exclusive remedy and is subject to the aggregate liability cap in this Section.
+                    </p>
+
+                    <h3>11.5 Third-Party Abuse</h3>
+                    <p>
+                      We are not liable for costs arising from third-party or automated interactions with the Client’s widget, including bots, spam, or malicious traffic, 
+                      except as provided in Section 11.4. The Client remains responsible for configuring controls and monitoring usage.
+                    </p>
+
+                    <h3>11.6 Indemnity for Misconfiguration &amp; Integrations</h3>
+                    <p>
+                      The Client shall indemnify and hold harmless COPPER HEART FACTORY SAS from claims, losses, or fees arising from Client misconfiguration, 
+                      disabled or insufficient limits, unsafe integrations, or exposure of API keys or widget code that enables abuse.
+                    </p>
+
+                    <h3>11.7 Auto-Top-Up Disclaimer</h3>
+                    <p>
+                      The auto-top-up feature is provided for convenience and relies on the Client’s configuration. 
+                      We are not responsible for over-funding or unintended top-ups resulting from misconfiguration, shared account access, or abusive third-party traffic, 
+                      except where the system demonstrably exceeded the Client’s configured monthly deposit limit due solely to a technical fault on our side.
+                    </p>
+                    
+                                        <h3>11.8 Force Majeure</h3>
+                                        <p>
+                                            We are not liable for any failure or delay in performance caused by events beyond our reasonable control, 
+                                            including but not limited to internet or hosting outages, DDoS attacks, failures of third-party providers, 
+                                            acts of government, or natural disasters. Obligations affected by such events are suspended for their duration.
+                                        </p>
+
+                                        <h3>11.9 Aggregate Cap</h3>
+                                        <p>
+                                            All claims and liabilities arising out of or related to the Service, whether in contract, tort, or otherwise, 
+                                            are subject to a single aggregate cap equal to the amount specified in Section 11, regardless of the number of incidents or claims.
+                                        </p>
+
+<h3>11.10 Disclaimer of Reliance & Custom Tools</h3>
+<p>
+  The Service generates automated responses and may execute <strong>custom tools</strong> or integrations configured by the Client. 
+  These tools, endpoints, and scripts are operated under the Client’s exclusive control and responsibility.
+</p>
+<p>
+  Outputs produced by the Service or by such custom tools are provided “as is” for informational purposes only. 
+  We make no representation or warranty that any generated content, data, or tool result is accurate, complete, secure, or suitable for any particular purpose. 
+  We disclaim all liability for damages, errors, loss of data, or security incidents arising from or related to the use or execution of Client-configured tools, 
+  third-party APIs, or the reliance on automated outputs.
+</p>
+<p>
+  The Client is solely responsible for ensuring that any connected tools, APIs, or endpoints are properly secured, 
+  access-controlled, and comply with applicable law and data-protection requirements.
+</p>
+
+
+                                        <h3>11.11 Compliance Responsibility</h3>
+                                        <p>
+                                            The Client is solely responsible for ensuring that its use of the Service complies with applicable laws, 
+                                            including data-protection, consumer-information, and accessibility requirements. 
+                                            We provide no warranty of legal compliance for the Client’s own deployment or configuration.
+                                        </p>
                 </div>
 
                 <div class="section fade-in">
-                    <h2>12. Service Modifications & Termination</h2>
+                    <h2>12. Service Modifications &amp; Termination</h2>
                     <ul>
                         <li>We may modify, suspend, or discontinue any feature at any time with reasonable notice</li>
                         <li>Either party may terminate the account at any time</li>
@@ -443,7 +568,7 @@
                 </div>
 
                 <div class="section fade-in">
-                    <h2>14. Export Control & Sanctions</h2>
+                    <h2>14. Export Control &amp; Sanctions</h2>
                     <p>The Service is not available to users or entities located in or ordinarily resident of countries subject to EU, UN, or US sanctions, including but not limited to Iran, North Korea, Syria, and the Crimea regions.</p>
                 </div>
 
@@ -457,7 +582,7 @@
                 </div>
 
                 <div class="section fade-in">
-                    <h2>16. Governing Law & Jurisdiction</h2>
+                    <h2>16. Governing Law &amp; Jurisdiction</h2>
                     <ul>
                         <li>These Terms are governed by French law</li>
                         <li>Any dispute shall be submitted to the competent courts of Thonon-les-Bains, France, subject to mandatory local law for consumers where applicable</li>

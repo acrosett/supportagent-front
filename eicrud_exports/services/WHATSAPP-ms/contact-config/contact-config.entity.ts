@@ -42,11 +42,19 @@ export class ContactConfig {
     @IsNumber()
     messageCountToday: number;
 
+    // Total tokens counted globally today for this product/priority
+    @IsNumber()
+    tokenCountToday: number;
+
     @IsOptional()
     lastMessageDailyReset?: Date;
 
     @IsNumber()
     messageCountThisWeek: number;
+
+    // Total tokens counted globally this week for this product/priority
+    @IsNumber()
+    tokenCountThisWeek: number;
 
     @IsOptional()
     lastMessageWeeklyReset?: Date;

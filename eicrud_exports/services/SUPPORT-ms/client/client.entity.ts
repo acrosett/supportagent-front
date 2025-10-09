@@ -37,11 +37,19 @@ export class Client {
     @IsNumber()
     messagesToday: number;
 
+    // Total tokens used by this client today
+    @IsNumber()
+    tokenCountToday: number;
+
     @IsOptional()
     lastMessageDailyReset?: Date;
 
     @IsNumber()
     messagesThisWeek: number;
+
+    // Total tokens used by this client this week
+    @IsNumber()
+    tokenCountThisWeek: number;
 
     @IsOptional()
     lastMessageWeeklyReset?: Date;

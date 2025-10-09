@@ -12,7 +12,7 @@
   const DEFAULT_CONFIG = {
     width: '400px',
     height: '600px',
-    domain: window.location.origin, // Will be replaced with actual domain in production
+    domain: '$ENV_NUXT_PUBLIC_FRONT_BASE_URL', // Will be replaced with actual domain from env
     position: 'bottom-right',
     zIndex: 1000
   };
@@ -448,7 +448,7 @@ const createWidget = (config) => {
     // Check product status before initializing widget
     try {
       //const backEndDomain = 'https://api.directsupport.ai';
-      const backEndDomain = 'http://localhost:5000';
+      const backEndDomain = '$ENV_NUXT_PUBLIC_API_BASE_URL';
       const productInfo = await getProductPublicInfo(backEndDomain, productId);
       config.debug && console.log('Product Info:', productInfo);
       // Hide widget if chat is disabled or quotas exceeded (unless debug mode is enabled)

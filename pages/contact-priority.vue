@@ -163,6 +163,50 @@
                 {{ config.contactForIssues ? 'Enabled' : 'Disabled' }}
               </span>
             </div>
+                        <div class="config-row">
+                          <span class="config-label">Tokens Today:</span>
+                          <span class="config-value">
+                            <span :class="{ exceeded: (((config as any).tokensToday ?? 0) as number) > ((config.MaxMessagesPerDayGlobal as number || 0) * 18000) }">
+                              {{ formatK(((config as any).tokensToday ?? 0) as number) }}
+                            </span>
+                            <span v-if="config.MaxMessagesPerDayGlobal" class="max-note">
+                              / {{ formatK((config.MaxMessagesPerDayGlobal as number) * 18000) }}
+                            </span>
+                          </span>
+                        </div>
+                        <div class="config-row">
+                          <span class="config-label">Tokens This Week:</span>
+                          <span class="config-value">
+                            <span :class="{ exceeded: (((config as any).tokensThisWeek ?? 0) as number) > ((config.MaxMessagesPerWeekGlobal as number || 0) * 18000) }">
+                              {{ formatK(((config as any).tokensThisWeek ?? 0) as number) }}
+                            </span>
+                            <span v-if="config.MaxMessagesPerWeekGlobal" class="max-note">
+                              / {{ formatK((config.MaxMessagesPerWeekGlobal as number) * 18000) }}
+                            </span>
+                          </span>
+                        </div>
+                        <div class="config-row">
+                          <span class="config-label">Messages Today:</span>
+                          <span class="config-value">
+                            <span :class="{ exceeded: (((config as any).messagesToday ?? 0) as number) > (config.MaxMessagesPerDayGlobal as number || 0) }">
+                              {{ formatNumber(((config as any).messagesToday ?? 0) as number) }}
+                            </span>
+                            <span v-if="config.MaxMessagesPerDayGlobal" class="max-note">
+                              / {{ formatNumber(config.MaxMessagesPerDayGlobal as number) }}
+                            </span>
+                          </span>
+                        </div>
+                        <div class="config-row">
+                          <span class="config-label">Messages This Week:</span>
+                          <span class="config-value">
+                            <span :class="{ exceeded: (((config as any).messagesThisWeek ?? 0) as number) > (config.MaxMessagesPerWeekGlobal as number || 0) }">
+                              {{ formatNumber(((config as any).messagesThisWeek ?? 0) as number) }}
+                            </span>
+                            <span v-if="config.MaxMessagesPerWeekGlobal" class="max-note">
+                              / {{ formatNumber(config.MaxMessagesPerWeekGlobal as number) }}
+                            </span>
+                          </span>
+                        </div>
           </div>
 
           <div class="limits-grid">
@@ -421,6 +465,25 @@ const formatAiType = (aiType: string): string => {
     default:
       return 'Fast'
   }
+}
+
+// Simple number formatter for readability
+const formatNumber = (n: number): string => {
+  try {
+    return Number(n || 0).toLocaleString()
+  } catch {
+    return String(n)
+  }
+}
+
+// Format numbers in K units (e.g., 1.2K). Below 1000 show full number.
+const formatK = (n: number): string => {
+  const v = Number(n || 0)
+  if (isNaN(v)) return '0'
+  if (Math.abs(v) < 1000) return v.toLocaleString()
+  const k = v / 1000
+  const s = k.toFixed(1)
+  return `${s.endsWith('.0') ? s.slice(0, -2) : s}K`
 }
 
 // Phone number functions
@@ -1009,6 +1072,15 @@ const configFormActions: MegaFormAction[] = [
     align-items: center;
     gap: 0.5rem;
     color: $muted;
+    
+    .max-note {
+      opacity: 0.8;
+    }
+    
+    .exceeded {
+      color: $warning;
+      font-weight: 600;
+    }
     
     .unverified-note {
       color: $warning;

@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsBoolean, IsDate } from "class-validator";
+//
 
 
 export class ChatAgent {
