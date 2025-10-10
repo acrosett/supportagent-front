@@ -1105,8 +1105,8 @@ const configFormActions: MegaFormAction[] = [
       }
       
       &.smart {
-        background: rgba($warning, 0.1);
-        color: $warning;
+        background: rgba($ok, 0.1);
+        color: $ok;
       }
     }
   }
