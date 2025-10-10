@@ -136,16 +136,16 @@
             <div class="config-row">
               <span class="config-label">Client AI Type:</span>
               <span class="config-value">
-                <span class="ai-type-badge" :class="(config as any).clientFacingAiType || 'fast'">
-                  {{ formatAiType((config as any).clientFacingAiType || 'fast') }}
+                <span class="ai-type-badge" :class="config.clientFacingAiType || 'fast'">
+                  {{ formatAiType(config.clientFacingAiType || 'fast') }}
                 </span>
               </span>
             </div>
             <div class="config-row">
               <span class="config-label">Staff AI Type:</span>
               <span class="config-value">
-                <span class="ai-type-badge" :class="(config as any).staffFacing || 'fast'">
-                  {{ formatAiType((config as any).staffFacing || 'fast') }}
+                <span class="ai-type-badge" :class="config.staffFacingAiType || 'fast'">
+                  {{ formatAiType(config.staffFacingAiType || 'fast') }}
                 </span>
               </span>
             </div>
@@ -166,44 +166,44 @@
                         <div class="config-row">
                           <span class="config-label">Tokens Today:</span>
                           <span class="config-value">
-                            <span :class="{ exceeded: (((config as any).tokensToday ?? 0) as number) > ((config.MaxMessagesPerDayGlobal as number || 0) * 18000) }">
-                              {{ formatK(((config as any).tokensToday ?? 0) as number) }}
+                            <span :class="{ exceeded: (config.tokenCountToday ?? 0) > ((config.MaxMessagesPerDayGlobal || 0) * 18000) }">
+                              {{ formatK(config.tokenCountToday ?? 0) }}
                             </span>
                             <span v-if="config.MaxMessagesPerDayGlobal" class="max-note">
-                              / {{ formatK((config.MaxMessagesPerDayGlobal as number) * 18000) }}
+                              / {{ formatK(config.MaxMessagesPerDayGlobal * 18000) }}
                             </span>
                           </span>
                         </div>
                         <div class="config-row">
                           <span class="config-label">Tokens This Week:</span>
                           <span class="config-value">
-                            <span :class="{ exceeded: (((config as any).tokensThisWeek ?? 0) as number) > ((config.MaxMessagesPerWeekGlobal as number || 0) * 18000) }">
-                              {{ formatK(((config as any).tokensThisWeek ?? 0) as number) }}
+                            <span :class="{ exceeded: (config.tokenCountThisWeek ?? 0) > ((config.MaxMessagesPerWeekGlobal || 0) * 18000) }">
+                              {{ formatK(config.tokenCountThisWeek ?? 0) }}
                             </span>
                             <span v-if="config.MaxMessagesPerWeekGlobal" class="max-note">
-                              / {{ formatK((config.MaxMessagesPerWeekGlobal as number) * 18000) }}
+                              / {{ formatK(config.MaxMessagesPerWeekGlobal * 18000) }}
                             </span>
                           </span>
                         </div>
                         <div class="config-row">
                           <span class="config-label">Messages Today:</span>
                           <span class="config-value">
-                            <span :class="{ exceeded: (((config as any).messagesToday ?? 0) as number) > (config.MaxMessagesPerDayGlobal as number || 0) }">
-                              {{ formatNumber(((config as any).messagesToday ?? 0) as number) }}
+                            <span :class="{ exceeded: (config.messageCountToday ?? 0) > (config.MaxMessagesPerDayGlobal || 0) }">
+                              {{ formatNumber(config.messageCountToday ?? 0) }}
                             </span>
                             <span v-if="config.MaxMessagesPerDayGlobal" class="max-note">
-                              / {{ formatNumber(config.MaxMessagesPerDayGlobal as number) }}
+                              / {{ formatNumber(config.MaxMessagesPerDayGlobal) }}
                             </span>
                           </span>
                         </div>
                         <div class="config-row">
                           <span class="config-label">Messages This Week:</span>
                           <span class="config-value">
-                            <span :class="{ exceeded: (((config as any).messagesThisWeek ?? 0) as number) > (config.MaxMessagesPerWeekGlobal as number || 0) }">
-                              {{ formatNumber(((config as any).messagesThisWeek ?? 0) as number) }}
+                            <span :class="{ exceeded: (config.messageCountThisWeek ?? 0) > (config.MaxMessagesPerWeekGlobal || 0) }">
+                              {{ formatNumber(config.messageCountThisWeek ?? 0) }}
                             </span>
                             <span v-if="config.MaxMessagesPerWeekGlobal" class="max-note">
-                              / {{ formatNumber(config.MaxMessagesPerWeekGlobal as number) }}
+                              / {{ formatNumber(config.MaxMessagesPerWeekGlobal) }}
                             </span>
                           </span>
                         </div>
