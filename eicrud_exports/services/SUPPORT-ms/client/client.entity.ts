@@ -31,27 +31,21 @@ export class Client {
     @IsOptional()
     email?: string;
 
-    @IsNumber()
     messageCount: number;
 
-    @IsNumber()
     messagesToday: number;
 
     // Total tokens used by this client today
-    @IsNumber()
     tokenCountToday: number;
 
     @IsOptional()
     lastMessageDailyReset?: Date;
 
-    @IsNumber()
     messagesThisWeek: number;
 
     // Total tokens used by this client this week
-    @IsNumber()
     tokenCountThisWeek: number;
 
-    @IsOptional()
     lastMessageWeeklyReset?: Date;
 
     @IsEnum(ClientPriority)
@@ -67,13 +61,16 @@ export class Client {
     lastMessageDate?: Date;
 
     @IsBoolean()
+    @IsOptional()
     conversationResolved: Boolean = false;
 
     @IsBoolean()
+    @IsOptional()
     conversationArchived: Boolean = false;
 
     
     @IsBoolean()
+    @IsOptional()
     nameChangedByAI: Boolean = false;
 
     ghostedUntil: Date;
@@ -86,7 +83,7 @@ export class Client {
 
     @IsBoolean()
     @IsOptional()
-    anonymized: boolean;
+    anonymized: boolean = false;
 
     createdAt: Date;
 

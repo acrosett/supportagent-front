@@ -13,7 +13,7 @@ export enum NotificationType {
 export class NotifyDto {
 
     @IsObject()
-    product: Product;
+    product: Product | string;
 
     @IsString()
     title: string;

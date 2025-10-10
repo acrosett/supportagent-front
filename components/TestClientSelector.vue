@@ -117,6 +117,7 @@ const clientFieldOverrides = computed((): OverrideRecord<Client> => ({
     label: 'Guest Client',
     type: 'checkbox',
     description: 'Simulate an anonymous guest user (no email or ID needed)',
+    invertedConditionsFields: ['email', 'uniqueId'],
   },
   name: {
     label: 'Client Name',
@@ -133,7 +134,7 @@ const clientFieldOverrides = computed((): OverrideRecord<Client> => ({
   },
   uniqueId: {
     label: 'Unique ID',
-    placeholder: 'Will be auto-generated for guest clients',
+    placeholder: 'Corresponds to your database record ID',
     type: 'text',
     description: 'The unique identifier corresponding to your database record of the client',
     props: {
@@ -170,7 +171,8 @@ const loadTestClients = async () => {
     
     const result = await $sp.client.find({ 
       product: nuxtApp.$userProductId, 
-      isTest: true 
+      isTest: true,
+      anonymized: false
     })
     
     testClients.value = result.data || []
@@ -201,20 +203,20 @@ const deleteClient = async (client: Client) => {
     return
   }
   
+  const nuxtApp = useNuxtApp()
+
   try {
-    const { $sp } = useNuxtApp()
-    await $sp.client.delete({ id: client.id })
-    
+    await nuxtApp.$sp.message.delete_test_client({ id: client.id, product: nuxtApp.$userProductId })
     // Remove from local array
     const index = testClients.value.findIndex(c => c.id === client.id)
     if (index > -1) {
       testClients.value.splice(index, 1)
     }
-    
-    useNuxtApp().$toast.show('Test client deleted', 'success')
+
+    nuxtApp.$toast.show('Test client deleted', 'success')
   } catch (error) {
     console.error('Failed to delete test client:', error)
-    useNuxtApp().$toast.show('Failed to delete test client', 'error')
+    nuxtApp.$toast.show('Failed to delete test client', 'error')
   }
 }
 
@@ -266,9 +268,6 @@ const createNewClient = async (data: any) => {
       isTest: true,
       isGuest: data.isGuest,
       priority: ClientPriority.REGULAR,
-      messageCount: 0,
-      messagesToday: 0,
-      messagesThisWeek: 0,
       conversationResolved: false,
       conversationArchived: false,
       aiOn: true,

@@ -613,7 +613,6 @@ async function copyToClipboard(text: string) {
   font-weight: 600;
   color: $text;
   margin: 0;
-  text-transform: capitalize;
 }
 
 .tool-actions {

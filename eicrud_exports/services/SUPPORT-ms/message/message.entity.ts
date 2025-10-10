@@ -31,7 +31,7 @@ export class Message {
     @IsBoolean()
     isHidden: boolean = false;
 
-    client: Client;
+    client: Client | string;
 
     product: Product | string;
 

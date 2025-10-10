@@ -22,7 +22,7 @@ export class WhatsappMessage {
     @IsString()
     content: string;
 
-    phoneNumber: PhoneNumber;
+    phoneNumber: PhoneNumber | string;
 
     @IsEnum(WhatsappMessageDirection)
     from: WhatsappMessageDirection;

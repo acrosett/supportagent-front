@@ -16,7 +16,7 @@ export class Event {
     @IsString()
     description: string;
 
-    product: Product;
+    product: Product | string;
 
     @IsDate()
     @IsOptional()

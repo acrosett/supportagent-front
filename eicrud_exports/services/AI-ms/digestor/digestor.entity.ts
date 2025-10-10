@@ -22,9 +22,9 @@ export class Digestor {
     @IsOptional()
     spend?: Spend;
 
-    initiator: User;
+    initiator: User | string;
 
-    product: Product;
+    product: Product | string;
 
     createdAt: Date;
 
