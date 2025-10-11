@@ -12,7 +12,7 @@
         <h2>Additional Instructions for AI</h2>
       </div>
       <p class="section-description">
-        Provide additional context and instructions that the AI should follow when assisting your customers.
+        Provide additional context and instructions that (SMART) client-facing agents should follow when assisting your customers.
       </p>
       
       <MegaForm
@@ -121,7 +121,7 @@
       </div>
       
       <p class="section-description">
-        Create and manage custom tools that the AI can use to integrate with your systems.
+        Create and manage custom tools that (SMART) client-facing agents can use to integrate with your systems.
       </p>
 
       <!-- Custom Tools List -->
@@ -217,7 +217,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import MegaForm from '~/components/MegaForm.vue'
+import MegaForm, { FieldOverride } from '~/components/MegaForm.vue'
 import AppButton from '~/components/AppButton.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import CustomToolForm from '~/components/CustomToolForm.vue'
@@ -230,11 +230,12 @@ let aiInstructions = reactive({
   additionalInstructions: ''
 })
 
-const aiInstructionsOverrides = {
+const aiInstructionsOverrides: Record<string, FieldOverride> = {
   additionalInstructions: {
+    maxChars: 4000,
     type: 'richtext',
     label: 'Additional Instructions',
-    description: 'Provide specific instructions for how the AI should behave when using your custom tools',
+    description: 'Provide specific instructions for how the AI should behave when using your custom tools. Only SMART AI agents can use custom tools and benefit from extra instructions.',
     placeholder: 'Enter additional instructions for the AI...'
   }
 }

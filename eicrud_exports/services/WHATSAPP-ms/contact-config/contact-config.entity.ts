@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean, IsEnum, IsNumber, Min } from "class-validator";
+import { IsString, IsOptional, IsBoolean, IsEnum, IsNumber, Min, Max } from "class-validator";
 import { ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 import { Product } from "../../SUPPORT-ms/product/product.entity";
 import { PhoneNumber } from "../phone-number/phone-number.entity";
@@ -18,11 +18,21 @@ export class ContactConfig {
     @IsString()
     phoneNumber?: PhoneNumber | string;
 
+    
+    @IsEnum(AiModelType)
+    clientFacingAiType: AiModelType = AiModelType.FAST;
+
+    @IsEnum(AiModelType)
+    staffFacingAiType: AiModelType = AiModelType.FAST;
+
     @IsBoolean()
     contactForDocumentationUpdate: boolean = true;
 
     @IsBoolean()
     contactForIssues: boolean = true;
+
+    @IsBoolean()
+    tellClientsToLogin: boolean = false;
 
     @IsString()
     product: Product | string;;
@@ -65,15 +75,13 @@ export class ContactConfig {
     @IsBoolean()
     hasBeenNotifiedWeeklyGlobal: boolean;
 
-    @IsEnum(AiModelType)
-    clientFacingAiType: AiModelType = AiModelType.FAST;
-
-    @IsEnum(AiModelType)
-    staffFacingAiType: AiModelType = AiModelType.FAST;
 
     @IsNumber()
     @Min(12)
+    @Max(20)
     maxHistoryPages: number = 18;
+
+
 
     createdAt: Date;
 

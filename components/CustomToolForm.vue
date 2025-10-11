@@ -88,6 +88,7 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
         description: 'Unique name for this tool (lowercase, no spaces)'
     },
     description: {
+        maxChars: 1000,
         type: 'richtext',
         label: 'Description',
         placeholder: 'Describe what this tool does and how to use it...',
@@ -132,6 +133,7 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
                 description: 'Name of the parameter as expected by the API'
             },
             description: {
+                maxChars: 500,
                 label: 'Description',
                 placeholder: 'Describe this parameter...',
                 description: 'What this parameter is used for'

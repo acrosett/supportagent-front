@@ -134,29 +134,33 @@
               </span>
             </div>
             <div class="config-row">
-              <span class="config-label">Client AI Type:</span>
+              <span class="config-label">AI Type:</span>
               <span class="config-value">
                 <span class="ai-type-badge" :class="config.clientFacingAiType || 'fast'">
                   {{ formatAiType(config.clientFacingAiType || 'fast') }}
                 </span>
               </span>
             </div>
-            <div class="config-row">
-              <span class="config-label">Staff AI Type:</span>
-              <span class="config-value">
-                <span class="ai-type-badge" :class="config.staffFacingAiType || 'fast'">
-                  {{ formatAiType(config.staffFacingAiType || 'fast') }}
-                </span>
+            <div class="ai-warning-box" :class="config.clientFacingAiType || 'fast'">
+              <AppIcon 
+                :name="(config.clientFacingAiType || 'fast') === 'fast' ? 'info' : 'check'" 
+                size="sm" 
+              />
+              <span v-if="(config.clientFacingAiType || 'fast') === 'fast'">
+                Fast agents cannot use custom tools nor escalate to staff
+              </span>
+              <span v-else>
+                Smart agents can use custom tools and escalate to staff
               </span>
             </div>
-            <div class="config-row">
+            <div v-if="(config.clientFacingAiType || 'fast') === 'smart'" class="config-row">
               <span class="config-label">Documentation Updates:</span>
               <span class="config-value">
                 <AppIcon :name="config.contactForDocumentationUpdate ? 'check' : 'close'" size="sm" />
                 {{ config.contactForDocumentationUpdate ? 'Enabled' : 'Disabled' }}
               </span>
             </div>
-            <div class="config-row">
+            <div v-if="(config.clientFacingAiType || 'fast') === 'smart'" class="config-row">
               <span class="config-label">Issue Contacts:</span>
               <span class="config-value">
                 <AppIcon :name="config.contactForIssues ? 'check' : 'close'" size="sm" />
@@ -301,8 +305,7 @@
           'MaxMessagesPerWeekPerUser',
           'MaxMessagesPerDayPerUser',
           'clientFacingAiType',
-          'staffFacingAiType',
-          'maxHistoryPages'
+          'tellClientsToLogin',
         ]"
         :actions="configFormActions"
       />
@@ -744,20 +747,21 @@ const configFieldOverrides = computed<OverrideRecord>(() => {
       ]
     },
     clientFacingAiType: {
-      label: 'Client-Facing AI Model',
-      description: 'AI reasoning level for customer chat interactions (smart costs 2x more)',
+      label: 'AI Type',
+      description: 'AI reasoning level for customer chat interactions (smart thinking tokens are billed at 2.5x the standard cost)',
       selectOptions: [
         { label: 'Fast - Standard reasoning', value: 'fast' },
         { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' }
+      ],
+      conditionsFieldsIfValue: [
+        { value: 'smart', field: 'contactForDocumentationUpdate' },
+        { value: 'smart', field: 'contactForIssues' },
+        { value: 'fast', field: 'tellClientsToLogin' }
       ]
     },
-    staffFacingAiType: {
-      label: 'Staff-Facing AI Model', 
-      description: 'AI reasoning level for WhatsApp communication with staff (smart costs 2x more)',
-      selectOptions: [
-        { label: 'Fast - Standard reasoning', value: 'fast' },
-        { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' }
-      ]
+    tellClientsToLogin: {
+      label: 'Prompt Non-Logged Users to Login',
+      description: 'Will instruct non logged users to login in order to benefit from staff escalation or custom tools'
     },
     maxHistoryPages: {
       label: 'Max History Pages',
@@ -1109,6 +1113,30 @@ const configFormActions: MegaFormAction[] = [
         color: $ok;
       }
     }
+  }
+}
+
+.ai-warning-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: $radius;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-left: 4px solid;
+  
+  &.fast {
+    background: rgba($brand, 0.1);
+    border-left-color: $brand;
+    color: $brand;
+  }
+  
+  &.smart {
+    background: rgba($ok, 0.1);
+    border-left-color: $ok;
+    color: $ok;
   }
 }
 

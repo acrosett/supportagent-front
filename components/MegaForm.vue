@@ -423,9 +423,9 @@ defineExpose({
 
 <template>
   <form @submit.prevent="validateForm">
-    <div v-for="field in fields" :key="field.key" class="megaform-field">
-      <template v-if="field.show">
-                <label 
+    <template v-for="field in fields" :key="field.key">
+      <div v-if="field.show" class="megaform-field">
+        <label 
           v-if="field.label" 
           :for="field.key"
           class="megaform-label"
@@ -624,8 +624,8 @@ defineExpose({
         <div v-if="errors[field.key]" class="megaform-error">
           <div v-for="err in errors[field.key]" :key="err">{{ err }}</div>
         </div>
-      </template>
-    </div>
+      </div>
+    </template>
   <div v-if="links?.length" class="megaform-links">
       <a v-for="link in links" :key="link.href" :href="link.href" class="megaform-link">
         {{ link.label }}
