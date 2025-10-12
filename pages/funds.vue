@@ -822,27 +822,14 @@ const loadTransactions = async (reset = false) => {
       }))
     } else {
       // For 'all' transactions, we need a different strategy since we're combining two APIs
-      // First, get totals to understand the actual ratio
+      // Always get fresh totals to ensure accuracy
+      const [depositCountResult, spendCountResult] = await Promise.all([
+        $sp.deposit.find(baseQuery, { limit: 1, offset: 0 }),
+        $sp.spend.find(baseQuery, { limit: 1, offset: 0 })
+      ])
       
-      let depositsTotal = 0
-      let spendsTotal = 0
-      
-      if (reset) {
-        // On first load, get totals to understand the data distribution
-        const [depositCountResult, spendCountResult] = await Promise.all([
-          $sp.deposit.find(baseQuery, { limit: 1, offset: 0 }),
-          $sp.spend.find(baseQuery, { limit: 1, offset: 0 })
-        ])
-        
-        depositsTotal = depositCountResult?.total || 0
-        spendsTotal = spendCountResult?.total || 0
-        
-        console.log('Initial totals:', { depositsTotal, spendsTotal })
-      } else {
-        // Use previously determined totals (you might want to cache these)
-        depositsTotal = 2  // From your debug output
-        spendsTotal = 568  // From your debug output
-      }
+      const depositsTotal = depositCountResult?.total || 0
+      const spendsTotal = spendCountResult?.total || 0
       
       totalCount = depositsTotal + spendsTotal
       
@@ -896,20 +883,7 @@ const loadTransactions = async (reset = false) => {
       
       // Take only what we need
       newTransactions = allTransactions.slice(0, itemsPerPage)
-      
-      console.log('All transactions debug:', {
-        depositsTotal,
-        spendsTotal,
-        depositRatio: depositRatio.toFixed(3),
-        spendRatio: spendRatio.toFixed(3),
-        depositOffset,
-        spendOffset,
-        depositsLoaded: deposits.length,
-        spendsLoaded: spends.length,
-        totalCombined: allTransactions.length,
-        newTransactionsCount: newTransactions.length,
-        currentLength
-      })
+
     }
     
     // Update transactions array
