@@ -18,12 +18,8 @@ export class ContactConfig {
     @IsString()
     phoneNumber?: PhoneNumber | string;
 
-    
     @IsEnum(AiModelType)
     clientFacingAiType: AiModelType = AiModelType.FAST;
-
-    @IsEnum(AiModelType)
-    staffFacingAiType: AiModelType = AiModelType.FAST;
 
     @IsBoolean()
     contactForDocumentationUpdate: boolean = true;

@@ -232,7 +232,7 @@ let aiInstructions = reactive({
 
 const aiInstructionsOverrides: Record<string, FieldOverride> = {
   additionalInstructions: {
-    maxChars: 4000,
+    maxChars: 6000,
     type: 'richtext',
     label: 'Additional Instructions',
     description: 'Provide specific instructions for how the AI should behave when using your custom tools. Only SMART AI agents can use custom tools and benefit from extra instructions.',

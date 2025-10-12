@@ -58,7 +58,7 @@ export class Product {
 
     @IsString()
     @IsOptional()
-    @Matches(/^https/, { message: 'URL must start with https' })
+    @Matches(/^https:\/\//, { message: 'URL must start with https://' })
     webhookUrl?: string;
 
     @IsString()

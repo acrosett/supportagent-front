@@ -153,14 +153,14 @@
                 Smart agents can use custom tools and escalate to staff
               </span>
             </div>
-            <div v-if="(config.clientFacingAiType || 'fast') === 'smart'" class="config-row">
+            <div v-if="['smart', 'pro'].includes(config.clientFacingAiType || 'fast')" class="config-row">
               <span class="config-label">Documentation Updates:</span>
               <span class="config-value">
                 <AppIcon :name="config.contactForDocumentationUpdate ? 'check' : 'close'" size="sm" />
                 {{ config.contactForDocumentationUpdate ? 'Enabled' : 'Disabled' }}
               </span>
             </div>
-            <div v-if="(config.clientFacingAiType || 'fast') === 'smart'" class="config-row">
+            <div v-if="['smart', 'pro'].includes(config.clientFacingAiType || 'fast')" class="config-row">
               <span class="config-label">Issue Contacts:</span>
               <span class="config-value">
                 <AppIcon :name="config.contactForIssues ? 'check' : 'close'" size="sm" />
@@ -465,6 +465,8 @@ const formatAiType = (aiType: string): string => {
       return 'Fast'
     case 'smart':
       return 'Smart (2.5x cost)'
+    case 'pro':
+      return 'Pro (60x cost)'
     default:
       return 'Fast'
   }
@@ -748,15 +750,16 @@ const configFieldOverrides = computed<OverrideRecord>(() => {
     },
     clientFacingAiType: {
       label: 'AI Type',
-      description: 'AI reasoning level for customer chat interactions (smart thinking tokens are billed at 2.5x the standard cost)',
+      description: 'AI reasoning level for customer chat interactions (smart thinking tokens are billed at 2.5x the standard cost, pro tokens at 60x the standard cost)',
       selectOptions: [
         { label: 'Fast - Standard reasoning', value: 'fast' },
-        { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' }
+        { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' },
+        // { label: 'Pro - Highest reasoning (60x cost)', value: 'pro' }
       ],
       conditionsFieldsIfValue: [
-        { value: 'smart', field: 'contactForDocumentationUpdate' },
-        { value: 'smart', field: 'contactForIssues' },
-        { value: 'fast', field: 'tellClientsToLogin' }
+        { values: ['smart', 'pro'], field: 'contactForDocumentationUpdate' },
+        { values: ['smart', 'pro'], field: 'contactForIssues' },
+        { values: ['fast'], field: 'tellClientsToLogin' }
       ]
     },
     tellClientsToLogin: {
@@ -1112,6 +1115,11 @@ const configFormActions: MegaFormAction[] = [
         background: rgba($ok, 0.1);
         color: $ok;
       }
+
+      &.pro {
+        background: rgba($brand-2, 0.1);
+        color: $brand-2;
+      }
     }
   }
 }
@@ -1137,6 +1145,12 @@ const configFormActions: MegaFormAction[] = [
     background: rgba($ok, 0.1);
     border-left-color: $ok;
     color: $ok;
+  }
+
+  &.pro {
+    background: rgba($brand-2, 0.1);
+    border-left-color: $brand-2;
+    color: $brand-2;
   }
 }
 

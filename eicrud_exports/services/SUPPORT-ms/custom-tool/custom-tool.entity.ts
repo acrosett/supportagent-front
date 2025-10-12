@@ -92,7 +92,7 @@ export class CustomTool {
     description?: string;
 
     @IsUrl({require_tld: false})
-    @Matches(/^https/, { message: 'URL must start with https' })
+    @Matches(/^https:\/\//, { message: 'URL must start with https://' })
     url: string;
 
     @IsEnum(HttpMethod)
@@ -111,9 +111,6 @@ export class CustomTool {
     @IsOptional()
     timeoutMs?: number = 30000; // Request timeout in milliseconds
 
-    @IsBoolean()
-    @IsOptional()
-    enabled?: boolean;
 
     @IsArray()
     @IsEnum(ClientPriority, { each: true })
@@ -129,6 +126,11 @@ export class CustomTool {
 
     @IsString()
     product: Product | string;
+
+    
+    @IsBoolean()
+    @IsOptional()
+    enabled?: boolean;
 
     createdAt: Date;
 
