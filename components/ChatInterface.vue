@@ -54,7 +54,7 @@
           <!-- Regular chat message -->
           <div v-if="message.type !== 'tool-trace'" :class="['message', getMessageClass(message.type)]">
             <div class="message-header">
-              <span class="sender-name">{{ getSenderName(message.type) }}</span>
+              <span class="sender-name">{{ getSenderName(message.type) }} <span class="ai-type-label">{{getAiTypeLabel(message.aiType)}}</span></span>
               <span class="message-time">&nbsp;&nbsp;{{ formatTime(message.createdAt) }}</span>
             </div>
             <div class="message-content" v-html="renderMarkdown((message as ChatMessage).content || '')"></div>
@@ -655,6 +655,21 @@ const getSenderName = (messageType?: string) => {
   return messageType === 'user' ? 'Client' : 'Support Agent'
 }
 
+const getAiTypeLabel = (aiType?: string) => {
+  if (!aiType) return ''
+  
+  switch (aiType.toLowerCase()) {
+    case 'fast':
+      return '(Fast)'
+    case 'smart':
+      return '(Smart)'
+    case 'pro':
+      return '(Pro)'
+    default:
+      return ''
+  }
+}
+
 const getMessageClass = (messageType?: string) => {
   // Always use the same styling regardless of mode
   let cond =  messageType === 'user'
@@ -1212,6 +1227,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .dark-mode .message-fan { background:var(--primary-color, #667eea); }
 .message-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem; font-size:.75rem; opacity:.8; }
 .sender-name { font-weight:600; }
+.ai-type-label { opacity:0.7; }
 .message-time { font-size:.7rem; }
 .message-content p { margin:0; line-height:1.4; }
 .message-content { display:flex; flex-direction:column; gap:.5rem; }

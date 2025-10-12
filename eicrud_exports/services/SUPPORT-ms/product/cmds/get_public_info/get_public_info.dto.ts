@@ -1,4 +1,5 @@
 import { IsString, IsOptional } from "class-validator";
+import { AiModelType } from "../../../../BANK-ms/spend/cmds/shared.utils";
 
 
 export class GetPublicInfoDto {

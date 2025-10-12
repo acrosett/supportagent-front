@@ -28,6 +28,7 @@ export class ContactConfig {
     contactForIssues: boolean = true;
 
     @IsBoolean()
+    @IsOptional()
     tellClientsToLogin: boolean = false;
 
     @IsString()

@@ -3,6 +3,7 @@ import { Client } from "../client/client.entity";
 import { User } from "../../user/user.entity";
 import { Product } from "../product/product.entity";
 import { Spend } from "../../BANK-ms/spend/spend.entity";
+import { AiModelType } from "../../BANK-ms/spend/cmds/shared.utils";
 
 export enum MessageType {
   USER = 'user',
@@ -14,8 +15,6 @@ export class Message {
     @IsString()
     @IsOptional()
     id: string;
-
-    
 
     @IsString()
     content: string;
@@ -35,8 +34,9 @@ export class Message {
 
     product: Product | string;
 
-    @IsOptional()
     metadata?: any;
+
+    aiType: AiModelType;
 
     @IsOptional()
     @IsString()

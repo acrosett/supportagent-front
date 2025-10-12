@@ -1,7 +1,7 @@
 export enum AiModelType {
     SMART = 'smart',
     FAST = 'fast',
-    PRO = 'pro',
+    // PRO = 'pro',
 }
 
 const baseInputRatePer1KTokens = 0.0005; // $ per 1K tokens (input)
@@ -26,9 +26,9 @@ export function calculateTokensPrice(params: {
 		total *= 2.5; // 2.5x for smart model
 	}
 
-	if (aiModelType == AiModelType.PRO) {
-		total *= 60; // 60x for pro model
-	}
+	// if (aiModelType == AiModelType.PRO) {
+	// 	total *= 60; // 60x for pro model
+	// }
 
 	return total;
 }
