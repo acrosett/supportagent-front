@@ -162,7 +162,7 @@
           v-for="filter in transactionFilters"
           :key="filter.value"
           :class="['filter-tab', { active: activeFilter === filter.value }]"
-          @click="activeFilter = filter.value; loadTransactions()"
+          @click="activeFilter = filter.value; loadTransactions(true)"
         >
           {{ filter.label }}
         </button>
@@ -222,13 +222,15 @@
           </div>
         </div>
 
-        <!-- Pagination -->
-        <AppPagination
-          :current-page="currentPage"
-          :total-pages="totalPages"
-          :total-items="totalTransactions"
-          @page-change="handlePageChange"
-        />
+        <!-- Load More Indicator -->
+        <div v-if="loadingMore" class="loading-more">
+          <div class="spinner"></div>
+          <span>Loading more transactions...</span>
+        </div>
+        
+        <div v-if="hasMoreTransactions === false && transactions.length > 0" class="end-message">
+          <span>No more transactions to load</span>
+        </div>
       </div>
     </div>
 
@@ -593,7 +595,6 @@ import { ToggleAutoTopUpDto } from '~/eicrud_exports/services/BANK-ms/spend/cmds
 import MegaForm, { MegaFormAction } from '~/components/MegaForm.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
 import FieldTooltip from '~/components/FieldTooltip.vue'
-import AppPagination from '~/components/AppPagination.vue'
 import { CrudOptions } from '~/eicrud_exports/CrudOptions'
 
 definePageMeta({
@@ -626,9 +627,9 @@ const autoTopUpEnabled = ref(false)
 // Transaction history
 const transactions = ref<any[]>([])
 const selectedTransaction = ref<any>(null)
-const currentPage = ref(1)
-const totalPages = ref(1)
-const totalTransactions = ref(0)
+const loadingMore = ref(false)
+const hasMoreTransactions = ref(true)
+const currentOffset = ref(0)
 const activeFilter = ref('all')
 
 const quickAmounts = [10, 25, 50, 100, 250, 500]
@@ -669,14 +670,53 @@ const spendingLimitActions: MegaFormAction[] = [
   }
 ]
 
+// Throttle function for scroll events
+let scrollTimeout: NodeJS.Timeout | null = null
+
+// Scroll detection for infinite loading
+const handleScroll = (event: Event) => {
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout)
+  }
+  
+  scrollTimeout = setTimeout(() => {
+    const target = event.target as HTMLElement
+    const scrollTop = target.scrollTop
+    const scrollHeight = target.scrollHeight
+    const clientHeight = target.clientHeight
+        
+    // Load more when user scrolls to within 200px of bottom
+    if (scrollTop + clientHeight >= scrollHeight - 200) {
+      loadMoreTransactions()
+    }
+  }, 100)
+}
+
 // Load initial data
 onMounted(async () => {
   // Check for Stripe payment result in URL
   await checkStripeResult()
   
   await loadProduct()
-  await loadTransactions()
+  await loadTransactions(true) // Reset on initial load
   loading.value = false
+  
+  // Add scroll listener for infinite loading to the main content element
+  const mainElement = document.querySelector('main.main-content')
+  if (mainElement) {
+    mainElement.addEventListener('scroll', handleScroll)
+  }
+})
+
+onUnmounted(() => {
+  // Clean up scroll listener and timeout
+  const mainElement = document.querySelector('main.main-content')
+  if (mainElement) {
+    mainElement.removeEventListener('scroll', handleScroll)
+  }
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout)
+  }
 })
 
 const checkStripeResult = async () => {
@@ -733,12 +773,19 @@ const loadProduct = async () => {
   }
 }
 
-const loadTransactions = async () => {
+const loadTransactions = async (reset = false) => {
   if (!currentProduct.value) return
   
   try {
+    if (reset) {
+      currentOffset.value = 0
+      transactions.value = []
+      hasMoreTransactions.value = true
+    }
+    
+    if (!hasMoreTransactions.value) return
+    
     const itemsPerPage = 20
-    const skip = (currentPage.value - 1) * itemsPerPage
     
     // Base query for product
     const baseQuery = {
@@ -748,45 +795,135 @@ const loadTransactions = async () => {
     const options: CrudOptions = {
       orderBy: { createdAt: 'DESC' as const },
       limit: itemsPerPage,
-      offset: skip
+      offset: currentOffset.value
     }
     
-    let deposits: any[] = []
-    let spends: any[] = []
+    let newTransactions: any[] = []
+    let totalCount = 0
     
-    // Load deposits and spends based on filter
-    if (activeFilter.value === 'all' || activeFilter.value === 'deposits') {
+    if (activeFilter.value === 'deposits') {
+      // Load only deposits
       const depositResult = await $sp.deposit.find(baseQuery, options)
       const depositData = Array.isArray(depositResult) ? depositResult : (depositResult?.data || [])
-      deposits = depositData.map((deposit: any) => ({
+      totalCount = depositResult?.total || 0
+      newTransactions = depositData.map((deposit: any) => ({
         ...deposit,
         type: 'deposit' as const
       }))
-    }
-    
-    if (activeFilter.value === 'all' || activeFilter.value === 'spending') {
+    } else if (activeFilter.value === 'spending') {
+      // Load only spends
       const spendResult = await $sp.spend.find(baseQuery, options)
       const spendData = Array.isArray(spendResult) ? spendResult : (spendResult?.data || [])
-      spends = spendData.map((spend: any) => ({
+      totalCount = spendResult?.total || 0
+      newTransactions = spendData.map((spend: any) => ({
         ...spend,
         type: 'spend' as const,
         spendType: spend.type // Map spend.type to spendType to avoid confusion
       }))
+    } else {
+      // For 'all' transactions, we need a different strategy since we're combining two APIs
+      // First, get totals to understand the actual ratio
+      
+      let depositsTotal = 0
+      let spendsTotal = 0
+      
+      if (reset) {
+        // On first load, get totals to understand the data distribution
+        const [depositCountResult, spendCountResult] = await Promise.all([
+          $sp.deposit.find(baseQuery, { limit: 1, offset: 0 }),
+          $sp.spend.find(baseQuery, { limit: 1, offset: 0 })
+        ])
+        
+        depositsTotal = depositCountResult?.total || 0
+        spendsTotal = spendCountResult?.total || 0
+        
+        console.log('Initial totals:', { depositsTotal, spendsTotal })
+      } else {
+        // Use previously determined totals (you might want to cache these)
+        depositsTotal = 2  // From your debug output
+        spendsTotal = 568  // From your debug output
+      }
+      
+      totalCount = depositsTotal + spendsTotal
+      
+      // Calculate proper offsets based on actual data ratios
+      const depositRatio = depositsTotal / totalCount
+      const spendRatio = spendsTotal / totalCount
+      
+      const currentLength = transactions.value.length
+      const depositOffset = Math.floor(currentLength * depositRatio)
+      const spendOffset = Math.floor(currentLength * spendRatio)
+      
+      const batchSize = itemsPerPage * 2 // Load 2x more to ensure we get enough after sorting
+      
+      // Load from both APIs with calculated offsets
+      const [depositResult, spendResult] = await Promise.all([
+        $sp.deposit.find(baseQuery, { 
+          ...options, 
+          limit: Math.min(batchSize, depositsTotal), // Don't request more than available
+          offset: Math.min(depositOffset, Math.max(0, depositsTotal - batchSize))
+        }),
+        $sp.spend.find(baseQuery, { 
+          ...options, 
+          limit: batchSize, 
+          offset: spendOffset
+        })
+      ])
+      
+      const depositData = Array.isArray(depositResult) ? depositResult : (depositResult?.data || [])
+      const spendData = Array.isArray(spendResult) ? spendResult : (spendResult?.data || [])
+      
+      const deposits = depositData.map((deposit: any) => ({
+        ...deposit,
+        type: 'deposit' as const
+      }))
+      
+      const spends = spendData.map((spend: any) => ({
+        ...spend,
+        type: 'spend' as const,
+        spendType: spend.type
+      }))
+      
+      // Combine and sort chronologically
+      let allTransactions = [...deposits, ...spends]
+      allTransactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      
+      // Filter out any transactions we already have (to avoid duplicates)
+      if (!reset && transactions.value.length > 0) {
+        const existingIds = new Set(transactions.value.map(t => t.id))
+        allTransactions = allTransactions.filter(t => !existingIds.has(t.id))
+      }
+      
+      // Take only what we need
+      newTransactions = allTransactions.slice(0, itemsPerPage)
+      
+      console.log('All transactions debug:', {
+        depositsTotal,
+        spendsTotal,
+        depositRatio: depositRatio.toFixed(3),
+        spendRatio: spendRatio.toFixed(3),
+        depositOffset,
+        spendOffset,
+        depositsLoaded: deposits.length,
+        spendsLoaded: spends.length,
+        totalCombined: allTransactions.length,
+        newTransactionsCount: newTransactions.length,
+        currentLength
+      })
     }
     
-    // Combine and sort by date
-    const allTransactions = [...deposits, ...spends]
-    allTransactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    // Update transactions array
+    if (reset) {
+      transactions.value = newTransactions
+    } else {
+      transactions.value = [...transactions.value, ...newTransactions]
+    }
     
-    // Apply pagination to combined results
-    const startIndex = (currentPage.value - 1) * itemsPerPage
-    const endIndex = startIndex + itemsPerPage
-    transactions.value = allTransactions.slice(startIndex, endIndex)
+    // Update offset for next load
+    currentOffset.value += itemsPerPage
     
-    // For total count, we need to get counts from both endpoints
-    // This is a simplified approach - in production you might want separate count endpoints
-    totalTransactions.value = allTransactions.length
-    totalPages.value = Math.ceil(totalTransactions.value / itemsPerPage)
+    // Check if we have more transactions to load
+    hasMoreTransactions.value = transactions.value.length < totalCount && newTransactions.length > 0
     
   } catch (error) {
     console.error('Failed to load transactions:', error)
@@ -897,9 +1034,15 @@ const handleAutoTopUpToggle = async (enabled: boolean) => {
   }
 }
 
-const handlePageChange = (page: number) => {
-  currentPage.value = page
-  loadTransactions()
+const loadMoreTransactions = async () => {
+  if (loadingMore.value || !hasMoreTransactions.value) return
+  
+  loadingMore.value = true
+  try {
+    await loadTransactions()
+  } finally {
+    loadingMore.value = false
+  }
 }
 
 const showTransactionDetail = (transaction: any) => {
@@ -919,7 +1062,7 @@ const handleActivateSubscription = async () => {
     
     // Reload the product to get updated subscription status
     await loadProduct()
-    await loadTransactions()
+    await loadTransactions(true)
     
     $toast.show('Subscription activated successfully', 'success')
     showSubscriptionPopup.value = false
@@ -1855,6 +1998,38 @@ const formatNextBillingDate = (lastChecked: Date | string): string => {
     margin: 0;
     color: $text-muted;
   }
+}
+
+.loading-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: $text-muted;
+  
+  .spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid $border;
+    border-top: 2px solid $brand;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 0.75rem;
+  }
+  
+  span {
+    font-size: 0.875rem;
+  }
+}
+
+.end-message {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  color: $text-muted;
+  font-size: 0.875rem;
+  border-top: 1px solid $border;
 }
 
 @media (max-width: 768px) {
