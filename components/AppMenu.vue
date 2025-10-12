@@ -209,9 +209,9 @@ const handleClientSelected = (clientData: { guestId?: string, userToken?: string
     // Build URL with parameters
     const params = new URLSearchParams()
     if (clientData.guestId) params.set('guest-id', clientData.guestId)
-    if (clientData.userToken) params.set('user-token', clientData.userToken)
     if (clientData.apiToken) params.set('api-token', clientData.apiToken)
-    
+    if (clientData.userToken) params.set('user-token', clientData.userToken)
+
     const url = `/test-chat${params.toString() ? '?' + params.toString() : ''}`
     window.open(url, '_blank')
   }

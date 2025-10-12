@@ -7,7 +7,7 @@ import { ContactConfig } from "../../WHATSAPP-ms/contact-config/contact-config.e
 
 export enum AgentRole {
   CHAT_AGENT = 'chat_agent',
-  STAFF_CONTACT_AGENT = 'staff_contact_agent'
+  STAFF_FACING_AGENT = 'staff_facing_agent'
 }
 
 export class AgentMessage {

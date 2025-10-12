@@ -42,7 +42,8 @@ const includeFields = [
     'contentType',
     'timeoutMs',
     'enabled',
-    'clientPriorities'
+    'clientPriorities',
+    'provideToolToGuests'
 ]
 
 // Watch for tool prop changes
@@ -88,7 +89,7 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
         description: 'Unique name for this tool (lowercase, no spaces)'
     },
     description: {
-        maxChars: 1000,
+        maxChars: 2000,
         type: 'richtext',
         label: 'Description',
         placeholder: 'Describe what this tool does and how to use it...',
@@ -133,7 +134,7 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
                 description: 'Name of the parameter as expected by the API'
             },
             description: {
-                maxChars: 500,
+                maxChars: 2000,
                 label: 'Description',
                 placeholder: 'Describe this parameter...',
                 description: 'What this parameter is used for'
@@ -213,6 +214,11 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
         type: 'checkbox',
         label: 'Tool Status',
         description: 'Whether this tool is available for use'
+    },
+    provideToolToGuests: {
+        type: 'checkbox',
+        label: 'Allow Guest Access',
+        description: 'Allow the tool to be used by non-logged users'
     }
 }
 

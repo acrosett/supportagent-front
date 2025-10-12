@@ -76,12 +76,10 @@ export class ContactConfig {
     hasBeenNotifiedWeeklyGlobal: boolean;
 
 
-    @IsNumber()
-    @Min(12)
-    @Max(20)
-    maxHistoryPages: number = 18;
-
-
+    // @IsNumber()
+    // @Min(12)
+    // @Max(20)
+    // maxHistoryPages: number = 18;
 
     createdAt: Date;
 

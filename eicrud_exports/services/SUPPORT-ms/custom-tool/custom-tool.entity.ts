@@ -120,8 +120,9 @@ export class CustomTool {
     @ArrayMinSize(1)
     clientPriorities?: ClientPriority[] = [ClientPriority.LOWEST, ClientPriority.REGULAR, ClientPriority.HIGH];
 
-    // @IsBoolean()
-    // provideToolToGuests: boolean = true;
+    @IsBoolean()
+    @IsOptional()
+    provideToolToGuests: boolean = true;
 
     @IsOptional()
     version: number = 1;

@@ -87,6 +87,35 @@
         ]"
       />
     </AppPopup>
+
+    <!-- Token Input Modal -->
+    <AppPopup
+      :show="showTokenInput"
+      title="Authentication Token Required"
+      size="md"
+      @close="cancelTokenInput"
+    >
+      <MegaForm
+        :form-class="TokenForm"
+        v-model="tokenData"
+        :field-overrides="tokenFieldOverrides"
+        :include-fields="['token']"
+        :actions="[
+          {
+            label: 'Cancel',
+            color: 'secondary',
+            callback: cancelTokenInput,
+            skipValidation: true
+          },
+          {
+            label: 'Start Chat',
+            color: 'primary',
+            margin: 'left',
+            callback: handleTokenSubmit
+          }
+        ]"
+      />
+    </AppPopup>
   </div>
 </template>
 
@@ -95,12 +124,21 @@ import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/cli
 import MegaForm from '~/components/MegaForm.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import type { OverrideRecord } from '~/components/MegaForm.vue'
+import { IsString } from 'class-validator'
+
+// Token form class for validation
+class TokenForm {
+  @IsString()
+  token!: string
+}
 
 const emit = defineEmits(['close', 'client-selected'])
 
 const isLoading = ref(false)
 const testClients = ref<Client[]>([])
 const showCreateClientInput = ref(false)
+const showTokenInput = ref(false)
+const selectedClientForToken = ref<Client | null>(null)
 
 // Form data for MegaForm
 const newClientData = ref({
@@ -109,6 +147,11 @@ const newClientData = ref({
   uniqueId: '',
   isGuest: true,
   priority: ClientPriority.REGULAR
+})
+
+// Token form data
+const tokenData = ref({
+  token: ''
 })
 
 // Field overrides for MegaForm
@@ -152,6 +195,16 @@ const clientFieldOverrides = computed((): OverrideRecord<Client> => ({
   }
 }))
 
+// Token field overrides
+const tokenFieldOverrides = computed((): OverrideRecord<TokenForm> => ({
+  token: {
+    label: 'Authentication Token',
+    placeholder: 'Enter your auth identifier...',
+    type: 'text',
+    description: 'The identifier sent to your webhook for authentication'
+  }
+}))
+
 // Generate a unique identifier (similar to MongoDB ObjectId)
 const generateId = () => {
   const timestamp = Math.floor(Date.now() / 1000).toString(16)
@@ -186,9 +239,17 @@ const loadTestClients = async () => {
 }
 
 const selectClient = (client: Client) => {
+  // Check if uniqueId starts with "guest_"
+  if (!client.uniqueId?.startsWith('guest_')) {
+    // Show token input popup for non-guest clients
+    selectedClientForToken.value = client
+    tokenData.value.token = ''
+    showTokenInput.value = true
+    return
+  }
+
+  // For guest clients, proceed directly
   const nuxtApp = useNuxtApp()
-  
-  // Use the uniqueId we created the client with
   const clientData = {
     guestId: client.uniqueId,
     name: client.name || 'Test Client',
@@ -257,7 +318,7 @@ const createNewClient = async (data: any) => {
       uniqueId = "guest_" + generateId()
     } else {
       // For non-guest clients, use provided uniqueId or generate one
-      uniqueId = data.uniqueId?.trim() || "client_" + generateId()
+      uniqueId = data.uniqueId?.trim()
     }
     
     const newClient = await $sp.client.create({
@@ -307,6 +368,30 @@ const cancelCreateClient = async () => {
     priority: ClientPriority.REGULAR
   }
   showCreateClientInput.value = false
+}
+
+const handleTokenSubmit = async (data: any) => {
+  if (!selectedClientForToken.value) return
+  
+  const nuxtApp = useNuxtApp()
+  const clientData = {
+    guestId: "user_" + data.token,
+    name: selectedClientForToken.value.name || 'Test Client',
+    apiToken: nuxtApp.$userProductId
+  }
+  
+  // Reset token form and close modal
+  tokenData.value.token = ''
+  showTokenInput.value = false
+  selectedClientForToken.value = null
+  
+  emit('client-selected', clientData)
+}
+
+const cancelTokenInput = async () => {
+  tokenData.value.token = ''
+  showTokenInput.value = false
+  selectedClientForToken.value = null
 }
 
 const formatDate = (dateStr: string) => {
