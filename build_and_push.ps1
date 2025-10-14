@@ -41,7 +41,7 @@ Write-Host "DEBUG: NEW_VER variable contains: '$NEW_VER'"
 Write-Host "DEBUG: NEW_VER length: $($NEW_VER.Length)"
 if (Test-Path "scripts\compile-embed.mjs") {
     Write-Host "DEBUG: About to run: node scripts\compile-embed.mjs `"$NEW_VER`" prod"
-    node "scripts\compile-embed.mjs" "`"$NEW_VER`" "prod"
+    node "scripts\compile-embed.mjs" `"$NEW_VER`" "prod"
     if ($LASTEXITCODE -ne 0) {
         throw "Embed script compilation failed"
     }

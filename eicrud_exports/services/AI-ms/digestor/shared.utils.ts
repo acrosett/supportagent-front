@@ -10,7 +10,7 @@ export const FAQ_SPLIT_TOKENS = 50000;
  * Estimate digest price based on token count.
  * Returns -1 if token length exceeds MAX_DIGEST_TOKENS.
  */
-export async function estimateStringTokenPrice(fileText: string, aiModelType: AiModelType = AiModelType.FAST, checkMax: boolean = false): Promise<{
+export async function estimateStringTokenPrice(fileText: string, aiModelType: AiModelType = AiModelType.SMART, checkMax: boolean = false): Promise<{
       tokenCount: number;
       exceedsMax: boolean;
       price: number;
@@ -41,7 +41,7 @@ export async function estimateStringTokenPrice(fileText: string, aiModelType: Ai
 
 export async function estimateFullDigestCost(fileText: string) {
 
-      const aiModelType = AiModelType.FAST;
+      const aiModelType = AiModelType.SMART;
       let price = 0;
       const firstStep = await estimateStringTokenPrice(fileText, aiModelType, true);
 
@@ -54,12 +54,13 @@ export async function estimateFullDigestCost(fileText: string) {
       const estimatedOutput = firstStep.tokenCount * 0.8;
 
       let nextStepCount = Math.ceil(estimatedOutput / FAQ_SPLIT_TOKENS);
+      const tokenPerStep = Math.min(estimatedOutput, FAQ_SPLIT_TOKENS);
 
       nextStepCount *= 3.5; //AI search FAQs then read FAQs and then update it with tools, then send result;
 
       price +=  calculateTokensPrice({
-                  inputTokens: FAQ_SPLIT_TOKENS,
-                  outputTokens: FAQ_SPLIT_TOKENS,
+                  inputTokens: tokenPerStep,
+                  outputTokens: tokenPerStep,
                   aiModelType
                   }) * nextStepCount;
 

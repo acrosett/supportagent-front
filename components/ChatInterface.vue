@@ -227,6 +227,7 @@ const clientIdentifier = ref('')
 const isInvertedMode = ref(false)
 const aiEnabled = ref(true)
 const isNewGuest = ref(false) // Track if this is a new guest
+const hasScrolledOnVisibility = ref(false) // Track if we've already scrolled when widget became visible
 
 // Composables
 const { getRecaptchaToken } = useRecaptcha()
@@ -317,6 +318,8 @@ const initializeChat = async (nuxtApp: NuxtApp) => {
     if (isInvertedMode.value) {
       await fetchAIStatus(nuxtApp)
     }
+
+
 
   } catch (error: any) {
     console.error('Failed to initialize chat:', error)
@@ -1092,8 +1095,10 @@ onMounted(() => {
         case 'widget-visibility-changed':
           // Handle visibility change from embed.js
           console.log('Widget visibility changed:', visible)
-          if (visible) {
+          if (visible && !hasScrolledOnVisibility.value) {
             // Widget became visible - socket will be managed by clientIdentifier watcher
+            scrollToBottom()
+            hasScrolledOnVisibility.value = true
           } else {
             // Widget became hidden - keep socket alive for real-time updates
           }
