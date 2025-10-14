@@ -202,7 +202,7 @@ async function runClosure() {
     }
 
     // Replace CURRENT_VERSION_STRING with actual version
-    const finalOutput = result.stdOut.replace(/CURRENT_VERSION_STRING/g, version)
+    const finalOutput = result.stdOut.replace(/CURRENT_VERSION_STRING/g, version.replace(/"/g, '\\"'))
     
     // Write to all output directories
     for (const outDir of outputDirs) {

@@ -229,6 +229,9 @@ const aiEnabled = ref(true)
 const isNewGuest = ref(false) // Track if this is a new guest
 const hasScrolledOnVisibility = ref(false) // Track if we've already scrolled when widget became visible
 
+// Simulated typing indicator for first message
+const simulatedTypingTimeout = ref<number | null>(null)
+
 // Composables
 const { getRecaptchaToken } = useRecaptcha()
 const { renderMarkdown, highlightCodeBlocks } = useMarkdown()
@@ -525,6 +528,15 @@ const sendMessage = async () => {
     }
 
     await nuxtApp.$sp.message.send_client_message(messageData)
+
+    // If no socket connection exists (first message), simulate typing indicator
+    if (!socket.value) {
+      isTyping.value = true
+      simulatedTypingTimeout.value = setTimeout(() => {
+        isTyping.value = false
+        simulatedTypingTimeout.value = null
+      }, 60000) as unknown as number // 1 minute timeout
+    }
 
     if(isNewGuest.value || !socket.value){
       openSocketConnection(nuxtApp)
@@ -903,10 +915,20 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
             if (widgetConfig.value.soundOn) playBipSound()
             break
           case 'thinking_start':
+            // Clear simulated typing timeout if it exists
+            if (simulatedTypingTimeout.value) {
+              clearTimeout(simulatedTypingTimeout.value)
+              simulatedTypingTimeout.value = null
+            }
             // AI started thinking - show typing indicator
             isTyping.value = true
             break
           case 'thinking_stop':
+            // Clear simulated typing timeout if it exists
+            if (simulatedTypingTimeout.value) {
+              clearTimeout(simulatedTypingTimeout.value)
+              simulatedTypingTimeout.value = null
+            }
             // AI stopped thinking - hide typing indicator
             isTyping.value = false
             break
@@ -973,6 +995,12 @@ const closeSocketConnection = () => {
   if (reconnectTimeoutId.value) {
     clearTimeout(reconnectTimeoutId.value)
     reconnectTimeoutId.value = null
+  }
+  
+  // Clear simulated typing timeout
+  if (simulatedTypingTimeout.value) {
+    clearTimeout(simulatedTypingTimeout.value)
+    simulatedTypingTimeout.value = null
   }
   
   if (socket.value) {
