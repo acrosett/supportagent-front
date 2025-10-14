@@ -637,6 +637,17 @@
             observer.observe(el);
         });
 
+        // Trigger visibility check for elements already in viewport on page load
+        setTimeout(() => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                if (isVisible) {
+                    el.classList.add('visible');
+                }
+            });
+        }, 100);
+
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {

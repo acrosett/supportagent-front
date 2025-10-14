@@ -36,6 +36,23 @@ server {
   root /var/www/app;
   index index.html;
 
+  location = /embed.js {
+    return 301 https://cdn.directsupport.ai/embed.js;
+  }
+
+    # Test chat iframe with CSP
+  location = /test-chat {
+    add_header Cache-Control "public, max-age=60";
+    add_header Content-Security-Policy "frame-ancestors *";
+    try_files $uri $uri/ /index.html;
+  }
+
+  # Landing files on app domain
+  location /landing/ {
+    add_header Cache-Control "public, max-age=60";
+    try_files $uri =404;
+  }
+
   # Nuxt static files
   location /_nuxt/ {
     expires 1y;
@@ -45,6 +62,7 @@ server {
 
   # SPA routing
   location / {
+    add_header Cache-Control "public, max-age=60";
     try_files $uri $uri/ /index.html;
   }
 }

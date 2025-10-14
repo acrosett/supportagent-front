@@ -504,9 +504,8 @@
                 <div class="section fade-in">
                     <h2>9. Cookies and Trackers</h2>
                     <ul>
-                        <li>We do not use tracking cookies</li>
-                        <li>Essential technical cookies may be set for session and security purposes only</li>
-                        <li>Google reCAPTCHA v3 may use cookies strictly necessary for spam and abuse prevention</li>
+<p>We do not use tracking or advertising cookies. Essential technical cookies may be set for session and security purposes only.</p>
+<p><strong>Security and Abuse Prevention (reCAPTCHA):</strong> Our chat feature uses security tools such as Google reCAPTCHA to protect against spam and automated abuse. These tools may place cookies or collect technical data (e.g., IP address, browser characteristics) solely to verify that a real human is using the chat. Because this functionality is essential to the security and operation of the Service, it is implemented without prior consent under the exemption for cookies strictly necessary for security purposes. Google’s processing is subject to its own Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" style="color:#667eea;">https://policies.google.com/privacy</a>.</p>
                     </ul>
                 </div>
 
@@ -571,6 +570,17 @@
         document.querySelectorAll('.fade-in').forEach(el => {
             observer.observe(el);
         });
+
+        // Trigger visibility check for elements already in viewport on page load
+        setTimeout(() => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                if (isVisible) {
+                    el.classList.add('visible');
+                }
+            });
+        }, 100);
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
