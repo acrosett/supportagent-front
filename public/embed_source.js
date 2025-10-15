@@ -46,6 +46,7 @@
       
       // New configuration options
       config.welcomeMessage = script.dataset.welcomeMessage; // Welcome message for new users
+      config.faqs = script.dataset.faqs; // FAQ questions (comma-separated or JSON array)
       config.icon = script.dataset.icon || 'robot'; // 'robot', 'message', or 'phone'
       config.primaryColor = script.dataset.primaryColor; // Primary color for chat
   config.secondaryColor = script.dataset.secondaryColor; // Secondary color for chat
@@ -58,6 +59,19 @@
   const parseSeconds = (v)=>{ if(!v) return undefined; const n=parseFloat(v); return isNaN(n)?undefined:n; };
   config.bounceAfterInit = parseSeconds(script.dataset.bounceAfterInit); // delay before first double bounce
   config.periodicBounce = parseSeconds(script.dataset.periodicBounce); // interval between periodic bounces
+    }
+    
+    // Parse FAQs if provided (support comma-separated string or JSON array)
+    if (config.faqs) {
+      try {
+        // Try to parse as JSON array first
+        config.faqs = JSON.parse(config.faqs);
+      } catch (e) {
+        // If not JSON, treat as comma-separated string
+        config.faqs = config.faqs.split(',').map(q => q.trim()).filter(q => q);
+      }
+    } else {
+      config.faqs = [];
     }
     
     return config;

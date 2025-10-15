@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsBoolean } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsBoolean, IsArray } from "class-validator";
 import { Client } from "../client/client.entity";
 import { User } from "../../user/user.entity";
 import { Product } from "../product/product.entity";
@@ -28,13 +28,22 @@ export class Message {
 
     @IsOptional()
     @IsBoolean()
+    fromCache: boolean = false;
+
+    @IsOptional()
+    @IsBoolean()
     isHidden: boolean = false;
+
+
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    followUps?: string[] = [];
 
     client: Client | string;
 
     product: Product | string;
 
-    metadata?: any;
 
     aiType: AiModelType;
 

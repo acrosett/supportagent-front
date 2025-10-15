@@ -33,8 +33,7 @@ import { WidgetConfig, WidgetPosition, WidgetIcon } from '@/eicrud_exports/servi
 definePageMeta({ layout: 'default' })
 
 const nuxtApp = useNuxtApp()
-const apiToken = computed(() => (nuxtApp as any).$userProductId || 'REPLACE_TOKEN')
-
+const apiToken = computed(() => nuxtApp.$userProductId);
 const excludeFields = ['id','owner','product','createdAt','updatedAt']
 
 const defaultConfig = (): Partial<WidgetConfig> => ({
@@ -47,6 +46,7 @@ const defaultConfig = (): Partial<WidgetConfig> => ({
   secondaryColor: '#764ba2',
   icon: WidgetIcon.ROBOT,
   welcomeMessage: '👋 Welcome! How can I help you today?',
+  faqs: [],
   bounceAfterInit: 1,
   periodicBounce: 20,
   startOpen: false,
@@ -91,6 +91,10 @@ const buildAttributes = () => {
   if (f.secondaryColor) attrs.push(`data-secondary-color="${f.secondaryColor}"`)
   if (f.icon) attrs.push(`data-icon="${f.icon}"`)
   if (f.welcomeMessage) attrs.push(`data-welcome-message="${f.welcomeMessage.replace(/"/g,'&quot;')}"`)
+  if (f.faqs && f.faqs.length > 0) {
+    const faqsJson = JSON.stringify(f.faqs).replace(/"/g,'&quot;')
+    attrs.push(`data-faqs="${faqsJson}"`)
+  }
   if (f.bounceAfterInit != null) attrs.push(`data-bounce-after-init="${f.bounceAfterInit}"`)
   if (f.periodicBounce != null) attrs.push(`data-periodic-bounce="${f.periodicBounce}"`)
   if (f.startOpen) attrs.push('data-start-open="true"')
@@ -140,6 +144,9 @@ const buildPreview = () => {
   s.setAttribute('data-secondary-color', f.secondaryColor)
   s.setAttribute('data-icon', f.icon)
   s.setAttribute('data-welcome-message', f.welcomeMessage)
+  if (f.faqs && f.faqs.length > 0) {
+    s.setAttribute('data-faqs', JSON.stringify(f.faqs))
+  }
   if (f.bounceAfterInit != null) s.setAttribute('data-bounce-after-init', String(f.bounceAfterInit))
   if (f.periodicBounce != null) s.setAttribute('data-periodic-bounce', String(f.periodicBounce))
   if (f.startOpen) s.setAttribute('data-start-open', 'true')
@@ -177,14 +184,15 @@ const fieldOverrides: OverrideRecord<WidgetConfig> = {
   darkMode: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
   draggable: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
   soundOn: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
-  welcomeMessage: { type: "richtext", placeholder: '👋 Welcome!', label: 'Welcome Message' }
+  welcomeMessage: { type: "richtext", placeholder: '👋 Welcome!', label: 'Welcome Message' },
+  faqs: { label: 'FAQs (Frequently Asked Questions)', placeholder: 'How do I reset my password?' }
 }
 
 const actions: MegaFormAction[] = [
   { label: 'Save', color: 'primary', callback: async (data:any) => {
       try {
         // Associate product (if available) so server can link
-        if (nuxtApp.$userProductId) data.product = { id: nuxtApp.$userProductId }
+        if (nuxtApp.$userProductId) data.product = nuxtApp.$userProductId
         // Persist via service client (create or update based on existing id?)
         if (formData.value.id) {
           await nuxtApp.$sp.widgetConfig.patchOne({ id: formData.value.id }, data)
@@ -205,7 +213,6 @@ const actions: MegaFormAction[] = [
 <style scoped lang="scss">
 @use "~/assets/_variables.scss" as *;
 
-.widget-config-page { }
 .page-header { margin-bottom:2rem; }
 .page-title { margin:0; font-size:2rem; color:$text; }
 .page-desc { color:$muted; margin:.5rem 0 0; font-size:.9rem; }

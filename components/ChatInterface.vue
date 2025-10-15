@@ -50,14 +50,30 @@
           <span>Loading older messages...</span>
         </div>
         
-        <div v-for="message in messages" :key="message.id" class="message-wrapper">
+        <div v-for="(message, index) in messages" :key="message.id" class="message-wrapper">
           <!-- Regular chat message -->
           <div v-if="message.type !== 'tool-trace'" :class="['message', getMessageClass(message.type)]">
             <div class="message-header">
               <span class="sender-name">{{ getSenderName(message.type) }} <span class="ai-type-label">{{getAiTypeLabel(message.aiType)}}</span></span>
               <span class="message-time">&nbsp;&nbsp;{{ formatTime(message.createdAt) }}</span>
             </div>
-            <div class="message-content" v-html="renderMarkdown((message as ChatMessage).content || '')"></div>
+            <div 
+              class="message-content" 
+              v-html="renderMarkdown(getMessageContent(message))"
+            ></div>
+            
+            <!-- Follow-up questions (only show on last message) -->
+            <div v-if="isLastMessage(index) && hasFollowUps(message) && !isStreaming(message.id)" class="follow-up-questions">
+              <div class="follow-up-label">Suggested questions:</div>
+              <button 
+                v-for="(question, qIndex) in getFollowUps(message)" 
+                :key="qIndex"
+                class="follow-up-button"
+                @click="sendFollowUpQuestion(question)"
+              >
+                {{ question }}
+              </button>
+            </div>
           </div>
           
           <!-- Tool trace message -->
@@ -219,7 +235,8 @@ const widgetConfig = ref<any>({
   apiToken: '',
   icons: null,
   darkMode: false,
-  soundOn: true
+  soundOn: true,
+  faqs: []
 })
 
 // Client state
@@ -231,6 +248,11 @@ const hasScrolledOnVisibility = ref(false) // Track if we've already scrolled wh
 
 // Simulated typing indicator for first message
 const simulatedTypingTimeout = ref<number | null>(null)
+
+// Streaming animation state
+const streamingMessageId = ref<string | null>(null)
+const streamingContent = ref('')
+const streamingInterval = ref<number | null>(null)
 
 // Composables
 const { getRecaptchaToken } = useRecaptcha()
@@ -401,6 +423,35 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
     const newMessageCount = allMessages.length
     const hasNewMessages = newMessageCount > lastMessageCount.value
     
+    // Check for new AI messages to stream
+    if (!append && hasNewMessages && allMessages.length > 0) {
+      const lastMessage = allMessages[allMessages.length - 1] as ChatMessage
+      // Only stream AI messages (type 'ai' or 'model'), not user messages or temp messages
+      const isAIMessage = lastMessage.type === 'ai' || (lastMessage.type as any) === 'model'
+      if (isAIMessage && !lastMessage.id?.startsWith('temp-') && !lastMessage.id?.startsWith('welcome-') && lastMessage.content) {
+        // Start streaming animation for the new message
+        const messageId = lastMessage.id!
+        const fullContent = lastMessage.content
+        
+        // Update messages first
+        messages.value = allMessages
+        messageOffset.value = allMessages.filter(msg => msg.type != 'tool-trace').length
+        toolTraceOffset.value = allMessages.filter(msg => msg.type === 'tool-trace').length
+        
+        // Start streaming
+        startStreamingAnimation(messageId, fullContent, () => {
+          // Re-highlight after streaming completes
+          highlightCodeBlocks()
+        })
+        
+        // Update tracking
+        lastMessageCount.value = newMessageCount
+        
+        // Scroll during streaming is handled in startStreamingAnimation
+        return
+      }
+    }
+    
     // Update messages and offset
     messages.value = allMessages
     messageOffset.value = allMessages.filter(msg => msg.type != 'tool-trace').length
@@ -443,7 +494,8 @@ const addWelcomeMessage = () => {
       type: 'model' as any,
       createdAt: new Date(),
       updatedAt: new Date(),
-      identifier: 'system'
+      identifier: 'system',
+      followUps: Array.isArray(widgetConfig.value.faqs) ? widgetConfig.value.faqs : []
     } as Partial<Message>
     
     messages.value.push(welcomeMessage)
@@ -527,10 +579,10 @@ const sendMessage = async () => {
       }
     }
 
-    await nuxtApp.$sp.message.send_client_message(messageData)
+    const fromCache = await nuxtApp.$sp.message.send_client_message(messageData)
 
     // If no socket connection exists (first message), simulate typing indicator
-    if (!socket.value) {
+    if (!socket.value && !fromCache) {
       isTyping.value = true
       simulatedTypingTimeout.value = setTimeout(() => {
         isTyping.value = false
@@ -683,6 +735,83 @@ const getAiTypeLabel = (aiType?: string) => {
     default:
       return ''
   }
+}
+
+// Follow-up questions helper functions
+const isLastMessage = (index: number): boolean => {
+  // Filter out tool traces and find the last actual message
+  const actualMessages = messages.value.filter(msg => msg.type !== 'tool-trace')
+  const lastActualMessage = actualMessages[actualMessages.length - 1]
+  return messages.value[index] === lastActualMessage
+}
+
+const hasFollowUps = (message: ChatItem): boolean => {
+  const chatMessage = message as ChatMessage
+  return Array.isArray(chatMessage.followUps) && chatMessage.followUps.length > 0
+}
+
+const getFollowUps = (message: ChatItem): string[] => {
+  const chatMessage = message as ChatMessage
+  return chatMessage.followUps || []
+}
+
+const sendFollowUpQuestion = (question: string) => {
+  messageText.value = question
+  sendMessage()
+}
+
+// Streaming animation helper functions
+const isStreaming = (messageId?: string): boolean => {
+  return streamingMessageId.value === messageId
+}
+
+const getMessageContent = (message: ChatItem): string => {
+  const chatMessage = message as ChatMessage
+  if (isStreaming(message.id)) {
+    return streamingContent.value
+  }
+  return chatMessage.content || ''
+}
+
+const startStreamingAnimation = (messageId: string, fullContent: string, onComplete?: () => void) => {
+  // Stop any existing streaming
+  stopStreamingAnimation()
+  
+  streamingMessageId.value = messageId
+  streamingContent.value = ''
+  
+  let currentIndex = 0
+  const charsPerFrame = 3 // Characters to add per frame (adjust for speed)
+  const frameDelay = 20 // Milliseconds between frames (adjust for smoothness)
+  
+  streamingInterval.value = setInterval(() => {
+    if (currentIndex >= fullContent.length) {
+      // Animation complete
+      streamingContent.value = fullContent
+      stopStreamingAnimation()
+      if (onComplete) onComplete()
+      return
+    }
+    
+    // Add characters progressively
+    const nextIndex = Math.min(currentIndex + charsPerFrame, fullContent.length)
+    streamingContent.value = fullContent.substring(0, nextIndex)
+    currentIndex = nextIndex
+    
+    // Auto-scroll during streaming
+    nextTick(() => {
+      scrollToBottom()
+      highlightCodeBlocks()
+    })
+  }, frameDelay) as unknown as number
+}
+
+const stopStreamingAnimation = () => {
+  if (streamingInterval.value) {
+    clearInterval(streamingInterval.value)
+    streamingInterval.value = null
+  }
+  streamingMessageId.value = null
 }
 
 const getMessageClass = (messageType?: string) => {
@@ -1002,6 +1131,9 @@ const closeSocketConnection = () => {
     clearTimeout(simulatedTypingTimeout.value)
     simulatedTypingTimeout.value = null
   }
+  
+  // Stop streaming animation
+  stopStreamingAnimation()
   
   if (socket.value) {
     socket.value.close()
@@ -1515,5 +1647,75 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 
 .grecaptcha-badge { 
     visibility: hidden !important;
+}
+
+/* Follow-up Questions Styles */
+.follow-up-questions {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.message-fan .follow-up-questions {
+  border-top-color: rgba(255, 255, 255, 0.2);
+}
+
+.message-model .follow-up-questions {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .message-model .follow-up-questions {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.follow-up-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
+}
+
+.follow-up-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: inherit;
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  line-height: 1.4;
+}
+
+.follow-up-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateX(2px);
+}
+
+.message-model .follow-up-button {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.message-model .follow-up-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .message-model .follow-up-button {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e6e8ef;
+}
+
+.dark-mode .message-model .follow-up-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 </style>

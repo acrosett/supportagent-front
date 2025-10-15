@@ -2,6 +2,7 @@ import { SendClientMessageDto, SendClientMessageReturnDto } from './cmds/send_cl
 import { GetClientMessagesDto, GetClientMessagesReturnDto } from './cmds/get_client_messages/get_client_messages.dto';
 import { DeleteTestClientDto, DeleteTestClientReturnDto } from './cmds/delete_test_client/delete_test_client.dto';
 import { DeleteClientDto, DeleteClientReturnDto } from './cmds/delete_client/delete_client.dto';
+import { CacheMessageDto, CacheMessageReturnDto } from './cmds/cache_message/cache_message.dto';
 import { AdminDeleteClientDto, AdminDeleteClientReturnDto } from './cmds/admin_delete_client/admin_delete_client.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
 import { ICrudOptions } from "@eicrud/shared/interfaces";
@@ -139,6 +140,38 @@ export class MessageClient extends CrudClient<Message> {
       copts?: ClientOptions,
     ): Promise<DeleteClientReturnDto> {
       return super.cmdSL('delete_client', dto, options, copts) as any;
+  }
+
+  async cache_message(
+      dto: CacheMessageDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CacheMessageReturnDto> {
+      return super.cmd('cache_message', dto, options, copts);
+  }
+
+  async cache_messageS(
+      dto: CacheMessageDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CacheMessageReturnDto> {
+      return super.cmdS('cache_message', dto, options, copts);
+  }
+
+  async cache_messageL(
+      dto: CacheMessageDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CacheMessageReturnDto> {
+      return super.cmdL('cache_message', dto, options, copts) as any;
+  }
+
+  async cache_messageSL(
+      dto: CacheMessageDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<CacheMessageReturnDto> {
+      return super.cmdSL('cache_message', dto, options, copts) as any;
   }
 
   async admin_delete_client(

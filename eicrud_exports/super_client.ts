@@ -15,6 +15,7 @@ import { EventClient } from './services/SUPPORT-ms/event/event.client';
 import { DomainClient } from './services/SUPPORT-ms/domain/domain.client';
 import { CustomToolClient } from './services/SUPPORT-ms/custom-tool/custom-tool.client';
 import { ClientClient } from './services/SUPPORT-ms/client/client.client';
+import { CachedResponseClient } from './services/SUPPORT-ms/cached-response/cached-response.client';
 import { NotificationClient } from './services/notification/notification.client';
 import { ProductStatClient } from './services/LOG-ms/product-stat/product-stat.client';
 import { LogClient } from './services/LOG-ms/log/log.client';
@@ -60,6 +61,7 @@ export class SuperClient {
         this.domain = new DomainClient(config);
         this.customTool = new CustomToolClient(config);
         this.client = new ClientClient(config);
+        this.cachedResponse = new CachedResponseClient(config);
         this.notification = new NotificationClient(config);
         this.productStat = new ProductStatClient(config);
         this.log = new LogClient(config);
@@ -101,6 +103,7 @@ export class SuperClient {
     domain: DomainClient;
     customTool: CustomToolClient;
     client: ClientClient;
+    cachedResponse: CachedResponseClient;
     notification: NotificationClient;
     productStat: ProductStatClient;
     log: LogClient;

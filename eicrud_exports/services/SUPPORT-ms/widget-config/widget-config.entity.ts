@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsBoolean, IsNumber, Min } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsBoolean, IsNumber, Min, IsArray } from "class-validator";
 import { User } from "../../user/user.entity";
 import { Product } from "../product/product.entity";
 
@@ -42,6 +42,10 @@ export class WidgetConfig {
 
     @IsString()
     welcomeMessage: string;
+
+    @IsArray()
+    @IsString({ each: true })
+    faqs: string[];
 
     @IsOptional()
     @IsNumber()

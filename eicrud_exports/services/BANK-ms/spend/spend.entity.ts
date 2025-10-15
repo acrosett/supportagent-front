@@ -11,6 +11,7 @@ export enum SpendType {
   AI_THINKING = 'ai_thinking',
   AI_SUMMARY = 'ai_summary',
   SUBSCRIPTION = 'subscription',
+  CACHED = 'cached',
   UNKNOWN = 'unknown',
 }
 
