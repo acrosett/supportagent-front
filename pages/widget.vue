@@ -6,7 +6,14 @@
     </header>
 
     <div class="content-section">
+      
+      <div v-if="loadingConfig" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading widget configuration...</p>
+      </div>
+      
       <MegaForm
+        v-else
         :formClass="WidgetConfig"
         v-model="formData"
         :fieldOverrides="fieldOverrides"
@@ -83,25 +90,24 @@ const loadConfig = async () => {
 const buildAttributes = () => {
   const attrs: string[] = []
   const f = formData.value
-  attrs.push(`data-api-token="${apiToken.value}"`)
-  attrs.push(`data-position="${f.position}"`)
-  attrs.push(`data-width="${f.width}"`)
-  attrs.push(`data-height="${f.height}"`)
-  if (f.primaryColor) attrs.push(`data-primary-color="${f.primaryColor}"`)
-  if (f.secondaryColor) attrs.push(`data-secondary-color="${f.secondaryColor}"`)
-  if (f.icon) attrs.push(`data-icon="${f.icon}"`)
-  if (f.welcomeMessage) attrs.push(`data-welcome-message="${f.welcomeMessage.replace(/"/g,'&quot;')}"`)
+  attrs.push(`data-api-token='${apiToken.value}'`)
+  attrs.push(`data-position='${f.position}'`)
+  attrs.push(`data-width='${f.width}'`)
+  attrs.push(`data-height='${f.height}'`)
+  if (f.primaryColor) attrs.push(`data-primary-color='${f.primaryColor}'`)
+  if (f.secondaryColor) attrs.push(`data-secondary-color='${f.secondaryColor}'`)
+  if (f.icon) attrs.push(`data-icon='${f.icon}'`)
+  if (f.welcomeMessage) attrs.push(`data-welcome-message='${f.welcomeMessage}'`)
   if (f.faqs && f.faqs.length > 0) {
-    const faqsJson = JSON.stringify(f.faqs).replace(/"/g,'&quot;')
-    attrs.push(`data-faqs="${faqsJson}"`)
+    attrs.push(`data-faqs='${JSON.stringify(f.faqs)}'`)
   }
-  if (f.bounceAfterInit != null) attrs.push(`data-bounce-after-init="${f.bounceAfterInit}"`)
-  if (f.periodicBounce != null) attrs.push(`data-periodic-bounce="${f.periodicBounce}"`)
-  if (f.startOpen) attrs.push('data-start-open="true"')
-  if (f.darkMode) attrs.push('data-dark-mode="true"')
-  if (!f.draggable) attrs.push('data-draggable="false"')
-  if (!f.soundOn) attrs.push('data-sound-on="false"')
-  attrs.push('data-debug="true"')
+  if (f.bounceAfterInit != null) attrs.push(`data-bounce-after-init='${f.bounceAfterInit}'`)
+  if (f.periodicBounce != null) attrs.push(`data-periodic-bounce='${f.periodicBounce}'`)
+  if (f.startOpen) attrs.push(`data-start-open='true'`)
+  if (f.darkMode) attrs.push(`data-dark-mode='true'`)
+  if (!f.draggable) attrs.push(`data-draggable='false'`)
+  if (!f.soundOn) attrs.push(`data-sound-on='false'`)
+  attrs.push(`data-debug='true'`)
   
   return attrs.join('\n        ')
 }
@@ -109,7 +115,7 @@ const buildAttributes = () => {
 const snippet = computed(() => {
   // Use a placeholder to avoid prematurely closing the surrounding script context
   const closingTag = '<' + '/script>'
-  return `<script src=\"${window.location.origin}/embed.js\"\n        ${buildAttributes()}\n>${closingTag}`
+  return `<script src='${window.location.origin}/embed.js'\n        ${buildAttributes()}\n>${closingTag}`
 })
 
 const copied = ref(false)
@@ -195,7 +201,7 @@ const actions: MegaFormAction[] = [
         if (nuxtApp.$userProductId) data.product = nuxtApp.$userProductId
         // Persist via service client (create or update based on existing id?)
         if (formData.value.id) {
-          await nuxtApp.$sp.widgetConfig.patchOne({ id: formData.value.id }, data)
+          await nuxtApp.$sp.widgetConfig.patchOne({ id: formData.value.id, product: nuxtApp.$userProductId }, data)
           nuxtApp.$toast.show('Widget config updated', 'success')
         } else {
           const created = await nuxtApp.$sp.widgetConfig.create(data)
@@ -227,6 +233,31 @@ const actions: MegaFormAction[] = [
 .copy-btn { margin-top:.75rem; background:$brand; color:#fff; border:none; padding:.55rem .9rem; font-size:.75rem; font-weight:600; border-radius:6px; cursor:pointer; }
 .copy-btn:hover { background:$brand-2; }
 .copied-msg { margin-top:.35rem; font-size:.6rem; color:#2d995b; font-weight:600; }
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: $muted;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba($brand, 0.1);
+  border-top: 3px solid $brand;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 @media (max-width: 768px){
   .content-section { padding:1rem; }

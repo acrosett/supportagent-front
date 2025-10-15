@@ -57,10 +57,10 @@
               <span class="sender-name">{{ getSenderName(message.type) }} <span class="ai-type-label">{{getAiTypeLabel(message.aiType)}}</span></span>
               <span class="message-time">&nbsp;&nbsp;{{ formatTime(message.createdAt) }}</span>
             </div>
-            <div 
-              class="message-content" 
-              v-html="renderMarkdown(getMessageContent(message))"
-            ></div>
+            <div class="message-content">
+              <div v-if="isStreaming(message.id)" class="streaming-text">{{ getMessageContent(message) }}</div>
+              <div v-else v-html="renderMarkdown(getMessageContent(message))"></div>
+            </div>
             
             <!-- Follow-up questions (only show on last message) -->
             <div v-if="isLastMessage(index) && hasFollowUps(message) && !isStreaming(message.id)" class="follow-up-questions">
@@ -69,7 +69,7 @@
                 v-for="(question, qIndex) in getFollowUps(message)" 
                 :key="qIndex"
                 class="follow-up-button"
-                @click="sendFollowUpQuestion(question)"
+                @click="sendMessage(question)"
               >
                 {{ question }}
               </button>
@@ -119,7 +119,7 @@
             rows="1"
             ref="messageInput"
             :disabled="isInvertedMode && aiEnabled"
-            @keydown.enter.exact.prevent="sendMessage"
+            @keydown.enter.exact.prevent="sendMessage()"
             @keydown.enter.shift.exact="handleShiftEnter"
             @input="autoResize"
           ></textarea>
@@ -128,7 +128,7 @@
             <button 
               type="button" 
               class="send-button" 
-              @click="sendMessage"
+              @click="sendMessage()"
               :disabled="!messageText.trim() || (isInvertedMode && aiEnabled)"
             >
               <AppIcon name="send" />
@@ -424,7 +424,7 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
     const hasNewMessages = newMessageCount > lastMessageCount.value
     
     // Check for new AI messages to stream
-    if (!append && hasNewMessages && allMessages.length > 0) {
+    if (!append && hasNewMessages && allMessages.length > 0 && (limit||0) < messagesPerPage) {
       const lastMessage = allMessages[allMessages.length - 1] as ChatMessage
       // Only stream AI messages (type 'ai' or 'model'), not user messages or temp messages
       const isAIMessage = lastMessage.type === 'ai' || (lastMessage.type as any) === 'model'
@@ -514,9 +514,10 @@ const addWelcomeMessage = () => {
 }
 
 
-const sendMessage = async () => {
-  console.log('Sending message:', messageText.value)
-  if (!messageText.value.trim()) return
+const sendMessage = async (msg?: string) => {
+  const messageContent = msg || messageText.value.trim()
+  console.log('Sending message:', messageContent)
+  if (!messageContent) return
   const nuxtApp = useNuxtApp()
 
   // Initialize audio context on first user interaction
@@ -538,7 +539,6 @@ const sendMessage = async () => {
     return
   }
 
-  const messageContent = messageText.value.trim()
   
   // Create temporary message and add to UI immediately
   const tempMessage = {
@@ -580,6 +580,14 @@ const sendMessage = async () => {
     }
 
     const fromCache = await nuxtApp.$sp.message.send_client_message(messageData)
+
+    // If message came from cache and socket isn't ready, manually fetch the new message
+    if (fromCache && !socket.value) {
+      setTimeout(() => {
+        console.log('Message from cache with no socket - fetching new messages')
+        refreshMessages(nuxtApp, 4)
+      }, 100)
+    }
 
     // If no socket connection exists (first message), simulate typing indicator
     if (!socket.value && !fromCache) {
@@ -753,11 +761,6 @@ const hasFollowUps = (message: ChatItem): boolean => {
 const getFollowUps = (message: ChatItem): string[] => {
   const chatMessage = message as ChatMessage
   return chatMessage.followUps || []
-}
-
-const sendFollowUpQuestion = (question: string) => {
-  messageText.value = question
-  sendMessage()
 }
 
 // Streaming animation helper functions
@@ -1039,7 +1042,7 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
         switch (message.type) {
           case 'new_message':
             // Refresh messages when server tells us to (just get latest, don't append)
-            await refreshMessages(nuxtApp, 9)
+            await refreshMessages(nuxtApp, 4)
             // Play bip sound for new message if enabled
             if (widgetConfig.value.soundOn) playBipSound()
             break

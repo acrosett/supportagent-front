@@ -1,5 +1,4 @@
 import { IsString, IsOptional, IsInt } from "class-validator";
-import { ChatAgentContext } from "../../../../AI-ms/chat-agent/chat-agent.service";
 
 
 export class CacheMessageDto {
@@ -21,8 +20,6 @@ export class CacheMessageDto {
     @IsOptional()
     followUps?: string[];
 
-    // toolContext will be passed but not validated (it's not a serialized field)
-    toolContext?: ChatAgentContext;
 
 }
 

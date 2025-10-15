@@ -350,7 +350,8 @@ const confirmUpload = async () => {
       // Clear the paste form
       pasteFormData.value.fileText = ''
     }
-    
+
+    activeTab.value = 'upload'
     // Call digest_file with the processed text (both flows converge here)
     if (processedText.value) {
       await callDigestFile()

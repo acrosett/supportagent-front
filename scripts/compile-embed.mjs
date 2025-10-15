@@ -21,7 +21,7 @@ console.log(`[compile-embed] Environment: ${env}`)
 // Resolve inputs/outputs
 const repoRoot = path.resolve(__dirname, '..')
 const publicDir = path.join(repoRoot, 'public')
-const sourceFile = path.join(publicDir, 'embed_source.js')
+const sourceFile = path.join(repoRoot, 'embed_source.js')
 const htmlSourceFile = path.join(publicDir, 'landing', 'index_source.html')
 
 // Write to both .output/public and public directories to avoid confusion
