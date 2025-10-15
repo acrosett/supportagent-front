@@ -10,7 +10,6 @@ export const PUBLIC_PATHS = [
   "/reset-password", 
   "/verify-email", 
   "/coming-soon",
-  "/widget",
   "/landing",
   "/embed.js"
 ]
