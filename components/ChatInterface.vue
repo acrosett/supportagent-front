@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-interface" :class="{ 'dark-mode': widgetConfig.darkMode }" :style="dynamicStyles">
+  <div class="chat-interface" :class="{ 'dark-mode': widgetConfig.darkMode }" :style="dynamicStyles" @click="handleUserInteraction">
     <!-- Admin Training Data Panel -->
     <TrainingDataPanel
       ref="trainingDataPanel"
@@ -846,6 +846,13 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
 }
 
 const showToolTraceDetails = (trace: ToolTraceMessage) => {
+  // Initialize audio context on user interaction
+  if (widgetConfig.value.soundOn) {
+    initAudioContext().catch(err => {
+      console.log('Failed to initialize audio context on user interaction:', err)
+    })
+  }
+  
   selectedToolTrace.value = trace
   showToolTracePopup.value = true
 }
@@ -936,6 +943,9 @@ const toggleAI = async () => {
 // Audio context for bip sounds (created after user interaction)
 let audioContext: AudioContext | null = null
 
+// Track if audio context has been initialized to avoid redundant attempts
+const audioContextInitialized = ref(false)
+
 // Initialize audio context after user interaction
 const initAudioContext = async () => {
   if (!audioContext) {
@@ -946,9 +956,20 @@ const initAudioContext = async () => {
       if (audioContext.state === 'suspended') {
         await audioContext.resume()
       }
+      
+      audioContextInitialized.value = true
     } catch (error) {
       console.log('Audio context creation failed:', error)
     }
+  }
+}
+
+// Handle any user interaction to initialize audio context
+const handleUserInteraction = () => {
+  if (!audioContextInitialized.value && widgetConfig.value.soundOn) {
+    initAudioContext().catch(err => {
+      console.log('Failed to initialize audio context on user interaction:', err)
+    })
   }
 }
 
@@ -1284,6 +1305,13 @@ onMounted(() => {
             // Widget became visible - socket will be managed by clientIdentifier watcher
             scrollToBottom()
             hasScrolledOnVisibility.value = true
+            
+            // Initialize audio context on widget open (user gesture)
+            if (widgetConfig.value.soundOn) {
+              initAudioContext().catch(err => {
+                console.log('Failed to initialize audio context on widget open:', err)
+              })
+            }
           } else {
             // Widget became hidden - keep socket alive for real-time updates
           }
