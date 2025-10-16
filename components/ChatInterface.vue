@@ -207,6 +207,8 @@ const reconnectAttempts = ref(0)
 const maxReconnectAttempts = 5
 const baseReconnectDelay = 1000 // 1 second
 const reconnectTimeoutId = ref<number | null>(null)
+const connectionStableTimeoutId = ref<number | null>(null)
+const minStableConnectionTime = 5000 // 5 seconds - connection must be stable this long to reset attempts
 
 // Tool trace state
 const toolTraces = ref<ToolTraceMessage[]>([])
@@ -1031,8 +1033,16 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     
     socket.value.onopen = () => {
       console.log('Socket connected successfully')
-      // Reset reconnection attempts on successful connection
-      reconnectAttempts.value = 0
+      // Don't reset attempts immediately - wait for stable connection
+      // Clear any existing stable timeout
+      if (connectionStableTimeoutId.value) {
+        clearTimeout(connectionStableTimeoutId.value)
+      }
+      // Reset attempts only after connection has been stable for a while
+      connectionStableTimeoutId.value = setTimeout(() => {
+        console.log('Socket connection stable - resetting reconnection attempts')
+        reconnectAttempts.value = 0
+      }, minStableConnectionTime) as unknown as number
     }
     
     socket.value.onmessage = async (event) => {
@@ -1079,6 +1089,12 @@ const openSocketConnection = async (nuxtApp: NuxtApp) => {
     socket.value.onclose = (event) => {
       console.log('Socket disconnected, code:', event.code, 'reason:', event.reason)
       socket.value = null
+      
+      // Clear stable connection timeout since connection was lost
+      if (connectionStableTimeoutId.value) {
+        clearTimeout(connectionStableTimeoutId.value)
+        connectionStableTimeoutId.value = null
+      }
       
       // Only attempt reconnection if we have a client identifier and haven't exceeded max attempts
       if (clientIdentifier.value && reconnectAttempts.value < maxReconnectAttempts) {
@@ -1127,6 +1143,12 @@ const closeSocketConnection = () => {
   if (reconnectTimeoutId.value) {
     clearTimeout(reconnectTimeoutId.value)
     reconnectTimeoutId.value = null
+  }
+  
+  // Clear stable connection timeout
+  if (connectionStableTimeoutId.value) {
+    clearTimeout(connectionStableTimeoutId.value)
+    connectionStableTimeoutId.value = null
   }
   
   // Clear simulated typing timeout

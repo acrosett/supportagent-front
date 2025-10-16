@@ -291,7 +291,17 @@
             
             <div class="log-content">
               <div class="log-section">
-                <h5>Input</h5>
+                <div class="log-section-header">
+                  <h5>Input</h5>
+                  <AppButton
+                    v-if="log.llmInput"
+                    label="Copy"
+                    color="secondary"
+                    margin="left"
+                    size="small"
+                    @click="copyToClipboard(log.llmInput, 'LLM Input copied to clipboard!')"
+                  />
+                </div>
                 <div class="log-text">{{ log.llmInput || 'No input available' }}</div>
               </div>
               
@@ -652,7 +662,7 @@ const fetchTaskLogs = async () => {
       contextId: contextId
     }, {
       orderBy: { createdAt: 'desc' },
-      limit: 50
+      limit: 1
     })
     
     taskLogs.value = Array.isArray(logsResult) ? logsResult : (logsResult?.data || [])
@@ -673,6 +683,17 @@ const fetchTaskLogs = async () => {
 const closeLogsPopup = () => {
   showLogsPopup.value = false
   taskLogs.value = []
+}
+
+// Copy to clipboard utility function
+const copyToClipboard = async (text: string, successMessage: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    useNuxtApp().$toast.show(successMessage, 'success')
+  } catch (error) {
+    console.error('Failed to copy to clipboard:', error)
+    useNuxtApp().$toast.show('Failed to copy to clipboard', 'error')
+  }
 }
 
 // Lifecycle
@@ -1479,8 +1500,15 @@ definePageMeta({
 }
 
 .log-section {
+  .log-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  
   h5 {
-    margin: 0 0 0.75rem 0;
+    margin: 0;
     color: $text;
     font-size: 1rem;
     font-weight: 600;
