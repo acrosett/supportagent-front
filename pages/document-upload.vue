@@ -218,15 +218,24 @@
           </div>
         </div>
         
-        <!-- Admin Retry Button -->
-        <div v-if="true && (selectedTask.status === EditorTaskStatus.FAILED)" class="admin-actions">
+        <!-- Admin Actions -->
+        <div v-if="isAdmin" class="admin-actions">
           <AppButton
+            v-if="selectedTask.status === EditorTaskStatus.FAILED"
             label="Retry Processing"
             color="secondary"
             size="sm"
-            margin="both"
+            margin="right"
             :loading="isRetrying"
             @click="retryTask"
+          />
+          <AppButton
+            label="View Logs"
+            color="primary"
+            size="sm"
+            margin="left"
+            :loading="isLoadingLogs"
+            @click="fetchTaskLogs"
           />
         </div>
 
@@ -234,6 +243,63 @@
           <h4>Knowledge Content</h4>
           <div class="knowledge-text">
             {{ selectedTask.newKnowledge || 'No content available' }}
+          </div>
+        </div>
+      </div>
+    </AppPopup>
+
+    <!-- Task Logs Popup -->
+    <AppPopup
+      v-if="showLogsPopup"
+      @close="closeLogsPopup"
+      title="Task Processing Logs"
+      :show="showLogsPopup"
+      size="xl"
+    >
+      <div class="logs-popup-content">
+        <div v-if="taskLogs.length === 0" class="no-logs-state">
+          <AppIcon name="info" size="xl" class="no-logs-icon" />
+          <h3>No logs available</h3>
+          <p>No processing logs found for this task</p>
+        </div>
+        
+        <div v-else class="logs-list">
+          <div class="logs-header">
+            <h4>Processing History ({{ taskLogs.length }} entries)</h4>
+            <p class="logs-description">LLM training data and processing logs for task {{ selectedTask?.id?.substring(0, 8) }}...</p>
+          </div>
+          
+          <div 
+            v-for="(log, index) in taskLogs" 
+            :key="log.id || index"
+            class="log-entry"
+            :class="{ 'is-test': log.isTest, 'has-error': log.errorCount > 0 }"
+          >
+            <div class="log-header">
+              <div class="log-info">
+                <div class="log-meta">
+                  <span class="log-agent">{{ log.agentName || 'Unknown Agent' }}</span>
+                  <span class="log-version">v{{ log.agentVersion || '0.0.0' }}</span>
+                  <span v-if="log.isTest" class="test-badge">TEST</span>
+                  <span v-if="log.errorCount > 0" class="error-badge">{{ log.errorCount }} errors</span>
+                </div>
+                <div class="log-timestamp">
+                  {{ formatDate(log.createdAt) }}
+                </div>
+              </div>
+            </div>
+            
+            <div class="log-content">
+              <div class="log-section">
+                <h5>Input</h5>
+                <div class="log-text">{{ log.llmInput || 'No input available' }}</div>
+              </div>
+              
+              <div class="log-section">
+                <h5>Output</h5>
+                <div class="log-text">{{ log.llmOutput || 'No output available' }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -247,6 +313,7 @@ import AppIcon from '~/components/AppIcon.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
 import { EditorTask, EditorTaskStatus, EditorTaskInitiator } from '~/eicrud_exports/services/SUPPORT-ms/editor-task/editor-task.entity'
+import { LlmTrainingData } from '~/eicrud_exports/services/LOG-ms/llm-training-data/llm-training-data.entity'
 
 const processedText = ref('')
 const isAdmin = ref(false)
@@ -264,6 +331,9 @@ const pageSize = 20
 const showTaskDetail = ref(false)
 const selectedTask = ref<EditorTask | null>(null)
 const isRetrying = ref(false)
+const isLoadingLogs = ref(false)
+const taskLogs = ref<any[]>([])
+const showLogsPopup = ref(false)
 
 // Filter state
 const filters = ref({
@@ -565,6 +635,44 @@ const retryTask = async () => {
   } finally {
     isRetrying.value = false
   }
+}
+
+const fetchTaskLogs = async () => {
+  if (!selectedTask.value || !selectedTask.value.id) return
+  
+  try {
+    isLoadingLogs.value = true
+    
+    const { $sp } = useNuxtApp()
+    const productId = useNuxtApp().$userProductId
+    const contextId = `${productId}_${selectedTask.value.id}`
+    
+    // Fetch LLM training data for this task
+    const logsResult = await $sp.llmTrainingData.find({
+      contextId: contextId
+    }, {
+      orderBy: { createdAt: 'desc' },
+      limit: 50
+    })
+    
+    taskLogs.value = Array.isArray(logsResult) ? logsResult : (logsResult?.data || [])
+    showLogsPopup.value = true
+    
+    if (taskLogs.value.length === 0) {
+      useNuxtApp().$toast.show('No logs found for this task', 'info')
+    }
+    
+  } catch (error) {
+    console.error('Failed to fetch task logs:', error)
+    useNuxtApp().$toast.show(error, 'error')
+  } finally {
+    isLoadingLogs.value = false
+  }
+}
+
+const closeLogsPopup = () => {
+  showLogsPopup.value = false
+  taskLogs.value = []
 }
 
 // Lifecycle
@@ -1221,6 +1329,184 @@ definePageMeta({
   &:hover {
     transform: translateY(-2px);
     box-shadow: $shadow;
+  }
+}
+
+// Task Logs Popup Styles
+.logs-popup-content {
+  max-width: 1000px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.no-logs-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: $muted;
+  
+  .no-logs-icon {
+    opacity: 0.5;
+    margin-bottom: 1rem;
+  }
+  
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: $text;
+  }
+  
+  p {
+    margin: 0;
+  }
+}
+
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.logs-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba($muted, 0.3);
+  
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: $text;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .logs-description {
+    margin: 0;
+    color: $muted;
+    font-size: 0.9rem;
+  }
+}
+
+.log-entry {
+  background: rgba($muted, 0.03);
+  border: 1px solid rgba($muted, 0.2);
+  border-radius: $radius;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  
+  &.is-test {
+    border-color: rgba($brand, 0.3);
+    background: rgba($brand, 0.02);
+  }
+  
+  &.has-error {
+    border-color: rgba(#ef4444, 0.3);
+    background: rgba(#ef4444, 0.02);
+  }
+}
+
+.log-header {
+  padding: 1rem;
+  background: rgba($muted, 0.05);
+  border-bottom: 1px solid rgba($muted, 0.1);
+}
+
+.log-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.log-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  
+  .log-agent {
+    font-weight: 600;
+    color: $text;
+    font-size: 0.95rem;
+  }
+  
+  .log-version {
+    background: rgba($muted, 0.2);
+    color: $text;
+    padding: 0.2rem 0.5rem;
+    border-radius: $radius;
+    font-size: 0.75rem;
+    font-family: monospace;
+  }
+  
+  .test-badge {
+    background: rgba($brand, 0.2);
+    color: $brand;
+    padding: 0.2rem 0.5rem;
+    border-radius: $radius;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .error-badge {
+    background: rgba(#ef4444, 0.2);
+    color: #ef4444;
+    padding: 0.2rem 0.5rem;
+    border-radius: $radius;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+}
+
+.log-timestamp {
+  color: $muted;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.log-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.log-section {
+  h5 {
+    margin: 0 0 0.75rem 0;
+    color: $text;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.log-text {
+  background: rgba($muted, 0.05);
+  border: 1px solid rgba($muted, 0.2);
+  border-radius: $radius;
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: $text;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  
+  &:empty::before {
+    content: 'No content available';
+    color: $muted;
+    font-style: italic;
   }
 }
 </style>
