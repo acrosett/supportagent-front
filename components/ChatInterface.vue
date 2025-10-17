@@ -1316,6 +1316,12 @@ onMounted(() => {
             // Widget became hidden - keep socket alive for real-time updates
           }
           break
+        case 'mute-state-changed':
+          // Handle mute state change from embed.js
+          const { muted } = data || {}
+          console.log('Mute state changed:', muted)
+          widgetConfig.value.soundOn = !muted
+          break
         case 'guest-id':
           // Handle guest ID from embed.js
           console.log('Guest ID received:', guestId, 'isNew:', isNew)

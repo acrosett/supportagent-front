@@ -164,6 +164,7 @@ const createWidget = (config) => {
       </div>
 
       <div class="ai-widget-controls">
+        <button type="button" data-action="mute" title="Mute/Unmute" aria-label="Mute/Unmute">🔊</button>
         <button type="button" data-action="minimize" title="Minimize" aria-label="Minimize">–</button>
         <button type="button" data-action="fullscreen" title="Fullscreen" aria-label="Fullscreen">⛶</button>
       </div>
@@ -367,7 +368,47 @@ const createWidget = (config) => {
     return false;
   };
 
-
+  // Mute/unmute functionality
+  const MUTE_KEY = 'ai-support-widget-muted';
+  
+  const getMuteState = () => {
+    try {
+      return localStorage.getItem(MUTE_KEY) === 'true';
+    } catch (error) {
+      console.warn('Failed to read mute state from localStorage:', error);
+      return false;
+    }
+  };
+  
+  const setMuteState = (muted) => {
+    try {
+      localStorage.setItem(MUTE_KEY, muted.toString());
+      
+      // Update button appearance
+      const muteBtn = document.querySelector('#ai-support-widget .ai-widget-controls button[data-action="mute"]');
+      if (muteBtn) {
+        muteBtn.textContent = muted ? '🔇' : '🔊';
+        muteBtn.title = muted ? 'Unmute' : 'Mute';
+        muteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+      }
+      
+      // Notify iframe about mute state change
+      sendMessage({
+        type: 'mute-state-changed',
+        muted: muted
+      });
+      
+      return muted;
+    } catch (error) {
+      console.warn('Failed to save mute state to localStorage:', error);
+      return false;
+    }
+  };
+  
+  const toggleMute = () => {
+    const currentState = getMuteState();
+    return setMuteState(!currentState);
+  };
 
   // Store guest ID permanently (called when user sends first message)
   const storeGuestId = (identifier) => {
@@ -425,6 +466,10 @@ const createWidget = (config) => {
       sendMessage: sendMessage,
       setUserToken: updateChatToken,
       getGuestId: getGuestId,
+      mute: () => setMuteState(true),
+      unmute: () => setMuteState(false),
+      toggleMute: toggleMute,
+      isMuted: getMuteState,
       isVisible: () => {
         const widget = document.getElementById('ai-support-widget');
         return widget && widget.style.opacity !== '0' && widget.style.display !== 'none';
@@ -635,7 +680,7 @@ const createWidget = (config) => {
     const controls = container.querySelector('.ai-widget-controls');
     if (controls) {
       controls.addEventListener('click', (e)=>{
-        const btn = e.target.closest('button'); if(!btn) return; const action=btn.dataset.action; if(action==='minimize') minimizeWidget(); else if(action==='fullscreen') toggleFullscreen();
+        const btn = e.target.closest('button'); if(!btn) return; const action=btn.dataset.action; if(action==='minimize') minimizeWidget(); else if(action==='fullscreen') toggleFullscreen(); else if(action==='mute') toggleMute();
       });
     }
 
@@ -713,10 +758,11 @@ const createWidget = (config) => {
           case 'widget-ready':
             console.log('AI Support Widget ready');
             // Send full configuration to iframe
-            // Pass icon map to iframe along with config
+            // Pass icon map to iframe along with config, include initial mute state
+            const currentMuteState = getMuteState();
             sendMessage({
               type: 'set-config',
-              data: { config: { ...config, icons: ICON_SVGS } }
+              data: { config: { ...config, icons: ICON_SVGS, soundOn: !currentMuteState } }
             });
 
             // Mark widget as ready after config is sent
@@ -761,6 +807,10 @@ const createWidget = (config) => {
       const b = getBubble();
       b.style.display='flex';
     }
+
+    // Initialize mute state and send to iframe
+    const initialMuteState = getMuteState();
+    setMuteState(initialMuteState); // This will update button appearance and notify iframe
 
     config.debug && console.log('Bounce config:', { bounceAfterInit: config.bounceAfterInit, periodicBounce: config.periodicBounce });
     // Prepare bubble early if bounce timers configured

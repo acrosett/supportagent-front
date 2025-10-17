@@ -133,15 +133,17 @@
                 </span>
               </span>
             </div>
-            <div class="config-row">
+            <!-- AI Type always smart now, commented out -->
+            <!-- <div class="config-row">
               <span class="config-label">AI Type:</span>
               <span class="config-value">
                 <span class="ai-type-badge" :class="config.clientFacingAiType || 'fast'">
                   {{ formatAiType(config.clientFacingAiType || 'fast') }}
                 </span>
               </span>
-            </div>
-            <div class="ai-warning-box" :class="config.clientFacingAiType || 'fast'">
+            </div> -->
+            <!-- AI warning box commented out - always smart now -->
+            <!-- <div class="ai-warning-box" :class="config.clientFacingAiType || 'fast'">
               <AppIcon 
                 :name="(config.clientFacingAiType || 'fast') === 'fast' ? 'info' : 'check'" 
                 size="sm" 
@@ -152,15 +154,15 @@
               <span v-else>
                 Smart agents can use custom tools and escalate to staff
               </span>
-            </div>
-            <div v-if="['smart', 'pro'].includes(config.clientFacingAiType || 'fast')" class="config-row">
+            </div> -->
+            <div class="config-row">
               <span class="config-label">Documentation Updates:</span>
               <span class="config-value">
                 <AppIcon :name="config.contactForDocumentationUpdate ? 'check' : 'close'" size="sm" />
                 {{ config.contactForDocumentationUpdate ? 'Enabled' : 'Disabled' }}
               </span>
             </div>
-            <div v-if="['smart', 'pro'].includes(config.clientFacingAiType || 'fast')" class="config-row">
+            <div class="config-row">
               <span class="config-label">Issue Contacts:</span>
               <span class="config-value">
                 <AppIcon :name="config.contactForIssues ? 'check' : 'close'" size="sm" />
@@ -304,8 +306,8 @@
           'MaxMessagesPerDayGlobal',
           'MaxMessagesPerWeekPerUser',
           'MaxMessagesPerDayPerUser',
-          'clientFacingAiType',
-          'tellClientsToLogin',
+          // 'clientFacingAiType', // Always smart now
+          // 'tellClientsToLogin', // Only for fast AI type, not needed for smart
         ]"
         :actions="configFormActions"
       />
@@ -748,24 +750,24 @@ const configFieldOverrides = computed<OverrideRecord>(() => {
         { label: 'No verified WhatsApp numbers available', value: null }
       ]
     },
-    clientFacingAiType: {
-      label: 'AI Type',
-      description: 'AI reasoning level for customer chat interactions (smart thinking tokens are billed at 2.5x the standard cost, pro tokens at 60x the standard cost)',
-      selectOptions: [
-        { label: 'Fast - Standard reasoning', value: 'fast' },
-        { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' },
-        // { label: 'Pro - Highest reasoning (60x cost)', value: 'pro' }
-      ],
-      conditionsFieldsIfValue: [
-        { values: ['smart', 'pro'], field: 'contactForDocumentationUpdate' },
-        { values: ['smart', 'pro'], field: 'contactForIssues' },
-        { values: ['fast'], field: 'tellClientsToLogin' }
-      ]
-    },
-    tellClientsToLogin: {
-      label: 'Prompt Non-Logged Users to Login',
-      description: 'Will instruct non logged users to login in order to benefit from staff escalation or custom tools'
-    },
+    // clientFacingAiType: {
+    //   label: 'AI Type',
+    //   description: 'AI reasoning level for customer chat interactions (smart thinking tokens are billed at 2.5x the standard cost, pro tokens at 60x the standard cost)',
+    //   selectOptions: [
+    //     { label: 'Fast - Standard reasoning', value: 'fast' },
+    //     { label: 'Smart - High reasoning (2.5x cost)', value: 'smart' },
+    //     // { label: 'Pro - Highest reasoning (60x cost)', value: 'pro' }
+    //   ],
+    //   conditionsFieldsIfValue: [
+    //     { values: ['smart', 'pro'], field: 'contactForDocumentationUpdate' },
+    //     { values: ['smart', 'pro'], field: 'contactForIssues' },
+    //     { values: ['fast'], field: 'tellClientsToLogin' }
+    //   ]
+    // },
+    // tellClientsToLogin: {
+    //   label: 'Prompt Non-Logged Users to Login',
+    //   description: 'Will instruct non logged users to login in order to benefit from staff escalation or custom tools'
+    // },
     maxHistoryPages: {
       label: 'Max History Pages',
       type: 'number',
