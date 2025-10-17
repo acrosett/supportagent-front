@@ -83,6 +83,24 @@ async function loadEnvVars(environment) {
   return envVars
 }
 
+/**
+ * Replace keys in HTML content with translations
+ * @param {string} htmlContent 
+ * @param {Object} translations 
+ * @returns {string}
+ */
+function replaceTranslationKeys(htmlContent, translations) {
+  let result = htmlContent
+  
+  // Replace {{key_xxx}} patterns with translations
+  Object.entries(translations).forEach(([key, translation]) => {
+    const keyPattern = new RegExp(`{{${key}}}`, 'g')
+    result = result.replace(keyPattern, translation)
+  })
+  
+  return result
+}
+
 // Replace environment variables in content
 function replaceEnvVars(content, envVars) {
   let replacedContent = content
@@ -128,7 +146,7 @@ async function ensureHtmlSourceExists() {
   return true
 }
 
-// Process HTML files with environment variables
+// Process HTML files with environment variables and translations
 async function processHtmlFiles() {
   if (!(await ensureHtmlSourceExists())) {
     console.warn(`[compile-embed] Skipping HTML processing - source file not found`)
@@ -140,27 +158,82 @@ async function processHtmlFiles() {
   // Read HTML source
   const htmlContent = await fs.readFile(htmlSourceFile, 'utf8')
   
-  // Process for dev environment (only .env)
+  // Process for dev environment (only .env) - use base English translations
   const devEnvVars = await loadEnvVars('dev')
-  const devHtmlContent = replaceEnvVars(htmlContent, devEnvVars)
+  let devHtmlContent = replaceEnvVars(htmlContent, devEnvVars)
   
-  // Process for prod environment (.env + prod.env)
+  // Apply base translations to dev version too (English)
+  try {
+    const basePath = path.join(repoRoot, 'translations', 'index.base.json')
+    const baseTranslations = JSON.parse(await fs.readFile(basePath, 'utf8'))
+    devHtmlContent = replaceTranslationKeys(devHtmlContent, baseTranslations)
+  } catch (error) {
+    console.warn(`[compile-embed] Could not apply base translations to dev version: ${error.message}`)
+  }
+  
+  // Process for prod environment (.env + prod.env) - with translations
   const prodEnvVars = await loadEnvVars('prod')
-  const prodHtmlContent = replaceEnvVars(htmlContent, prodEnvVars)
+  let prodHtmlContent = replaceEnvVars(htmlContent, prodEnvVars)
+  
+  // Load translations for prod HTML files
+  const translationsDir = path.join(repoRoot, 'translations')
   
   // Write to all output directories
   for (const outDir of outputDirs) {
     const htmlOutDir = path.join(outDir, 'landing')
     await fs.mkdir(htmlOutDir, { recursive: true })
     
+    // Create dev version (no translation)
     const htmlOutFileDev = path.join(htmlOutDir, 'index_dev.html')
-    const htmlOutFileProd = path.join(htmlOutDir, 'index.html')
-    
     await fs.writeFile(htmlOutFileDev, devHtmlContent, 'utf8')
     console.log(`[compile-embed] Created ${path.relative(repoRoot, htmlOutFileDev)}`)
     
-    await fs.writeFile(htmlOutFileProd, prodHtmlContent, 'utf8')
-    console.log(`[compile-embed] Created ${path.relative(repoRoot, htmlOutFileProd)}`)
+    // Create English prod version using base translations
+    try {
+      const basePath = path.join(translationsDir, 'index.base.json')
+      const baseTranslations = JSON.parse(await fs.readFile(basePath, 'utf8'))
+      const englishHtml = replaceTranslationKeys(prodHtmlContent, baseTranslations)
+      
+      const htmlOutFileProd = path.join(htmlOutDir, 'index.html')
+      await fs.writeFile(htmlOutFileProd, englishHtml, 'utf8')
+      console.log(`[compile-embed] Created ${path.relative(repoRoot, htmlOutFileProd)} (English)`)
+    } catch (error) {
+      console.warn(`[compile-embed] Could not create English version: ${error.message}`)
+      // Fallback: create without translation keys
+      const htmlOutFileProd = path.join(htmlOutDir, 'index.html')
+      await fs.writeFile(htmlOutFileProd, prodHtmlContent, 'utf8')
+      console.log(`[compile-embed] Created ${path.relative(repoRoot, htmlOutFileProd)} (fallback)`)
+    }
+    
+    // Create localized versions for each available translation
+    try {
+      const files = await fs.readdir(translationsDir)
+      const translationFiles = files.filter(file => 
+        file.startsWith('index.') && 
+        file.endsWith('.json') && 
+        !file.includes('.base.')
+      )
+      
+      for (const file of translationFiles) {
+        const locale = file.replace('index.', '').replace('.json', '')
+        console.log(`[compile-embed] Creating localized HTML for: ${locale}`)
+        
+        const translationPath = path.join(translationsDir, file)
+        const translations = JSON.parse(await fs.readFile(translationPath, 'utf8'))
+        
+        // Replace translation keys
+        let localizedHtml = replaceTranslationKeys(prodHtmlContent, translations)
+        
+        // Update lang attribute
+        localizedHtml = localizedHtml.replace(/<html lang="en">/, `<html lang="${locale}">`)
+        
+        const outputPath = path.join(htmlOutDir, `index_${locale}.html`)
+        await fs.writeFile(outputPath, localizedHtml, 'utf8')
+        console.log(`[compile-embed] Created ${path.relative(repoRoot, outputPath)}`)
+      }
+    } catch (error) {
+      console.warn(`[compile-embed] Could not create localized versions: ${error.message}`)
+    }
   }
 }
 

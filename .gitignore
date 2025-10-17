@@ -24,3 +24,6 @@ logs
 *.env
 !.env.example
 build.env
+public/landing/index_de.html
+public/landing/index_es.html
+public/landing/index_fr.html
