@@ -542,7 +542,6 @@ const sendMessage = async (msg?: string) => {
       customerCurrentPageUrl: window.location.hostname + window.location.pathname
     }
 
-
     // If this is a new guest's first message, get reCAPTCHA token
     if (isNewGuest.value) {
       const recaptchaToken = await getRecaptchaToken('guest_creation')
@@ -551,7 +550,34 @@ const sendMessage = async (msg?: string) => {
       }
     }
 
-    const fromCache = await nuxtApp.$sp.message.send_client_message(messageData)
+    let fromCache: any
+    try {
+      fromCache = await nuxtApp.$sp.message.send_client_message(messageData)
+    } catch (firstError: any) {
+      // Check if the error is about missing recaptcha token
+      // Handle both direct error messages and axios error responses
+      const errorMessage = firstError?.response?.data?.message;
+      
+      const isRecaptchaError = errorMessage.includes('RECAPTCHA_REQUIRED');
+
+      if (isRecaptchaError) {
+        console.log('Recaptcha token required, getting fresh token and retrying...')
+        
+        // Get a fresh recaptcha token
+        const freshRecaptchaToken = await getRecaptchaToken('send_message')
+        if (freshRecaptchaToken) {
+          // Retry with the fresh token
+          messageData.recaptchaToken = freshRecaptchaToken
+          fromCache = await nuxtApp.$sp.message.send_client_message(messageData)
+        } else {
+          // If we can't get a recaptcha token, throw the original error
+          throw firstError
+        }
+      } else {
+        // If it's not a recaptcha error, throw the original error
+        throw firstError
+      }
+    }
 
     // If message came from cache and socket isn't ready, manually fetch the new message
     if (fromCache && !socket.value) {
