@@ -164,7 +164,7 @@ const createWidget = (config) => {
       </div>
 
       <div class="ai-widget-controls">
-        <button type="button" data-action="mute" title="Mute/Unmute" aria-label="Mute/Unmute">🔊</button>
+        <button type="button" data-action="mute" title="Mute/Unmute" aria-label="Mute/Unmute">🔈</button>
         <button type="button" data-action="minimize" title="Minimize" aria-label="Minimize">–</button>
         <button type="button" data-action="fullscreen" title="Fullscreen" aria-label="Fullscreen">⛶</button>
       </div>
@@ -387,7 +387,7 @@ const createWidget = (config) => {
       // Update button appearance
       const muteBtn = document.querySelector('#ai-support-widget .ai-widget-controls button[data-action="mute"]');
       if (muteBtn) {
-        muteBtn.textContent = muted ? '🔇' : '🔊';
+        muteBtn.textContent = muted ? '🔇' : '🔈';
         muteBtn.title = muted ? 'Unmute' : 'Mute';
         muteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
       }
@@ -680,7 +680,7 @@ const createWidget = (config) => {
     const controls = container.querySelector('.ai-widget-controls');
     if (controls) {
       controls.addEventListener('click', (e)=>{
-        const btn = e.target.closest('button'); if(!btn) return; const action=btn.dataset.action; if(action==='minimize') minimizeWidget(); else if(action==='fullscreen') toggleFullscreen(); else if(action==='mute') toggleMute();
+        const btn = e.target.closest('button'); if(!btn) return; const action=btn.dataset.action; if(action==='minimize') { if(isFullscreen) toggleFullscreen(); else minimizeWidget(); } else if(action==='fullscreen') toggleFullscreen(); else if(action==='mute') toggleMute();
       });
     }
 
