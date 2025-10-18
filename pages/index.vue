@@ -242,7 +242,7 @@ const createChart = async (retryCount = 0) => {
         data,
         borderColor: priorityColors[priority],
         backgroundColor: priorityColors[priority] + '20',
-        tension: 0.3,
+        tension: 0,
         pointRadius: 2,
         pointHoverRadius: 4,
         fill: false
