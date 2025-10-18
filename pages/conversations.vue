@@ -197,6 +197,14 @@
               @click="unarchiveConversation(conversation)"
             />
             <AppButton
+              v-if="isAdmin"
+              margin="no-margins"
+              color="secondary"
+              size="sm"
+              fa-icon-left="fa-solid fa-list"
+              @click="openClientLogs(conversation)"
+            />
+            <AppButton
               :label="conversation.conversationResolved ? 'Reactivate' : 'Mark Resolved'"
               margin="no-margins"
               color="secondary"
@@ -241,6 +249,14 @@
         />
       </div>
     </AppPopup>
+    
+    <!-- LLM Logs Popup -->
+    <LlmLogsPopup
+      :show="showLogsPopup"
+      :title="logsPopupTitle"
+      :context-id="logsContextId"
+      @close="closeLogsPopup"
+    />
   </section>
 </template>
 
@@ -250,6 +266,7 @@ import AppIcon from '~/components/AppIcon.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
+import LlmLogsPopup from '~/components/LlmLogsPopup.vue'
 import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 import { getPriorityEmoji } from '~/utils/priority'
@@ -287,6 +304,14 @@ const archiveConfirmation = ref<{
   show: false,
   client: null
 })
+
+// Admin state
+const isAdmin = ref(false)
+
+// Logs state
+const showLogsPopup = ref(false)
+const logsPopupTitle = ref('')
+const logsContextId = ref('')
 
 // Load conversations data
 const loadConversations = async (reset = true) => {
@@ -691,6 +716,20 @@ const unarchiveConversation = async (client: Client) => {
   }
 }
 
+// Logs functions
+const openClientLogs = async (client: Client) => {
+  const contextId = `${client.id}`
+  
+  logsPopupTitle.value = `LLM Logs - ${getDisplayName(client)}`
+  logsContextId.value = contextId
+  showLogsPopup.value = true
+}
+
+const closeLogsPopup = () => {
+  showLogsPopup.value = false
+  logsContextId.value = ''
+}
+
 const formatDate = (date?: Date | string) => {
   if (!date) return 'No activity'
   
@@ -736,6 +775,10 @@ const getMessageCount = (client: Client) => {
 
 // Load data on mount
 onMounted(() => {
+  // Check if user is admin
+  const nuxtApp = useNuxtApp()
+  isAdmin.value = nuxtApp.$userRole === 'admin'
+  
   setupIntersectionObserver()
   loadConversations(true)
   

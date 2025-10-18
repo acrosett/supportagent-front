@@ -234,7 +234,6 @@
             color="primary"
             size="sm"
             margin="left"
-            :loading="isLoadingLogs"
             @click="fetchTaskLogs"
           />
         </div>
@@ -245,72 +244,16 @@
             {{ selectedTask.newKnowledge || 'No content available' }}
           </div>
         </div>
-      </div>
-    </AppPopup>
 
-    <!-- Task Logs Popup -->
-    <AppPopup
-      v-if="showLogsPopup"
-      @close="closeLogsPopup"
-      title="Task Processing Logs"
-      :show="showLogsPopup"
-      size="xl"
-    >
-      <div class="logs-popup-content">
-        <div v-if="taskLogs.length === 0" class="no-logs-state">
-          <AppIcon name="info" size="xl" class="no-logs-icon" />
-          <h3>No logs available</h3>
-          <p>No processing logs found for this task</p>
-        </div>
-        
-        <div v-else class="logs-list">
-          <div class="logs-header">
-            <h4>Processing History ({{ taskLogs.length }} entries)</h4>
-            <p class="logs-description">LLM training data and processing logs for task {{ selectedTask?.id?.substring(0, 8) }}...</p>
-          </div>
-          
-          <div 
-            v-for="(log, index) in taskLogs" 
-            :key="log.id || index"
-            class="log-entry"
-            :class="{ 'is-test': log.isTest, 'has-error': log.errorCount > 0 }"
-          >
-            <div class="log-header">
-              <div class="log-info">
-                <div class="log-meta">
-                  <span class="log-agent">{{ log.agentName || 'Unknown Agent' }}</span>
-                  <span class="log-version">v{{ log.agentVersion || '0.0.0' }}</span>
-                  <span v-if="log.isTest" class="test-badge">TEST</span>
-                  <span v-if="log.errorCount > 0" class="error-badge">{{ log.errorCount }} errors</span>
-                </div>
-                <div class="log-timestamp">
-                  {{ formatDate(log.createdAt) }}
-                </div>
-              </div>
-            </div>
-            
-            <div class="log-content">
-              <div class="log-section">
-                <div class="log-section-header">
-                  <h5>Input</h5>
-                  <AppButton
-                    v-if="log.llmInput"
-                    label="Copy"
-                    color="secondary"
-                    margin="left"
-                    size="small"
-                    @click="copyToClipboard(log.llmInput, 'LLM Input copied to clipboard!')"
-                  />
-                </div>
-                <div class="log-text">{{ log.llmInput || 'No input available' }}</div>
-              </div>
-              
-              <div class="log-section">
-                <h5>Output</h5>
-                <div class="log-text">{{ log.llmOutput || 'No output available' }}</div>
-              </div>
-            </div>
-          </div>
+        <!-- Embedded Logs Popup Component -->
+        <div v-if="showLogsPopup" class="embedded-logs-container">
+          <LlmLogsPopup
+            :show="true"
+            title=""
+            :context-id="logsContextId"
+            embedded
+            @close="closeLogsPopup"
+          />
         </div>
       </div>
     </AppPopup>
@@ -322,8 +265,8 @@ import AppButton from '~/components/AppButton.vue'
 import AppIcon from '~/components/AppIcon.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
+import LlmLogsPopup from '~/components/LlmLogsPopup.vue'
 import { EditorTask, EditorTaskStatus, EditorTaskInitiator } from '~/eicrud_exports/services/SUPPORT-ms/editor-task/editor-task.entity'
-import { LlmTrainingData } from '~/eicrud_exports/services/LOG-ms/llm-training-data/llm-training-data.entity'
 
 const processedText = ref('')
 const isAdmin = ref(false)
@@ -341,9 +284,13 @@ const pageSize = 20
 const showTaskDetail = ref(false)
 const selectedTask = ref<EditorTask | null>(null)
 const isRetrying = ref(false)
-const isLoadingLogs = ref(false)
-const taskLogs = ref<any[]>([])
 const showLogsPopup = ref(false)
+
+// Computed contextId for logs
+const logsContextId = computed(() => {
+  if (!selectedTask.value?.id) return ''
+  return `${useNuxtApp().$userProductId}_${selectedTask.value.id}`
+})
 
 // Filter state
 const filters = ref({
@@ -649,40 +596,11 @@ const retryTask = async () => {
 
 const fetchTaskLogs = async () => {
   if (!selectedTask.value || !selectedTask.value.id) return
-  
-  try {
-    isLoadingLogs.value = true
-    
-    const { $sp } = useNuxtApp()
-    const productId = useNuxtApp().$userProductId
-    const contextId = `${productId}_${selectedTask.value.id}`
-    
-    // Fetch LLM training data for this task
-    const logsResult = await $sp.llmTrainingData.find({
-      contextId: contextId
-    }, {
-      orderBy: { createdAt: 'desc' },
-      limit: 1
-    })
-    
-    taskLogs.value = Array.isArray(logsResult) ? logsResult : (logsResult?.data || [])
-    showLogsPopup.value = true
-    
-    if (taskLogs.value.length === 0) {
-      useNuxtApp().$toast.show('No logs found for this task', 'info')
-    }
-    
-  } catch (error) {
-    console.error('Failed to fetch task logs:', error)
-    useNuxtApp().$toast.show(error, 'error')
-  } finally {
-    isLoadingLogs.value = false
-  }
+  showLogsPopup.value = true
 }
 
 const closeLogsPopup = () => {
   showLogsPopup.value = false
-  taskLogs.value = []
 }
 
 // Copy to clipboard utility function
@@ -1353,53 +1271,20 @@ definePageMeta({
   }
 }
 
-// Task Logs Popup Styles
-.logs-popup-content {
-  max-width: 1000px;
-  width: 100%;
-  max-height: 80vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.no-logs-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: $muted;
-  
-  .no-logs-icon {
-    opacity: 0.5;
-    margin-bottom: 1rem;
-  }
-  
-  h3 {
-    margin: 0 0 0.5rem 0;
-    color: $text;
-  }
-  
-  p {
-    margin: 0;
-  }
-}
-
-.logs-list {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+// Embedded Logs Section Styles
+.embedded-logs-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba($muted, 0.3);
 }
 
 .logs-header {
   margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba($muted, 0.3);
   
   h4 {
     margin: 0 0 0.5rem 0;
     color: $text;
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.1rem;
   }
   
   .logs-description {
@@ -1438,11 +1323,6 @@ definePageMeta({
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
 }
 
 .log-meta {
