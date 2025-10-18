@@ -321,6 +321,25 @@ const createNewClient = async (data: any) => {
       uniqueId = data.uniqueId?.trim()
     }
     
+    // Check if client already exists with this uniqueId for this product
+    if (uniqueId) {
+      try {
+        const existingClient = await $sp.client.findOne({
+          product: nuxtApp.$userProductId,
+          uniqueId: uniqueId
+        })
+        
+        // Check if any client has the exact uniqueId match
+        if (existingClient) {
+          const errorMessage = `Client with ID "${uniqueId}" already exists for this product`
+          useNuxtApp().$toast.show(errorMessage, 'error')
+          throw new Error(errorMessage)
+        }
+      } catch (err: any) {
+        console.warn('Could not check for existing client:', err)
+      }
+    }
+    
     const newClient = await $sp.client.create({
       product: nuxtApp.$userProductId,
       uniqueId: uniqueId,

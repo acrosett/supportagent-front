@@ -371,7 +371,7 @@ const loadConversations = async (reset = true) => {
       limit: pageSize,
       offset: reset ? 0 : currentPage.value * pageSize,
       orderBy: {
-        $natural: 'desc'
+        lastMessageDate: 'desc'
       }
     }
     
