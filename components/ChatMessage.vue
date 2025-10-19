@@ -53,8 +53,9 @@ import { computed } from 'vue'
 import { useMarkdown } from '~/composables/useMarkdown'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-trace.entity'
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
 
-const { t } = useI18n()
+const { t } = useLocalNamespace('chat')
 
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };

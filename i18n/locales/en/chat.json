@@ -1,0 +1,68 @@
+{
+  "chatInterface": {
+    "status": {
+      "settingUp": "Setting up chat..."
+    },
+    "header": {
+      "title": "Support Agent",
+      "subtitle": "Chat Support"
+    },
+    "ai": {
+      "disableLabel": "Disable AI",
+      "messages": {
+        "enabled": "AI enabled",
+        "disabled": "AI disabled"
+      }
+    },
+    "messages": {
+      "loadingOlder": "Loading older messages..."
+    },
+    "input": {
+      "placeholder": "Type your message...",
+      "disabledPlaceholder": "Disable AI to chat with client"
+    },
+    "toolTrace": {
+      "title": "Tool Trace Details",
+      "sections": {
+        "toolInfo": "Tool Information",
+        "input": "Input",
+        "output": "Output",
+        "error": "Error"
+      },
+      "fields": {
+        "toolName": "Tool Name",
+        "status": "Status",
+        "executedAt": "Executed At"
+      },
+      "status": {
+        "unknownTool": "Unknown Tool",
+        "error": "Error",
+        "success": "Success",
+        "unknown": "Unknown"
+      }
+    }
+  },
+  "chatMessage": {
+    "sender": {
+      "client": "Client",
+      "agent": "Support Agent"
+    },
+    "aiType": {
+      "fast": "Fast",
+      "smart": "Smart",
+      "pro": "Pro"
+    },
+    "followUp": {
+      "label": "Suggested questions:"
+    },
+    "toolTrace": {
+      "detailsButton": "Details",
+      "unknownTool": "Unknown Tool",
+      "status": {
+        "error": "Error",
+        "success": "Success",
+        "unknown": "Unknown"
+      }
+    }
+  }
+}

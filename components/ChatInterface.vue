@@ -144,8 +144,9 @@ import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-
 import { useRecaptcha } from '~/composables/useRecaptcha'
 import { useMarkdown } from '~/composables/useMarkdown'
 import { SendClientMessageDto } from '~/eicrud_exports/services/SUPPORT-ms/message/cmds/send_client_message/send_client_message.dto'
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
 
-const { t } = useI18n()
+const { t } = useLocalNamespace('chat')
 
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };
@@ -168,7 +169,6 @@ const connectionStableTimeoutId = ref<number | null>(null)
 const minStableConnectionTime = 5000 // 5 seconds - connection must be stable this long to reset attempts
 
 // Tool trace state
-const toolTraces = ref<ToolTraceMessage[]>([])
 const showToolTracePopup = ref(false)
 const selectedToolTrace = ref<ToolTraceMessage | null>(null)
 

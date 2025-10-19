@@ -20,22 +20,22 @@ export default defineNuxtConfig({
       {
         code: 'en',
         name: 'English',
-        file: 'en.json'
+        files: ['en/index.json', 'en/small.json'],
       },
       {
         code: 'fr', 
         name: 'Français',
-        file: 'fr.json'
+        files: ['fr/index.json', 'fr/small.json'],
       },
       // {
       //   code: 'es',
       //   name: 'Español', 
-      //   file: 'es.json'
+      //   files: ['es/index.json', 'es/small.json']
       // },
       // {
       //   code: 'de',
       //   name: 'Deutsch',
-      //   file: 'de.json'
+      //   files: ['de/index.json', 'de/small.json']
       // }
     ],
     detectBrowserLanguage: {
