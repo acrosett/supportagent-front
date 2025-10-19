@@ -1,15 +1,15 @@
 <template>
   <div class="widget-config-page page-container">
     <header class="page-header">
-      <h1 class="page-title">Widget Configuration</h1>
-      <p class="page-desc">Tune your support widget appearance & behavior, then copy the embed snippet.</p>
+      <h1 class="page-title">{{ t('widget.page.title') }}</h1>
+      <p class="page-desc">{{ t('widget.page.description') }}</p>
     </header>
 
     <div class="content-section">
       
       <div v-if="loadingConfig" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading widget configuration...</p>
+        <p>{{ t('widget.status.loading') }}</p>
       </div>
       
       <MegaForm
@@ -22,11 +22,11 @@
       >
         <div class="embed-snippet-block">
           <h2 class="snippet-header">
-            <span>Embed Snippet</span>
-            <button class="copy-btn" type="button" @click="copySnippet">Copy Snippet</button>
+            <span>{{ t('widget.embed.title') }}</span>
+            <button class="copy-btn" type="button" @click="copySnippet">{{ t('widget.embed.copyButton') }}</button>
           </h2>
           <div class="code-wrapper"><pre><code ref="codeEl">{{ snippet }}</code></pre></div>
-          <p v-if="copied" class="copied-msg">Copied!</p>
+          <p v-if="copied" class="copied-msg">{{ t('widget.embed.copiedMessage') }}</p>
         </div>
       </MegaForm>
     </div>
@@ -36,6 +36,8 @@
 <script setup lang="ts">
 import MegaForm, { OverrideRecord, MegaFormAction } from '@/components/MegaForm.vue'
 import { WidgetConfig, WidgetPosition, WidgetIcon } from '@/eicrud_exports/services/SUPPORT-ms/widget-config/widget-config.entity'
+
+const { t } = useI18n()
 
 definePageMeta({ layout: 'default' })
 
@@ -174,39 +176,39 @@ onBeforeUnmount(() => { if (previewBuildTimer) clearTimeout(previewBuildTimer); 
 
 const fieldOverrides: OverrideRecord<WidgetConfig> = {
   position: { selectOptions: [
-    { label: 'Bottom Right', value: WidgetPosition.BOTTOM_RIGHT },
-    { label: 'Bottom Left', value: WidgetPosition.BOTTOM_LEFT }
+    { label: t('widget.fields.position.bottomRight'), value: WidgetPosition.BOTTOM_RIGHT },
+    { label: t('widget.fields.position.bottomLeft'), value: WidgetPosition.BOTTOM_LEFT }
   ]},
   icon: { selectOptions: [
-    { label: 'Robot', value: WidgetIcon.ROBOT },
-    { label: 'Message', value: WidgetIcon.MESSAGE },
-    { label: 'Headset', value: WidgetIcon.HEADSET },
+    { label: t('widget.fields.icon.robot'), value: WidgetIcon.ROBOT },
+    { label: t('widget.fields.icon.message'), value: WidgetIcon.MESSAGE },
+    { label: t('widget.fields.icon.headset'), value: WidgetIcon.HEADSET },
   ]},
-  primaryColor: { type: 'color', label: 'Primary Color' },
-  secondaryColor: { type: 'color', label: 'Secondary Color' },
-  bounceAfterInit: { type: 'number', label: 'Bounce After Init (seconds)' },
-  periodicBounce: { type: 'number', label: 'Periodic Bounce (seconds)' },
-  startOpen: { type: 'checkbox', onLabel: 'YES', offLabel: 'NO' },
-  darkMode: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
-  draggable: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
-  soundOn: { type: 'checkbox', onLabel: 'ON', offLabel: 'OFF' },
-  welcomeMessage: { type: "richtext", placeholder: '👋 Welcome!', label: 'Welcome Message' },
-  faqs: { label: 'FAQs (Frequently Asked Questions)', placeholder: 'How do I reset my password?' }
+  primaryColor: { type: 'color', label: t('widget.fields.primaryColor') },
+  secondaryColor: { type: 'color', label: t('widget.fields.secondaryColor') },
+  bounceAfterInit: { type: 'number', label: t('widget.fields.bounceAfterInit') },
+  periodicBounce: { type: 'number', label: t('widget.fields.periodicBounce') },
+  startOpen: { type: 'checkbox', onLabel: t('widget.fields.options.yes'), offLabel: t('widget.fields.options.no') },
+  darkMode: { type: 'checkbox', onLabel: t('widget.fields.options.on'), offLabel: t('widget.fields.options.off') },
+  draggable: { type: 'checkbox', onLabel: t('widget.fields.options.on'), offLabel: t('widget.fields.options.off') },
+  soundOn: { type: 'checkbox', onLabel: t('widget.fields.options.on'), offLabel: t('widget.fields.options.off') },
+  welcomeMessage: { type: "richtext", placeholder: t('widget.fields.welcomeMessage.placeholder'), label: t('widget.fields.welcomeMessage.label') },
+  faqs: { label: t('widget.fields.faqs.label'), placeholder: t('widget.fields.faqs.placeholder') }
 }
 
 const actions: MegaFormAction[] = [
-  { label: 'Save', color: 'primary', callback: async (data:any) => {
+  { label: t('widget.actions.save'), color: 'primary', callback: async (data:any) => {
       try {
         // Associate product (if available) so server can link
         if (nuxtApp.$userProductId) data.product = nuxtApp.$userProductId
         // Persist via service client (create or update based on existing id?)
         if (formData.value.id) {
           await nuxtApp.$sp.widgetConfig.patchOne({ id: formData.value.id, product: nuxtApp.$userProductId }, data)
-          nuxtApp.$toast.show('Widget config updated', 'success')
+          nuxtApp.$toast.show(t('widget.messages.success.updated'), 'success')
         } else {
           const created = await nuxtApp.$sp.widgetConfig.create(data)
           formData.value.id = created.id
-          nuxtApp.$toast.show('Widget config saved', 'success')
+          nuxtApp.$toast.show(t('widget.messages.success.saved'), 'success')
         }
       } catch (e:any) {
         console.error(e)

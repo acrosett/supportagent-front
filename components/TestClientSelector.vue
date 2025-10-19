@@ -1,17 +1,17 @@
 <template>
   <div class="test-client-selector">
     <div class="selector-header">
-      <p class="subtitle">Choose a client to start a test chat session, test clients have access to disabled custom tools.</p>
+      <p class="subtitle">{{ t('testClientSelector.header.subtitle') }}</p>
     </div>
 
     <div v-if="isLoading" class="loading-state">
       <div class="spinner"></div>
-      <p>Loading test clients...</p>
+      <p>{{ t('testClientSelector.status.loading') }}</p>
     </div>
 
     <div v-else-if="testClients.length === 0" class="empty-state">
       <AppIcon name="user" size="lg" />
-      <p>No test clients found</p>
+      <p>{{ t('testClientSelector.status.empty') }}</p>
     </div>
 
     <div v-else class="clients-list">
@@ -26,15 +26,15 @@
             <div class="avatar-placeholder">{{ client.name?.charAt(0) || 'C' }}</div>
           </div>
           <div class="client-details">
-            <h4>{{ client.name || 'Unnamed Client' }}</h4>
-            <p class="client-meta">ID: {{ client.uniqueId }}</p>
-            <p class="client-meta">Created: {{ formatDate(client.createdAt?.toString() || '') }}</p>
+            <h4>{{ client.name || t('testClientSelector.client.unnamedClient') }}</h4>
+            <p class="client-meta">{{ t('testClientSelector.client.id') }}: {{ client.uniqueId }}</p>
+            <p class="client-meta">{{ t('testClientSelector.client.created') }}: {{ formatDate(client.createdAt?.toString() || '') }}</p>
           </div>
         </div>
         <button 
           @click.stop="deleteClient(client)"
           class="delete-btn"
-          title="Delete client"
+          :title="t('testClientSelector.actions.deleteClient')"
         >
           <AppIcon name="delete" size="sm" />
         </button>
@@ -43,18 +43,18 @@
 
     <div class="selector-actions">
       <AppButton
-        label="Delete All Clients"
+        :label="t('testClientSelector.actions.deleteAllClients')"
         color="warning"
         @click="deleteAllClients"
         :disabled="testClients.length === 0"
       />
       <AppButton
-        label="Create New Test Client"
+        :label="t('testClientSelector.actions.createNewClient')"
         color="secondary"
         @click="showCreateClientInput = true"
       />
       <AppButton
-        label="Cancel"
+        :label="t('testClientSelector.actions.cancel')"
         color="secondary"
         @click="$emit('close')"
       />
@@ -63,7 +63,7 @@
     <!-- Create Client Modal -->
     <AppPopup
       :show="showCreateClientInput"
-      title="Create New Test Client"
+      :title="t('testClientSelector.modals.createClient.title')"
       size="md"
       @close="cancelCreateClient"
     >
@@ -74,13 +74,13 @@
         :include-fields="['name', 'email', 'uniqueId', 'isGuest', 'priority']"
         :actions="[
           {
-            label: 'Cancel',
+            label: t('testClientSelector.modals.createClient.cancel'),
             color: 'secondary',
             callback: cancelCreateClient,
             skipValidation: true
           },
           {
-            label: 'Create Client',
+            label: t('testClientSelector.modals.createClient.create'),
             color: 'primary',
             callback: createNewClient
           }
@@ -91,7 +91,7 @@
     <!-- Token Input Modal -->
     <AppPopup
       :show="showTokenInput"
-      title="Authentication Token Required"
+      :title="t('testClientSelector.modals.authToken.title')"
       size="md"
       @close="cancelTokenInput"
     >
@@ -102,13 +102,13 @@
         :include-fields="['token']"
         :actions="[
           {
-            label: 'Cancel',
+            label: t('testClientSelector.modals.authToken.cancel'),
             color: 'secondary',
             callback: cancelTokenInput,
             skipValidation: true
           },
           {
-            label: 'Start Chat',
+            label: t('testClientSelector.modals.authToken.startChat'),
             color: 'primary',
             margin: 'left',
             callback: handleTokenSubmit
@@ -125,6 +125,8 @@ import MegaForm from '~/components/MegaForm.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import type { OverrideRecord } from '~/components/MegaForm.vue'
 import { IsString } from 'class-validator'
+
+const { t } = useI18n()
 
 // Token form class for validation
 class TokenForm {
@@ -231,7 +233,7 @@ const loadTestClients = async () => {
     testClients.value = result.data || []
   } catch (error) {
     console.error('Failed to load test clients:', error)
-    useNuxtApp().$toast.show('Failed to load test clients', 'error')
+    useNuxtApp().$toast.show(t('testClientSelector.messages.error.loadFailed'), 'error')
     testClients.value = []
   } finally {
     isLoading.value = false
@@ -259,7 +261,7 @@ const selectClient = (client: Client) => {
 }
 
 const deleteClient = async (client: Client) => {
-  const confirmed = await useNuxtApp().$confirmPopup.show(`Delete test client "${client.name || 'Unnamed Client'}"?`)
+  const confirmed = await useNuxtApp().$confirmPopup.show(t('testClientSelector.messages.confirm.deleteClient', { name: client.name || t('testClientSelector.client.unnamedClient') }))
   if (!confirmed) {
     return
   }
@@ -274,17 +276,17 @@ const deleteClient = async (client: Client) => {
       testClients.value.splice(index, 1)
     }
 
-    nuxtApp.$toast.show('Test client deleted', 'success')
+    nuxtApp.$toast.show(t('testClientSelector.messages.success.clientDeleted'), 'success')
   } catch (error) {
     console.error('Failed to delete test client:', error)
-    nuxtApp.$toast.show('Failed to delete test client', 'error')
+    nuxtApp.$toast.show(t('testClientSelector.messages.error.deleteFailed'), 'error')
   }
 }
 
 const deleteAllClients = async () => {
   if (testClients.value.length === 0) return
   
-  const confirmed = await useNuxtApp().$confirmPopup.show(`Are you sure you want to delete all ${testClients.value.length} test clients? This action cannot be undone.`)
+  const confirmed = await useNuxtApp().$confirmPopup.show(t('testClientSelector.messages.confirm.deleteAll', { count: testClients.value.length }))
   if (!confirmed) {
     return
   }
@@ -298,10 +300,10 @@ const deleteAllClients = async () => {
     )
     
     testClients.value = []
-    useNuxtApp().$toast.show('All test clients deleted', 'success')
+    useNuxtApp().$toast.show(t('testClientSelector.messages.success.allDeleted'), 'success')
   } catch (error) {
     console.error('Failed to delete all test clients:', error)
-    useNuxtApp().$toast.show('Failed to delete all test clients', 'error')
+    useNuxtApp().$toast.show(t('testClientSelector.messages.error.deleteAllFailed'), 'error')
     // Reload to get current state
     await loadTestClients()
   }
@@ -370,10 +372,10 @@ const createNewClient = async (data: any) => {
     // Auto-select the new client
     selectClient(newClient)
     
-    useNuxtApp().$toast.show('Test client created', 'success')
+    useNuxtApp().$toast.show(t('testClientSelector.messages.success.clientCreated'), 'success')
   } catch (error) {
     console.error('Failed to create test client:', error)
-    useNuxtApp().$toast.show('Failed to create test client', 'error')
+    useNuxtApp().$toast.show(t('testClientSelector.messages.error.createFailed'), 'error')
     throw error // Re-throw to let MegaForm handle the error state
   }
 }

@@ -11,7 +11,7 @@
     <!-- Loading State -->
     <div v-if="isLoading" class="loading-state">
       <div class="spinner"></div>
-      <p>Setting up chat...</p>
+      <p>{{ t('chatInterface.status.settingUp') }}</p>
     </div>
 
     <!-- Chat Interface -->
@@ -23,15 +23,15 @@
             <div class="avatar-placeholder" v-html="avatarIcon"></div>
           </div>
           <div class="model-details">
-            <h1>Support Agent</h1>
-            <p class="chat-subtitle">Chat Support</p>
+            <h1>{{ t('chatInterface.header.title') }}</h1>
+            <p class="chat-subtitle">{{ t('chatInterface.header.subtitle') }}</p>
           </div>
         </div>
         
         <!-- AI Toggle (only shown in inverted mode) -->
         <div v-if="isInvertedMode" class="ai-toggle">
           <label class="toggle-switch">
-            <span class="toggle-label">Disable AI</span>
+            <span class="toggle-label">{{ t('chatInterface.ai.disableLabel') }}</span>
             <input 
               type="checkbox" 
               :checked="!aiEnabled" 
@@ -47,7 +47,7 @@
         <!-- Loading More Messages Indicator -->
         <div v-if="isLoadingMoreMessages" class="loading-more-indicator">
           <div class="spinner-small"></div>
-          <span>Loading older messages...</span>
+          <span>{{ t('chatInterface.messages.loadingOlder') }}</span>
         </div>
         
         <ChatMessage
@@ -103,39 +103,39 @@
     <!-- Tool Trace Details Popup -->
     <AppPopup
       :show="showToolTracePopup"
-      title="Tool Trace Details"
+      :title="t('chatInterface.toolTrace.title')"
       size="lg"
       @close="closeToolTracePopup"
     >
       <div v-if="selectedToolTrace" class="tool-trace-popup-content">
         <div class="tool-trace-detail-section">
-          <h4>Tool Information</h4>
+          <h4>{{ t('chatInterface.toolTrace.sections.toolInfo') }}</h4>
           <div class="tool-trace-detail-item">
-            <strong>Tool Name:</strong> {{ getToolName(selectedToolTrace) }}
+            <strong>{{ t('chatInterface.toolTrace.fields.toolName') }}:</strong> {{ getToolName(selectedToolTrace) }}
           </div>
           <div class="tool-trace-detail-item">
-            <strong>Status:</strong> 
+            <strong>{{ t('chatInterface.toolTrace.fields.status') }}:</strong> 
             <span :class="getToolTraceStatusClass(selectedToolTrace)">
               {{ getToolTraceStatus(selectedToolTrace) }}
             </span>
           </div>
           <div class="tool-trace-detail-item">
-            <strong>Executed At:</strong> {{ formatTime(selectedToolTrace.createdAt) }}
+            <strong>{{ t('chatInterface.toolTrace.fields.executedAt') }}:</strong> {{ formatTime(selectedToolTrace.createdAt) }}
           </div>
         </div>
 
         <div v-if="selectedToolTrace.toolInput" class="tool-trace-detail-section">
-          <h4>Input</h4>
+          <h4>{{ t('chatInterface.toolTrace.sections.input') }}</h4>
           <pre class="tool-trace-code">{{ selectedToolTrace.toolInput }}</pre>
         </div>
 
         <div v-if="selectedToolTrace.toolResult" class="tool-trace-detail-section">
-          <h4>Output</h4>
+          <h4>{{ t('chatInterface.toolTrace.sections.output') }}</h4>
           <pre class="tool-trace-code">{{ selectedToolTrace.toolResult }}</pre>
         </div>
 
         <div v-if="selectedToolTrace.toolError" class="tool-trace-detail-section">
-          <h4>Error</h4>
+          <h4>{{ t('chatInterface.toolTrace.sections.error') }}</h4>
           <pre class="tool-trace-code error">{{ selectedToolTrace.toolError }}</pre>
         </div>
       </div>
@@ -151,6 +151,8 @@ import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-
 import { useRecaptcha } from '~/composables/useRecaptcha'
 import { useMarkdown } from '~/composables/useMarkdown'
 import { SendClientMessageDto } from '~/eicrud_exports/services/SUPPORT-ms/message/cmds/send_client_message/send_client_message.dto'
+
+const { t } = useI18n()
 
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };
@@ -265,9 +267,9 @@ const dynamicStyles = computed(() => {
 
 const placeholderText = computed(() => {
   if (isInvertedMode.value && aiEnabled.value) {
-    return 'Disable AI to chat with client'
+    return t('chatInterface.input.disabledPlaceholder')
   }
-  return 'Type your message...'
+  return t('chatInterface.input.placeholder')
 })
 
 // Utility: lighten/darken color
@@ -789,13 +791,13 @@ const getMessageClass = (messageType?: string) => {
 
 // Tool trace helper functions (for popup display)
 const getToolName = (trace: ToolTraceMessage): string => {
-  return trace.toolName || 'Unknown Tool'
+  return trace.toolName || t('chatInterface.toolTrace.status.unknownTool')
 }
 
 const getToolTraceStatus = (trace: ToolTraceMessage): string => {
-  if (trace.toolError) return 'Error'
-  if (trace.toolResult) return 'Success'
-  return 'Unknown'
+  if (trace.toolError) return t('chatInterface.toolTrace.status.error')
+  if (trace.toolResult) return t('chatInterface.toolTrace.status.success')
+  return t('chatInterface.toolTrace.status.unknown')
 }
 
 const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
@@ -892,7 +894,10 @@ const toggleAI = async () => {
     })
     
     aiEnabled.value = newAIState
-    useNuxtApp().$toast.show(`AI ${newAIState ? 'enabled' : 'disabled'}`, 'success')
+    const message = newAIState 
+      ? t('chatInterface.ai.messages.enabled') 
+      : t('chatInterface.ai.messages.disabled')
+    useNuxtApp().$toast.show(message, 'success')
   } catch (error) {
     useNuxtApp().$toast.show(error, 'error')
     console.error('Failed to toggle AI:', error)

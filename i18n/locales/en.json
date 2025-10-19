@@ -235,5 +235,274 @@
                 "invalidToken": "Failed to reset password. The reset link may be expired or invalid."
             }
         }
+    },
+    "clientChat": {
+        "navigation": {
+            "backToConversations": "Back to Conversations"
+        },
+        "client": {
+            "anonymousUser": "Anonymous User",
+            "id": "ID"
+        },
+        "status": {
+            "loading": "Loading..."
+        },
+        "messages": {
+            "error": {
+                "missingParameters": "Missing required parameters",
+                "clientNotFound": "Client not found"
+            }
+        }
+    },
+    "conversations": {
+        "page": {
+            "title": "Conversations"
+        },
+        "search": {
+            "placeholder": "Search conversations..."
+        },
+        "filters": {
+            "seeArchived": "See Archived",
+            "resetFilters": "Reset Filters",
+            "readStatus": {
+                "title": "Read Status",
+                "unread": "Unread",
+                "read": "Read"
+            },
+            "status": {
+                "title": "Status",
+                "active": "Active",
+                "resolved": "Resolved"
+            },
+            "aiStatus": {
+                "title": "AI Status",
+                "on": "AI On",
+                "off": "AI Off"
+            },
+            "priority": {
+                "title": "Priority",
+                "lowest": "Lowest",
+                "regular": "Regular",
+                "high": "High"
+            },
+            "options": {
+                "both": "Both"
+            }
+        },
+        "status": {
+            "loading": "Loading conversations...",
+            "loadingMore": "Loading more conversations...",
+            "noMoreConversations": "No more conversations to load"
+        },
+        "empty": {
+            "title": "No conversations found",
+            "description": "Customer conversations will appear here when they start chatting"
+        },
+        "conversation": {
+            "id": "ID",
+            "ai": "AI",
+            "aiOn": "On",
+            "aiOff": "Off",
+            "active": "Active",
+            "resolved": "Resolved",
+            "messages": "messages",
+            "anonymousUser": "Anonymous User",
+            "noActivity": "No activity",
+            "invalidDate": "Invalid date",
+            "loadingMessage": "Loading message...",
+            "noMessages": "No messages yet"
+        },
+        "actions": {
+            "openChat": "Open Inverted Chat",
+            "reactivate": "Reactivate",
+            "markResolved": "Mark Resolved"
+        },
+        "archive": {
+            "title": "Archive Conversation",
+            "confirmMessage": "Are you sure you want to archive this conversation?",
+            "cancel": "Cancel",
+            "confirm": "Archive"
+        },
+        "logs": {
+            "title": "LLM Logs"
+        },
+        "messages": {
+            "success": {
+                "conversationResolved": "Conversation resolved",
+                "conversationReactivated": "Conversation reactivated",
+                "conversationArchived": "Conversation archived",
+                "conversationUnarchived": "Conversation unarchived"
+            },
+            "error": {
+                "missingApiKey": "User API key not found"
+            }
+        }
+    },
+    "chatInterface": {
+        "status": {
+            "settingUp": "Setting up chat..."
+        },
+        "header": {
+            "title": "Support Agent",
+            "subtitle": "Chat Support"
+        },
+        "ai": {
+            "disableLabel": "Disable AI",
+            "messages": {
+                "enabled": "AI enabled",
+                "disabled": "AI disabled"
+            }
+        },
+        "messages": {
+            "loadingOlder": "Loading older messages..."
+        },
+        "input": {
+            "placeholder": "Type your message...",
+            "disabledPlaceholder": "Disable AI to chat with client"
+        },
+        "toolTrace": {
+            "title": "Tool Trace Details",
+            "sections": {
+                "toolInfo": "Tool Information",
+                "input": "Input",
+                "output": "Output",
+                "error": "Error"
+            },
+            "fields": {
+                "toolName": "Tool Name",
+                "status": "Status",
+                "executedAt": "Executed At"
+            },
+            "status": {
+                "unknownTool": "Unknown Tool",
+                "error": "Error",
+                "success": "Success",
+                "unknown": "Unknown"
+            }
+        }
+    },
+    "chatMessage": {
+        "sender": {
+            "client": "Client",
+            "agent": "Support Agent"
+        },
+        "aiType": {
+            "fast": "Fast",
+            "smart": "Smart",
+            "pro": "Pro"
+        },
+        "followUp": {
+            "label": "Suggested questions:"
+        },
+        "toolTrace": {
+            "detailsButton": "Details",
+            "unknownTool": "Unknown Tool",
+            "status": {
+                "error": "Error",
+                "success": "Success",
+                "unknown": "Unknown"
+            }
+        }
+    },
+    "widget": {
+        "page": {
+            "title": "Widget Configuration",
+            "description": "Tune your support widget appearance & behavior, then copy the embed snippet."
+        },
+        "status": {
+            "loading": "Loading widget configuration..."
+        },
+        "embed": {
+            "title": "Embed Snippet",
+            "copyButton": "Copy Snippet",
+            "copiedMessage": "Copied!"
+        },
+        "fields": {
+            "primaryColor": "Primary Color",
+            "secondaryColor": "Secondary Color",
+            "bounceAfterInit": "Bounce After Init (seconds)",
+            "periodicBounce": "Periodic Bounce (seconds)",
+            "position": {
+                "bottomRight": "Bottom Right",
+                "bottomLeft": "Bottom Left"
+            },
+            "icon": {
+                "robot": "Robot",
+                "message": "Message",
+                "headset": "Headset"
+            },
+            "options": {
+                "yes": "YES",
+                "no": "NO",
+                "on": "ON",
+                "off": "OFF"
+            },
+            "welcomeMessage": {
+                "label": "Welcome Message",
+                "placeholder": "👋 Welcome!"
+            },
+            "faqs": {
+                "label": "FAQs (Frequently Asked Questions)",
+                "placeholder": "How do I reset my password?"
+            }
+        },
+        "actions": {
+            "save": "Save"
+        },
+        "messages": {
+            "success": {
+                "updated": "Widget config updated",
+                "saved": "Widget config saved"
+            }
+        }
+    },
+    "testClientSelector": {
+        "header": {
+            "subtitle": "Choose a client to start a test chat session, test clients have access to disabled custom tools."
+        },
+        "status": {
+            "loading": "Loading test clients...",
+            "empty": "No test clients found"
+        },
+        "client": {
+            "unnamedClient": "Unnamed Client",
+            "id": "ID",
+            "created": "Created"
+        },
+        "actions": {
+            "deleteClient": "Delete client",
+            "deleteAllClients": "Delete All Clients",
+            "createNewClient": "Create New Test Client",
+            "cancel": "Cancel"
+        },
+        "modals": {
+            "createClient": {
+                "title": "Create New Test Client",
+                "cancel": "Cancel",
+                "create": "Create Client"
+            },
+            "authToken": {
+                "title": "Authentication Token Required",
+                "cancel": "Cancel",
+                "startChat": "Start Chat"
+            }
+        },
+        "messages": {
+            "success": {
+                "clientDeleted": "Test client deleted",
+                "allDeleted": "All test clients deleted",
+                "clientCreated": "Test client created"
+            },
+            "error": {
+                "loadFailed": "Failed to load test clients",
+                "deleteFailed": "Failed to delete test client",
+                "deleteAllFailed": "Failed to delete all test clients",
+                "createFailed": "Failed to create test client"
+            },
+            "confirm": {
+                "deleteClient": "Delete test client \"{name}\"?",
+                "deleteAll": "Are you sure you want to delete all {count} test clients? This action cannot be undone."
+            }
+        }
     }
 }

@@ -12,7 +12,7 @@
       
       <!-- Follow-up questions (only show on last message) -->
       <div v-if="isLastMessage && hasFollowUps(message)" class="follow-up-questions">
-        <div class="follow-up-label">Suggested questions:</div>
+        <div class="follow-up-label">{{ t('chatMessage.followUp.label') }}</div>
         <button 
           v-for="(question, qIndex) in getFollowUps(message)" 
           :key="qIndex"
@@ -40,7 +40,7 @@
             class="tool-trace-details-btn" 
             @click="$emit('show-tool-trace-details', message)"
           >
-            Details
+            {{ t('chatMessage.toolTrace.detailsButton') }}
           </button>
         </div>
       </div>
@@ -53,6 +53,8 @@ import { computed } from 'vue'
 import { useMarkdown } from '~/composables/useMarkdown'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-trace.entity'
+
+const { t } = useI18n()
 
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };
@@ -89,7 +91,7 @@ const formatTime = (date?: Date | string | null) => {
 
 const getSenderName = (messageType?: string) => {
   // Always show the same labels regardless of mode
-  return messageType === 'user' ? 'Client' : 'Support Agent'
+  return messageType === 'user' ? t('chatMessage.sender.client') : t('chatMessage.sender.agent')
 }
 
 const getAiTypeLabel = (aiType?: string) => {
@@ -97,11 +99,11 @@ const getAiTypeLabel = (aiType?: string) => {
   
   switch (aiType.toLowerCase()) {
     case 'fast':
-      return '(Fast)'
+      return `(${t('chatMessage.aiType.fast')})`
     case 'smart':
-      return '(Smart)'
+      return `(${t('chatMessage.aiType.smart')})`
     case 'pro':
-      return '(Pro)'
+      return `(${t('chatMessage.aiType.pro')})`
     default:
       return ''
   }
@@ -139,13 +141,13 @@ const getMessageClass = (messageType?: string) => {
 
 // Tool trace helper functions
 const getToolName = (trace: ToolTraceMessage): string => {
-  return trace.toolName || 'Unknown Tool'
+  return trace.toolName || t('chatMessage.toolTrace.unknownTool')
 }
 
 const getToolTraceStatus = (trace: ToolTraceMessage): string => {
-  if (trace.toolError) return 'Error'
-  if (trace.toolResult) return 'Success'
-  return 'Unknown'
+  if (trace.toolError) return t('chatMessage.toolTrace.status.error')
+  if (trace.toolResult) return t('chatMessage.toolTrace.status.success')
+  return t('chatMessage.toolTrace.status.unknown')
 }
 
 const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {

@@ -2,11 +2,11 @@
   <section class="page-container conversations-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>Conversations</h1>
+        <h1>{{ t('conversations.page.title') }}</h1>
         <div class="page-actions">
           <ToggleSwitch
             v-model="showArchived"
-            label="See Archived"
+            :label="t('conversations.filters.seeArchived')"
             label-position="left"
             @update:modelValue="handleArchivedToggle"
           />
@@ -27,7 +27,7 @@
             <AppIcon name="search" size="sm" class="search-icon" />
             <input 
               type="text" 
-              placeholder="Search conversations..."
+              :placeholder="t('conversations.search.placeholder')"
               v-model="searchQuery"
               class="search-input"
             />
@@ -35,7 +35,7 @@
           
           <!-- Reset Filter -->
           <AppButton
-            label="Reset Filters"
+            :label="t('conversations.filters.resetFilters')"
             color="secondary"
             size="sm"
             margin="left"
@@ -48,57 +48,57 @@
           <div class="filter-checkboxes">
             <!-- Read Status Column -->
             <CheckBoxColumn
-              title="Read Status"
+              :title="t('conversations.filters.readStatus.title')"
               name="readStatus"
               v-model="filters.readStatus"
               :options="[
-                { value: 'both', label: 'Both' },
-                { value: 'false', label: 'Unread' },
-                { value: 'true', label: 'Read' }
+                { value: 'both', label: t('conversations.filters.options.both') },
+                { value: 'false', label: t('conversations.filters.readStatus.unread') },
+                { value: 'true', label: t('conversations.filters.readStatus.read') }
               ]"
               @change="applyFilters"
             />
             
             <!-- Conversation Status Column -->
             <CheckBoxColumn
-              title="Status"
+              :title="t('conversations.filters.status.title')"
               name="resolvedStatus"
               v-model="filters.resolvedStatus"
               :options="[
-                { value: 'both', label: 'Both' },
-                { value: 'false', label: 'Active' },
-                { value: 'true', label: 'Resolved' }
+                { value: 'both', label: t('conversations.filters.options.both') },
+                { value: 'false', label: t('conversations.filters.status.active') },
+                { value: 'true', label: t('conversations.filters.status.resolved') }
               ]"
               @change="applyFilters"
             />
             
             <!-- AI Status Column -->
             <CheckBoxColumn
-              title="AI Status"
+              :title="t('conversations.filters.aiStatus.title')"
               name="aiStatus"
               v-model="filters.aiStatus"
               :options="[
-                { value: 'both', label: 'Both' },
-                { value: 'true', label: 'AI On' },
-                { value: 'false', label: 'AI Off' }
+                { value: 'both', label: t('conversations.filters.options.both') },
+                { value: 'true', label: t('conversations.filters.aiStatus.on') },
+                { value: 'false', label: t('conversations.filters.aiStatus.off') }
               ]"
               @change="applyFilters"
             />
             
             <!-- Priority Column -->
             <div class="filter-column">
-              <h4>Priority</h4>
+              <h4>{{ t('conversations.filters.priority.title') }}</h4>
               <label class="checkbox-label">
                 <input type="checkbox" v-model="filters.priorityLowest" @change="applyFilters" />
-                <span>Lowest</span>
+                <span>{{ t('conversations.filters.priority.lowest') }}</span>
               </label>
               <label class="checkbox-label">
                 <input type="checkbox" v-model="filters.priorityRegular" @change="applyFilters" />
-                <span>Regular</span>
+                <span>{{ t('conversations.filters.priority.regular') }}</span>
               </label>
               <label class="checkbox-label">
                 <input type="checkbox" v-model="filters.priorityHigh" @change="applyFilters" />
-                <span>High</span>
+                <span>{{ t('conversations.filters.priority.high') }}</span>
               </label>
             </div>
           </div>
@@ -108,13 +108,13 @@
       <!-- Loading State -->
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading conversations...</p>
+        <p>{{ t('conversations.status.loading') }}</p>
       </div>
 
       <!-- Conversations List -->
       <div v-else-if="filteredConversations.length === 0" class="empty-state">
-        <h3>No conversations found</h3>
-        <p>Customer conversations will appear here when they start chatting</p>
+        <h3>{{ t('conversations.empty.title') }}</h3>
+        <p>{{ t('conversations.empty.description') }}</p>
       </div>
 
       <div v-else class="conversations-grid">
@@ -142,7 +142,7 @@
                 <span class="priority-badge">{{ getPriorityEmoji(conversation.priority || ClientPriority.LOWEST) }}</span>
                 <h3 class="customer-name">{{ getDisplayName(conversation) }}</h3>
               </div>
-              <p class="conversation-id">ID: {{ conversation.uniqueId }}</p>
+              <p class="conversation-id">{{ t('conversations.conversation.id') }}: {{ conversation.uniqueId }}</p>
             </div>
             <div class="conversation-status">
               <!-- AI Status Badge -->
@@ -151,7 +151,7 @@
                 :class="{ 'ai-on': conversation.aiOn, 'ai-off': !conversation.aiOn }"
               >
                 <AppIcon :name="conversation.aiOn ? 'check' : 'close'" size="sm" />
-                AI {{ conversation.aiOn ? 'On' : 'Off' }}
+                {{ t('conversations.conversation.ai') }} {{ conversation.aiOn ? t('conversations.conversation.aiOn') : t('conversations.conversation.aiOff') }}
               </span>
               
               <!-- Conversation Status Badge -->
@@ -160,7 +160,7 @@
                 :class="{ 'active': !conversation.conversationResolved, 'resolved': conversation.conversationResolved }"
               >
                 <AppIcon :name="!conversation.conversationResolved ? 'time' : 'check'" size="sm" />
-                {{ !conversation.conversationResolved ? 'Active' : 'Resolved' }}
+                {{ !conversation.conversationResolved ? t('conversations.conversation.active') : t('conversations.conversation.resolved') }}
               </span>
             </div>
           </div>
@@ -168,14 +168,14 @@
           <div class="conversation-preview">
             <p class="last-message">{{ getLastMessage(conversation) }}</p>
             <div class="conversation-meta">
-              <span class="message-count">{{ getMessageCount(conversation) }} messages</span>
+              <span class="message-count">{{ getMessageCount(conversation) }} {{ t('conversations.conversation.messages') }}</span>
               <span class="last-activity">{{ formatDate(conversation.lastMessageDate) }}</span>
             </div>
           </div>
 
           <div class="conversation-actions">
             <AppButton
-              label="Open Inverted Chat"
+              :label="t('conversations.actions.openChat')"
               color="primary"
               size="sm"
               @click="openInvertedChat(conversation)"
@@ -205,7 +205,7 @@
               @click="openClientLogs(conversation)"
             />
             <AppButton
-              :label="conversation.conversationResolved ? 'Reactivate' : 'Mark Resolved'"
+              :label="conversation.conversationResolved ? t('conversations.actions.reactivate') : t('conversations.actions.markResolved')"
               margin="no-margins"
               color="secondary"
               size="sm"
@@ -218,31 +218,31 @@
       <!-- Load More Indicator -->
       <div v-if="isLoadingMore" class="loading-more">
         <div class="spinner"></div>
-        <p>Loading more conversations...</p>
+        <p>{{ t('conversations.status.loadingMore') }}</p>
       </div>
 
       <!-- End of Results Indicator -->
       <div v-else-if="!hasMoreData && clients.length > 0" class="end-of-results">
-        <p>No more conversations to load</p>
+        <p>{{ t('conversations.status.noMoreConversations') }}</p>
       </div>
     </div>
     
     <!-- Archive Confirmation Popup -->
     <AppPopup
       :show="archiveConfirmation.show"
-      title="Archive Conversation"
+      :title="t('conversations.archive.title')"
       @close="cancelArchive"
     >
-      <p>Are you sure you want to archive this conversation?</p>
+      <p>{{ t('conversations.archive.confirmMessage') }}</p>
       
       <div class="popup-actions">
         <AppButton
-          label="Cancel"
+          :label="t('conversations.archive.cancel')"
           color="secondary"
           @click="cancelArchive"
         />
         <AppButton
-          label="Archive"
+          :label="t('conversations.archive.confirm')"
           color="warning"
           margin="left"
           @click="confirmArchive"
@@ -270,6 +270,8 @@ import LlmLogsPopup from '~/components/LlmLogsPopup.vue'
 import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 import { getPriorityEmoji } from '~/utils/priority'
+
+const { t } = useI18n()
 
 // State
 const clients = ref<Client[]>([])
@@ -331,7 +333,7 @@ const loadConversations = async (reset = true) => {
     const apiKey = useNuxtApp().$userProductId
     
     if (!apiKey) {
-      throw new Error('User API key not found')
+      throw new Error(t('conversations.messages.error.missingApiKey'))
     }
     
     // Build search parameters based on filters
@@ -632,8 +634,10 @@ const toggleResolved = async (client: Client) => {
       clients.value[clientIndex]!.conversationResolved = newResolvedState
     }
     
-    const action = newResolvedState ? 'resolved' : 'reactivated'
-    useNuxtApp().$toast.show(`Conversation ${action}`, 'success')
+    const message = newResolvedState 
+      ? t('conversations.messages.success.conversationResolved') 
+      : t('conversations.messages.success.conversationReactivated')
+    useNuxtApp().$toast.show(message, 'success')
   } catch (error) {
     console.error('Failed to toggle conversation status:', error)
     useNuxtApp().$toast.show(error, 'error')
@@ -677,7 +681,7 @@ const confirmArchive = async () => {
       animatingCards.value.delete(client.id)
     }, 300) // Match the CSS animation duration
     
-    useNuxtApp().$toast.show('Conversation archived', 'success')
+    useNuxtApp().$toast.show(t('conversations.messages.success.conversationArchived'), 'success')
   } catch (error) {
     console.error('Failed to archive conversation:', error)
     useNuxtApp().$toast.show(error, 'error')
@@ -709,7 +713,7 @@ const unarchiveConversation = async (client: Client) => {
       clients.value[clientIndex]!.conversationArchived = false
     }
     
-    useNuxtApp().$toast.show('Conversation unarchived', 'success')
+    useNuxtApp().$toast.show(t('conversations.messages.success.conversationUnarchived'), 'success')
   } catch (error) {
     console.error('Failed to unarchive conversation:', error)
     useNuxtApp().$toast.show(error, 'error')
@@ -720,7 +724,7 @@ const unarchiveConversation = async (client: Client) => {
 const openClientLogs = async (client: Client) => {
   const contextId = `${client.id}`
   
-  logsPopupTitle.value = `LLM Logs - ${getDisplayName(client)}`
+  logsPopupTitle.value = `${t('conversations.logs.title')} - ${getDisplayName(client)}`
   logsContextId.value = contextId
   showLogsPopup.value = true
 }
@@ -731,10 +735,10 @@ const closeLogsPopup = () => {
 }
 
 const formatDate = (date?: Date | string) => {
-  if (!date) return 'No activity'
+  if (!date) return t('conversations.conversation.noActivity')
   
   const d = date instanceof Date ? date : new Date(date)
-  if (isNaN(d.getTime())) return 'Invalid date'
+  if (isNaN(d.getTime())) return t('conversations.conversation.invalidDate')
   
   const now = new Date()
   const diff = now.getTime() - d.getTime()
@@ -752,7 +756,7 @@ const formatDate = (date?: Date | string) => {
 }
 
 const getDisplayName = (client: Client) => {
-  return client.name || client.email || 'Anonymous User'
+  return client.name || client.email || t('conversations.conversation.anonymousUser')
 }
 
 const getLastMessage = (client: Client) => {
@@ -763,10 +767,10 @@ const getLastMessage = (client: Client) => {
   
   // Show loading state if card is visible but message not loaded yet
   if (visibleCards.value.has(client.id)) {
-    return 'Loading message...'
+    return t('conversations.conversation.loadingMessage')
   }
   
-  return 'No messages yet'
+  return t('conversations.conversation.noMessages')
 }
 
 const getMessageCount = (client: Client) => {
