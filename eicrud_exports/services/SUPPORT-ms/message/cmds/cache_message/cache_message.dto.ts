@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsInt } from "class-validator";
+//
 
 
 export class CacheMessageDto {
@@ -20,6 +21,8 @@ export class CacheMessageDto {
     @IsOptional()
     followUps?: string[];
 
+    // toolContext will be passed but not validated (it's not a serialized field)
+    //
 
 }
 

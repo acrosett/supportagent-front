@@ -20,10 +20,4 @@ export class VerifyRecaptchaDto {
 
 }
 
-export interface VerifyRecaptchaReturnDto {
-    valid: boolean;
-    score: number;
-    rateLimited?: boolean;
-    action?: string;
-    actionMatched?: boolean;
-}
+export type VerifyRecaptchaReturnDto = number

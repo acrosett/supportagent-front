@@ -12,6 +12,7 @@ export enum SpendType {
   AI_SUMMARY = 'ai_summary',
   SUBSCRIPTION = 'subscription',
   CACHED = 'cached',
+  EMBEDDING = 'embedding',
   UNKNOWN = 'unknown',
 }
 

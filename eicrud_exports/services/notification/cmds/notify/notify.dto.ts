@@ -19,6 +19,10 @@ export class NotifyDto {
     title: string;
 
     @IsString()
+    @IsOptional()
+    link?: string;
+
+    @IsString()
     message: string;
 
     @IsEnum(NotificationType)

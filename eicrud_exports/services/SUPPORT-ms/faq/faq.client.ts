@@ -1,3 +1,4 @@
+import { VectorSearchDto, VectorSearchReturnDto } from './cmds/vector_search/vector_search.dto';
 import { SearchDto, SearchReturnDto } from './cmds/search/search.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
 import { ICrudOptions } from "@eicrud/shared/interfaces";
@@ -9,6 +10,38 @@ export class FaqClient extends CrudClient<Faq> {
     super({...config, serviceName: 'faq'});
   }
   // GENERATED START
+  async vector_search(
+      dto: VectorSearchDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<VectorSearchReturnDto> {
+      return super.cmd('vector_search', dto, options, copts);
+  }
+
+  async vector_searchS(
+      dto: VectorSearchDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<VectorSearchReturnDto> {
+      return super.cmdS('vector_search', dto, options, copts);
+  }
+
+  async vector_searchL(
+      dto: VectorSearchDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<VectorSearchReturnDto> {
+      return super.cmdL('vector_search', dto, options, copts) as any;
+  }
+
+  async vector_searchSL(
+      dto: VectorSearchDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<VectorSearchReturnDto> {
+      return super.cmdSL('vector_search', dto, options, copts) as any;
+  }
+
   async search(
       dto: SearchDto,
       options: ICrudOptions = undefined,

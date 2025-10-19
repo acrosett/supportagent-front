@@ -80,6 +80,7 @@ const errors = ref<Record<string, string[]>>({})
 const showErrorAnim = ref<Record<number, boolean>>({})
 const loading = ref<Record<number, boolean>>({})
 const nestedFormRefs = ref<Record<string, any>>({}) // Store refs to nested MegaForms
+const passwordVisibility = ref<Record<string, boolean>>({}) // Track password field visibility
 
 // Initialize select fields and nested classes
 if (props.fieldOverrides) {
@@ -413,6 +414,11 @@ watch(formData, () => {
   emit('update:modelValue', { ...formData })
 })
 
+// Function to toggle password visibility
+function togglePasswordVisibility(fieldKey: string) {
+  passwordVisibility.value[fieldKey] = !passwordVisibility.value[fieldKey]
+}
+
 // Expose validateForm and errors for parent forms to access
 defineExpose({
   validateForm,
@@ -550,6 +556,28 @@ defineExpose({
             {{ option.label }}
           </option>
         </select>
+        <!-- Password input with reveal toggle -->
+        <div v-else-if="field.inputType === 'password'" class="megaform-password-wrapper">
+          <input
+            :type="passwordVisibility[field.key] ? 'text' : 'password'"
+            v-model="formData[field.key]"
+            :id="field.key"
+            :name="field.key"
+            :placeholder="field.placeholder"
+            :disabled="fieldOverrides?.[field.key]?.props?.disabled"
+            :maxlength="fieldOverrides?.[field.key]?.maxChars"
+            class="megaform-input megaform-password-input"
+            :style="fieldOverrides?.[field.key]?.maxHeight ? { 'max-height': fieldOverrides?.[field.key]?.maxHeight } : {}"
+          />
+          <button
+            type="button"
+            class="megaform-password-toggle"
+            @click="togglePasswordVisibility(field.key)"
+            :title="passwordVisibility[field.key] ? 'Hide password' : 'Show password'"
+          >
+            <i :class="passwordVisibility[field.key] ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
         <!-- Default input with optional placeholder and name -->
         <input
           v-else-if="field.inputType !== 'checkbox' && field.inputType !== 'color'"
@@ -856,6 +884,51 @@ defineExpose({
 .megaform-color::-webkit-color-swatch { border:1px solid $border; border-radius:8px; }
 .megaform-color::-moz-color-swatch { border:1px solid $border; border-radius:8px; }
 .megaform-color-hex { flex:0 0 auto; }
+
+/* Password input styles */
+.megaform-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.megaform-password-input {
+  padding-right: 2.5rem; /* Make room for the eye icon */
+  width: 100%;
+}
+
+.megaform-password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $muted;
+  font-size: 1rem;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  
+  &:hover {
+    color: $text;
+    background-color: rgba($muted, 0.1);
+  }
+  
+  &:focus {
+    outline: 2px solid rgba($brand, 0.3);
+    outline-offset: 2px;
+    color: $brand;
+  }
+  
+  i {
+    font-size: 0.875rem;
+  }
+}
 
 // ...existing code...
 

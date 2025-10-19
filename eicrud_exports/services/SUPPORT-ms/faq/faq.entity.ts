@@ -9,8 +9,6 @@ export class Faq {
     @IsOptional()
     id: string;
 
-    
-
     @IsString()
     question: string;
 
@@ -25,6 +23,9 @@ export class Faq {
     @IsOptional()
     tags: string[];
 
+    @IsOptional()
+    embedding?: number[]; 
+    
     createdAt: Date;
 
     updatedAt: Date;

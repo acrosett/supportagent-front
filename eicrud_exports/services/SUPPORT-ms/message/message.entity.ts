@@ -23,6 +23,9 @@ export class Message {
     type: MessageType;
 
     @IsOptional()
+    embedding?: number[];
+
+    @IsOptional()
     @IsBoolean()
     fromStaff: boolean = false;
 

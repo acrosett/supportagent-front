@@ -122,6 +122,7 @@ const fieldOverrides: OverrideRecord<Product> = {
   },
   sharedSecret: {
     label: 'Shared Secret',
+    type: 'password',
     placeholder: 'Your webhook shared secret',
     description: 'Secret key used to secure webhook requests between your system and ours'
   }

@@ -33,11 +33,14 @@
           :key="notification.id"
           class="notification-card"
           :class="{ 'unread': !notification.read }"
-          @click="markAsRead(notification)"
+          @click="handleNotificationClick(notification)"
         >
           <div class="notification-content">
+            <div class="notification-title">
+              {{ notification.title }}
+            </div>
             <div class="notification-message">
-              {{ notification.message }}
+              {{ truncateMessage(notification.message) }}
             </div>
             <div class="notification-meta">
               <span class="notification-date">{{ formatDate(notification.createdAt) }}</span>
@@ -142,22 +145,27 @@ const addMockNotifications = (productId: string, reset: boolean): Notification[]
     {
       id: 'mock-1',
       product: productId,
+      title: 'High Customer Engagement',
       message: 'Your chat widget has received 15 new conversations in the last hour. Customer engagement is up 23% today!',
       read: false,
       createdAt: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-      updatedAt: new Date(Date.now() - 5 * 60 * 1000)
+      updatedAt: new Date(Date.now() - 5 * 60 * 1000),
+      link: '/conversations'
     },
     {
       id: 'mock-2', 
       product: productId,
+      title: 'Low Account Balance',
       message: 'Account balance is running low ($2.50 remaining). Consider adding funds to ensure uninterrupted service.',
       read: false,
       createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000)
+      updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      link: '/funds'
     },
     {
       id: 'mock-3',
-      product: productId, 
+      product: productId,
+      title: 'AI Assistant Success',
       message: 'Your AI assistant successfully resolved 8 customer inquiries without human intervention today.',
       read: true,
       createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
@@ -166,6 +174,7 @@ const addMockNotifications = (productId: string, reset: boolean): Notification[]
     {
       id: 'mock-4',
       product: productId,
+      title: 'Security Alert',
       message: 'Security alert: Multiple failed login attempts detected from IP 192.168.1.100. Account has been temporarily locked.',
       read: false,
       createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
@@ -174,6 +183,7 @@ const addMockNotifications = (productId: string, reset: boolean): Notification[]
     {
       id: 'mock-5',
       product: productId,
+      title: 'Weekly Report',
       message: 'Weekly report: Your chat widget handled 147 conversations with a 94% customer satisfaction rate.',
       read: true,
       createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
@@ -182,6 +192,7 @@ const addMockNotifications = (productId: string, reset: boolean): Notification[]
     {
       id: 'mock-6',
       product: productId,
+      title: 'New Feature Available',
       message: 'New feature available: Advanced analytics dashboard is now live! Check out detailed conversation insights.',
       read: false,
       createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
@@ -214,6 +225,27 @@ const markAsRead = async (notification: Notification) => {
     console.error('Failed to mark notification as read:', error)
     useNuxtApp().$toast.show('Failed to update notification', 'error')
   }
+}
+
+// Handle notification click - mark as read and navigate if link exists
+const handleNotificationClick = async (notification: Notification) => {
+  // Mark as read first
+  await markAsRead(notification)
+  
+  // Check if notification has a link (could be in message or a separate field)
+  // For now, we'll assume the link might be added to the entity later
+  const link = (notification).link
+  if (link) {
+    // Navigate to the relative link
+    await navigateTo(link)
+  }
+}
+
+// Truncate message to 50 characters max
+const truncateMessage = (message: string): string => {
+  if (!message) return ''
+  if (message.length <= 100) return message
+  return message.substring(0, 100) + '...'
 }
 
 // Load more notifications
@@ -387,10 +419,18 @@ onMounted(() => {
 }
 
 .notification-content {
-  .notification-message {
+  .notification-title {
     color: $text;
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  
+  .notification-message {
+    color: $muted;
+    font-size: 0.9rem;
+    line-height: 1.4;
     margin-bottom: 0.75rem;
   }
   

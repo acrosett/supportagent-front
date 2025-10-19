@@ -42,6 +42,7 @@
               <div class="log-meta">
                 <span class="log-agent">{{ log.agentName || 'Unknown Agent' }}</span>
                 <span class="log-version">v{{ log.agentVersion || '1.0' }}</span>
+                <span class="test-badge">{{ log.id }}</span>
                 <span v-if="log.isTest" class="test-badge">TEST</span>
                 <span v-if="log.errorCount > 0" class="error-badge">{{ log.errorCount }} ERROR{{ log.errorCount > 1 ? 'S' : '' }}</span>
               </div>

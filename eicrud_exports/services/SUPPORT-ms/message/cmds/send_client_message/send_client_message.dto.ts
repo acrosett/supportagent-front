@@ -26,4 +26,4 @@ export class SendClientMessageDto {
 }
 
 //used by super-client, update me here
-export type SendClientMessageReturnDto = string;
+export type SendClientMessageReturnDto = boolean;

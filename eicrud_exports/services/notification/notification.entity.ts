@@ -14,6 +14,10 @@ export class Notification {
     title: string;
 
     @IsString()
+    @IsOptional()
+    link?: string;
+
+    @IsString()
     message: string;
 
     @IsBoolean()

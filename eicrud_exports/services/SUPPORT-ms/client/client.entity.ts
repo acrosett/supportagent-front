@@ -31,20 +31,20 @@ export class Client {
     @IsOptional()
     email?: string;
 
-    messageCount: number;
+    messageCount: number = 0;
 
-    messagesToday: number;
+    messagesToday: number = 0;
 
     // Total tokens used by this client today
-    tokenCountToday: number;
+    tokenCountToday: number = 0;
 
     @IsOptional()
     lastMessageDailyReset?: Date;
 
-    messagesThisWeek: number;
+    messagesThisWeek: number = 0;
 
     // Total tokens used by this client this week
-    tokenCountThisWeek: number;
+    tokenCountThisWeek: number = 0;
 
     lastMessageWeeklyReset?: Date;
 
