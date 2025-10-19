@@ -1,0 +1,53 @@
+{
+  "page": {
+    "title": "Widget Configuration",
+    "description": "Tune your support widget appearance & behavior, then copy the embed snippet."
+  },
+  "status": {
+    "loading": "Loading widget configuration..."
+  },
+  "embed": {
+    "title": "Embed Snippet",
+    "copyButton": "Copy Snippet",
+    "copiedMessage": "Copied!"
+  },
+  "fields": {
+    "primaryColor": "Primary Color",
+    "secondaryColor": "Secondary Color",
+    "bounceAfterInit": "Bounce After Init (seconds)",
+    "periodicBounce": "Periodic Bounce (seconds)",
+    "position": {
+      "label": "Position",
+      "bottomRight": "Bottom Right",
+      "bottomLeft": "Bottom Left"
+    },
+    "icon": {
+      "label": "Icon",
+      "message": "Message",
+      "headset": "Headset"
+    },
+    "options": {
+      "label": "Options",
+      "enabledLabel": "ENABLED",
+      "disabledLabel": "DISABLED",
+      "off": "OFF"
+    },
+    "welcomeMessage": {
+      "label": "Welcome Message",
+      "placeholder": "👋 Welcome!"
+    },
+    "faqs": {
+      "label": "Show FAQ List",
+      "description": "Show FAQ list instead of the widget form"
+    }
+  },
+  "actions": {
+    "save": "Save"
+  },
+  "messages": {
+    "success": {
+      "saved": "Widget configuration saved successfully",
+      "copied": "Embed snippet copied to clipboard"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "tabs": {
+    "upload": "Upload File",
+    "paste": "Paste Text"
+  },
+  "upload": {
+    "title": "Upload Document",
+    "instruction": "Drop your file here or click to browse",
+    "supportedFiles": "Supports: HTML, PDF, Word (.doc, .docx), XML, Text (.txt), Markdown (.md), JSON, CSV"
+  },
+  "processing": {
+    "message": "Processing {fileName}..."
+  },
+  "success": {
+    "message": "Successfully processed",
+    "uploadAnother": "Upload Another File"
+  },
+  "paste": {
+    "label": "Paste your text content",
+    "placeholder": "Paste or type your content here...",
+    "processButton": "Process Text",
+    "defaultFileName": "Pasted Text"
+  },
+  "confirm": {
+    "uploadTitle": "Confirm Upload",
+    "processTitle": "Confirm Processing",
+    "uploadMessage": "You are about to upload {fileName} ({sizeKB} KB).",
+    "processMessage": "You are about to process {fileName} ({sizeKB} KB of text).",
+    "defaultFileName": "your file",
+    "calculatingCost": "Calculating estimated cost...",
+    "estimatedCost": "Estimated processing cost: ${cost}",
+    "cancel": "Cancel",
+    "process": "Process with AI"
+  }
+}

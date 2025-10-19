@@ -1,15 +1,15 @@
 <template>
   <div class="widget-config-page page-container">
     <header class="page-header">
-      <h1 class="page-title">{{ t('widget.page.title') }}</h1>
-      <p class="page-desc">{{ t('widget.page.description') }}</p>
+      <h1 class="page-title">{{ t('page.title') }}</h1>
+      <p class="page-desc">{{ t('page.description') }}</p>
     </header>
 
     <div class="content-section">
       
       <div v-if="loadingConfig" class="loading-state">
         <div class="spinner"></div>
-        <p>{{ t('widget.status.loading') }}</p>
+        <p>{{ t('status.loading') }}</p>
       </div>
       
       <MegaForm
@@ -22,11 +22,11 @@
       >
         <div class="embed-snippet-block">
           <h2 class="snippet-header">
-            <span>{{ t('widget.embed.title') }}</span>
-            <button class="copy-btn" type="button" @click="copySnippet">{{ t('widget.embed.copyButton') }}</button>
+            <span>{{ t('embed.title') }}</span>
+            <button class="copy-btn" type="button" @click="copySnippet">{{ t('embed.copyButton') }}</button>
           </h2>
           <div class="code-wrapper"><pre><code ref="codeEl">{{ snippet }}</code></pre></div>
-          <p v-if="copied" class="copied-msg">{{ t('widget.embed.copiedMessage') }}</p>
+          <p v-if="copied" class="copied-msg">{{ t('embed.copiedMessage') }}</p>
         </div>
       </MegaForm>
     </div>
@@ -37,7 +37,8 @@
 import MegaForm, { OverrideRecord, MegaFormAction } from '@/components/MegaForm.vue'
 import { WidgetConfig, WidgetPosition, WidgetIcon } from '@/eicrud_exports/services/SUPPORT-ms/widget-config/widget-config.entity'
 
-const { t } = useI18n()
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
+const { t } = useLocalNamespace('widget')
 
 definePageMeta({ layout: 'default' })
 
@@ -176,39 +177,39 @@ onBeforeUnmount(() => { if (previewBuildTimer) clearTimeout(previewBuildTimer); 
 
 const fieldOverrides: OverrideRecord<WidgetConfig> = {
   position: { selectOptions: [
-    { label: t('widget.fields.position.bottomRight'), value: WidgetPosition.BOTTOM_RIGHT },
-    { label: t('widget.fields.position.bottomLeft'), value: WidgetPosition.BOTTOM_LEFT }
+    { label: t('fields.position.bottomRight'), value: WidgetPosition.BOTTOM_RIGHT },
+    { label: t('fields.position.bottomLeft'), value: WidgetPosition.BOTTOM_LEFT }
   ]},
   icon: { selectOptions: [
-    { label: t('widget.fields.icon.robot'), value: WidgetIcon.ROBOT },
-    { label: t('widget.fields.icon.message'), value: WidgetIcon.MESSAGE },
-    { label: t('widget.fields.icon.headset'), value: WidgetIcon.HEADSET },
+    { label: t('fields.icon.robot'), value: WidgetIcon.ROBOT },
+    { label: t('fields.icon.message'), value: WidgetIcon.MESSAGE },
+    { label: t('fields.icon.headset'), value: WidgetIcon.HEADSET },
   ]},
-  primaryColor: { type: 'color', label: t('widget.fields.primaryColor') },
-  secondaryColor: { type: 'color', label: t('widget.fields.secondaryColor') },
-  bounceAfterInit: { type: 'number', label: t('widget.fields.bounceAfterInit') },
-  periodicBounce: { type: 'number', label: t('widget.fields.periodicBounce') },
-  startOpen: { type: 'checkbox', onLabel: t('widget.fields.options.yes'), offLabel: t('widget.fields.options.no') },
-  darkMode: { type: 'checkbox', onLabel: t('widget.fields.options.on'), offLabel: t('widget.fields.options.off') },
-  draggable: { type: 'checkbox', onLabel: t('widget.fields.options.on'), offLabel: t('widget.fields.options.off') },
-  soundOn: { type: 'checkbox', onLabel: t('widget.fields.options.on'), offLabel: t('widget.fields.options.off') },
-  welcomeMessage: { type: "richtext", placeholder: t('widget.fields.welcomeMessage.placeholder'), label: t('widget.fields.welcomeMessage.label') },
-  faqs: { label: t('widget.fields.faqs.label'), placeholder: t('widget.fields.faqs.placeholder') }
+  primaryColor: { type: 'color', label: t('fields.primaryColor') },
+  secondaryColor: { type: 'color', label: t('fields.secondaryColor') },
+  bounceAfterInit: { type: 'number', label: t('fields.bounceAfterInit') },
+  periodicBounce: { type: 'number', label: t('fields.periodicBounce') },
+  startOpen: { type: 'checkbox', onLabel: t('fields.options.yes'), offLabel: t('fields.options.no') },
+  darkMode: { type: 'checkbox', onLabel: t('fields.options.on'), offLabel: t('fields.options.off') },
+  draggable: { type: 'checkbox', onLabel: t('fields.options.on'), offLabel: t('fields.options.off') },
+  soundOn: { type: 'checkbox', onLabel: t('fields.options.on'), offLabel: t('fields.options.off') },
+  welcomeMessage: { type: "richtext", placeholder: t('fields.welcomeMessage.placeholder'), label: t('fields.welcomeMessage.label') },
+  faqs: { label: t('fields.faqs.label'), placeholder: t('fields.faqs.placeholder') }
 }
 
 const actions: MegaFormAction[] = [
-  { label: t('widget.actions.save'), color: 'primary', callback: async (data:any) => {
+  { label: t('actions.save'), color: 'primary', callback: async (data:any) => {
       try {
         // Associate product (if available) so server can link
         if (nuxtApp.$userProductId) data.product = nuxtApp.$userProductId
         // Persist via service client (create or update based on existing id?)
         if (formData.value.id) {
           await nuxtApp.$sp.widgetConfig.patchOne({ id: formData.value.id, product: nuxtApp.$userProductId }, data)
-          nuxtApp.$toast.show(t('widget.messages.success.updated'), 'success')
+          nuxtApp.$toast.show(t('messages.success.updated'), 'success')
         } else {
           const created = await nuxtApp.$sp.widgetConfig.create(data)
           formData.value.id = created.id
-          nuxtApp.$toast.show(t('widget.messages.success.saved'), 'success')
+          nuxtApp.$toast.show(t('messages.success.saved'), 'success')
         }
       } catch (e:any) {
         console.error(e)

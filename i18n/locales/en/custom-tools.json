@@ -1,0 +1,127 @@
+{
+  "page": {
+    "title": "Custom Tools"
+  },
+  "aiInstructions": {
+    "title": "Additional Instructions for AI",
+    "description": "Provide additional context and instructions that (SMART) client-facing agents should follow when assisting your customers.",
+    "saveButton": "Save Instructions",
+    "form": {
+      "placeholder": "Enter additional instructions for the AI agent...",
+      "description": "These instructions will be provided to the AI when responding to customer inquiries"
+    }
+  },
+  "domains": {
+    "title": "Verified Domains",
+    "description": "Verify domains to enable custom tool integrations with your systems.",
+    "addButton": "Add Domain",
+    "empty": {
+      "title": "No verified domains",
+      "description": "Add a domain to enable custom tool integrations"
+    },
+    "verification": {
+      "title": "Domain Verification",
+      "instruction": "To verify this domain, add a file at:",
+      "option1": "Option 1: Create a file at the specified path",
+      "option1Returns": "That returns the verification string",
+      "option2": "Option 2: Create an endpoint at:",
+      "option2Returns": "That returns the verification string"
+    },
+    "status": {
+      "verified": "Verified",
+      "unverified": "Unverified"
+    },
+    "actions": {
+      "verify": "Verify",
+      "delete": "Delete"
+    },
+    "form": {
+      "domainName": {
+        "label": "Domain Name",
+        "placeholder": "example.com"
+      }
+    }
+  },
+  "tools": {
+    "title": "Custom Tools",
+    "description": "Create and manage custom tools that (SMART) client-facing agents can use to integrate with your systems.",
+    "addButton": "Add Custom Tool",
+    "empty": {
+      "title": "No custom tools",
+      "description": "Create your first custom tool to start integrating with external systems."
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "arguments": {
+      "label": "Arguments",
+      "count": "{count} parameter(s)"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "popups": {
+    "createTool": {
+      "title": "Custom Tool (our chatbot can create them for you)"
+    },
+    "addDomain": {
+      "title": "Add Domain",
+      "description": "Enter the domain name you want to verify and use for custom tools."
+    }
+  },
+  "form": {
+    "clientPriorities": {
+      "label": "Client Priorities",
+      "low": "Low priority",
+      "medium": "Medium priority",
+      "high": "High priority"
+    },
+    "name": {
+      "label": "Tool Name",
+      "placeholder": "my_custom_tool",
+      "description": "Unique name for this tool (lowercase, no spaces)"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Describe what this tool does...",
+      "description": "Detailed description of the tool's purpose and functionality"
+    },
+    "url": {
+      "label": "URL",
+      "placeholder": "https://api.example.com/endpoint",
+      "description": "The full URL where the tool will make requests"
+    },
+    "method": {
+      "label": "HTTP Method",
+      "description": "HTTP method to use for requests"
+    },
+    "arguments": {
+    },
+    "contentType": {
+      "label": "Content Type",
+      "placeholder": "application/json",
+      "description": "MIME type for request body"
+    },
+    "timeout": {
+      "label": "Timeout (ms)",
+      "placeholder": "5000",
+      "description": "Request timeout in milliseconds"
+    },
+    "enabled": {
+      "label": "Enabled",
+      "description": "Whether this tool is available for use"
+    },
+    "guestAccess": {
+      "label": "Guest Access",
+      "description": "Allow the tool to be used by non-logged users"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save Tool",
+      "update": "Update Tool"
+    }
+  }
+}

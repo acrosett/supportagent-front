@@ -21,4 +21,4 @@ for non base operations (cmds) you will find a dto in <method>.dto.ts
 
 No JSDoc ever.
 
-Do the i18n extraction when a display string is needed, only update i18n/locales/en.json don't do other languages
+Do the i18n extraction when a display string is needed, only update i18n/locales/en/<pageOrComponent>.json don't do other languages. Import t with useLocalNamespace from '~/composables/useLocalNamespace'. There must be one namespace per page or component (must match the exact name)

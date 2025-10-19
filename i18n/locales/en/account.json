@@ -1,0 +1,67 @@
+{
+  "page": {
+    "title": "Account Settings",
+    "description": "Manage your account, email, password, and security settings."
+  },
+  "common": {
+    "loading": "Loading..."
+  },
+  "deletion": {
+    "title": "Account Scheduled for Deletion",
+    "scheduledMessage": "Your account has been flagged for deletion on {date}"
+  },
+  "email": {
+    "title": "Email Verification",
+    "description": "Verify your email address to enable additional security features",
+    "emailAddress": "Email Address",
+    "updateEmail": "Update Email",
+    "verified": "Email Verified",
+    "notVerified": "Email Not Verified",
+    "sendVerification": "Send Verification Email",
+    "popup": {
+      "title": "Change Email Address",
+      "description": "Enter your new email address and current password to send a verification email."
+    },
+    "fields": {
+      "newEmail": {
+        "label": "New Email Address",
+        "placeholder": "Enter your new email address",
+        "description": "Enter the new email address you want to use for your account"
+      },
+      "password": {
+        "label": "Current Password",
+        "placeholder": "Enter your current password",
+        "description": "Enter your current password to confirm this change"
+      }
+    }
+  },
+  "twoFA": {
+    "title": "Two-Factor Authentication (2FA)",
+    "description": "Add an extra layer of security to your account",
+    "enabled": "Two-Factor Authentication Enabled",
+    "disabled": "Two-Factor Authentication Disabled",
+    "requirement": "Please verify your email address first to enable 2FA",
+    "enableDescription": "Enable 2FA to secure your account with an additional authentication step",
+    "protectedMessage": "Your account is protected with two-factor authentication"
+  },
+  "password": {
+    "title": "Change Password",
+    "updateButton": "Update Password",
+    "fields": {
+      "current": {
+        "label": "Current Password",
+        "placeholder": "Enter your current password"
+      },
+      "new": {
+        "label": "New Password",
+        "placeholder": "Enter your new password",
+        "description": "Must be at least 8 characters long"
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Delete Account",
+    "deleteButton": "Delete Account",
+    "cancelButton": "Cancel Account Deletion"
+  }
+}

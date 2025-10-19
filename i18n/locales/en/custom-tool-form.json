@@ -1,0 +1,52 @@
+{
+  "clientPriorities": {
+    "label": "Client Priorities",
+    "low": "Low priority",
+    "medium": "Medium priority",
+    "high": "High priority"
+  },
+  "name": {
+    "label": "Tool Name",
+    "placeholder": "my_custom_tool",
+    "description": "Unique name for this tool (lowercase, no spaces)"
+  },
+  "description": {
+    "label": "Description",
+    "placeholder": "Describe what this tool does...",
+    "description": "Detailed description of the tool's purpose and functionality"
+  },
+  "url": {
+    "label": "URL",
+    "placeholder": "https://api.example.com/endpoint",
+    "description": "The full URL where the tool will make requests"
+  },
+  "method": {
+    "label": "HTTP Method",
+    "description": "HTTP method to use for requests"
+  },
+  "arguments": {
+  },
+  "contentType": {
+    "label": "Content Type",
+    "placeholder": "application/json",
+    "description": "MIME type for request body"
+  },
+  "timeout": {
+    "label": "Timeout (ms)",
+    "placeholder": "5000",
+    "description": "Request timeout in milliseconds"
+  },
+  "enabled": {
+    "label": "Enabled",
+    "description": "Whether this tool is available for use"
+  },
+  "guestAccess": {
+    "label": "Guest Access",
+    "description": "Allow the tool to be used by non-logged users"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "save": "Save Tool",
+    "update": "Update Tool"
+  }
+}

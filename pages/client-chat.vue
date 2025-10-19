@@ -3,7 +3,7 @@
     <div class="chat-header">
       <div class="header-content">
         <AppButton
-          :label="t('clientChat.navigation.backToConversations')"
+          :label="t('navigation.backToConversations')"
           color="secondary"
           :showBackIcon="true"
           margin:="right"
@@ -12,14 +12,14 @@
         <div class="client-info">
           <div class="client-name-row">
             <h1 v-if="client">
-              {{ client.isGuest ? t('clientChat.client.anonymousUser') : client.name + ' ' + client.email }}
+              {{ client.isGuest ? t('client.anonymousUser') : client.name + ' ' + client.email }}
             </h1>
-            <h1 v-else>{{ t('clientChat.status.loading') }}</h1>
+            <h1 v-else>{{ t('status.loading') }}</h1>
             <span v-if="client" class="priority-badge">{{ getPriorityEmoji(client.priority || ClientPriority.LOWEST) }}</span>
           </div>
           <div v-if="client" class="client-details">
             <span v-if="client.email" class="client-email">{{ client.email }}</span>
-            <span class="client-id">{{ t('clientChat.client.id') }}: {{ client.uniqueId }}</span>
+            <span class="client-id">{{ t('client.id') }}: {{ client.uniqueId }}</span>
           </div>
         </div>
       </div>
@@ -35,8 +35,9 @@
 import AppButton from '~/components/AppButton.vue'
 import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import { getPriorityEmoji } from '~/utils/priority'
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
 
-const { t } = useI18n()
+const { t } = useLocalNamespace('client-chat')
 
 definePageMeta({ 
   layout: 'default'
@@ -60,7 +61,7 @@ const navigateToConversations = () => {
 const loadClient = async () => {
   if (!userToken || !apiToken) {
     console.error('Missing user token or API token')
-    useNuxtApp().$toast.show(t('clientChat.messages.error.missingParameters'), 'error')
+    useNuxtApp().$toast.show(t('messages.error.missingParameters'), 'error')
     return
   }
 
@@ -76,7 +77,7 @@ const loadClient = async () => {
     if (result) {
       client.value = result
     } else {
-      useNuxtApp().$toast.show(t('clientChat.messages.error.clientNotFound'), 'error')
+      useNuxtApp().$toast.show(t('messages.error.clientNotFound'), 'error')
     }
   } catch (error) {
     console.error('Failed to load client:', error)

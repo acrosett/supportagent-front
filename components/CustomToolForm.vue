@@ -12,7 +12,8 @@ import { type ChecklistOption } from '~/components/ChecklistInput.vue'
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity';
 import { CustomTool, CustomToolArgument, HttpMethod, ArgumentLocation, ArgumentValueType, ArgumentDataType } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
 
-const { t } = useI18n()
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
+const { t } = useLocalNamespace('custom-tool-form')
 
 interface Props {
     tool?: CustomTool | null

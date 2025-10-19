@@ -1,0 +1,18 @@
+{
+  "navigation": {
+    "backToConversations": "Back to Conversations"
+  },
+  "client": {
+    "anonymousUser": "Anonymous User",
+    "id": "ID"
+  },
+  "status": {
+    "loading": "Loading..."
+  },
+  "messages": {
+    "error": {
+      "missingParameters": "Missing required parameters",
+      "clientNotFound": "Client not found"
+    }
+  }
+}

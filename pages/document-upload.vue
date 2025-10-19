@@ -3,13 +3,13 @@
     <div class="upload-header">
       <div class="header-content">
         <AppButton
-          :label="t('documentUpload.buttons.backToFaq')"
+          :label="t('buttons.backToFaq')"
           color="secondary"
           :showBackIcon="true"
           @click="navigateToFAQ"
         />
         <h1>
-          {{ t('documentUpload.page.title') }}
+          {{ t('page.title') }}
         </h1>
         <div></div> <!-- Spacer for flexbox alignment -->
       </div>
@@ -18,7 +18,7 @@
     <div class="upload-content">
       <div class="upload-section">
         <p class="ai-note">
-          {{ t('documentUpload.aiNote') }}
+          {{ t('aiNote') }}
         </p>
         <DigestFile
           v-model="processedText"
@@ -28,17 +28,17 @@
         
         <!-- Admin Text Preview - Only for admins -->
         <div v-if="processedText && isAdmin" class="admin-text-preview">
-          <h3>{{ t('documentUpload.admin.rawTextTitle') }}</h3>
+          <h3>{{ t('admin.rawTextTitle') }}</h3>
           <div class="text-preview">
             <div class="text-stats">
               <span class="text-size">{{ textSizeFormatted }}</span>
-              <span class="text-length">{{ t('documentUpload.admin.charactersCount', { count: processedText.length.toLocaleString() }) }}</span>
+              <span class="text-length">{{ t('admin.charactersCount', { count: processedText.length.toLocaleString() }) }}</span>
             </div>
             <textarea 
               v-model="processedText" 
               readonly 
               class="processed-textarea"
-              :placeholder="t('documentUpload.admin.textPlaceholder')"
+              :placeholder="t('admin.textPlaceholder')"
             ></textarea>
           </div>
         </div>
@@ -47,8 +47,8 @@
       <!-- Editor Tasks Section -->
       <div class="tasks-section">
         <div class="section-header">
-          <h2>{{ t('documentUpload.processingQueue.title') }}</h2>
-          <p class="section-description">{{ t('documentUpload.processingQueue.description') }}</p>
+          <h2>{{ t('processingQueue.title') }}</h2>
+          <p class="section-description">{{ t('processingQueue.description') }}</p>
         </div>
 
         <!-- Filters -->
@@ -58,14 +58,14 @@
               <AppIcon name="search" size="sm" class="search-icon" />
               <input 
                 type="text" 
-                :placeholder="t('documentUpload.search.placeholder')"
+                :placeholder="t('search.placeholder')"
                 v-model="searchQuery"
                 class="search-input"
               />
             </div>
             
             <AppButton
-              :label="t('documentUpload.buttons.resetFilters')"
+              :label="t('buttons.resetFilters')"
               color="secondary"
               size="sm"
               margin="left"
@@ -75,26 +75,26 @@
           
           <div class="filter-controls">
             <CheckBoxColumn
-              :title="t('documentUpload.filters.status.title')"
+              :title="t('filters.status.title')"
               name="taskStatus"
               v-model="filters.taskStatus"
               :options="[
-                { value: 'both', label: t('documentUpload.filters.status.all') },
-                { value: 'NEW', label: t('documentUpload.filters.status.processing') },
-                { value: 'COMPLETED', label: t('documentUpload.filters.status.completed') },
-                { value: 'FAILED', label: t('documentUpload.filters.status.failed') }
+                { value: 'both', label: t('filters.status.all') },
+                { value: 'NEW', label: t('filters.status.processing') },
+                { value: 'COMPLETED', label: t('filters.status.completed') },
+                { value: 'FAILED', label: t('filters.status.failed') }
               ]"
               @change="applyFilters"
             />
             
             <CheckBoxColumn
-              :title="t('documentUpload.filters.initiator.title')"
+              :title="t('filters.initiator.title')"
               name="taskInitiator"
               v-model="filters.taskInitiator"
               :options="[
-                { value: 'both', label: t('documentUpload.filters.initiator.all') },
-                { value: 'DIGESTOR', label: t('documentUpload.filters.initiator.documentUpload') },
-                { value: 'STAFF_AGENT', label: t('documentUpload.filters.initiator.staffAgent') }
+                { value: 'both', label: t('filters.initiator.all') },
+                { value: 'DIGESTOR', label: t('filters.initiator.documentUpload') },
+                { value: 'STAFF_AGENT', label: t('filters.initiator.staffAgent') }
               ]"
               @change="applyFilters"
             />
@@ -104,14 +104,14 @@
         <!-- Loading State -->
         <div v-if="isLoading" class="loading-state">
           <div class="spinner"></div>
-          <p>{{ t('documentUpload.states.loading') }}</p>
+          <p>{{ t('states.loading') }}</p>
         </div>
 
         <!-- Tasks List -->
         <div v-else-if="filteredTasks.length === 0" class="empty-state">
           <AppIcon name="document" size="xl" class="empty-icon" />
-          <h3>{{ t('documentUpload.states.noTasks.title') }}</h3>
-          <p>{{ t('documentUpload.states.noTasks.description') }}</p>
+          <h3>{{ t('states.noTasks.title') }}</h3>
+          <p>{{ t('states.noTasks.description') }}</p>
         </div>
 
         <div v-else class="tasks-grid">
@@ -155,8 +155,8 @@
             <div class="task-content">
               <p class="knowledge-preview">{{ getKnowledgePreview(task.newKnowledge) }}</p>
               <div class="task-meta">
-                <span class="created-date">{{ t('documentUpload.taskCard.created') }} {{ formatDate(task.createdAt) }}</span>
-                <span class="updated-date">{{ t('documentUpload.taskCard.updated') }} {{ formatDate(task.updatedAt) }}</span>
+                <span class="created-date">{{ t('taskCard.created') }} {{ formatDate(task.createdAt) }}</span>
+                <span class="updated-date">{{ t('taskCard.updated') }} {{ formatDate(task.updatedAt) }}</span>
               </div>
             </div>
           </div>
@@ -165,12 +165,12 @@
         <!-- Load More Indicator -->
         <div v-if="isLoadingMore" class="loading-more">
           <div class="spinner"></div>
-          <p>{{ t('documentUpload.states.loadingMore') }}</p>
+          <p>{{ t('states.loadingMore') }}</p>
         </div>
 
         <!-- End of Results Indicator -->
         <div v-else-if="!hasMoreData && editorTasks.length > 0" class="end-of-results">
-          <p>{{ t('documentUpload.states.noMoreTasks') }}</p>
+          <p>{{ t('states.noMoreTasks') }}</p>
         </div>
       </div>
     </div>
@@ -179,7 +179,7 @@
     <AppPopup
       v-if="showTaskDetail && selectedTask"
       @close="closeTaskDetail"
-      :title="t('documentUpload.taskDetail.title')"
+      :title="t('taskDetail.title')"
       :show="showTaskDetail"
     >
       <div class="task-detail-content">
@@ -208,11 +208,11 @@
           
           <div class="task-detail-dates">
             <div class="date-item">
-              <span class="date-label">{{ t('documentUpload.taskDetail.created') }}:</span>
+              <span class="date-label">{{ t('taskDetail.created') }}:</span>
               <span class="date-value">{{ formatDate(selectedTask.createdAt) }}</span>
             </div>
             <div class="date-item">
-              <span class="date-label">{{ t('documentUpload.taskDetail.updated') }}:</span>
+              <span class="date-label">{{ t('taskDetail.updated') }}:</span>
               <span class="date-value">{{ formatDate(selectedTask.updatedAt) }}</span>
             </div>
           </div>
@@ -222,7 +222,7 @@
         <div v-if="isAdmin" class="admin-actions">
           <AppButton
             v-if="selectedTask.status === EditorTaskStatus.FAILED"
-            :label="t('documentUpload.taskDetail.actions.retry')"
+            :label="t('taskDetail.actions.retry')"
             color="secondary"
             size="sm"
             margin="right"
@@ -230,7 +230,7 @@
             @click="retryTask"
           />
           <AppButton
-            :label="t('documentUpload.taskDetail.actions.viewLogs')"
+            :label="t('taskDetail.actions.viewLogs')"
             color="primary"
             size="sm"
             margin="left"
@@ -239,9 +239,9 @@
         </div>
 
         <div class="knowledge-content">
-          <h4>{{ t('documentUpload.taskDetail.knowledgeContent') }}</h4>
+          <h4>{{ t('taskDetail.knowledgeContent') }}</h4>
           <div class="knowledge-text">
-            {{ selectedTask.newKnowledge || t('documentUpload.taskDetail.noContent') }}
+            {{ selectedTask.newKnowledge || t('taskDetail.noContent') }}
           </div>
         </div>
 
@@ -268,7 +268,8 @@ import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
 import LlmLogsPopup from '~/components/LlmLogsPopup.vue'
 import { EditorTask, EditorTaskStatus, EditorTaskInitiator } from '~/eicrud_exports/services/SUPPORT-ms/editor-task/editor-task.entity'
 
-const { t } = useI18n()
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
+const { t } = useLocalNamespace('document-upload')
 const processedText = ref('')
 const isAdmin = ref(false)
 

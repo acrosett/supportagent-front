@@ -1,0 +1,26 @@
+{
+  "page": {
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your account"
+  },
+  "form": {
+    "fields": {
+      "expiresInSec": {
+        "label": "Keep me logged in for 15 days",
+        "description": "Extends your session duration for convenience"
+      }
+    },
+    "buttons": {
+      "submit": "Login"
+    }
+  },
+  "links": {
+    "resetPassword": "Trouble logging in? Reset your password",
+    "register": "No account? Register here"
+  },
+  "messages": {
+    "error": {
+      "loginFailed": "Login failed"
+    }
+  }
+}

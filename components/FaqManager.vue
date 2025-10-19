@@ -2,17 +2,17 @@
   <section class="faq-manager">
     <header class="faq-header-row">
       <h2 class="faq-title">
-        {{ t('faq.header.title') }}
+        {{ t('header.title') }}
       </h2>
       <div class="header-actions">
         <AppButton
-          :label="t('faq.buttons.newFaq')"
+          :label="t('buttons.newFaq')"
           color="primary"
           :showPlusIcon="true"
           @click="startCreate"
         />
         <AppButton
-          :label="t('faq.buttons.documentUpload')"
+          :label="t('buttons.documentUpload')"
           color="secondary"
           margin="left"
           @click="navigateToDocumentUpload"
@@ -29,11 +29,11 @@
           v-model="query"
           type="text"
           class="search-input"
-          :placeholder="t('faq.search.placeholder')"
+          :placeholder="t('search.placeholder')"
         />
       </div>
       <div class="page-size">
-        <label>{{ t('faq.pagination.perPage') }}</label>
+        <label>{{ t('pagination.perPage') }}</label>
         <select v-model.number="pageSize">
           <option :value="5">5</option>
           <option :value="10">10</option>
@@ -45,23 +45,23 @@
     <!-- List -->
     <div v-if="loading" class="loading-state">
       <div class="spinner"></div>
-      <p>{{ t('faq.states.loading') }}</p>
+      <p>{{ t('states.loading') }}</p>
     </div>
     <div v-else-if="paginated.length === 0" class="empty-state">
-      <p>{{ t('faq.states.empty') }}</p>
+      <p>{{ t('states.empty') }}</p>
     </div>
     <ul v-else class="faq-list">
       <li v-for="item in paginated" :key="item.id" class="faq-item">
         <div class="faq-item-head" @click="toggleAnswer(item.id)">
           <h3 class="faq-question">{{ item.question }}</h3>
           <div class="item-actions" @click.stop>
-            <button class="icon-btn" :title="t('faq.actions.toggleAnswer')" @click="toggleAnswer(item.id)">
+            <button class="icon-btn" :title="t('actions.toggleAnswer')" @click="toggleAnswer(item.id)">
               <AppIcon name="chevron-down" size="sm" :class="{ 'rotate-180': expandedItems.has(item.id) }" />
             </button>
-            <button class="icon-btn" :title="t('faq.actions.edit')" @click="openEditPopup(item)">
+            <button class="icon-btn" :title="t('actions.edit')" @click="openEditPopup(item)">
               <AppIcon name="edit" size="sm" />
             </button>
-            <button class="icon-btn" :title="t('faq.actions.delete')" @click="confirmDelete(item)">
+            <button class="icon-btn" :title="t('actions.delete')" @click="confirmDelete(item)">
               <AppIcon name="delete" size="sm" />
             </button>
           </div>
@@ -75,11 +75,11 @@
     <!-- Pagination -->
     <div class="pagination" v-if="pages > 1">
       <button class="pager-btn" :disabled="page === 1" @click="page--">
-        <AppIcon name="chevron-left" size="sm" /> {{ t('faq.buttons.prev') }}
+        <AppIcon name="chevron-left" size="sm" /> {{ t('buttons.prev') }}
       </button>
-      <span class="page-info">{{ t('faq.pagination.pageInfo', { current: page, total: pages }) }}</span>
+      <span class="page-info">{{ t('pagination.pageInfo', { current: page, total: pages }) }}</span>
       <button class="pager-btn" :disabled="page === pages" @click="page++">
-        {{ t('faq.buttons.next') }} <AppIcon name="chevron-down" size="sm" class="rotate-270" />
+        {{ t('buttons.next') }} <AppIcon name="chevron-down" size="sm" class="rotate-270" />
       </button>
     </div>
   </section>
@@ -87,7 +87,7 @@
   <!-- Create FAQ Popup -->
   <AppPopup
     :show="showCreatePopup"
-    :title="t('faq.popups.create.title')"
+    :title="t('popups.create.title')"
     size="lg"
     @close="closeCreatePopup"
   >
@@ -104,7 +104,7 @@
   <!-- Edit FAQ Popup -->
   <AppPopup
     :show="showEditPopup"
-    :title="t('faq.popups.edit.title')"
+    :title="t('popups.edit.title')"
     size="lg"
     @close="closeEditPopup"
   >
@@ -132,7 +132,8 @@ import { useMarkdown } from '~/composables/useMarkdown'
 
 const { $sp, $toast, $confirmPopup, $userProductId } = useNuxtApp()
 const { renderMarkdown, highlightCodeBlocks } = useMarkdown()
-const { t } = useI18n()
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
+const { t } = useLocalNamespace('faq-manager')
 
 const items = ref<Faq[]>([])
 const loading = ref(false)
@@ -257,12 +258,12 @@ function closeEditPopup() {
 const sharedFieldOverrides: OverrideRecord = {
   answer: {
     type: 'richtext',
-    label: t('faq.form.fields.answer.label'),
-    placeholder: t('faq.form.fields.answer.placeholder')
+    label: t('form.fields.answer.label'),
+    placeholder: t('form.fields.answer.placeholder')
   },
   tags: {
-    label: t('faq.form.fields.tags.label'),
-    placeholder: t('faq.form.fields.tags.placeholder')
+    label: t('form.fields.tags.label'),
+    placeholder: t('form.fields.tags.placeholder')
   }
 }
 
@@ -271,14 +272,14 @@ const editFieldOverrides = sharedFieldOverrides
 
 const createActions: MegaFormAction[] = [
   {
-    label: t('faq.form.buttons.cancel'),
+    label: t('form.buttons.cancel'),
     color: 'secondary',
     callback: async () => {
       closeCreatePopup()
     }
   },
   {
-    label: t('faq.form.buttons.create'),
+    label: t('form.buttons.create'),
     color: 'primary',
     callback: async (formData: Partial<Faq>) => {
       if (!$userProductId) return
@@ -293,7 +294,7 @@ const createActions: MegaFormAction[] = [
           ...payload,
           product: $userProductId as any
         })
-        $toast.show(t('faq.messages.success.created'), 'success')
+        $toast.show(t('messages.success.created'), 'success')
         closeCreatePopup()
         await loadFaqs()
       } catch (error) {
@@ -306,14 +307,14 @@ const createActions: MegaFormAction[] = [
 
 const editActions: MegaFormAction[] = [
   {
-    label: t('faq.form.buttons.cancel'),
+    label: t('form.buttons.cancel'),
     color: 'secondary',
     callback: async () => {
       closeEditPopup()
     }
   },
   {
-    label: t('faq.form.buttons.save'),
+    label: t('form.buttons.save'),
     color: 'primary',
     margin: 'left',
     callback: async (formData: Partial<Faq>) => {
@@ -327,7 +328,7 @@ const editActions: MegaFormAction[] = [
             : []
         }
         await $sp.faq.patch({ id: editingFaq.value.id, product: useNuxtApp().$userProductId as any }, payload)
-        $toast.show(t('faq.messages.success.updated'), 'success')
+        $toast.show(t('messages.success.updated'), 'success')
         closeEditPopup()
         await loadFaqs()
       } catch (error) {
@@ -340,14 +341,14 @@ const editActions: MegaFormAction[] = [
 
 async function confirmDelete(item: Faq) {
   const confirmed = await $confirmPopup.show(
-    t('faq.messages.confirm.delete')
+    t('messages.confirm.delete')
   )
 
   if (!confirmed) return
 
   try {
     await $sp.faq.delete({ id: item.id, product: useNuxtApp().$userProductId as any })
-    $toast.show(t('faq.messages.success.deleted'), 'success')
+    $toast.show(t('messages.success.deleted'), 'success')
     await loadFaqs()
   } catch (error) {
     console.error('Failed to delete FAQ:', error)

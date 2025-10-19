@@ -1,0 +1,48 @@
+{
+  "header": {
+    "subtitle": "Choose a client to start a test chat session, test clients have access to disabled custom tools."
+  },
+  "status": {
+    "loading": "Loading test clients...",
+    "empty": "No test clients found"
+  },
+  "client": {
+    "unnamedClient": "Unnamed Client",
+    "id": "ID",
+    "created": "Created"
+  },
+  "actions": {
+    "deleteClient": "Delete client",
+    "deleteAllClients": "Delete All Clients",
+    "createNewClient": "Create New Test Client",
+    "cancel": "Cancel"
+  },
+  "modals": {
+    "createClient": {
+      "title": "Create Test Client",
+      "description": "Create a new test client for debugging purposes.",
+      "create": "Create Client"
+    },
+    "authToken": {
+      "title": "Authentication Token",
+      "description": "Use this token to authenticate as the test client:",
+      "copy": "Copy Token"
+    }
+  },
+  "messages": {
+    "success": {
+      "clientDeleted": "Test client deleted",
+      "allClientsDeleted": "All test clients deleted",
+      "clientCreated": "Test client created"
+    },
+    "error": {
+      "deleteFailed": "Failed to delete test client",
+      "deleteAllFailed": "Failed to delete all test clients",
+      "createFailed": "Failed to create test client"
+    },
+    "confirm": {
+      "deleteClient": "Are you sure you want to delete this test client?",
+      "deleteAllClients": "Are you sure you want to delete all test clients?"
+    }
+  }
+}

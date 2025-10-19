@@ -1,0 +1,85 @@
+{
+  "page": {
+    "title": "Conversations"
+  },
+  "search": {
+    "placeholder": "Search conversations..."
+  },
+  "filters": {
+    "seeArchived": "See Archived",
+    "resetFilters": "Reset Filters",
+    "readStatus": {
+      "title": "Read Status",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "status": {
+      "title": "Status",
+      "active": "Active",
+      "resolved": "Resolved"
+    },
+    "aiStatus": {
+      "title": "AI Status",
+      "on": "AI On",
+      "off": "AI Off"
+    },
+    "priority": {
+      "title": "Priority",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "options": {
+      "showArchived": "Show Archived"
+    }
+  },
+  "status": {
+    "loading": "Loading conversations...",
+    "loadingMore": "Loading more conversations...",
+    "noMoreConversations": "No more conversations to load"
+  },
+  "empty": {
+    "title": "No conversations found",
+    "description": "Customer conversations will appear here when they start chatting"
+  },
+  "conversation": {
+    "id": "ID",
+    "ai": "AI",
+    "aiOn": "On",
+    "aiOff": "Off",
+    "active": "Active",
+    "resolved": "Resolved",
+    "messages": "messages",
+    "anonymousUser": "Anonymous User",
+    "noActivity": "No activity",
+    "invalidDate": "Invalid date",
+    "loadingMessage": "Loading message...",
+    "noMessages": "No messages yet"
+  },
+  "actions": {
+    "openChat": "Open Inverted Chat",
+    "reactivate": "Reactivate",
+    "markResolved": "Mark Resolved"
+  },
+  "archive": {
+    "title": "Archive Conversation",
+    "confirmMessage": "Are you sure you want to archive this conversation?",
+    "cancel": "Cancel",
+    "confirm": "Archive"
+  },
+  "logs": {
+    "title": "LLM Logs"
+  },
+  "messages": {
+    "success": {
+      "conversationReactivated": "Conversation reactivated",
+      "conversationResolved": "Conversation marked as resolved",
+      "conversationArchived": "Conversation archived",
+      "conversationUnarchived": "Conversation unarchived"
+    },
+    "error": {
+      "updateFailed": "Failed to update conversation",
+      "archiveFailed": "Failed to archive conversation"
+    }
+  }
+}

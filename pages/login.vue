@@ -5,8 +5,8 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">{{ $t('login.page.title') }}</h2>
-      <p class="auth-subtitle">{{ $t('login.page.subtitle') }}</p>
+      <h2 class="auth-title">{{ $t('page.title') }}</h2>
+      <p class="auth-subtitle">{{ $t('page.subtitle') }}</p>
     </div>
     <MegaForm
       :formClass="LoginDto"
@@ -24,14 +24,15 @@ import MegaForm, { MegaFormAction, OverrideRecord } from '~/components/MegaForm.
 import { LoginDto } from '~/eicrud_exports/services/user/cmds/login/login.dto'
 import { isValidRedirect } from '~/utils/redirect-validation'
 import { ref } from 'vue'
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
 
 definePageMeta({ layout: 'bare' })
 
-const { t } = useI18n()
+const { t } = useLocalNamespace('login')
 
 const links = [
-    { label: t('login.links.resetPassword'), href: '/reset-password' },
-  { label: t('login.links.register'), href: '/register' },
+    { label: t('links.resetPassword'), href: '/reset-password' },
+  { label: t('links.register'), href: '/register' },
 ]
 
 const formData = ref({
@@ -46,8 +47,8 @@ const fieldOverrides: OverrideRecord<LoginDto> = {
   },
   expiresInSec: {
     type: 'checkbox',
-    label: t('login.form.fields.expiresInSec.label'),
-    description: t('login.form.fields.expiresInSec.description'),
+    label: t('form.fields.expiresInSec.label'),
+    description: t('form.fields.expiresInSec.description'),
     mapValue: {
       true: 60*60*24*15,
       false: undefined
@@ -60,7 +61,7 @@ const excludeFields = ['twoFA_code']
 
 const actions: MegaFormAction[] = [
   {
-    label: t('login.form.buttons.submit'),
+    label: t('form.buttons.submit'),
     color: 'primary',
     margin: 'right',
     callback: async (data: LoginDto) => {

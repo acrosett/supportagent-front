@@ -5,7 +5,7 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">{{ $t('verifyEmail.page.title') }}</h2>
+      <h2 class="auth-title">{{ $t('page.title') }}</h2>
       <p class="auth-subtitle">{{ $t(subtitleKey) }}</p>
     </div>
 
@@ -15,8 +15,8 @@
         <div class="status-icon">
           <i class="fas fa-spinner fa-spin"></i>
         </div>
-        <h3>{{ $t('verifyEmail.status.loading.title') }}</h3>
-        <p>{{ $t('verifyEmail.status.loading.message') }}</p>
+        <h3>{{ $t('status.loading.title') }}</h3>
+        <p>{{ $t('status.loading.message') }}</p>
       </div>
 
       <!-- Success State -->
@@ -24,14 +24,14 @@
         <div class="status-icon">
           <i class="fas fa-check-circle"></i>
         </div>
-        <h3>{{ $t('verifyEmail.status.success.title') }}</h3>
-        <p>{{ $t('verifyEmail.status.success.message') }}</p>
+        <h3>{{ $t('status.success.title') }}</h3>
+        <p>{{ $t('status.success.message') }}</p>
         <div class="status-actions">
           <button class="auth-button primary" @click="goToAccount">
-            {{ $t('verifyEmail.buttons.goToAccount') }}
+            {{ $t('buttons.goToAccount') }}
           </button>
           <button class="auth-button secondary" @click="goToHome">
-            {{ $t('verifyEmail.buttons.goToDashboard') }}
+            {{ $t('buttons.goToDashboard') }}
           </button>
         </div>
       </div>
@@ -41,14 +41,14 @@
         <div class="status-icon">
           <i class="fas fa-times-circle"></i>
         </div>
-        <h3>{{ $t('verifyEmail.status.error.title') }}</h3>
+        <h3>{{ $t('status.error.title') }}</h3>
         <p>{{ errorMessage }}</p>
         <div class="status-actions">
           <button class="auth-button primary" @click="resendVerification">
-            {{ $t('verifyEmail.buttons.resendVerification') }}
+            {{ $t('buttons.resendVerification') }}
           </button>
           <button class="auth-button secondary" @click="goToAccount">
-            {{ $t('verifyEmail.buttons.goToAccount') }}
+            {{ $t('buttons.goToAccount') }}
           </button>
         </div>
       </div>
@@ -65,7 +65,8 @@ definePageMeta({ layout: 'bare' })
 // Get token_id from URL query params
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
+const { t } = useLocalNamespace('verify-email')
 const tokenId = computed(() => route.query.token_id as string || null)
 
 // Reactive state
@@ -90,7 +91,7 @@ const subtitleKey = computed(() => {
 const verifyEmail = async () => {
   if (!tokenId.value) {
     console.warn('No token_id found, redirecting to home')
-    await useNuxtApp().$confirmPopup.showInfo(t('verifyEmail.messages.noToken'))
+    await useNuxtApp().$confirmPopup.showInfo(t('messages.noToken'))
     await router.push('/')
     return
   }
@@ -109,7 +110,7 @@ const verifyEmail = async () => {
     
     if (result) {
       verificationResult.value = 'success'
-      useNuxtApp().$toast.show(t('verifyEmail.messages.success'), 'success')
+      useNuxtApp().$toast.show(t('messages.success'), 'success')
     } else {
       throw new Error('Verification failed')
     }
@@ -120,14 +121,14 @@ const verifyEmail = async () => {
     // Set appropriate error message based on error type
     if (error instanceof Error) {
       if (error.message.includes('expired') || error.message.includes('invalid')) {
-        errorMessage.value = t('verifyEmail.messages.error.expired')
+        errorMessage.value = t('messages.error.expired')
       } else if (error.message.includes('already verified')) {
-        errorMessage.value = t('verifyEmail.messages.error.alreadyVerified')
+        errorMessage.value = t('messages.error.alreadyVerified')
       } else {
-        errorMessage.value = t('verifyEmail.messages.error.failed')
+        errorMessage.value = t('messages.error.failed')
       }
     } else {
-      errorMessage.value = t('verifyEmail.messages.error.unexpected')
+      errorMessage.value = t('messages.error.unexpected')
     }
     
     useNuxtApp().$toast.show(errorMessage.value, 'error')
@@ -150,11 +151,11 @@ const resendVerification = async () => {
     // Note: send_verification_email requires newEmail and password
     // This might need to be handled differently in your application
     // For now, we'll redirect to account page where user can manage email verification
-    useNuxtApp().$toast.show(t('verifyEmail.messages.resendInfo'), 'info')
+    useNuxtApp().$toast.show(t('messages.resendInfo'), 'info')
     await router.push('/account')
   } catch (error) {
     console.error('Failed to handle verification resend:', error)
-    useNuxtApp().$toast.show(t('verifyEmail.messages.resendError'), 'error')
+    useNuxtApp().$toast.show(t('messages.resendError'), 'error')
   }
 }
 
@@ -162,7 +163,7 @@ const resendVerification = async () => {
 onMounted(async () => {
   if (!tokenId.value) {
     console.warn('No token_id provided, redirecting to home')
-    await useNuxtApp().$confirmPopup.showInfo(t('verifyEmail.messages.noToken'))
+    await useNuxtApp().$confirmPopup.showInfo(t('messages.noToken'))
     await router.push('/')
     return
   }

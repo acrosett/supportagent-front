@@ -2,7 +2,7 @@
   <div class="page-container faq-page">
     <div class="faq-header">
       <h1>
-        {{ t('faq.page.title') }}
+        {{ t('page.title') }}
       </h1>
     </div>
 
@@ -14,8 +14,9 @@
 
 <script setup lang="ts">
 import FaqManager from '@/components/FaqManager.vue'
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
 
-const { t } = useI18n()
+const { t } = useLocalNamespace('faq')
 
 // Set page metadata
 definePageMeta({

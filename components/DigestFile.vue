@@ -8,7 +8,7 @@
         @click="activeTab = 'upload'"
       >
         <AppIcon name="document" size="sm" />
-        {{ t('digestFile.tabs.upload') }}
+        {{ t('tabs.upload') }}
       </button>
       <button 
         class="tab-button"
@@ -16,7 +16,7 @@
         @click="activeTab = 'paste'"
       >
         <AppIcon name="edit" size="sm" />
-        {{ t('digestFile.tabs.paste') }}
+        {{ t('tabs.paste') }}
       </button>
     </div>
 
@@ -41,23 +41,23 @@
         >
           <div v-if="!isProcessing && !processedText" class="upload-prompt">
             <AppIcon name="document" size="xl" class="upload-icon" />
-            <h3>{{ t('digestFile.upload.title') }}</h3>
-            <p>{{ t('digestFile.upload.instruction') }}</p>
-            <p class="file-types">{{ t('digestFile.upload.supportedFiles') }}</p>
+            <h3>{{ t('upload.title') }}</h3>
+            <p>{{ t('upload.instruction') }}</p>
+            <p class="file-types">{{ t('upload.supportedFiles') }}</p>
           </div>
           
           <div v-else-if="isProcessing" class="processing-state">
             <div class="spinner"></div>
-            <p>{{ t('digestFile.processing.message', { fileName: currentFileName }) }}</p>
+            <p>{{ t('processing.message', { fileName: currentFileName }) }}</p>
           </div>
           
           <div v-else class="success-state">
             <AppIcon name="check" size="lg" class="success-icon" />
             <h4>{{ currentFileName }}</h4>
-            <p>{{ t('digestFile.success.message') }}</p>
+            <p>{{ t('success.message') }}</p>
             <AppButton 
               @click.stop="resetUpload"
-              :label="t('digestFile.success.uploadAnother')"
+              :label="t('success.uploadAnother')"
               color="secondary"
               size="sm"
             />
@@ -83,35 +83,35 @@
   <!-- Confirm price popup -->
   <AppPopup
     :show="showConfirm"
-    :title="activeTab === 'upload' ? t('digestFile.confirm.uploadTitle') : t('digestFile.confirm.processTitle')"
+    :title="activeTab === 'upload' ? t('confirm.uploadTitle') : t('confirm.processTitle')"
     size="sm"
     @close="cancelConfirm"
   >
     <div class="confirm-content">
       <p v-if="activeTab === 'upload'">
-        {{ t('digestFile.confirm.uploadMessage', { 
-          fileName: pendingFile?.name || t('digestFile.confirm.defaultFileName'),
+        {{ t('confirm.uploadMessage', { 
+          fileName: pendingFile?.name || t('confirm.defaultFileName'),
           sizeKB: (pendingSizeKB || 0).toFixed(1)
         }) }}
       </p>
       <p v-else>
-        {{ t('digestFile.confirm.processMessage', {
+        {{ t('confirm.processMessage', {
           fileName: currentFileName,
           sizeKB: Math.ceil((processedText.length || 0) / 1024)
         }) }}
       </p>
       <div v-if="isCalculatingCost" class="calculating-cost">
         <div class="mini-spinner"></div>
-        {{ t('digestFile.confirm.calculatingCost') }}
+        {{ t('confirm.calculatingCost') }}
       </div>
       <p v-else>
-        {{ t('digestFile.confirm.estimatedCost', { cost: estimatedCost.toFixed(2) }) }}
+        {{ t('confirm.estimatedCost', { cost: estimatedCost.toFixed(2) }) }}
       </p>
     </div>
     <template #footer>
       <div class="confirm-footer">
-        <AppButton :label="t('digestFile.confirm.cancel')" color="secondary" @click="cancelConfirm" />
-        <AppButton :label="t('digestFile.confirm.process')" margin="left" color="primary" @click="confirmUpload" />
+        <AppButton :label="t('confirm.cancel')" color="secondary" @click="cancelConfirm" />
+        <AppButton :label="t('confirm.process')" margin="left" color="primary" @click="confirmUpload" />
       </div>
     </template>
   </AppPopup>
@@ -122,7 +122,8 @@ import { estimateFullDigestCost, FILE_MAX_SIZE } from '~/eicrud_exports/services
 import MegaForm, { type MegaFormAction, type OverrideRecord } from './MegaForm.vue'
 import { DigestFileDto } from '~/eicrud_exports/services/AI-ms/digestor/cmds/digest_file/digest_file.dto'
 
-const { t } = useI18n()
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
+const { t } = useLocalNamespace('digest-file')
 
 interface Props {
   modelValue?: string
@@ -241,15 +242,15 @@ const resetUpload = () => {
 const pasteFieldOverrides: OverrideRecord = {
   fileText: {
     type: 'richtext',
-    label: t('digestFile.paste.label'),
-    placeholder: t('digestFile.paste.placeholder'),
+    label: t('paste.label'),
+    placeholder: t('paste.placeholder'),
     maxChars: Math.floor(FILE_MAX_SIZE * 0.8) // 80% of max to give margin
   }
 }
 
 const pasteActions: MegaFormAction[] = [
   {
-    label: t('digestFile.paste.processButton'),
+    label: t('paste.processButton'),
     margin: 'left',
     color: 'primary',
     callback: async (formData: any) => {
@@ -262,7 +263,7 @@ const pasteActions: MegaFormAction[] = [
         
         // Store the pasted text as "pending"
         processedText.value = formData.fileText
-        currentFileName.value = t('digestFile.paste.defaultFileName')
+        currentFileName.value = t('paste.defaultFileName')
         
         // Show confirmation popup
         showConfirm.value = true

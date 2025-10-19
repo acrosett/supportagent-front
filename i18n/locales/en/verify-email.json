@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "Email Verification",
+    "subtitleDefault": "Verifying your email address...",
+    "subtitleProcessing": "Processing your verification request...",
+    "subtitleSuccess": "Your email has been successfully verified!",
+    "subtitleError": "There was a problem verifying your email."
+  },
+  "status": {
+    "loading": {
+      "title": "Verifying your email...",
+      "message": "Please wait while we verify your email address."
+    },
+    "success": {
+      "title": "Email Verified Successfully!",
+      "message": "Your email address has been verified. You can now access all features of your account."
+    },
+    "error": {
+      "title": "Verification Failed"
+    }
+  },
+  "buttons": {
+    "goToAccount": "Go to Account",
+    "goToDashboard": "Go to Dashboard",
+    "resendVerification": "Resend Verification Email"
+  },
+  "messages": {
+    "noToken": "No verification token found. You will be redirected to the homepage.",
+    "success": "Email verified successfully!",
+    "resendInfo": "Please go to your account settings to resend verification email.",
+    "resendError": "Please try again from your account settings.",
+    "error": {
+      "expired": "The verification link has expired or is invalid. Please request a new verification email.",
+      "alreadyVerified": "This email address has already been verified.",
+      "failed": "Verification failed. Please try again or contact support if the problem persists.",
+      "unexpected": "An unexpected error occurred during verification. Please try again."
+    }
+  }
+}

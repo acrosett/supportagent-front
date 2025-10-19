@@ -1,0 +1,30 @@
+{
+  "page": {
+    "title": "Create Account",
+    "subtitle": "Join us to start automating your customer support"
+  },
+  "form": {
+    "fields": {
+      "email": {
+        "label": "Email"
+      },
+      "password": {
+        "label": "Password"
+      },
+      "acceptedEula": {
+        "label": "I accept the [End User License Agreement](https://directsupport.ai/eula)"
+      },
+      "acceptedMarketing": {
+        "label": "I accept receiving commercial marketing emails about DirectSupport.ai."
+      }
+    },
+    "buttons": {
+      "submit": "Register"
+    }
+  },
+  "messages": {
+    "error": {
+      "recaptchaFailed": "reCAPTCHA verification failed. Please try again."
+    }
+  }
+}

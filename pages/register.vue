@@ -5,8 +5,8 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">{{ $t('register.page.title') }}</h2>
-      <p class="auth-subtitle">{{ $t('register.page.subtitle') }}</p>
+      <h2 class="auth-title">{{ $t('page.title') }}</h2>
+      <p class="auth-subtitle">{{ $t('page.subtitle') }}</p>
     </div>
     <MegaForm
       :formClass="CreateAccountExtendedDto"
@@ -37,8 +37,9 @@ useHead({
 })
 
 // Composables
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
 const { getRecaptchaToken } = useRecaptcha()
-const { t } = useI18n()
+const { t } = useLocalNamespace('register')
 
 const formData = ref({
   email: '',
@@ -53,26 +54,26 @@ const formData = ref({
 const fieldOverrides = {
   password: {
     type: 'password',
-    label: t('register.form.fields.password.label'),
+    label: t('form.fields.password.label'),
     doubleCheck: true
   },
   email: {
     type: 'email',
-    label: t('register.form.fields.email.label')
+    label: t('form.fields.email.label')
   },
   acceptedEula: {
     type: 'checkbox',
-    label: t('register.form.fields.acceptedEula.label')
+    label: t('form.fields.acceptedEula.label')
   },
   acceptedMarketing: {
     type: 'checkbox',
-    label: t('register.form.fields.acceptedMarketing.label')
+    label: t('form.fields.acceptedMarketing.label')
   }
 }
 
 const actions: MegaFormAction[] = [
   {
-    label: t('register.form.buttons.submit'),
+    label: t('form.buttons.submit'),
     color: 'primary',
     margin: 'right',
     callback: async (data: CreateAccountExtendedDto) => {
@@ -80,7 +81,7 @@ const actions: MegaFormAction[] = [
         // Get reCAPTCHA token for account creation
         const recaptchaToken = await getRecaptchaToken('account_creation')
         if (!recaptchaToken) {
-          useNuxtApp().$toast.show(t('register.messages.error.recaptchaFailed'), 'error')
+          useNuxtApp().$toast.show(t('messages.error.recaptchaFailed'), 'error')
           return
         }
 

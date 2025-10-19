@@ -1,14 +1,15 @@
 <template>
   <div class="easymde-wrapper">
     <div v-if="isClient" ref="editorElement"></div>
-    <div v-else class="loading-placeholder">{{ t('richTextEditor.loading') }}</div>
+    <div v-else class="loading-placeholder">{{ t('loading') }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from 'vue'
 
-const { t } = useI18n()
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
+const { t } = useLocalNamespace('rich-text-editor')
 
 interface Props {
   modelValue?: string
@@ -21,7 +22,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
-  placeholder: () => t('richTextEditor.defaultPlaceholder')
+  placeholder: () => t('defaultPlaceholder')
 })
 
 const emit = defineEmits<Emits>()

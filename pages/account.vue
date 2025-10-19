@@ -2,8 +2,8 @@
   <section class="page-container account-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>{{ $t('account.page.title') }}</h1>
-        <p class="page-description">{{ $t('account.page.description') }}</p>
+        <h1>{{ $t('page.title') }}</h1>
+        <p class="page-description">{{ $t('page.description') }}</p>
       </div>
     </header>
 
@@ -12,8 +12,8 @@
       <div class="warning-header">
         <AppIcon name="info" size="lg" class="warning-icon" />
         <div class="warning-content">
-          <h2>{{ $t('account.deletion.title') }}</h2>
-          <p>{{ $t('account.deletion.scheduledMessage', { date: formatDeletionDate(product.flaggedForDeletion) }) }}</p>
+          <h2>{{ $t('deletion.title') }}</h2>
+          <p>{{ $t('deletion.scheduledMessage', { date: formatDeletionDate(product.flaggedForDeletion) }) }}</p>
           <p class="deletion-countdown">{{ getDeletionCountdown(product.flaggedForDeletion) }}</p>
         </div>
       </div>
@@ -22,16 +22,16 @@
     <!-- Email Verification Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ $t('account.email.title') }}</h2>
-        <p class="section-description">{{ $t('account.email.description') }}</p>
+        <h2>{{ $t('email.title') }}</h2>
+        <p class="section-description">{{ $t('email.description') }}</p>
       </div>
       
       <div class="email-status-container">
         <div class="current-email">
-          <label class="current-label">{{ $t('account.email.emailAddress') }}:</label>
-          <span class="current-value">{{ userEmail || $t('account.common.loading') }}</span>
+          <label class="current-label">{{ $t('email.emailAddress') }}:</label>
+          <span class="current-value">{{ userEmail || $t('common.loading') }}</span>
            <AppButton
-              :label="$t('account.email.updateEmail')"
+              :label="$t('email.updateEmail')"
               color="secondary"
               size="sm"
               margin="left"
@@ -42,13 +42,13 @@
         <div class="verification-status">
           <div v-if="emailVerified" class="status-verified">
             <AppIcon name="check" size="md" class="status-icon" />
-            <span class="status-text">{{ $t('account.email.verified') }}</span>
+            <span class="status-text">{{ $t('email.verified') }}</span>
           </div>
           <div v-else class="status-unverified">
             <AppIcon name="info" size="md" class="status-icon" />
-            <span class="status-text">{{ $t('account.email.notVerified') }}</span>
+            <span class="status-text">{{ $t('email.notVerified') }}</span>
             <AppButton
-              :label="$t('account.email.sendVerification')"
+              :label="$t('email.sendVerification')"
               color="primary"
               size="sm"
               margin="left"
@@ -63,22 +63,22 @@
     <!-- Two-Factor Authentication Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ $t('account.twoFA.title') }}</h2>
-        <p class="section-description">{{ $t('account.twoFA.description') }}</p>
+        <h2>{{ $t('twoFA.title') }}</h2>
+        <p class="section-description">{{ $t('twoFA.description') }}</p>
       </div>
 
       <div class="twofa-container">
         <div class="twofa-status">
           <div class="twofa-info">
-            <h3>{{ twoFactorEnabled ? $t('account.twoFA.enabled') : $t('account.twoFA.disabled') }}</h3>
+            <h3>{{ twoFactorEnabled ? $t('twoFA.enabled') : $t('twoFA.disabled') }}</h3>
             <p v-if="!emailVerified" class="twofa-requirement">
-              {{ $t('account.twoFA.requirement') }}
+              {{ $t('twoFA.requirement') }}
             </p>
             <p v-else-if="!twoFactorEnabled" class="twofa-description">
-              {{ $t('account.twoFA.enableDescription') }}
+              {{ $t('twoFA.enableDescription') }}
             </p>
             <p v-else class="twofa-description">
-              {{ $t('account.twoFA.protectedMessage') }}
+              {{ $t('twoFA.protectedMessage') }}
             </p>
           </div>
           
@@ -100,7 +100,7 @@
     <!-- Change Password Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ $t('account.password.title') }}</h2>
+        <h2>{{ $t('password.title') }}</h2>
         <p class="section-description">Update your account password</p>
       </div>
 
@@ -116,7 +116,7 @@
     <!-- Delete Account Section -->
     <div class="content-section" :class="{ 'danger-section': product?.flaggedForDeletion }">
       <div class="section-header">
-        <h2>{{ $t('account.deleteAccount.title') }}</h2>
+        <h2>{{ $t('deleteAccount.title') }}</h2>
         <p class="section-description">Permanently delete your account and all associated data</p>
       </div>
 
@@ -146,13 +146,13 @@
         <div class="danger-actions">
           <AppButton
             v-if="!product?.flaggedForDeletion"
-            :label="$t('account.deleteAccount.deleteButton')"
+            :label="$t('deleteAccount.deleteButton')"
             color="error"
             @click="handleDeleteAccount"
           />
           <AppButton
             v-else
-            :label="$t('account.deleteAccount.cancelButton')"
+            :label="$t('deleteAccount.cancelButton')"
             color="ok"
             @click="handleCancelDeletion"
           />
@@ -163,11 +163,11 @@
     <!-- Email Change Popup -->
     <AppPopup 
       :show="showEmailChangePopup"
-      :title="$t('account.email.popup.title')"
+      :title="$t('email.popup.title')"
       @close="closeEmailChangePopup"
     >
       <div class="popup-description">
-        <p>{{ $t('account.email.popup.description') }}</p>
+        <p>{{ $t('email.popup.description') }}</p>
       </div>
       
       <MegaForm
@@ -191,8 +191,9 @@ import AppButton from '~/components/AppButton.vue'
 import AppIcon from '~/components/AppIcon.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
 
-const { t } = useI18n()
+const { t } = useLocalNamespace('account')
 
 // Reactive data
 const product = ref<Product | null>(null)
@@ -287,15 +288,15 @@ const getDeletionCountdown = (flaggedDate: Date): string => {
 // Form configurations
 const passwordFieldOverrides: OverrideRecord = {
   oldPassword: {
-    label: t('account.password.fields.current.label'),
+    label: t('password.fields.current.label'),
     type: 'password',
-    placeholder: t('account.password.fields.current.placeholder')
+    placeholder: t('password.fields.current.placeholder')
   },
   newPassword: {
-    label: t('account.password.fields.new.label'),
+    label: t('password.fields.new.label'),
     type: 'password',
-    placeholder: t('account.password.fields.new.placeholder'),
-    description: t('account.password.fields.new.description'),
+    placeholder: t('password.fields.new.placeholder'),
+    description: t('password.fields.new.description'),
     doubleCheck: true
   }
 }
@@ -338,21 +339,21 @@ const emailChangeFieldOverrides: OverrideRecord<SendVerificationEmailDto> = {
   newEmail: {
     type: 'email',
     doubleCheck: true,
-    label: t('account.email.fields.newEmail.label'),
-    placeholder: t('account.email.fields.newEmail.placeholder'),
-    description: t('account.email.fields.newEmail.description')
+    label: t('email.fields.newEmail.label'),
+    placeholder: t('email.fields.newEmail.placeholder'),
+    description: t('email.fields.newEmail.description')
   },
   password: {
     type: 'password',
-    label: t('account.email.fields.password.label'),
-    placeholder: t('account.email.fields.password.placeholder'),
-    description: t('account.email.fields.password.description')
+    label: t('email.fields.password.label'),
+    placeholder: t('email.fields.password.placeholder'),
+    description: t('email.fields.password.description')
   }
 }
 
 const emailChangeActions: MegaFormAction[] = [
   {
-    label: t('account.email.sendVerification'),
+    label: t('email.sendVerification'),
     color: 'primary',
     callback: async (data: SendVerificationEmailDto) => {
       try {
@@ -408,7 +409,7 @@ const handleTwoFactorToggle = async (enabled: boolean) => {
 // Form actions
 const passwordFormActions: MegaFormAction[] = [
   {
-    label: t('account.password.updateButton'),
+    label: t('password.updateButton'),
     color: 'primary',
     callback: async (formData: ChangePasswordDto) => {
       try {

@@ -2,17 +2,17 @@
   <section class="page-container custom-tools-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>{{ t('customTools.page.title') }}</h1>
+        <h1>{{ t('page.title') }}</h1>
       </div>
     </header>
     
     <!-- AI Instructions Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ t('customTools.aiInstructions.title') }}</h2>
+        <h2>{{ t('aiInstructions.title') }}</h2>
       </div>
       <p class="section-description">
-        {{ t('customTools.aiInstructions.description') }}
+        {{ t('aiInstructions.description') }}
       </p>
       
       <MegaForm
@@ -21,7 +21,7 @@
         :fieldOverrides="aiInstructionsOverrides"
         :includeFields="['additionalInstructions']"
         :actions="[{
-          label: t('customTools.aiInstructions.saveButton'),
+          label: t('aiInstructions.saveButton'),
           callback: saveAiInstructions,
           color: 'primary'
         }]"
@@ -31,9 +31,9 @@
     <!-- Verified Domains Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ t('customTools.domains.title') }}</h2>
+        <h2>{{ t('domains.title') }}</h2>
         <AppButton
-          :label="t('customTools.domains.addButton')"
+          :label="t('domains.addButton')"
           color="primary"
           margin="left"
           @click="showAddDomain = true"
@@ -41,13 +41,13 @@
       </div>
       
       <p class="section-description">
-        {{ t('customTools.domains.description') }}
+        {{ t('domains.description') }}
       </p>
 
       <div v-if="verifiedDomains.length === 0" class="empty-state">
         <div class="empty-icon">🌐</div>
-        <h3>{{ t('customTools.domains.empty.title') }}</h3>
-        <p>{{ t('customTools.domains.empty.description') }}</p>
+        <h3>{{ t('domains.empty.title') }}</h3>
+        <p>{{ t('domains.empty.description') }}</p>
       </div>
 
       <div v-else class="domains-grid">
@@ -61,16 +61,16 @@
             <div class="domain-info">
               <h4 class="domain-name">{{ domain.domain }}</h4>
               <p v-if="!domain.isVerified && domain.randomString" class="verification-code">
-                <strong>{{ t('customTools.domains.verification.instructions') }}:</strong><br><br>
+                <strong>{{ t('domains.verification.instructions') }}:</strong><br><br>
                 
-                <strong>{{ t('customTools.domains.verification.option1Title') }}</strong><br>
-                {{ t('customTools.domains.verification.option1Description') }}:<br>
+                <strong>{{ t('domains.verification.option1Title') }}</strong><br>
+                {{ t('domains.verification.option1Description') }}:<br>
                 Value: <code>direct-support-ai-verify={{ domain.randomString }}</code><br><br>
                 
-                <strong>{{ t('customTools.domains.verification.option2Title') }}</strong><br>
-                {{ t('customTools.domains.verification.option2Description') }}:<br>
+                <strong>{{ t('domains.verification.option2Title') }}</strong><br>
+                {{ t('domains.verification.option2Description') }}:<br>
                 <code>https://{{ domain.domain }}/direct-support-ai-verify-domain</code><br>
-                {{ t('customTools.domains.verification.option2Returns') }}: <code>{{ domain.randomString }}</code>
+                {{ t('domains.verification.option2Returns') }}: <code>{{ domain.randomString }}</code>
               </p>
             </div>
             <div class="domain-status">
@@ -79,11 +79,11 @@
                 class="status-badge verified"
               >
                 <AppIcon name="check" size="sm" />
-                {{ t('customTools.domains.status.verified') }}
+                {{ t('domains.status.verified') }}
               </span>
               <span v-else class="status-badge unverified">
                 <AppIcon name="time" size="sm" />
-                {{ t('customTools.domains.status.unverified') }}
+                {{ t('domains.status.unverified') }}
               </span>
             </div>
           </div>
@@ -91,13 +91,13 @@
           <div class="domain-actions">
             <AppButton
               v-if="!domain.isVerified"
-              :label="t('customTools.domains.actions.verify')"
+              :label="t('domains.actions.verify')"
               color="warning"
               size="sm"
               @click="verifyDomain(domain)"
             />
             <AppButton
-              :label="t('customTools.domains.actions.delete')"
+              :label="t('domains.actions.delete')"
               color="error"
               :margin="domain.isVerified ? 'no-margins' : 'left'"
               size="sm"
@@ -111,9 +111,9 @@
     <!-- Custom Tools Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ t('customTools.tools.title') }}</h2>
+        <h2>{{ t('tools.title') }}</h2>
         <AppButton
-          :label="t('customTools.tools.addButton')"
+          :label="t('tools.addButton')"
           color="primary"
           margin="left"
           @click="showCreateTool = true"
@@ -121,7 +121,7 @@
       </div>
       
       <p class="section-description">
-        {{ t('customTools.tools.description') }}
+        {{ t('tools.description') }}
       </p>
 
       <!-- Custom Tools List -->
@@ -135,13 +135,13 @@
             <h3 class="tool-name">{{ tool.name }}</h3>
             <div class="tool-actions">
               <AppButton
-                :label="t('customTools.tools.actions.edit')"
+                :label="t('tools.actions.edit')"
                 color="secondary"
                 margin="no-margins"
                 @click="editTool(tool)"
               />
               <AppButton
-                :label="t('customTools.tools.actions.delete')"
+                :label="t('tools.actions.delete')"
                 color="error"
                 margin="no-margins"
                 @click="deleteTool(tool.id)"
@@ -155,12 +155,12 @@
               <span class="tool-method">{{ tool.method }}</span>
               <span class="tool-url">{{ tool.url }}</span>
               <span class="tool-enabled" :class="{ disabled: !tool.enabled }">
-                {{ tool.enabled ? t('customTools.tools.status.enabled') : t('customTools.tools.status.disabled') }}
+                {{ tool.enabled ? t('tools.status.enabled') : t('tools.status.disabled') }}
               </span>
             </div>
             <div v-if="tool.arguments && tool.arguments.length > 0" class="tool-arguments">
-              <strong>{{ t('customTools.tools.arguments.label') }}: </strong>
-              <span class="argument-count">{{ t('customTools.tools.arguments.count', { count: tool.arguments.length }) }}</span>
+              <strong>{{ t('tools.arguments.label') }}: </strong>
+              <span class="argument-count">{{ t('tools.arguments.count', { count: tool.arguments.length }) }}</span>
             </div>
           </div>
         </div>
@@ -169,8 +169,8 @@
       <!-- Empty State -->
       <div v-else class="empty-state">
         <div class="empty-icon">🛠️</div>
-        <h3>{{ t('customTools.tools.empty.title') }}</h3>
-        <p>{{ t('customTools.tools.empty.description') }}</p>
+        <h3>{{ t('tools.empty.title') }}</h3>
+        <p>{{ t('tools.empty.description') }}</p>
       </div>
     </div>
 
@@ -179,7 +179,7 @@
     <AppPopup
       v-if="showCreateTool"
       :show="showCreateTool"
-      :title="t('customTools.popups.createTool.title')"
+      :title="t('popups.createTool.title')"
       @close="closeToolForm"
     >
       <CustomToolForm
@@ -193,7 +193,7 @@
     <AppPopup
       v-if="showAddDomain"
       :show="showAddDomain"
-      :title="t('customTools.popups.addDomain.title')"
+      :title="t('popups.addDomain.title')"
       @close="showAddDomain = false"
     >
       <MegaForm
@@ -202,11 +202,11 @@
         :includeFields="['domain']"
         :fieldOverrides="domainOverrides"
         :actions="[{
-          label: t('customTools.popups.addDomain.addButton'),
+          label: t('popups.addDomain.addButton'),
           callback: handleDomainSave,
           color: 'primary'
         }, {
-          label: t('customTools.popups.addDomain.cancelButton'),
+          label: t('popups.addDomain.cancelButton'),
           callback: closeDomainForm,
           color: 'secondary'
         }]"
@@ -225,7 +225,8 @@ import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.en
 import { CustomTool } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
 import { Domain } from '~/eicrud_exports/services/SUPPORT-ms/domain/domain.entity'
 
-const { t } = useI18n()
+import { useLocalNamespace } from '~/composables/useLocalNamespace'
+const { t } = useLocalNamespace('custom-tools')
 
 // AI Instructions
 let aiInstructions = reactive({
@@ -236,9 +237,9 @@ const aiInstructionsOverrides: Record<string, FieldOverride> = {
   additionalInstructions: {
     maxChars: 6000,
     type: 'richtext',
-    label: t('customTools.aiInstructions.form.label'),
-    description: t('customTools.aiInstructions.form.description'),
-    placeholder: t('customTools.aiInstructions.form.placeholder')
+    label: t('aiInstructions.form.label'),
+    description: t('aiInstructions.form.description'),
+    placeholder: t('aiInstructions.form.placeholder')
   }
 }
 
@@ -256,9 +257,9 @@ let newDomain = reactive({
 
 const domainOverrides = {
   domain: {
-    label: t('customTools.domains.form.label'),
-    description: t('customTools.domains.form.description'),
-    placeholder: t('customTools.domains.form.placeholder'),
+    label: t('domains.form.label'),
+    description: t('domains.form.description'),
+    placeholder: t('domains.form.placeholder'),
     required: true
   }
 }

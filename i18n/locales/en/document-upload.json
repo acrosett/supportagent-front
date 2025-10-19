@@ -1,0 +1,61 @@
+{
+  "page": {
+    "title": "Document Upload & Processing"
+  },
+  "buttons": {
+    "backToFaq": "Back to FAQ",
+    "resetFilters": "Reset Filters"
+  },
+  "aiNote": "The AI will use this content to update the FAQ.",
+  "admin": {
+    "rawTextTitle": "Raw Text Content (Admin Only)",
+    "charactersCount": "{count} characters",
+    "textPlaceholder": "Processed text will appear here..."
+  },
+  "processingQueue": {
+    "title": "Processing Queue",
+    "description": "Track your document processing and FAQ update tasks"
+  },
+  "search": {
+    "placeholder": "Search tasks..."
+  },
+  "filters": {
+    "status": {
+      "title": "Status",
+      "queued": "Queued",
+      "processing": "Processing",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "initiator": {
+      "title": "Initiator",
+      "system": "System",
+      "user": "User",
+      "admin": "Admin"
+    }
+  },
+  "states": {
+    "loading": "Loading tasks...",
+    "loadingMore": "Loading more tasks...",
+    "noMoreTasks": "No more tasks to load",
+    "noTasks": {
+      "title": "No tasks found",
+      "description": "Processing tasks will appear here when documents are uploaded"
+    }
+  },
+  "taskCard": {
+    "created": "Created",
+    "updated": "Updated"
+  },
+  "taskDetail": {
+    "title": "Task Details",
+    "created": "Created",
+    "updated": "Updated",
+    "knowledgeContent": "Knowledge Content",
+    "noContent": "No content available",
+    "actions": {
+      "close": "Close",
+      "reprocess": "Reprocess"
+    }
+  }
+}
