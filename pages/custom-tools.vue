@@ -2,17 +2,17 @@
   <section class="page-container custom-tools-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>Custom Tools</h1>
+        <h1>{{ t('customTools.page.title') }}</h1>
       </div>
     </header>
     
     <!-- AI Instructions Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>Additional Instructions for AI</h2>
+        <h2>{{ t('customTools.aiInstructions.title') }}</h2>
       </div>
       <p class="section-description">
-        Provide additional context and instructions that (SMART) client-facing agents should follow when assisting your customers.
+        {{ t('customTools.aiInstructions.description') }}
       </p>
       
       <MegaForm
@@ -21,7 +21,7 @@
         :fieldOverrides="aiInstructionsOverrides"
         :includeFields="['additionalInstructions']"
         :actions="[{
-          label: 'Save Instructions',
+          label: t('customTools.aiInstructions.saveButton'),
           callback: saveAiInstructions,
           color: 'primary'
         }]"
@@ -31,9 +31,9 @@
     <!-- Verified Domains Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>Verified Domains</h2>
+        <h2>{{ t('customTools.domains.title') }}</h2>
         <AppButton
-          label="Add Domain"
+          :label="t('customTools.domains.addButton')"
           color="primary"
           margin="left"
           @click="showAddDomain = true"
@@ -41,13 +41,13 @@
       </div>
       
       <p class="section-description">
-        Verify domains to enable custom tool integrations with your systems.
+        {{ t('customTools.domains.description') }}
       </p>
 
       <div v-if="verifiedDomains.length === 0" class="empty-state">
         <div class="empty-icon">🌐</div>
-        <h3>No domains configured</h3>
-        <p>Add a domain to enable custom tool integrations</p>
+        <h3>{{ t('customTools.domains.empty.title') }}</h3>
+        <p>{{ t('customTools.domains.empty.description') }}</p>
       </div>
 
       <div v-else class="domains-grid">
@@ -61,16 +61,16 @@
             <div class="domain-info">
               <h4 class="domain-name">{{ domain.domain }}</h4>
               <p v-if="!domain.isVerified && domain.randomString" class="verification-code">
-                <strong>Setup Instructions (choose one):</strong><br><br>
+                <strong>{{ t('customTools.domains.verification.instructions') }}:</strong><br><br>
                 
-                <strong>Option 1: DNS TXT Record</strong><br>
-                Add a TXT record to your domain's DNS:<br>
+                <strong>{{ t('customTools.domains.verification.option1Title') }}</strong><br>
+                {{ t('customTools.domains.verification.option1Description') }}:<br>
                 Value: <code>direct-support-ai-verify={{ domain.randomString }}</code><br><br>
                 
-                <strong>Option 2: Webhook Endpoint</strong><br>
-                Create a webhook endpoint at:<br>
+                <strong>{{ t('customTools.domains.verification.option2Title') }}</strong><br>
+                {{ t('customTools.domains.verification.option2Description') }}:<br>
                 <code>https://{{ domain.domain }}/direct-support-ai-verify-domain</code><br>
-                That returns the verification string: <code>{{ domain.randomString }}</code>
+                {{ t('customTools.domains.verification.option2Returns') }}: <code>{{ domain.randomString }}</code>
               </p>
             </div>
             <div class="domain-status">
@@ -79,11 +79,11 @@
                 class="status-badge verified"
               >
                 <AppIcon name="check" size="sm" />
-                Verified
+                {{ t('customTools.domains.status.verified') }}
               </span>
               <span v-else class="status-badge unverified">
                 <AppIcon name="time" size="sm" />
-                Unverified
+                {{ t('customTools.domains.status.unverified') }}
               </span>
             </div>
           </div>
@@ -91,13 +91,13 @@
           <div class="domain-actions">
             <AppButton
               v-if="!domain.isVerified"
-              label="Verify Domain"
+              :label="t('customTools.domains.actions.verify')"
               color="warning"
               size="sm"
               @click="verifyDomain(domain)"
             />
             <AppButton
-              label="Delete"
+              :label="t('customTools.domains.actions.delete')"
               color="error"
               :margin="domain.isVerified ? 'no-margins' : 'left'"
               size="sm"
@@ -111,9 +111,9 @@
     <!-- Custom Tools Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>Custom Tools</h2>
+        <h2>{{ t('customTools.tools.title') }}</h2>
         <AppButton
-          label="Add Custom Tool"
+          :label="t('customTools.tools.addButton')"
           color="primary"
           margin="left"
           @click="showCreateTool = true"
@@ -121,7 +121,7 @@
       </div>
       
       <p class="section-description">
-        Create and manage custom tools that (SMART) client-facing agents can use to integrate with your systems.
+        {{ t('customTools.tools.description') }}
       </p>
 
       <!-- Custom Tools List -->
@@ -135,13 +135,13 @@
             <h3 class="tool-name">{{ tool.name }}</h3>
             <div class="tool-actions">
               <AppButton
-                label="Edit"
+                :label="t('customTools.tools.actions.edit')"
                 color="secondary"
                 margin="no-margins"
                 @click="editTool(tool)"
               />
               <AppButton
-                label="Delete"
+                :label="t('customTools.tools.actions.delete')"
                 color="error"
                 margin="no-margins"
                 @click="deleteTool(tool.id)"
@@ -155,12 +155,12 @@
               <span class="tool-method">{{ tool.method }}</span>
               <span class="tool-url">{{ tool.url }}</span>
               <span class="tool-enabled" :class="{ disabled: !tool.enabled }">
-                {{ tool.enabled ? 'Enabled' : 'Disabled' }}
+                {{ tool.enabled ? t('customTools.tools.status.enabled') : t('customTools.tools.status.disabled') }}
               </span>
             </div>
             <div v-if="tool.arguments && tool.arguments.length > 0" class="tool-arguments">
-              <strong>Arguments: </strong>
-              <span class="argument-count">{{ tool.arguments.length }} parameter(s)</span>
+              <strong>{{ t('customTools.tools.arguments.label') }}: </strong>
+              <span class="argument-count">{{ t('customTools.tools.arguments.count', { count: tool.arguments.length }) }}</span>
             </div>
           </div>
         </div>
@@ -169,8 +169,8 @@
       <!-- Empty State -->
       <div v-else class="empty-state">
         <div class="empty-icon">🛠️</div>
-        <h3>No Custom Tools Yet</h3>
-        <p>Create your first custom tool to start integrating with external systems.</p>
+        <h3>{{ t('customTools.tools.empty.title') }}</h3>
+        <p>{{ t('customTools.tools.empty.description') }}</p>
       </div>
     </div>
 
@@ -179,7 +179,7 @@
     <AppPopup
       v-if="showCreateTool"
       :show="showCreateTool"
-      title="Custom Tool (our chatbot can create them for you)"
+      :title="t('customTools.popups.createTool.title')"
       @close="closeToolForm"
     >
       <CustomToolForm
@@ -193,7 +193,7 @@
     <AppPopup
       v-if="showAddDomain"
       :show="showAddDomain"
-      title="Add Domain"
+      :title="t('customTools.popups.addDomain.title')"
       @close="showAddDomain = false"
     >
       <MegaForm
@@ -202,11 +202,11 @@
         :includeFields="['domain']"
         :fieldOverrides="domainOverrides"
         :actions="[{
-          label: 'Add Domain',
+          label: t('customTools.popups.addDomain.addButton'),
           callback: handleDomainSave,
           color: 'primary'
         }, {
-          label: 'Cancel',
+          label: t('customTools.popups.addDomain.cancelButton'),
           callback: closeDomainForm,
           color: 'secondary'
         }]"
@@ -225,6 +225,8 @@ import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.en
 import { CustomTool } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
 import { Domain } from '~/eicrud_exports/services/SUPPORT-ms/domain/domain.entity'
 
+const { t } = useI18n()
+
 // AI Instructions
 let aiInstructions = reactive({
   additionalInstructions: ''
@@ -234,9 +236,9 @@ const aiInstructionsOverrides: Record<string, FieldOverride> = {
   additionalInstructions: {
     maxChars: 6000,
     type: 'richtext',
-    label: 'Additional Instructions',
-    description: 'Provide specific instructions for how the AI should behave when using your custom tools. Only SMART AI agents can use custom tools and benefit from extra instructions.',
-    placeholder: 'Enter additional instructions for the AI...'
+    label: t('customTools.aiInstructions.form.label'),
+    description: t('customTools.aiInstructions.form.description'),
+    placeholder: t('customTools.aiInstructions.form.placeholder')
   }
 }
 
@@ -254,9 +256,9 @@ let newDomain = reactive({
 
 const domainOverrides = {
   domain: {
-    label: 'Domain',
-    description: 'Enter the domain name you want to verify (e.g., example.com)',
-    placeholder: 'example.com',
+    label: t('customTools.domains.form.label'),
+    description: t('customTools.domains.form.description'),
+    placeholder: t('customTools.domains.form.placeholder'),
     required: true
   }
 }

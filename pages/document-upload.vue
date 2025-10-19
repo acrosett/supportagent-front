@@ -3,13 +3,13 @@
     <div class="upload-header">
       <div class="header-content">
         <AppButton
-          label="Back to FAQ"
+          :label="t('documentUpload.buttons.backToFaq')"
           color="secondary"
           :showBackIcon="true"
           @click="navigateToFAQ"
         />
         <h1>
-          Document Upload & Processing
+          {{ t('documentUpload.page.title') }}
         </h1>
         <div></div> <!-- Spacer for flexbox alignment -->
       </div>
@@ -18,7 +18,7 @@
     <div class="upload-content">
       <div class="upload-section">
         <p class="ai-note">
-          The AI will use this content to update the FAQ.
+          {{ t('documentUpload.aiNote') }}
         </p>
         <DigestFile
           v-model="processedText"
@@ -28,17 +28,17 @@
         
         <!-- Admin Text Preview - Only for admins -->
         <div v-if="processedText && isAdmin" class="admin-text-preview">
-          <h3>Raw Text Content (Admin Only)</h3>
+          <h3>{{ t('documentUpload.admin.rawTextTitle') }}</h3>
           <div class="text-preview">
             <div class="text-stats">
               <span class="text-size">{{ textSizeFormatted }}</span>
-              <span class="text-length">{{ processedText.length.toLocaleString() }} characters</span>
+              <span class="text-length">{{ t('documentUpload.admin.charactersCount', { count: processedText.length.toLocaleString() }) }}</span>
             </div>
             <textarea 
               v-model="processedText" 
               readonly 
               class="processed-textarea"
-              placeholder="Processed text will appear here..."
+              :placeholder="t('documentUpload.admin.textPlaceholder')"
             ></textarea>
           </div>
         </div>
@@ -47,8 +47,8 @@
       <!-- Editor Tasks Section -->
       <div class="tasks-section">
         <div class="section-header">
-          <h2>Processing Queue</h2>
-          <p class="section-description">Track your document processing and FAQ update tasks</p>
+          <h2>{{ t('documentUpload.processingQueue.title') }}</h2>
+          <p class="section-description">{{ t('documentUpload.processingQueue.description') }}</p>
         </div>
 
         <!-- Filters -->
@@ -58,14 +58,14 @@
               <AppIcon name="search" size="sm" class="search-icon" />
               <input 
                 type="text" 
-                placeholder="Search tasks..."
+                :placeholder="t('documentUpload.search.placeholder')"
                 v-model="searchQuery"
                 class="search-input"
               />
             </div>
             
             <AppButton
-              label="Reset Filters"
+              :label="t('documentUpload.buttons.resetFilters')"
               color="secondary"
               size="sm"
               margin="left"
@@ -75,26 +75,26 @@
           
           <div class="filter-controls">
             <CheckBoxColumn
-              title="Status"
+              :title="t('documentUpload.filters.status.title')"
               name="taskStatus"
               v-model="filters.taskStatus"
               :options="[
-                { value: 'both', label: 'All' },
-                { value: 'NEW', label: 'Processing' },
-                { value: 'COMPLETED', label: 'Completed' },
-                { value: 'FAILED', label: 'Failed' }
+                { value: 'both', label: t('documentUpload.filters.status.all') },
+                { value: 'NEW', label: t('documentUpload.filters.status.processing') },
+                { value: 'COMPLETED', label: t('documentUpload.filters.status.completed') },
+                { value: 'FAILED', label: t('documentUpload.filters.status.failed') }
               ]"
               @change="applyFilters"
             />
             
             <CheckBoxColumn
-              title="Initiator"
+              :title="t('documentUpload.filters.initiator.title')"
               name="taskInitiator"
               v-model="filters.taskInitiator"
               :options="[
-                { value: 'both', label: 'All' },
-                { value: 'DIGESTOR', label: 'Document Upload' },
-                { value: 'STAFF_AGENT', label: 'Staff Agent' }
+                { value: 'both', label: t('documentUpload.filters.initiator.all') },
+                { value: 'DIGESTOR', label: t('documentUpload.filters.initiator.documentUpload') },
+                { value: 'STAFF_AGENT', label: t('documentUpload.filters.initiator.staffAgent') }
               ]"
               @change="applyFilters"
             />
@@ -104,14 +104,14 @@
         <!-- Loading State -->
         <div v-if="isLoading" class="loading-state">
           <div class="spinner"></div>
-          <p>Loading tasks...</p>
+          <p>{{ t('documentUpload.states.loading') }}</p>
         </div>
 
         <!-- Tasks List -->
         <div v-else-if="filteredTasks.length === 0" class="empty-state">
           <AppIcon name="document" size="xl" class="empty-icon" />
-          <h3>No processing tasks found</h3>
-          <p>Document processing tasks will appear here</p>
+          <h3>{{ t('documentUpload.states.noTasks.title') }}</h3>
+          <p>{{ t('documentUpload.states.noTasks.description') }}</p>
         </div>
 
         <div v-else class="tasks-grid">
@@ -155,8 +155,8 @@
             <div class="task-content">
               <p class="knowledge-preview">{{ getKnowledgePreview(task.newKnowledge) }}</p>
               <div class="task-meta">
-                <span class="created-date">Created {{ formatDate(task.createdAt) }}</span>
-                <span class="updated-date">Updated {{ formatDate(task.updatedAt) }}</span>
+                <span class="created-date">{{ t('documentUpload.taskCard.created') }} {{ formatDate(task.createdAt) }}</span>
+                <span class="updated-date">{{ t('documentUpload.taskCard.updated') }} {{ formatDate(task.updatedAt) }}</span>
               </div>
             </div>
           </div>
@@ -165,12 +165,12 @@
         <!-- Load More Indicator -->
         <div v-if="isLoadingMore" class="loading-more">
           <div class="spinner"></div>
-          <p>Loading more tasks...</p>
+          <p>{{ t('documentUpload.states.loadingMore') }}</p>
         </div>
 
         <!-- End of Results Indicator -->
         <div v-else-if="!hasMoreData && editorTasks.length > 0" class="end-of-results">
-          <p>No more tasks to load</p>
+          <p>{{ t('documentUpload.states.noMoreTasks') }}</p>
         </div>
       </div>
     </div>
@@ -179,7 +179,7 @@
     <AppPopup
       v-if="showTaskDetail && selectedTask"
       @close="closeTaskDetail"
-      title="Task Details"
+      :title="t('documentUpload.taskDetail.title')"
       :show="showTaskDetail"
     >
       <div class="task-detail-content">
@@ -208,11 +208,11 @@
           
           <div class="task-detail-dates">
             <div class="date-item">
-              <span class="date-label">Created:</span>
+              <span class="date-label">{{ t('documentUpload.taskDetail.created') }}:</span>
               <span class="date-value">{{ formatDate(selectedTask.createdAt) }}</span>
             </div>
             <div class="date-item">
-              <span class="date-label">Updated:</span>
+              <span class="date-label">{{ t('documentUpload.taskDetail.updated') }}:</span>
               <span class="date-value">{{ formatDate(selectedTask.updatedAt) }}</span>
             </div>
           </div>
@@ -222,7 +222,7 @@
         <div v-if="isAdmin" class="admin-actions">
           <AppButton
             v-if="selectedTask.status === EditorTaskStatus.FAILED"
-            label="Retry Processing"
+            :label="t('documentUpload.taskDetail.actions.retry')"
             color="secondary"
             size="sm"
             margin="right"
@@ -230,7 +230,7 @@
             @click="retryTask"
           />
           <AppButton
-            label="View Logs"
+            :label="t('documentUpload.taskDetail.actions.viewLogs')"
             color="primary"
             size="sm"
             margin="left"
@@ -239,9 +239,9 @@
         </div>
 
         <div class="knowledge-content">
-          <h4>Knowledge Content</h4>
+          <h4>{{ t('documentUpload.taskDetail.knowledgeContent') }}</h4>
           <div class="knowledge-text">
-            {{ selectedTask.newKnowledge || 'No content available' }}
+            {{ selectedTask.newKnowledge || t('documentUpload.taskDetail.noContent') }}
           </div>
         </div>
 
@@ -268,6 +268,7 @@ import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
 import LlmLogsPopup from '~/components/LlmLogsPopup.vue'
 import { EditorTask, EditorTaskStatus, EditorTaskInitiator } from '~/eicrud_exports/services/SUPPORT-ms/editor-task/editor-task.entity'
 
+const { t } = useI18n()
 const processedText = ref('')
 const isAdmin = ref(false)
 

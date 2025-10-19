@@ -8,7 +8,7 @@
         @click="activeTab = 'upload'"
       >
         <AppIcon name="document" size="sm" />
-        Upload File
+        {{ t('digestFile.tabs.upload') }}
       </button>
       <button 
         class="tab-button"
@@ -16,7 +16,7 @@
         @click="activeTab = 'paste'"
       >
         <AppIcon name="edit" size="sm" />
-        Paste Text
+        {{ t('digestFile.tabs.paste') }}
       </button>
     </div>
 
@@ -41,23 +41,23 @@
         >
           <div v-if="!isProcessing && !processedText" class="upload-prompt">
             <AppIcon name="document" size="xl" class="upload-icon" />
-            <h3>Upload Document</h3>
-            <p>Drop your file here or click to browse</p>
-            <p class="file-types">Supports: HTML, PDF, Word (.doc, .docx), XML, Text (.txt), Markdown (.md), JSON, CSV</p>
+            <h3>{{ t('digestFile.upload.title') }}</h3>
+            <p>{{ t('digestFile.upload.instruction') }}</p>
+            <p class="file-types">{{ t('digestFile.upload.supportedFiles') }}</p>
           </div>
           
           <div v-else-if="isProcessing" class="processing-state">
             <div class="spinner"></div>
-            <p>Processing {{ currentFileName }}...</p>
+            <p>{{ t('digestFile.processing.message', { fileName: currentFileName }) }}</p>
           </div>
           
           <div v-else class="success-state">
             <AppIcon name="check" size="lg" class="success-icon" />
             <h4>{{ currentFileName }}</h4>
-            <p>Successfully processed</p>
+            <p>{{ t('digestFile.success.message') }}</p>
             <AppButton 
               @click.stop="resetUpload"
-              label="Upload Another File"
+              :label="t('digestFile.success.uploadAnother')"
               color="secondary"
               size="sm"
             />
@@ -83,31 +83,35 @@
   <!-- Confirm price popup -->
   <AppPopup
     :show="showConfirm"
-    :title="activeTab === 'upload' ? 'Confirm Upload' : 'Confirm Processing'"
+    :title="activeTab === 'upload' ? t('digestFile.confirm.uploadTitle') : t('digestFile.confirm.processTitle')"
     size="sm"
     @close="cancelConfirm"
   >
     <div class="confirm-content">
       <p v-if="activeTab === 'upload'">
-        You are about to upload <strong>{{ pendingFile?.name || 'your file' }}</strong>
-        ({{ (pendingSizeKB || 0).toFixed(1) }} KB).
+        {{ t('digestFile.confirm.uploadMessage', { 
+          fileName: pendingFile?.name || t('digestFile.confirm.defaultFileName'),
+          sizeKB: (pendingSizeKB || 0).toFixed(1)
+        }) }}
       </p>
       <p v-else>
-        You are about to process <strong>{{ currentFileName }}</strong>
-        ({{ Math.ceil((processedText.length || 0) / 1024) }} KB of text).
+        {{ t('digestFile.confirm.processMessage', {
+          fileName: currentFileName,
+          sizeKB: Math.ceil((processedText.length || 0) / 1024)
+        }) }}
       </p>
       <div v-if="isCalculatingCost" class="calculating-cost">
         <div class="mini-spinner"></div>
-        Calculating estimated cost...
+        {{ t('digestFile.confirm.calculatingCost') }}
       </div>
       <p v-else>
-        Estimated processing cost: <strong>${{ estimatedCost.toFixed(2) }}</strong>
+        {{ t('digestFile.confirm.estimatedCost', { cost: estimatedCost.toFixed(2) }) }}
       </p>
     </div>
     <template #footer>
       <div class="confirm-footer">
-        <AppButton label="Cancel" color="secondary" @click="cancelConfirm" />
-        <AppButton label="Process with AI" margin="left" color="primary" @click="confirmUpload" />
+        <AppButton :label="t('digestFile.confirm.cancel')" color="secondary" @click="cancelConfirm" />
+        <AppButton :label="t('digestFile.confirm.process')" margin="left" color="primary" @click="confirmUpload" />
       </div>
     </template>
   </AppPopup>
@@ -117,6 +121,8 @@
 import { estimateFullDigestCost, FILE_MAX_SIZE } from '~/eicrud_exports/services/AI-ms/digestor/shared.utils'
 import MegaForm, { type MegaFormAction, type OverrideRecord } from './MegaForm.vue'
 import { DigestFileDto } from '~/eicrud_exports/services/AI-ms/digestor/cmds/digest_file/digest_file.dto'
+
+const { t } = useI18n()
 
 interface Props {
   modelValue?: string
@@ -235,15 +241,15 @@ const resetUpload = () => {
 const pasteFieldOverrides: OverrideRecord = {
   fileText: {
     type: 'richtext',
-    label: 'Paste your text content',
-    placeholder: 'Paste or type your content here...',
+    label: t('digestFile.paste.label'),
+    placeholder: t('digestFile.paste.placeholder'),
     maxChars: Math.floor(FILE_MAX_SIZE * 0.8) // 80% of max to give margin
   }
 }
 
 const pasteActions: MegaFormAction[] = [
   {
-    label: 'Process Text',
+    label: t('digestFile.paste.processButton'),
     margin: 'left',
     color: 'primary',
     callback: async (formData: any) => {
@@ -256,7 +262,7 @@ const pasteActions: MegaFormAction[] = [
         
         // Store the pasted text as "pending"
         processedText.value = formData.fileText
-        currentFileName.value = 'Pasted Text'
+        currentFileName.value = t('digestFile.paste.defaultFileName')
         
         // Show confirmation popup
         showConfirm.value = true

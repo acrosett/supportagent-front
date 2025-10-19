@@ -1,12 +1,5 @@
 <template>
   <div class="chat-interface" :class="{ 'dark-mode': widgetConfig.darkMode }" :style="dynamicStyles" @click="handleUserInteraction">
-    <!-- Admin Training Data Panel -->
-    <TrainingDataPanel
-      ref="trainingDataPanel"
-      :showPanel="showSidebar"
-      @toggle="toggleSidebar"
-      @widthChange="handlePanelWidthChange"
-    />
 
     <!-- Loading State -->
     <div v-if="isLoading" class="loading-state">
@@ -226,7 +219,6 @@ const { renderMarkdown, highlightCodeBlocks } = useMarkdown()
 // Refs
 const messagesContainer = ref<HTMLElement>()
 const messageInput = ref<HTMLTextAreaElement>()
-const trainingDataPanel = ref()
 
 // Computed properties
 const avatarIcon = computed(() => {
@@ -439,10 +431,6 @@ const refreshMessages = async (nuxtApp: NuxtApp, limit?: number, append: boolean
     
     // Update tracking and trigger panel refresh (initial loads only)
     lastMessageCount.value = newMessageCount
-    
-    if (hasNewMessages && trainingDataPanel.value) {
-      await trainingDataPanel.value.refreshData()
-    }
     
     // Cache messages in sessionStorage
     const cacheKey = `${cachePrefix}chat-messages-${savedClientIdentifier}`;

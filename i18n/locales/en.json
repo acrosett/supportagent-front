@@ -504,5 +504,349 @@
                 "deleteAll": "Are you sure you want to delete all {count} test clients? This action cannot be undone."
             }
         }
+    },
+    "faq": {
+        "page": {
+            "title": "FAQ Management"
+        },
+        "header": {
+            "title": "Frequently Asked Questions"
+        },
+        "buttons": {
+            "newFaq": "New FAQ",
+            "documentUpload": "Document Upload",
+            "prev": "Prev",
+            "next": "Next"
+        },
+        "search": {
+            "placeholder": "Search FAQs..."
+        },
+        "pagination": {
+            "perPage": "Per page",
+            "pageInfo": "Page {current} / {total}"
+        },
+        "states": {
+            "loading": "Loading FAQs...",
+            "empty": "No FAQs match your search."
+        },
+        "actions": {
+            "toggleAnswer": "Toggle answer",
+            "edit": "Edit", 
+            "delete": "Delete"
+        },
+        "popups": {
+            "create": {
+                "title": "New FAQ"
+            },
+            "edit": {
+                "title": "Edit FAQ"
+            }
+        },
+        "form": {
+            "fields": {
+                "answer": {
+                    "label": "Answer",
+                    "placeholder": "Enter the FAQ answer..."
+                },
+                "tags": {
+                    "label": "Tags",
+                    "placeholder": "Add tags and press Enter"
+                }
+            },
+            "buttons": {
+                "cancel": "Cancel",
+                "create": "Create FAQ",
+                "save": "Save Changes"
+            }
+        },
+        "messages": {
+            "success": {
+                "created": "FAQ created successfully",
+                "updated": "FAQ updated successfully", 
+                "deleted": "FAQ deleted successfully"
+            },
+            "confirm": {
+                "delete": "Deleting this FAQ cannot be undone. Do you want to continue?"
+            }
+        }
+    },
+    "documentUpload": {
+        "page": {
+            "title": "Document Upload & Processing"
+        },
+        "buttons": {
+            "backToFaq": "Back to FAQ",
+            "resetFilters": "Reset Filters"
+        },
+        "aiNote": "The AI will use this content to update the FAQ.",
+        "admin": {
+            "rawTextTitle": "Raw Text Content (Admin Only)",
+            "charactersCount": "{count} characters",
+            "textPlaceholder": "Processed text will appear here..."
+        },
+        "processingQueue": {
+            "title": "Processing Queue",
+            "description": "Track your document processing and FAQ update tasks"
+        },
+        "search": {
+            "placeholder": "Search tasks..."
+        },
+        "filters": {
+            "status": {
+                "title": "Status",
+                "all": "All",
+                "processing": "Processing",
+                "completed": "Completed",
+                "failed": "Failed"
+            },
+            "initiator": {
+                "title": "Initiator",
+                "all": "All",
+                "documentUpload": "Document Upload",
+                "staffAgent": "Staff Agent"
+            }
+        },
+        "states": {
+            "loading": "Loading tasks...",
+            "loadingMore": "Loading more tasks...",
+            "noMoreTasks": "No more tasks to load",
+            "noTasks": {
+                "title": "No processing tasks found",
+                "description": "Document processing tasks will appear here"
+            }
+        },
+        "taskCard": {
+            "created": "Created",
+            "updated": "Updated"
+        },
+        "taskDetail": {
+            "title": "Task Details",
+            "created": "Created",
+            "updated": "Updated",
+            "knowledgeContent": "Knowledge Content",
+            "noContent": "No content available",
+            "actions": {
+                "retry": "Retry Processing",
+                "viewLogs": "View Logs"
+            }
+        }
+    },
+    "customTools": {
+        "page": {
+            "title": "Custom Tools"
+        },
+        "aiInstructions": {
+            "title": "Additional Instructions for AI",
+            "description": "Provide additional context and instructions that (SMART) client-facing agents should follow when assisting your customers.",
+            "saveButton": "Save Instructions",
+            "form": {
+                "label": "Additional Instructions",
+                "description": "Provide specific instructions for how the AI should behave when using your custom tools. Only SMART AI agents can use custom tools and benefit from extra instructions.",
+                "placeholder": "Enter additional instructions for the AI..."
+            }
+        },
+        "domains": {
+            "title": "Verified Domains",
+            "description": "Verify domains to enable custom tool integrations with your systems.",
+            "addButton": "Add Domain",
+            "empty": {
+                "title": "No domains configured",
+                "description": "Add a domain to enable custom tool integrations"
+            },
+            "verification": {
+                "instructions": "Setup Instructions (choose one)",
+                "option1Title": "Option 1: DNS TXT Record",
+                "option1Description": "Add a TXT record to your domain's DNS",
+                "option2Title": "Option 2: Webhook Endpoint",
+                "option2Description": "Create a webhook endpoint at",
+                "option2Returns": "That returns the verification string"
+            },
+            "status": {
+                "verified": "Verified",
+                "unverified": "Unverified"
+            },
+            "actions": {
+                "verify": "Verify Domain",
+                "delete": "Delete"
+            },
+            "form": {
+                "label": "Domain",
+                "description": "Enter the domain name you want to verify (e.g., example.com)",
+                "placeholder": "example.com"
+            }
+        },
+        "tools": {
+            "title": "Custom Tools",
+            "description": "Create and manage custom tools that (SMART) client-facing agents can use to integrate with your systems.",
+            "addButton": "Add Custom Tool",
+            "empty": {
+                "title": "No Custom Tools Yet",
+                "description": "Create your first custom tool to start integrating with external systems."
+            },
+            "status": {
+                "enabled": "Enabled",
+                "disabled": "Disabled"
+            },
+            "arguments": {
+                "label": "Arguments",
+                "count": "{count} parameter(s)"
+            },
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete"
+            }
+        },
+        "popups": {
+            "createTool": {
+                "title": "Custom Tool (our chatbot can create them for you)"
+            },
+            "addDomain": {
+                "title": "Add Domain",
+                "addButton": "Add Domain",
+                "cancelButton": "Cancel"
+            }
+        },
+        "form": {
+            "clientPriorities": {
+                "description": "Which clients can benefit from this tool?",
+                "lowest": "Lowest priority",
+                "regular": "Regular priority",
+                "high": "High priority"
+            },
+            "name": {
+                "label": "Tool Name",
+                "placeholder": "e.g., get-user-data",
+                "description": "Unique name for this tool (lowercase, no spaces)"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Describe what this tool does and how to use it...",
+                "description": "Detailed description of the tool's purpose and functionality"
+            },
+            "url": {
+                "label": "Endpoint URL",
+                "placeholder": "https://api.example.com/test/{argumentName}",
+                "description": "The full URL where the tool will make requests"
+            },
+            "method": {
+                "label": "HTTP Method",
+                "description": "HTTP method to use for requests"
+            },
+            "arguments": {
+                "label": "Parameters",
+                "description": "Define the parameters this tool accepts",
+                "name": {
+                    "label": "Parameter Name",
+                    "placeholder": "e.g., user_id",
+                    "description": "Name of the parameter as expected by the API"
+                },
+                "paramDescription": {
+                    "label": "Description",
+                    "placeholder": "Describe this parameter...",
+                    "description": "What this parameter is used for"
+                },
+                "location": {
+                    "label": "Location",
+                    "description": "Where this parameter should be placed in the request",
+                    "payload": "Request Body (Payload)",
+                    "header": "HTTP Header",
+                    "urlParam": "URL Parameter",
+                    "queryParam": "Query Parameter"
+                },
+                "valueType": {
+                    "label": "Value Type",
+                    "description": "How the parameter value should be determined",
+                    "setByAi": "Set by AI",
+                    "userId": "User ID",
+                    "sharedSecret": "Shared Secret",
+                    "constant": "Constant Value"
+                },
+                "dataType": {
+                    "label": "Data Type",
+                    "description": "The data type of this parameter",
+                    "string": "String",
+                    "number": "Number",
+                    "boolean": "Boolean",
+                    "object": "Object",
+                    "array": "Array"
+                },
+                "constantValue": {
+                    "label": "Constant Value",
+                    "placeholder": "Enter fixed value...",
+                    "description": "Fixed value to use (only for constant value type)"
+                },
+                "required": {
+                    "label": "Required Parameter",
+                    "description": "Whether this parameter must be provided"
+                },
+                "defaultValue": {
+                    "label": "Default Value",
+                    "placeholder": "Default value if not provided...",
+                    "description": "Default value to use when parameter is not required"
+                }
+            },
+            "contentType": {
+                "label": "Content Type",
+                "placeholder": "application/json",
+                "description": "MIME type for request body"
+            },
+            "timeout": {
+                "label": "Timeout (ms)",
+                "placeholder": "30000",
+                "description": "Request timeout in milliseconds"
+            },
+            "enabled": {
+                "label": "Tool Status",
+                "description": "Whether this tool is available for use"
+            },
+            "guestAccess": {
+                "label": "Allow Guest Access",
+                "description": "Allow the tool to be used by non-logged users"
+            },
+            "actions": {
+                "cancel": "Cancel",
+                "create": "Create Tool",
+                "update": "Update Tool"
+            }
+        }
+    },
+    "digestFile": {
+        "tabs": {
+            "upload": "Upload File",
+            "paste": "Paste Text"
+        },
+        "upload": {
+            "title": "Upload Document",
+            "instruction": "Drop your file here or click to browse",
+            "supportedFiles": "Supports: HTML, PDF, Word (.doc, .docx), XML, Text (.txt), Markdown (.md), JSON, CSV"
+        },
+        "processing": {
+            "message": "Processing {fileName}..."
+        },
+        "success": {
+            "message": "Successfully processed",
+            "uploadAnother": "Upload Another File"
+        },
+        "paste": {
+            "label": "Paste your text content",
+            "placeholder": "Paste or type your content here...",
+            "processButton": "Process Text",
+            "defaultFileName": "Pasted Text"
+        },
+        "confirm": {
+            "uploadTitle": "Confirm Upload",
+            "processTitle": "Confirm Processing",
+            "uploadMessage": "You are about to upload {fileName} ({sizeKB} KB).",
+            "processMessage": "You are about to process {fileName} ({sizeKB} KB of text).",
+            "defaultFileName": "your file",
+            "calculatingCost": "Calculating estimated cost...",
+            "estimatedCost": "Estimated processing cost: ${cost}",
+            "cancel": "Cancel",
+            "process": "Process with AI"
+        }
+    },
+    "richTextEditor": {
+        "loading": "Loading editor...",
+        "defaultPlaceholder": "Enter your content..."
     }
 }

@@ -2,7 +2,7 @@
   <div class="page-container faq-page">
     <div class="faq-header">
       <h1>
-        FAQ Management
+        {{ t('faq.page.title') }}
       </h1>
     </div>
 
@@ -14,6 +14,8 @@
 
 <script setup lang="ts">
 import FaqManager from '@/components/FaqManager.vue'
+
+const { t } = useI18n()
 
 // Set page metadata
 definePageMeta({
