@@ -12,7 +12,7 @@
       <button 
         class="hamburger-btn"
         @click="toggleMobileMenu"
-        aria-label="Toggle menu"
+        :aria-label="$t('menu.navigation.toggleMenu')"
       >
         <span></span>
         <span></span>
@@ -36,14 +36,14 @@
         <li>
           <NuxtLink to="/" @click="closeMobileMenu">
             <AppIcon name="home" size="md" class="nav-icon" />
-            {{$t('dashboard')}}
+            {{$t('menu.navigation.dashboard')}}
           </NuxtLink>
         </li>
         <li>
           <NuxtLink to="/edit-product" @click="closeMobileMenu" class="nav-link-with-warning">
             <div class="nav-link-content">
               <AppIcon name="settings" size="md" class="nav-icon" />
-              Edit Product
+              {{ $t('menu.navigation.editProduct') }}
             </div>
             <div v-if="showEditProductWarning" class="warning-indicator">
               <AppIcon name="info" size="sm" />
@@ -53,37 +53,37 @@
         <li>
           <NuxtLink to="/contact-priority" @click="closeMobileMenu">
             <AppIcon name="phone" size="md" class="nav-icon" />
-            Contact & Priority
+            {{ $t('menu.navigation.contactPriority') }}
           </NuxtLink>
         </li>
         <li>
           <NuxtLink to="/faq" @click="closeMobileMenu">
             <AppIcon name="info" size="md" class="nav-icon" />
-            FAQ Management
+            {{ $t('menu.navigation.faqManagement') }}
           </NuxtLink>
         </li>
         <li>
           <NuxtLink to="/widget" @click="closeMobileMenu">
             <AppIcon name="gear" size="md" class="nav-icon" />
-            Widget Builder
+            {{ $t('menu.navigation.widgetBuilder') }}
           </NuxtLink>
         </li>
         <li>
           <NuxtLink to="/conversations" @click="closeMobileMenu">
             <AppIcon name="message" size="md" class="nav-icon" />
-            Conversations
+            {{ $t('menu.navigation.conversations') }}
           </NuxtLink>
         </li>
         <li>
           <NuxtLink to="/issues" @click="closeMobileMenu">
             <AppIcon name="document" size="md" class="nav-icon" />
-            Issues
+            {{ $t('menu.navigation.issues') }}
           </NuxtLink>
         </li>
                 <li>
           <NuxtLink to="/custom-tools" @click="closeMobileMenu">
             <AppIcon name="tool" size="md" class="nav-icon" />
-            Custom Tools
+            {{ $t('menu.navigation.customTools') }}
           </NuxtLink>
         </li>
         <li>
@@ -93,7 +93,7 @@
             class="nav-link"
           >
             <AppIcon name="media" size="md" class="nav-icon" />
-            Test Chat
+            {{ $t('menu.navigation.testChat') }}
           </a>
         </li>
       </ul>
@@ -103,7 +103,7 @@
           <NuxtLink to="/notifications" @click="closeMobileMenu" class="nav-link-with-notification">
             <div class="nav-link-content">
               <AppIcon name="notifications" size="md" class="nav-icon" />
-              Notifications
+              {{ $t('menu.navigation.notifications') }}
             </div>
             <div v-if="notificationCount > 0" class="notification-count">
               {{ notificationCount > 99 ? '99+' : notificationCount }}
@@ -113,20 +113,20 @@
         <li v-if="isAdmin">
           <NuxtLink to="/logs" @click="closeMobileMenu">
             <AppIcon name="document" size="md" class="nav-icon" />
-            System Logs
+            {{ $t('menu.navigation.systemLogs') }}
           </NuxtLink>
         </li>
         <li v-if="isAdmin">
           <NuxtLink to="/debug" @click="closeMobileMenu">
             <AppIcon name="tool" size="md" class="nav-icon" />
-            Debug
+            {{ $t('menu.navigation.debug') }}
           </NuxtLink>
         </li>
         <li>
           <NuxtLink to="/funds" @click="closeMobileMenu" class="nav-link-with-warning">
             <div class="nav-link-content">
               <AppIcon name="credit-card" size="md" class="nav-icon" />
-              Billing & Usage
+              {{ $t('menu.navigation.billingUsage') }}
             </div>
             <div v-if="showBillingWarning" class="warning-indicator">
               <AppIcon name="info" size="sm" />
@@ -138,7 +138,7 @@
             <div class="nav-link-content">
               <AppIcon name="user" size="md" class="nav-icon" />
               <span style="max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom;">
-                {{ useNuxtApp().$userEmail || 'Account Settings' }}
+                {{ useNuxtApp().$userEmail || $t('menu.navigation.accountSettings') }}
               </span>
             </div>
             <div v-if="showAccountWarning" class="warning-indicator">
@@ -178,7 +178,7 @@
             class="nav-link logout-link"
           >
             <AppIcon name="logout" size="md" class="nav-icon" />
-            Logout
+            {{ $t('menu.navigation.logout') }}
           </a>
         </li>
       </ul>
@@ -187,7 +187,7 @@
     <!-- Test Client Selector Popup -->
     <AppPopup
       :show="showTestClientSelector"
-      title="Select Test Client"
+      :title="$t('menu.popup.selectTestClient.title')"
       size="md"
       @close="showTestClientSelector = false"
     >

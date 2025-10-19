@@ -5,8 +5,8 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">Email Verification</h2>
-      <p class="auth-subtitle">{{ subtitleText }}</p>
+      <h2 class="auth-title">{{ $t('verifyEmail.page.title') }}</h2>
+      <p class="auth-subtitle">{{ $t(subtitleKey) }}</p>
     </div>
 
     <div class="verification-status">
@@ -15,8 +15,8 @@
         <div class="status-icon">
           <i class="fas fa-spinner fa-spin"></i>
         </div>
-        <h3>Verifying your email...</h3>
-        <p>Please wait while we verify your email address.</p>
+        <h3>{{ $t('verifyEmail.status.loading.title') }}</h3>
+        <p>{{ $t('verifyEmail.status.loading.message') }}</p>
       </div>
 
       <!-- Success State -->
@@ -24,14 +24,14 @@
         <div class="status-icon">
           <i class="fas fa-check-circle"></i>
         </div>
-        <h3>Email Verified Successfully!</h3>
-        <p>Your email address has been verified. You can now access all features of your account.</p>
+        <h3>{{ $t('verifyEmail.status.success.title') }}</h3>
+        <p>{{ $t('verifyEmail.status.success.message') }}</p>
         <div class="status-actions">
           <button class="auth-button primary" @click="goToAccount">
-            Go to Account
+            {{ $t('verifyEmail.buttons.goToAccount') }}
           </button>
           <button class="auth-button secondary" @click="goToHome">
-            Go to Dashboard
+            {{ $t('verifyEmail.buttons.goToDashboard') }}
           </button>
         </div>
       </div>
@@ -41,14 +41,14 @@
         <div class="status-icon">
           <i class="fas fa-times-circle"></i>
         </div>
-        <h3>Verification Failed</h3>
+        <h3>{{ $t('verifyEmail.status.error.title') }}</h3>
         <p>{{ errorMessage }}</p>
         <div class="status-actions">
           <button class="auth-button primary" @click="resendVerification">
-            Resend Verification Email
+            {{ $t('verifyEmail.buttons.resendVerification') }}
           </button>
           <button class="auth-button secondary" @click="goToAccount">
-            Go to Account
+            {{ $t('verifyEmail.buttons.goToAccount') }}
           </button>
         </div>
       </div>
@@ -65,6 +65,7 @@ definePageMeta({ layout: 'bare' })
 // Get token_id from URL query params
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const tokenId = computed(() => route.query.token_id as string || null)
 
 // Reactive state
@@ -73,15 +74,15 @@ const verificationResult = ref<'success' | 'error' | null>(null)
 const errorMessage = ref('')
 
 // Computed subtitle text
-const subtitleText = computed(() => {
+const subtitleKey = computed(() => {
   if (isVerifying.value) {
-    return 'Processing your verification request...'
+    return 'verifyEmail.page.subtitleProcessing'
   } else if (verificationResult.value === 'success') {
-    return 'Your email has been successfully verified!'
+    return 'verifyEmail.page.subtitleSuccess'
   } else if (verificationResult.value === 'error') {
-    return 'There was a problem verifying your email.'
+    return 'verifyEmail.page.subtitleError'
   } else {
-    return 'Verifying your email address...'
+    return 'verifyEmail.page.subtitleDefault'
   }
 })
 
@@ -89,7 +90,7 @@ const subtitleText = computed(() => {
 const verifyEmail = async () => {
   if (!tokenId.value) {
     console.warn('No token_id found, redirecting to home')
-    await useNuxtApp().$confirmPopup.showInfo('No verification token found. You will be redirected to the homepage.')
+    await useNuxtApp().$confirmPopup.showInfo(t('verifyEmail.messages.noToken'))
     await router.push('/')
     return
   }
@@ -108,7 +109,7 @@ const verifyEmail = async () => {
     
     if (result) {
       verificationResult.value = 'success'
-      useNuxtApp().$toast.show('Email verified successfully!', 'success')
+      useNuxtApp().$toast.show(t('verifyEmail.messages.success'), 'success')
     } else {
       throw new Error('Verification failed')
     }
@@ -119,14 +120,14 @@ const verifyEmail = async () => {
     // Set appropriate error message based on error type
     if (error instanceof Error) {
       if (error.message.includes('expired') || error.message.includes('invalid')) {
-        errorMessage.value = 'The verification link has expired or is invalid. Please request a new verification email.'
+        errorMessage.value = t('verifyEmail.messages.error.expired')
       } else if (error.message.includes('already verified')) {
-        errorMessage.value = 'This email address has already been verified.'
+        errorMessage.value = t('verifyEmail.messages.error.alreadyVerified')
       } else {
-        errorMessage.value = 'Verification failed. Please try again or contact support if the problem persists.'
+        errorMessage.value = t('verifyEmail.messages.error.failed')
       }
     } else {
-      errorMessage.value = 'An unexpected error occurred during verification. Please try again.'
+      errorMessage.value = t('verifyEmail.messages.error.unexpected')
     }
     
     useNuxtApp().$toast.show(errorMessage.value, 'error')
@@ -149,11 +150,11 @@ const resendVerification = async () => {
     // Note: send_verification_email requires newEmail and password
     // This might need to be handled differently in your application
     // For now, we'll redirect to account page where user can manage email verification
-    useNuxtApp().$toast.show('Please go to your account settings to resend verification email.', 'info')
+    useNuxtApp().$toast.show(t('verifyEmail.messages.resendInfo'), 'info')
     await router.push('/account')
   } catch (error) {
     console.error('Failed to handle verification resend:', error)
-    useNuxtApp().$toast.show('Please try again from your account settings.', 'error')
+    useNuxtApp().$toast.show(t('verifyEmail.messages.resendError'), 'error')
   }
 }
 
@@ -161,7 +162,7 @@ const resendVerification = async () => {
 onMounted(async () => {
   if (!tokenId.value) {
     console.warn('No token_id provided, redirecting to home')
-    await useNuxtApp().$confirmPopup.showInfo('No verification token found. You will be redirected to the homepage.')
+    await useNuxtApp().$confirmPopup.showInfo(t('verifyEmail.messages.noToken'))
     await router.push('/')
     return
   }

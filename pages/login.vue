@@ -5,8 +5,8 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">Welcome Back</h2>
-      <p class="auth-subtitle">Sign in to your account</p>
+      <h2 class="auth-title">{{ $t('login.page.title') }}</h2>
+      <p class="auth-subtitle">{{ $t('login.page.subtitle') }}</p>
     </div>
     <MegaForm
       :formClass="LoginDto"
@@ -27,9 +27,11 @@ import { ref } from 'vue'
 
 definePageMeta({ layout: 'bare' })
 
+const { t } = useI18n()
+
 const links = [
-    { label: 'Trouble logging in? Reset your password', href: '/reset-password' },
-  { label: 'No account? Register here', href: '/register' },
+    { label: t('login.links.resetPassword'), href: '/reset-password' },
+  { label: t('login.links.register'), href: '/register' },
 ]
 
 const formData = ref({
@@ -44,8 +46,8 @@ const fieldOverrides: OverrideRecord<LoginDto> = {
   },
   expiresInSec: {
     type: 'checkbox',
-    label: 'Stay Connected (15 days)',
-    description: 'Keep me logged in for 15 days instead of the default session duration',
+    label: t('login.form.fields.expiresInSec.label'),
+    description: t('login.form.fields.expiresInSec.description'),
     mapValue: {
       true: 60*60*24*15,
       false: undefined
@@ -58,7 +60,7 @@ const excludeFields = ['twoFA_code']
 
 const actions: MegaFormAction[] = [
   {
-    label: 'Login',
+    label: t('login.form.buttons.submit'),
     color: 'primary',
     margin: 'right',
     callback: async (data: LoginDto) => {
@@ -66,7 +68,7 @@ const actions: MegaFormAction[] = [
 
       const res = await useNuxtApp().$sp.user.login(data);
       if(!res){
-        throw Error("Login failed");
+        throw Error(t('login.messages.error.loginFailed'));
       }
       const { userId, accessToken } = res;
 

@@ -5,8 +5,8 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">Create Account</h2>
-      <p class="auth-subtitle">Join us to start automating your customer support</p>
+      <h2 class="auth-title">{{ $t('register.page.title') }}</h2>
+      <p class="auth-subtitle">{{ $t('register.page.subtitle') }}</p>
     </div>
     <MegaForm
       :formClass="CreateAccountExtendedDto"
@@ -38,6 +38,7 @@ useHead({
 
 // Composables
 const { getRecaptchaToken } = useRecaptcha()
+const { t } = useI18n()
 
 const formData = ref({
   email: '',
@@ -52,26 +53,26 @@ const formData = ref({
 const fieldOverrides = {
   password: {
     type: 'password',
-    label: 'Password',
+    label: t('register.form.fields.password.label'),
     doubleCheck: true
   },
   email: {
     type: 'email',
-    label: 'Email'
+    label: t('register.form.fields.email.label')
   },
   acceptedEula: {
     type: 'checkbox',
-    label: 'I accept the [End User License Agreement](https://directsupport.ai/eula)'
+    label: t('register.form.fields.acceptedEula.label')
   },
   acceptedMarketing: {
     type: 'checkbox',
-    label: 'I agree to receive marketing communications'
+    label: t('register.form.fields.acceptedMarketing.label')
   }
 }
 
 const actions: MegaFormAction[] = [
   {
-    label: 'Register',
+    label: t('register.form.buttons.submit'),
     color: 'primary',
     margin: 'right',
     callback: async (data: CreateAccountExtendedDto) => {
@@ -79,7 +80,7 @@ const actions: MegaFormAction[] = [
         // Get reCAPTCHA token for account creation
         const recaptchaToken = await getRecaptchaToken('account_creation')
         if (!recaptchaToken) {
-          useNuxtApp().$toast.show('reCAPTCHA verification failed. Please try again.', 'error')
+          useNuxtApp().$toast.show(t('register.messages.error.recaptchaFailed'), 'error')
           return
         }
 

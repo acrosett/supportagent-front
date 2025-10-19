@@ -5,8 +5,8 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">{{ pageTitle }}</h2>
-      <p class="auth-subtitle">{{ pageSubtitle }}</p>
+      <h2 class="auth-title">{{ $t(tokenId ? 'resetPassword.page.titleReset' : 'resetPassword.page.titleForgot') }}</h2>
+      <p class="auth-subtitle">{{ $t(tokenId ? 'resetPassword.page.subtitleReset' : 'resetPassword.page.subtitleForgot') }}</p>
     </div>
 
     <!-- Send Reset Email Form (when no token_id) -->
@@ -44,34 +44,27 @@ definePageMeta({ layout: 'bare' })
 const route = useRoute()
 const tokenId = computed(() => route.query.token_id as string || null)
 
-// Computed page content based on mode
-const pageTitle = computed(() => 
-  tokenId.value ? 'Reset Your Password' : 'Forgot Password'
-)
-
-const pageSubtitle = computed(() => 
-  tokenId.value 
-    ? 'Enter your new password below' 
-    : 'Enter your email address to receive reset instructions'
-)
+// Remove computed page content as we're using i18n keys directly in template
 
 // Send Reset Email Form Data & Configuration
 const sendResetFormData = ref({
   email: ''
 })
 
+const { t } = useI18n()
+
 const sendResetFieldOverrides: OverrideRecord<SendPasswordResetEmailDto> = {
   email: {
     type: 'email',
-    placeholder: 'Enter your email address',
-    description: 'We\'ll send password reset instructions to this email address'
+    placeholder: t('resetPassword.form.fields.email.placeholder'),
+    description: t('resetPassword.form.fields.email.description')
   }
 }
 
 
 const sendResetActions: MegaFormAction[] = [
   {
-    label: 'Send Reset Email',
+    label: t('resetPassword.form.buttons.sendReset'),
     color: 'primary',
     margin: 'right',
     callback: async (data: SendPasswordResetEmailDto) => {
@@ -79,7 +72,7 @@ const sendResetActions: MegaFormAction[] = [
         await useNuxtApp().$sp.user.send_password_reset_emailS(data)
         
         useNuxtApp().$toast.show(
-          'Password reset instructions have been sent to your email address', 
+          t('resetPassword.messages.success.emailSent'), 
           'success'
         )
         
@@ -93,7 +86,7 @@ const sendResetActions: MegaFormAction[] = [
         
       } catch (error) {
         console.error('Failed to send reset email:', error)
-        throw new Error('Failed to send reset email. Please try again.')
+        throw new Error(t('resetPassword.messages.error.sendFailed'))
       }
     }
   }
@@ -111,14 +104,14 @@ const resetPasswordFieldOverrides: OverrideRecord<ResetPasswordDto> = {
 
   newPassword: {
     type: 'password',
-    placeholder: 'Enter your new password',
-    description: 'Must be at least 8 characters long',
+    placeholder: t('resetPassword.form.fields.newPassword.placeholder'),
+    description: t('resetPassword.form.fields.newPassword.description'),
     doubleCheck: true // Enable password confirmation
   },
     expiresInSec: {
     type: 'checkbox',
-    label: 'Stay Connected (15 days)',
-    description: 'Keep me logged in for 15 days instead of the default session duration',
+    label: t('resetPassword.form.fields.expiresInSec.label'),
+    description: t('resetPassword.form.fields.expiresInSec.description'),
     mapValue: {
       true: 60*60*24*15,
       false: undefined
@@ -129,12 +122,12 @@ const resetPasswordFieldOverrides: OverrideRecord<ResetPasswordDto> = {
 const resetPasswordExcludeFields = ['logMeIn', "token_id"] // Exclude as requested
 
 const resetPasswordLinks = [
-  { label: 'Back to login', href: '/login' }
+  { label: t('resetPassword.links.backToLogin'), href: '/login' }
 ]
 
 const resetPasswordActions: MegaFormAction[] = [
   {
-    label: 'Reset Password',
+    label: t('resetPassword.form.buttons.resetPassword'),
     color: 'primary',
     margin: 'right',
     callback: async (data: ResetPasswordDto) => {
@@ -149,7 +142,7 @@ const resetPasswordActions: MegaFormAction[] = [
         const res = await useNuxtApp().$sp.user.reset_passwordS(resetData)
         
         if (!res) {
-          throw new Error("Password reset failed")
+          throw new Error(t('resetPassword.messages.error.resetFailed'))
         }
         
         const { userId, accessToken } = res
@@ -160,7 +153,7 @@ const resetPasswordActions: MegaFormAction[] = [
         useNuxtApp().$userId = userId
         
         useNuxtApp().$toast.show(
-          'Password reset successfully! You are now logged in.', 
+          t('resetPassword.messages.success.resetComplete'), 
           'success'
         )
         
@@ -169,7 +162,7 @@ const resetPasswordActions: MegaFormAction[] = [
         
       } catch (error) {
         console.error('Failed to reset password:', error)
-        throw new Error('Failed to reset password. The reset link may be expired or invalid.')
+        throw new Error(t('resetPassword.messages.error.invalidToken'))
       }
     }
   }
