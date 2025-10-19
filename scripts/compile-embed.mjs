@@ -164,7 +164,7 @@ async function processHtmlFiles() {
   
   // Apply base translations to dev version too (English)
   try {
-    const basePath = path.join(repoRoot, 'translations', 'index.base.json')
+    const basePath = path.join(repoRoot, 'public', 'translations', 'index.base.json')
     const baseTranslations = JSON.parse(await fs.readFile(basePath, 'utf8'))
     devHtmlContent = replaceTranslationKeys(devHtmlContent, baseTranslations)
   } catch (error) {
@@ -176,7 +176,7 @@ async function processHtmlFiles() {
   let prodHtmlContent = replaceEnvVars(htmlContent, prodEnvVars)
   
   // Load translations for prod HTML files
-  const translationsDir = path.join(repoRoot, 'translations')
+  const translationsDir = path.join(repoRoot, 'public', 'translations')
   
   // Write to all output directories
   for (const outDir of outputDirs) {

@@ -10,6 +10,44 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   components: true,
   pages: true,
+  modules: [
+    '@nuxtjs/i18n'
+  ],
+  i18n: {
+    lazy: true,
+    langDir: 'public/translations/',
+    strategy: 'prefix_except_default',
+    defaultLocale: 'en',
+    locales: [
+      {
+        code: 'en',
+        name: 'English',
+        file: 'en/index.json'
+      },
+      {
+        code: 'fr', 
+        name: 'Français',
+        file: 'fr/index.json'
+      },
+      {
+        code: 'es',
+        name: 'Español', 
+        file: 'es/index.json'
+      },
+      {
+        code: 'de',
+        name: 'Deutsch',
+        file: 'de/index.json'
+      }
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root',
+      alwaysRedirect: false,
+      fallbackLocale: 'en'
+    }
+  },
   css: ['~/assets/main.scss', 'highlight.js/styles/github-dark.css' ],
   app: {
     head: {
