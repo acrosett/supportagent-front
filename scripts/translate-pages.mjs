@@ -65,34 +65,53 @@ async function translateBatchWithDeepL(texts, targetLang) {
  * @param {Object} obj 
  * @param {string[]} texts 
  * @param {Object} keyToTextMap 
+ * @param {Object} existingTranslations 
  */
-function extractTextsFromJson(obj, texts, keyToTextMap, prefix = '') {
+function extractTextsFromJson(obj, texts, keyToTextMap, existingTranslations, prefix = '') {
   Object.entries(obj).forEach(([key, value]) => {
     const fullKey = prefix ? `${prefix}.${key}` : key;
     
     if (typeof value === 'string') {
-      texts.push(value);
-      keyToTextMap[value] = fullKey;
+      // Check if translation already exists
+      const existingValue = getNestedValue(existingTranslations, fullKey);
+      if (!existingValue) {
+        texts.push(value);
+        keyToTextMap[value] = fullKey;
+      }
     } else if (typeof value === 'object' && value !== null) {
-      extractTextsFromJson(value, texts, keyToTextMap, fullKey);
+      extractTextsFromJson(value, texts, keyToTextMap, existingTranslations, fullKey);
     }
   });
+}
+
+/**
+ * Get nested value from object using dot notation
+ * @param {Object} obj 
+ * @param {string} path 
+ * @returns {*}
+ */
+function getNestedValue(obj, path) {
+  return path.split('.').reduce((current, key) => {
+    return current && current[key] !== undefined ? current[key] : null;
+  }, obj);
 }
 
 /**
  * Recursively apply translations to JSON object
  * @param {Object} obj 
  * @param {Object} translationMap 
+ * @param {Object} existingTranslations
  * @returns {Object}
  */
-function applyTranslationsToJson(obj, translationMap) {
+function applyTranslationsToJson(obj, translationMap, existingTranslations = {}) {
   const result = {};
   
   Object.entries(obj).forEach(([key, value]) => {
     if (typeof value === 'string') {
-      result[key] = translationMap[value] || value;
+      // Use existing translation if available, otherwise use new translation or original
+      result[key] = existingTranslations[key] || translationMap[value] || value;
     } else if (typeof value === 'object' && value !== null) {
-      result[key] = applyTranslationsToJson(value, translationMap);
+      result[key] = applyTranslationsToJson(value, translationMap, existingTranslations[key] || {});
     } else {
       result[key] = value;
     }
@@ -134,13 +153,15 @@ async function translatePageFile(pageFile, locale) {
       console.log(`📝 Creating new translation file: ${pageFile}`);
     }
     
-    // Extract all text strings that need translation
+    // Extract all text strings that need translation (skip existing ones)
     const textsToTranslate = [];
     const keyToTextMap = {};
-    extractTextsFromJson(sourceData, textsToTranslate, keyToTextMap);
+    extractTextsFromJson(sourceData, textsToTranslate, keyToTextMap, existingTranslations);
     
     if (textsToTranslate.length === 0) {
-      console.log(`⏭️  No text to translate in ${pageFile}`);
+      console.log(`⏭️  No new text to translate in ${pageFile} (all translations exist)`);
+      // Still need to merge existing translations with source structure
+      await fs.writeFile(targetFile, JSON.stringify(applyTranslationsToJson(sourceData, {}, existingTranslations), null, 2), 'utf-8');
       return;
     }
     
@@ -177,8 +198,8 @@ async function translatePageFile(pageFile, locale) {
       translationMap[text] = allTranslations[index];
     });
     
-    // Apply translations to create target structure
-    const translatedData = applyTranslationsToJson(sourceData, translationMap);
+    // Apply translations to create target structure, preserving existing translations
+    const translatedData = applyTranslationsToJson(sourceData, translationMap, existingTranslations);
     
     // Save translated file
     await fs.writeFile(targetFile, JSON.stringify(translatedData, null, 2), 'utf-8');

@@ -2,14 +2,14 @@
 
 ## File Review List (Groups of 7)
 
-### Group 1 - Authentication & User Management
-1. `pages/login.vue` - Login form and authentication messages
-2. `pages/register.vue` - User registration form and validation
-3. `pages/reset-password.vue` - Password reset functionality
-4. `pages/verify-email.vue` - Email verification page
-5. `pages/account.vue` - User account management and settings
-6. `components/AppMenu.vue` - Navigation menu items and tooltips
-7. `middleware/auth.global.ts` - Authentication middleware messages
+### Group 1 - Authentication & User Management ✅ COMPLETED
+1. ✅ `pages/login.vue` - Login form and authentication messages
+2. ✅ `pages/register.vue` - User registration form and validation
+3. ✅ `pages/reset-password.vue` - Password reset functionality
+4. ✅ `pages/verify-email.vue` - Email verification page
+5. ✅ `pages/account.vue` - User account management and settings
+6. ✅ `components/AppMenu.vue` - Navigation menu items and tooltips
+7. ✅ `middleware/auth.global.ts` - Authentication middleware messages (no user-facing text)
 
 ### Group 2 - Chat & Communication
 1. `pages/client-chat.vue` - Client chat interface
@@ -77,7 +77,6 @@
 You are tasked with refactoring Vue.js pages and components to support internationalization using Nuxt i18n. Focus ONLY on English translations - other languages will be handled separately.
 
 ### Setup Information
-- **Translation Files Location**: `public/translations/en/[page-name].json`
 - **i18n Module**: `@nuxtjs/i18n` is already configured
 - **Translation Function**: Use `$t()` for translations
 - **Key Format**: Use descriptive, hierarchical keys (e.g., `form.fields.email.label`)

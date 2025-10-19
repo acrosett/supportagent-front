@@ -474,7 +474,7 @@ const addWelcomeMessage = () => {
     console.log('Added welcome message:', welcomeMessage)
     
   // Play bip sound for welcome message if enabled
-  if (widgetConfig.value.soundOn) playBipSound()
+  // if (widgetConfig.value.soundOn) playBipSound()
     
     // Scroll to bottom to show welcome message
     nextTick(() => {

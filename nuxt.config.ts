@@ -40,10 +40,13 @@ export default defineNuxtConfig({
     ],
     detectBrowserLanguage: {
       useCookie: true,
-      cookieKey: 'i18n_redirected',
-      redirectOn: 'root',
+      cookieKey: 'i18n_locale',
+      cookieDomain: null,
+      cookieSecure: false,
+      redirectOn: 'no prefix',
       alwaysRedirect: false,
-      fallbackLocale: 'en'
+      fallbackLocale: 'en',
+      cookieCrossOrigin: false
     }
   },
   css: ['~/assets/main.scss', 'highlight.js/styles/github-dark.css' ],

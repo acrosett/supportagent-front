@@ -19,3 +19,6 @@ for exemple phoneNumber service dto for basic operations (find, create,delete ba
 
 for non base operations (cmds) you will find a dto in <method>.dto.ts
 
+No JSDoc ever.
+
+Do the i18n extraction when a display string is needed, only update i18n/locales/en.json don't do other languages

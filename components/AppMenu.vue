@@ -249,9 +249,29 @@ const toggleLanguageDropdown = () => {
 }
 
 const switchLanguage = async (localeCode: string) => {
-  await setLocale(localeCode as any)
-  showLanguageDropdown.value = false
-  closeMobileMenu()
+  try {
+    await setLocale(localeCode as any)
+    
+    // Manually set the cookie to ensure persistence
+    const cookieOptions = {
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax' as const
+    }
+    
+    // Set the cookie using Nuxt's useCookie composable
+    const localeCookie = useCookie('i18n_locale', cookieOptions)
+    localeCookie.value = localeCode
+    
+    showLanguageDropdown.value = false
+    closeMobileMenu()
+    
+    // Force page reload to ensure locale is properly applied
+    await navigateTo(useRoute().fullPath, { replace: true })
+  } catch (error) {
+    console.error('Failed to switch language:', error)
+  }
 }
 
 const handleTestChatClick = (event: Event) => {
@@ -382,6 +402,12 @@ onMounted(async () => {
   // Check admin role from stored value
   const nuxtApp = useNuxtApp()
   isAdmin.value = nuxtApp.$userRole === 'admin'
+  
+  // Ensure correct locale is set from cookie
+  const localeCookie = useCookie('i18n_locale')
+  if (localeCookie.value && localeCookie.value !== currentLocale.value) {
+    await setLocale(localeCookie.value as any)
+  }
   
   // Fetch product on init
   await fetchProduct()
