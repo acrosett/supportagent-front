@@ -14,31 +14,29 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n'
   ],
   i18n: {
-    lazy: true,
-    langDir: 'public/translations/',
     strategy: 'prefix_except_default',
     defaultLocale: 'en',
     locales: [
       {
         code: 'en',
         name: 'English',
-        file: 'en/index.json'
+        file: 'en.json'
       },
       {
         code: 'fr', 
         name: 'Français',
-        file: 'fr/index.json'
+        file: 'fr.json'
       },
-      {
-        code: 'es',
-        name: 'Español', 
-        file: 'es/index.json'
-      },
-      {
-        code: 'de',
-        name: 'Deutsch',
-        file: 'de/index.json'
-      }
+      // {
+      //   code: 'es',
+      //   name: 'Español', 
+      //   file: 'es.json'
+      // },
+      // {
+      //   code: 'de',
+      //   name: 'Deutsch',
+      //   file: 'de.json'
+      // }
     ],
     detectBrowserLanguage: {
       useCookie: true,

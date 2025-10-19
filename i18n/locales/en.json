@@ -1,0 +1,35 @@
+{
+    "dashboard": "Dashboard",
+    "menu": {
+        "brand": "DirectSupport.ai",
+        "navigation": {
+            "toggleMenu": "Toggle menu",
+            "dashboard": "Dashboard",
+            "editProduct": "Edit Product", 
+            "contactPriority": "Contact & Priority",
+            "faqManagement": "FAQ Management",
+            "widgetBuilder": "Widget Builder",
+            "conversations": "Conversations",
+            "issues": "Issues",
+            "customTools": "Custom Tools",
+            "testChat": "Test Chat",
+            "notifications": "Notifications",
+            "systemLogs": "System Logs",
+            "debug": "Debug",
+            "billingUsage": "Billing & Usage",
+            "accountSettings": "Account Settings",
+            "logout": "Logout",
+            "changeLanguage": "Change Language"
+        },
+        "popup": {
+            "selectTestClient": {
+                "title": "Select Test Client"
+            }
+        },
+        "messages": {
+            "confirm": {
+                "logout": "Are you sure you want to logout?"
+            }
+        }
+    }
+}

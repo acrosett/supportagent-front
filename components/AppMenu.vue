@@ -36,7 +36,7 @@
         <li>
           <NuxtLink to="/" @click="closeMobileMenu">
             <AppIcon name="home" size="md" class="nav-icon" />
-            Dashboard
+            {{$t('dashboard')}}
           </NuxtLink>
         </li>
         <li>
@@ -146,6 +146,31 @@
             </div>
           </NuxtLink>
         </li>
+        <li class="language-selector">
+          <div class="language-dropdown" :class="{ 'dropdown-open': showLanguageDropdown }">
+            <button 
+              @click="toggleLanguageDropdown"
+              class="language-btn"
+              :aria-label="$t('menu.navigation.changeLanguage')"
+            >
+              <img :src="currentFlagUrl" class="flag-icon" />
+              {{ currentLocaleDisplay }}
+              <AppIcon name="chevron-down" size="sm" class="dropdown-icon" :class="{ 'rotated': showLanguageDropdown }" />
+            </button>
+            <ul v-if="showLanguageDropdown" class="language-options">
+              <li v-for="locale in availableLocales" :key="locale.code">
+                <button 
+                  @click="switchLanguage(locale.code)"
+                  class="language-option"
+                  :class="{ 'active': locale.code === currentLocale }"
+                >
+                  <img :src="flagUrls[locale.code] || flagUrls['en']" class="flag-emoji" />
+                  {{ locale.name }}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </li>
         <li>
           <a 
             href="#"
@@ -188,12 +213,45 @@ const notificationCount = ref(0)
 // Test client selector state
 const showTestClientSelector = ref(false)
 
+// Language selector state
+const showLanguageDropdown = ref(false)
+const { locale: currentLocale, locales, setLocale } = useI18n()
+
+const availableLocales = computed(() => locales.value)
+const currentLocaleDisplay = computed(() => {
+  const current = locales.value.find(l => l.code === currentLocale.value)
+  return current?.name || 'EN'
+})
+
+
+
+const flagUrls: Record<string, string> = {
+  'en': 'https://kapowaz.github.io/square-flags/flags/gb.svg',
+  'fr': 'https://kapowaz.github.io/square-flags/flags/fr.svg',
+  'es': 'https://kapowaz.github.io/square-flags/flags/es.svg', 
+  'de': 'https://kapowaz.github.io/square-flags/flags/de.svg'
+}
+
+const currentFlagUrl = computed(() => {
+  return flagUrls[currentLocale.value] || flagUrls['en']
+})
+
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false
+}
+
+const toggleLanguageDropdown = () => {
+  showLanguageDropdown.value = !showLanguageDropdown.value
+}
+
+const switchLanguage = async (localeCode: string) => {
+  await setLocale(localeCode as any)
+  showLanguageDropdown.value = false
+  closeMobileMenu()
 }
 
 const handleTestChatClick = (event: Event) => {
@@ -557,6 +615,81 @@ onMounted(async () => {
   100% {
     box-shadow: 0 0 0 0 rgba($brand, 0);
   }
+}
+
+.language-selector {
+  position: relative;
+}
+
+.language-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: $muted;
+  font-weight: 500;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  border-left: 3px solid transparent;
+  
+  &:hover {
+    background-color: rgba(110, 231, 255, 0.06);
+    color: $brand;
+  }
+}
+
+.flag-icon {
+  width: 20px;
+  height: 15px;
+  margin-right: 0.75rem;
+}
+
+.language-options {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+  z-index: 1001;
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  color: #333;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  text-align: left;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+  
+  &.active {
+    background-color: #007bff;
+    color: white;
+  }
+}
+
+.flag-emoji {
+  width: 16px;
+  height: 12px;
+  margin-right: 8px;
 }
 
 .mobile-overlay {
