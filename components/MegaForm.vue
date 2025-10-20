@@ -7,6 +7,8 @@ import ChecklistInput, { type ChecklistOption } from './ChecklistInput.vue'
 import FieldTooltip from './FieldTooltip.vue'
 import ToggleSwitch from './ToggleSwitch.vue'
 
+const { t } = useLocalNamespace('MegaForm')
+
 // Component type mapping
 const componentTypeMap: Record<string, any> = {
   'richtext': RichTextEditor,
@@ -244,7 +246,7 @@ function validateForm() {
       
       if (isEmpty) {
         if (!errors.value[field.key]) errors.value[field.key] = []
-        errors.value[field.key]!.push(`${field.label} is required.`)
+        errors.value[field.key]!.push(`${field.label} ${t('validation.required')}`)
       }
     }
   })
@@ -255,7 +257,7 @@ function validateForm() {
       if (override?.doubleCheck && visibleFields.includes(key)) {
         if (formData[key] !== doubleCheckData[key]) {
           if (!errors.value[key]) errors.value[key] = []
-          errors.value[key].push('Fields do not match.')
+          errors.value[key].push(t('validation.fieldsDoNotMatch'))
         }
       }
     })
@@ -442,7 +444,7 @@ defineExpose({
               <span 
                 v-if="!field.isOptional"
                 class="megaform-required"
-                title="Required"
+                :title="t('labels.required')"
               >*</span>
               <span v-html="parseMarkdownLinks(field.label)"></span>
               <FieldTooltip
@@ -547,7 +549,7 @@ defineExpose({
           :disabled="fieldOverrides?.[field.key]?.props?.disabled"
           class="megaform-input megaform-select"
         >
-          <option value="" disabled>{{ field.placeholder || 'Select an option...' }}</option>
+          <option value="" disabled>{{ field.placeholder || t('placeholders.selectOption') }}</option>
           <option 
             v-for="option in fieldOverrides?.[field.key]?.selectOptions" 
             :key="option.value" 
@@ -573,7 +575,7 @@ defineExpose({
             type="button"
             class="megaform-password-toggle"
             @click="togglePasswordVisibility(field.key)"
-            :title="passwordVisibility[field.key] ? 'Hide password' : 'Show password'"
+            :title="passwordVisibility[field.key] ? t('buttons.hidePassword') : t('buttons.showPassword')"
           >
             <i :class="passwordVisibility[field.key] ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
           </button>
@@ -606,7 +608,7 @@ defineExpose({
             :id="field.key + '-hex'"
             :name="field.key + '-hex'"
             class="megaform-input megaform-color-hex"
-            placeholder="#FFFFFF"
+            :placeholder="t('placeholders.colorHex')"
             maxlength="7"
             style="width:110px;"
           />
@@ -615,8 +617,8 @@ defineExpose({
           v-else
           v-model="formData[field.key]"
           :disabled="fieldOverrides?.[field.key]?.props?.disabled"
-          :on-label="fieldOverrides?.[field.key]?.onLabel || 'ON'"
-          :off-label="fieldOverrides?.[field.key]?.offLabel || 'OFF'"
+          :on-label="fieldOverrides?.[field.key]?.onLabel || t('toggleSwitch.on')"
+          :off-label="fieldOverrides?.[field.key]?.offLabel || t('toggleSwitch.off')"
         />
         <!-- Double check input -->
         <div v-if="fieldOverrides?.[field.key]?.doubleCheck" class="megaform-field megaform-doublecheck" style="margin-top:0.5em;">
@@ -626,9 +628,9 @@ defineExpose({
                 <span 
                   v-if="!field.isOptional"
                   class="megaform-required"
-                  title="Required"
+                  :title="t('labels.required')"
                 >*</span>
-                {{ 'Confirm ' + field.label }}
+                {{ t('labels.confirm') + ' ' + field.label }}
               </div>
               <div 
                 v-if="fieldOverrides?.[field.key]?.maxChars"
@@ -644,7 +646,7 @@ defineExpose({
             v-model="doubleCheckData[field.key]"
             :id="field.key + '-double'"
             :name="field.key + '-double'"
-            :placeholder="'Confirm ' + field.label"
+            :placeholder="t('labels.confirm') + ' ' + field.label"
             :maxlength="fieldOverrides?.[field.key]?.maxChars"
             class="megaform-input"
           />

@@ -1,0 +1,45 @@
+{
+  "titles": {
+    "manageTags": "Manage Tags",
+    "createNewTag": "Create New Tag",
+    "deleteTag": "Delete Tag"
+  },
+  "sections": {
+    "availableTags": "Available Tags"
+  },
+  "messages": {
+    "noTags": "No tags available",
+    "deleteConfirmation": "Are you sure you want to delete the tag \"{{tagName}}\"?",
+    "deleteWarning": "This will remove the tag from all issues that use it.",
+    "tagAdded": "Tag added to issue",
+    "tagRemoved": "Tag removed from issue",
+    "tagCreated": "Tag created successfully",
+    "tagDeleted": "Tag deleted successfully",
+    "failedToAddTag": "Failed to add tag",
+    "failedToRemoveTag": "Failed to remove tag",
+    "failedToCreateTag": "Failed to create tag",
+    "failedToDeleteTag": "Failed to delete tag",
+    "failedToLoadTags": "Failed to load tags"
+  },
+  "buttons": {
+    "addToIssue": "Add to Issue",
+    "removeFromIssue": "Remove from Issue",
+    "createNewTag": "Create New Tag",
+    "createTag": "Create Tag",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "form": {
+    "fields": {
+      "tagColor": {
+        "label": "Tag Color",
+        "description": "Choose a color for this tag"
+      },
+      "tagName": {
+        "label": "Tag Name",
+        "placeholder": "Enter tag name...",
+        "description": "A unique name for this tag"
+      }
+    }
+  }
+}

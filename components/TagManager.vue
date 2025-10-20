@@ -1,16 +1,16 @@
 <template>
   <AppPopup
     :show="show"
-    title="Manage Tags"
+    :title="t('titles.manageTags')"
     @close="$emit('close')"
     max-width="600px"
   >
     <div class="tag-manager">
       <!-- Available Tags List -->
       <div class="available-tags-section">
-        <h4>Available Tags</h4>
+        <h4>{{ t('sections.availableTags') }}</h4>
         <div v-if="availableTags.length === 0" class="no-tags">
-          No tags available
+          {{ t('messages.noTags') }}
         </div>
         <div v-else class="tags-list">
           <div 
@@ -25,14 +25,14 @@
             <div class="tag-actions">
               <AppButton
                 v-if="!isTagSelected(tag.name)"
-                label="Add to Issue"
+                :label="t('buttons.addToIssue')"
                 color="primary"
                 size="sm"
                 @click="addTagToIssue(tag.name)"
               />
               <AppButton
                 v-else
-                label="Remove from Issue"
+                :label="t('buttons.removeFromIssue')"
                 color="warning"
                 size="sm"
                 @click="removeTagFromIssue(tag.name)"
@@ -52,7 +52,7 @@
       <!-- Create New Tag Button -->
       <div class="create-tag-section">
         <AppButton
-          label="Create New Tag"
+          :label="t('buttons.createNewTag')"
           color="ok"
           fa-icon-left="plus"
           @click="showCreateTagForm = true"
@@ -63,7 +63,7 @@
     <!-- Create Tag Form Popup -->
     <AppPopup
       :show="showCreateTagForm"
-      title="Create New Tag"
+      :title="t('titles.createNewTag')"
       @close="cancelCreateTag"
       max-width="500px"
     >
@@ -79,20 +79,20 @@
     <!-- Delete Confirmation Popup -->
     <AppPopup
       :show="deleteConfirmation.show"
-      title="Delete Tag"
+      :title="t('titles.deleteTag')"
       @close="cancelDeleteTag"
     >
-      <p>Are you sure you want to delete the tag "{{ deleteConfirmation.tag?.name }}"?</p>
-      <p class="warning-text">This will remove the tag from all issues that use it.</p>
+      <p>{{ t('messages.deleteConfirmation', { tagName: deleteConfirmation.tag?.name }) }}</p>
+      <p class="warning-text">{{ t('messages.deleteWarning') }}</p>
       
       <div class="popup-actions">
         <AppButton
-          label="Cancel"
+          :label="t('buttons.cancel')"
           color="secondary"
           @click="cancelDeleteTag"
         />
         <AppButton
-          label="Delete"
+          :label="t('buttons.delete')"
           color="error"
           margin="left"
           @click="confirmDeleteTag"
@@ -108,6 +108,8 @@ import AppPopup from '~/components/AppPopup.vue'
 import MegaForm, { MegaFormAction, FieldOverride, OverrideRecord } from '~/components/MegaForm.vue'
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { IssueTag } from '~/eicrud_exports/services/SUPPORT-ms/issue-tag/issue-tag.entity'
+
+const { t } = useLocalNamespace('TagManager')
 
 interface Props {
   show: boolean
@@ -139,20 +141,20 @@ const createTagEntity = ref({
 const fieldOverrides: OverrideRecord<IssueTag> = {
   color: {
     type: 'color',
-    label: 'Tag Color',
-    description: 'Choose a color for this tag'
+    label: t('form.fields.tagColor.label'),
+    description: t('form.fields.tagColor.description')
   },
   name: {
-    label: 'Tag Name',
-    placeholder: 'Enter tag name...',
-    description: 'A unique name for this tag'
+    label: t('form.fields.tagName.label'),
+    placeholder: t('form.fields.tagName.placeholder'),
+    description: t('form.fields.tagName.description')
   }
 }
 
 // Form actions for MegaForm
 const formActions: MegaFormAction[] = [
   {
-    label: 'Cancel',
+    label: t('buttons.cancel'),
     color: 'secondary',
     callback: () => {
       cancelCreateTag()
@@ -160,7 +162,7 @@ const formActions: MegaFormAction[] = [
     }
   },
   {
-    label: 'Create Tag',
+    label: t('buttons.createTag'),
     color: 'primary',
     margin: 'left',
     callback: (formData: any) => createNewTag(formData)
@@ -196,7 +198,7 @@ const loadAvailableTags = async () => {
     availableTags.value = response.data || []
   } catch (error) {
     console.error('Error loading available tags:', error)
-    useNuxtApp().$toast.show('Failed to load tags', 'error')
+    useNuxtApp().$toast.show(t('messages.failedToLoadTags'), 'error')
   } finally {
     isLoading.value = false
   }
@@ -229,11 +231,11 @@ const addTagToIssue = async (tagName: string) => {
       
       localTags.value = updatedTags
       emit('tagsUpdated', updatedTags)
-      useNuxtApp().$toast.show('Tag added to issue', 'success')
+      useNuxtApp().$toast.show(t('messages.tagAdded'), 'success')
     }
   } catch (error) {
     console.error('Error adding tag to issue:', error)
-    useNuxtApp().$toast.show('Failed to add tag', 'error')
+    useNuxtApp().$toast.show(t('messages.failedToAddTag'), 'error')
   }
 }
 
@@ -264,11 +266,11 @@ const removeTagFromIssue = async (tagName: string) => {
       
       localTags.value = updatedTags
       emit('tagsUpdated', updatedTags)
-      useNuxtApp().$toast.show('Tag removed from issue', 'success')
+      useNuxtApp().$toast.show(t('messages.tagRemoved'), 'success')
     }
   } catch (error) {
     console.error('Error removing tag from issue:', error)
-    useNuxtApp().$toast.show('Failed to remove tag', 'error')
+    useNuxtApp().$toast.show(t('messages.failedToRemoveTag'), 'error')
   }
 }
 
@@ -283,7 +285,7 @@ const createNewTag = async (tagData: any) => {
       product: nuxtApp.$userProductId
     }, {})
     
-    useNuxtApp().$toast.show('Tag created successfully', 'success')
+    useNuxtApp().$toast.show(t('messages.tagCreated'), 'success')
     showCreateTagForm.value = false
     
     // Reset form
@@ -293,7 +295,7 @@ const createNewTag = async (tagData: any) => {
     await loadAvailableTags()
   } catch (error) {
     console.error('Error creating tag:', error)
-    useNuxtApp().$toast.show('Failed to create tag', 'error')
+    useNuxtApp().$toast.show(t('messages.failedToCreateTag'), 'error')
   }
 }
 
@@ -320,13 +322,13 @@ const confirmDeleteTag = async () => {
     
     await $sp.issueTag.delete({ id: deleteConfirmation.tag.id }, {})
     
-    useNuxtApp().$toast.show('Tag deleted successfully', 'success')
+    useNuxtApp().$toast.show(t('messages.tagDeleted'), 'success')
     
     // Reload tags
     await loadAvailableTags()
   } catch (error) {
     console.error('Error deleting tag:', error)
-    useNuxtApp().$toast.show('Failed to delete tag', 'error')
+    useNuxtApp().$toast.show(t('messages.failedToDeleteTag'), 'error')
   }
 
   cancelDeleteTag()
