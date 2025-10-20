@@ -65,9 +65,9 @@
 6. ✅ `components/AppPopup.vue` - Generic popup component
 7. ✅ `layouts/default.vue` - Default page layout (widget config left as is)
 
-### Group 8 - Layout & Structure  
-1. `layouts/bare.vue` - Minimal layout
-2. Additional components or files discovered during refactoring
+### Group 8 - Layout & Structure ✅ COMPLETED
+1. ✅ `layouts/bare.vue` - Minimal layout (no user-facing strings)
+2. ✅ `utils/priority.ts` - Refactored formatPriority function for i18n compatibility
 
 ---
 

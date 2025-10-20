@@ -17,20 +17,15 @@ export const getPriorityEmoji = (priority: ClientPriority): string => {
   }
 }
 
-/**
- * Get a formatted string representation of the priority level
- * @param priority - The client priority level
- * @returns The formatted priority name
- */
-export const formatPriority = (priority: ClientPriority): string => {
+// Helper function to format priority with translation
+export const formatPriorityTranslated = (priority: ClientPriority): string => {
   switch (priority) {
     case ClientPriority.HIGH:
-      return 'High'
+      return t('config.priority.high')
     case ClientPriority.REGULAR:
-      return 'Regular'
+      return t('config.priority.regular')
     case ClientPriority.LOWEST:
-      return 'Lowest'
     default:
-      return 'Lowest'
+      return t('config.priority.lowest')
   }
 }

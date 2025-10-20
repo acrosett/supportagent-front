@@ -108,7 +108,7 @@
         >
           <div class="config-header">
             <h3 class="priority-title">
-              {{ formatPriority(config.clientPriority) }} Priority {{ getPriorityEmoji(config.clientPriority) }}
+              {{ formatPriorityTranslated(config.clientPriority) }} Priority {{ getPriorityEmoji(config.clientPriority) }}
             </h3>
             <div class="config-actions">
               <AppButton
@@ -289,7 +289,7 @@
     <!-- Edit Contact Config Popup -->
     <AppPopup
       :show="showConfigPopup"
-      :title="editingConfig ? `Edit ${formatPriority(editingConfig.clientPriority)} Priority Configuration ${getPriorityEmoji(editingConfig.clientPriority)}` : 'Edit Configuration'"
+      :title="editingConfig ? `Edit ${formatPriorityTranslated(editingConfig.clientPriority)} Priority Configuration ${getPriorityEmoji(editingConfig.clientPriority)}` : 'Edit Configuration'"
       size="lg"
       @close="closeConfigPopup"
     >
@@ -381,9 +381,11 @@ import { ContactConfig } from '~/eicrud_exports/services/WHATSAPP-ms/contact-con
 import { VerifyCodeDto } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/cmds/verify_code/verify_code.dto'
 import { SendVerifyDto } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/cmds/send_verify/send_verify.dto'
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
-import { getPriorityEmoji, formatPriority } from '~/utils/priority'
+import { getPriorityEmoji, formatPriorityTranslated } from '~/utils/priority'
 
 const { t } = useLocalNamespace('contact-priority')
+
+
 
 const phoneNumbers = ref<PhoneNumber[]>([])
 
