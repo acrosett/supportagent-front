@@ -11,21 +11,21 @@
       <!-- Loading State -->
       <div v-if="isLoadingLogs" class="loading-state">
         <div class="spinner"></div>
-        <p>{{ $t('LlmLogsPopup.loading') }}</p>
+        <p>{{ t('LlmLogsPopup.loading') }}</p>
       </div>
 
       <!-- No Logs State -->
       <div v-else-if="logs.length === 0" class="no-logs-state">
         <AppIcon name="document" size="lg" class="no-logs-icon" />
-        <h3>{{ $t('LlmLogsPopup.noLogs.title') }}</h3>
-        <p>{{ $t('LlmLogsPopup.noLogs.subtitle') }}</p>
+        <h3>{{ t('LlmLogsPopup.noLogs.title') }}</h3>
+        <p>{{ t('LlmLogsPopup.noLogs.subtitle') }}</p>
       </div>
 
       <!-- Logs Content -->
       <div v-else class="logs-list">
         <div class="logs-header">
-          <h4>{{ $t('LlmLogsPopup.header.title', { count: logs.length }) }}</h4>
-          <p class="logs-description">{{ $t('LlmLogsPopup.header.subtitle') }}</p>
+          <h4>{{ t('LlmLogsPopup.header.title', { count: logs.length }) }}</h4>
+          <p class="logs-description">{{ t('LlmLogsPopup.header.subtitle') }}</p>
         </div>
 
         <div
@@ -40,11 +40,11 @@
           <div class="log-header">
             <div class="log-info">
               <div class="log-meta">
-                <span class="log-agent">{{ log.agentName || $t('LlmLogsPopup.entry.unknownAgent') }}</span>
+                <span class="log-agent">{{ log.agentName || t('LlmLogsPopup.entry.unknownAgent') }}</span>
                 <span class="log-version">v{{ log.agentVersion || '1.0' }}</span>
                 <span class="test-badge">{{ log.id }}</span>
-                <span v-if="log.isTest" class="test-badge">{{ $t('LlmLogsPopup.entry.testBadge') }}</span>
-                <span v-if="log.errorCount > 0" class="error-badge">{{ $t('LlmLogsPopup.entry.errorBadge', { count: log.errorCount, plural: log.errorCount > 1 ? 'S' : '' }) }}</span>
+                <span v-if="log.isTest" class="test-badge">{{ t('LlmLogsPopup.entry.testBadge') }}</span>
+                <span v-if="log.errorCount > 0" class="error-badge">{{ t('LlmLogsPopup.entry.errorBadge', { count: log.errorCount, plural: log.errorCount > 1 ? 'S' : '' }) }}</span>
               </div>
               <div class="log-timestamp">
                 {{ formatDate(log.createdAt) }}
@@ -55,22 +55,22 @@
           <div class="log-content">
             <div class="log-section">
               <div class="log-section-header">
-                <h5>{{ $t('LlmLogsPopup.entry.sections.input') }}</h5>
+                <h5>{{ t('LlmLogsPopup.entry.sections.input') }}</h5>
                 <AppButton
                   v-if="log.llmInput"
-                  :label="$t('LlmLogsPopup.entry.copyButton')"
+                  :label="t('LlmLogsPopup.entry.copyButton')"
                   color="secondary"
                   margin="left"
                   size="small"
-                  @click="copyToClipboard(log.llmInput, $t('LlmLogsPopup.messages.copySuccess'))"
+                  @click="copyToClipboard(log.llmInput, t('LlmLogsPopup.messages.copySuccess'))"
                 />
               </div>
-              <div class="log-text">{{ log.llmInput || $t('LlmLogsPopup.entry.noInput') }}</div>
+              <div class="log-text">{{ log.llmInput || t('LlmLogsPopup.entry.noInput') }}</div>
             </div>
             
             <div class="log-section">
-              <h5>{{ $t('LlmLogsPopup.entry.sections.output') }}</h5>
-              <div class="log-text">{{ log.llmOutput || $t('LlmLogsPopup.entry.noOutput') }}</div>
+              <h5>{{ t('LlmLogsPopup.entry.sections.output') }}</h5>
+              <div class="log-text">{{ log.llmOutput || t('LlmLogsPopup.entry.noOutput') }}</div>
             </div>
           </div>
         </div>
@@ -83,21 +83,21 @@
     <!-- Loading State -->
     <div v-if="isLoadingLogs" class="loading-state">
       <div class="spinner"></div>
-      <p>{{ $t('LlmLogsPopup.loading') }}</p>
+      <p>{{ t('LlmLogsPopup.loading') }}</p>
     </div>
 
     <!-- No Logs State -->
     <div v-else-if="logs.length === 0" class="no-logs-state">
       <AppIcon name="document" size="lg" class="no-logs-icon" />
-      <h3>{{ $t('LlmLogsPopup.noLogs.title') }}</h3>
-      <p>{{ $t('LlmLogsPopup.noLogs.subtitle') }}</p>
+      <h3>{{ t('LlmLogsPopup.noLogs.title') }}</h3>
+      <p>{{ t('LlmLogsPopup.noLogs.subtitle') }}</p>
     </div>
 
     <!-- Logs Content -->
     <div v-else class="logs-list">
       <div class="logs-header">
-        <h4>{{ $t('LlmLogsPopup.header.title', { count: logs.length }) }}</h4>
-        <p class="logs-description">{{ $t('LlmLogsPopup.header.subtitle') }}</p>
+        <h4>{{ t('LlmLogsPopup.header.title', { count: logs.length }) }}</h4>
+        <p class="logs-description">{{ t('LlmLogsPopup.header.subtitle') }}</p>
       </div>
 
       <div
@@ -112,10 +112,10 @@
         <div class="log-header">
           <div class="log-info">
             <div class="log-meta">
-              <span class="log-agent">{{ log.agentName || $t('LlmLogsPopup.entry.unknownAgent') }}</span>
+              <span class="log-agent">{{ log.agentName || t('LlmLogsPopup.entry.unknownAgent') }}</span>
               <span class="log-version">v{{ log.agentVersion || '1.0' }}</span>
-              <span v-if="log.isTest" class="test-badge">{{ $t('LlmLogsPopup.entry.testBadge') }}</span>
-              <span v-if="log.errorCount > 0" class="error-badge">{{ $t('LlmLogsPopup.entry.errorBadge', { count: log.errorCount, plural: log.errorCount > 1 ? 'S' : '' }) }}</span>
+              <span v-if="log.isTest" class="test-badge">{{ t('LlmLogsPopup.entry.testBadge') }}</span>
+              <span v-if="log.errorCount > 0" class="error-badge">{{ t('LlmLogsPopup.entry.errorBadge', { count: log.errorCount, plural: log.errorCount > 1 ? 'S' : '' }) }}</span>
             </div>
             <div class="log-timestamp">
               {{ formatDate(log.createdAt) }}
@@ -126,22 +126,22 @@
         <div class="log-content">
           <div class="log-section">
             <div class="log-section-header">
-              <h5>{{ $t('LlmLogsPopup.entry.sections.input') }}</h5>
+              <h5>{{ t('LlmLogsPopup.entry.sections.input') }}</h5>
               <AppButton
                 v-if="log.llmInput"
-                :label="$t('LlmLogsPopup.entry.copyButton')"
+                :label="t('LlmLogsPopup.entry.copyButton')"
                 color="secondary"
                 margin="left"
                 size="small"
-                @click="copyToClipboard(log.llmInput, $t('LlmLogsPopup.messages.copySuccess'))"
+                @click="copyToClipboard(log.llmInput, t('LlmLogsPopup.messages.copySuccess'))"
               />
             </div>
-            <div class="log-text">{{ log.llmInput || $t('LlmLogsPopup.entry.noInput') }}</div>
+            <div class="log-text">{{ log.llmInput || t('LlmLogsPopup.entry.noInput') }}</div>
           </div>
           
           <div class="log-section">
-            <h5>{{ $t('LlmLogsPopup.entry.sections.output') }}</h5>
-            <div class="log-text">{{ log.llmOutput || $t('LlmLogsPopup.entry.noOutput') }}</div>
+            <h5>{{ t('LlmLogsPopup.entry.sections.output') }}</h5>
+            <div class="log-text">{{ log.llmOutput || t('LlmLogsPopup.entry.noOutput') }}</div>
           </div>
         </div>
       </div>

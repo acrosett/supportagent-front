@@ -1,33 +1,33 @@
 <template>
   <div class="page-container debug-page">
     <div class="page-header">
-      <h1>{{ $t('debug.page.title') }}</h1>
-      <p>{{ $t('debug.page.subtitle') }}</p>
+      <h1>{{ t('debug.page.title') }}</h1>
+      <p>{{ t('debug.page.subtitle') }}</p>
     </div>
 
     <div class="debug-sections">
       <!-- LLM Result Parsing Replay Section -->
       <div class="debug-section">
         <div class="section-header">
-          <h2>{{ $t('debug.llmReplay.title') }}</h2>
-          <p>{{ $t('debug.llmReplay.description') }}</p>
+          <h2>{{ t('debug.llmReplay.title') }}</h2>
+          <p>{{ t('debug.llmReplay.description') }}</p>
         </div>
         
         <div class="section-content">
           <div class="input-group">
-            <label for="trainingLogId">{{ $t('debug.llmReplay.form.trainingLogId.label') }}</label>
+            <label for="trainingLogId">{{ t('debug.llmReplay.form.trainingLogId.label') }}</label>
             <input
               id="trainingLogId"
               v-model="trainingLogId"
               type="text"
-              :placeholder="$t('debug.llmReplay.form.trainingLogId.placeholder')"
+              :placeholder="t('debug.llmReplay.form.trainingLogId.placeholder')"
               class="text-input"
             />
           </div>
           
           <div class="action-buttons">
             <AppButton
-              :label="$t('debug.llmReplay.form.button')"
+              :label="t('debug.llmReplay.form.button')"
               color="primary"
               :disabled="!trainingLogId.trim() || isReplaying"
               :loading="isReplaying"
@@ -37,7 +37,7 @@
           
           <!-- Result Display -->
           <div v-if="replayResult" class="result-section">
-            <h3>{{ $t('debug.llmReplay.results.title') }}</h3>
+            <h3>{{ t('debug.llmReplay.results.title') }}</h3>
             <div class="result-content">
               <pre>{{ JSON.stringify(replayResult, null, 2) }}</pre>
             </div>
@@ -45,7 +45,7 @@
           
           <!-- Error Display -->
           <div v-if="replayError" class="error-section">
-            <h3>{{ $t('debug.llmReplay.results.error') }}</h3>
+            <h3>{{ t('debug.llmReplay.results.error') }}</h3>
             <div class="error-content">
               <pre>{{ replayError }}</pre>
             </div>
@@ -56,14 +56,14 @@
       <!-- Delete Client Data Section -->
       <div class="debug-section">
         <div class="section-header">
-          <h2>{{ $t('debug.deleteClientData.title') }}</h2>
-          <p class="warning-text">{{ $t('debug.deleteClientData.warning') }}</p>
+          <h2>{{ t('debug.deleteClientData.title') }}</h2>
+          <p class="warning-text">{{ t('debug.deleteClientData.warning') }}</p>
         </div>
         
         <div class="section-content">
           <div class="action-buttons">
             <AppButton
-              :label="$t('debug.deleteClientData.button')"
+              :label="t('debug.deleteClientData.button')"
               color="error"
               :loading="isDeletingClientData"
               @click="deleteClientData"
@@ -75,8 +75,8 @@
       <!-- Effective Delete Account Section -->
       <div class="debug-section">
         <div class="section-header">
-          <h2>{{ $t('debug.effectiveDelete.title') }}</h2>
-          <p class="warning-text">{{ $t('debug.effectiveDelete.warning') }}</p>
+          <h2>{{ t('debug.effectiveDelete.title') }}</h2>
+          <p class="warning-text">{{ t('debug.effectiveDelete.warning') }}</p>
         </div>
         
         <div class="section-content">

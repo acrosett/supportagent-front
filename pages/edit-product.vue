@@ -2,7 +2,7 @@
   <div class="page-container edit-product-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>{{ isEditing ? $t('edit-product.page.title.edit') : $t('edit-product.page.title.create') }}</h1>
+        <h1>{{ isEditing ? t('edit-product.page.title.edit') : t('edit-product.page.title.create') }}</h1>
       </div>
     </header>
 
@@ -10,7 +10,7 @@
       
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>{{ $t('edit-product.page.loading') }}</p>
+        <p>{{ t('edit-product.page.loading') }}</p>
       </div>
       
       <MegaForm

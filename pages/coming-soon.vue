@@ -6,12 +6,12 @@
           <i class="fas fa-rocket"></i>
           <h1>DirectSupport.ai</h1>
         </a>
-        <h2 class="coming-soon-title">{{ $t('coming-soon.page.title') }}</h2>
-        <p class="coming-soon-subtitle">{{ $t('coming-soon.page.subtitle') }}</p>
+        <h2 class="coming-soon-title">{{ t('coming-soon.page.title') }}</h2>
+        <p class="coming-soon-subtitle">{{ t('coming-soon.page.subtitle') }}</p>
       </div>
 
       <div class="signup-form">
-        <h3>{{ $t('coming-soon.signup.title') }}</h3>
+        <h3>{{ t('coming-soon.signup.title') }}</h3>
         <MegaForm
           :formClass="WaitingList"
           v-model="formData"
@@ -22,11 +22,11 @@
       </div>
 
       <div class="features-preview">
-        <h4>{{ $t('coming-soon.features.title') }}</h4>
+        <h4>{{ t('coming-soon.features.title') }}</h4>
         <ul class="feature-list">
-          <li><i class="fas fa-check"></i> {{ $t('coming-soon.features.list.embeddedChat') }}</li>
-          <li><i class="fas fa-check"></i> {{ $t('coming-soon.features.list.whatsapp') }}</li>
-          <li><i class="fas fa-check"></i> {{ $t('coming-soon.features.list.knowledgeBase') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('coming-soon.features.list.embeddedChat') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('coming-soon.features.list.whatsapp') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('coming-soon.features.list.knowledgeBase') }}</li>
         </ul>
       </div>
     </div>

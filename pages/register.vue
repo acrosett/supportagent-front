@@ -5,8 +5,8 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">{{ $t('page.title') }}</h2>
-      <p class="auth-subtitle">{{ $t('page.subtitle') }}</p>
+      <h2 class="auth-title">{{ t('page.title') }}</h2>
+      <p class="auth-subtitle">{{ t('page.subtitle') }}</p>
     </div>
     <MegaForm
       :formClass="CreateAccountExtendedDto"

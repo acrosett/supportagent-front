@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, watch, nextTick, computed } from 'vue'
 
 import { useLocalNamespace } from '~/composables/useLocalNamespace'
 const { t } = useLocalNamespace('rich-text-editor')
@@ -22,10 +22,15 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
-  placeholder: () => t('defaultPlaceholder')
+  placeholder: ''
 })
 
 const emit = defineEmits<Emits>()
+
+// Use computed placeholder that falls back to translation if no placeholder is provided
+const effectivePlaceholder = computed(() => {
+  return props.placeholder || t('defaultPlaceholder')
+})
 
 const editorElement = ref<HTMLElement>()
 const isClient = ref(false)
@@ -66,7 +71,7 @@ onMounted(async () => {
     
     easymde = new EasyMDE({
       element: textarea,
-      placeholder: props.placeholder,
+      placeholder: effectivePlaceholder.value,
       spellChecker: false,
       status: false,
       toolbar: toolbar

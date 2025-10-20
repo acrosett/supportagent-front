@@ -22,10 +22,12 @@ export function useLocalNamespace(ns: string) {
     loading.value = true
     try {
       // Vite handles JSON imports both on server (SSR) and client
-      const mod = await import(`~/locales/${loc}/${ns}.json`)
+      const mod = await import(`~/i18n/locales/${loc}/${ns}.json`)
       // Set/replace this component's local messages for the active locale
+      console.log(`Loaded local namespace for locale '${loc}' and namespace '${ns}'`)
       i18n.setLocaleMessage(loc, mod.default ?? mod)
     } catch (e) {
+      console.error(`Could not load local namespace for locale '${loc}' and namespace '${ns}':`, e)
       // Optional: fall back to empty to avoid runtime errors
       i18n.setLocaleMessage(loc, {})
     } finally {

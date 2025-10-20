@@ -135,22 +135,22 @@ Transform code like this:
 <p v-if="error">Something went wrong</p>
 
 <!-- AFTER -->
-<h1>{{ $t('account.title') }}</h1>
-<button>{{ $t('account.buttons.save') }}</button>
-<p v-if="error">{{ $t('account.messages.error') }}</p>
+<h1>{{ t('account.title') }}</h1>
+<button>{{ t('account.buttons.save') }}</button>
+<p v-if="error">{{ t('account.messages.error') }}</p>
 ```
 
 #### 4. **Handle Dynamic Content**
 For pluralization:
 ```vue
 <!-- Use plural forms -->
-<p>{{ $t('messages.itemCount', { count: items.length }) }}</p>
+<p>{{ t('messages.itemCount', { count: items.length }) }}</p>
 ```
 
 For interpolation:
 ```vue
 <!-- Include variables -->
-<p>{{ $t('messages.welcome', { name: user.name }) }}</p>
+<p>{{ t('messages.welcome', { name: user.name }) }}</p>
 ```
 
 #### 5. **Update Each File**
@@ -238,21 +238,21 @@ For each file you refactor:
 ```vue
 <template>
   <div class="login-page">
-    <h1>{{ $t('login.page.title') }}</h1>
+    <h1>{{ t('login.page.title') }}</h1>
     <form @submit="handleLogin">
       <input 
         type="email" 
-        :placeholder="$t('login.form.fields.email.placeholder')" 
+        :placeholder="t('login.form.fields.email.placeholder')" 
         v-model="email"
       >
       <input 
         type="password" 
-        :placeholder="$t('login.form.fields.password.placeholder')" 
+        :placeholder="t('login.form.fields.password.placeholder')" 
         v-model="password"
       >
-      <button type="submit">{{ $t('login.form.buttons.submit') }}</button>
+      <button type="submit">{{ t('login.form.buttons.submit') }}</button>
     </form>
-    <p v-if="error">{{ $t('login.messages.error.invalidCredentials') }}</p>
+    <p v-if="error">{{ t('login.messages.error.invalidCredentials') }}</p>
   </div>
 </template>
 ```

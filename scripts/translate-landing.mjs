@@ -71,11 +71,11 @@ async function createTranslationFile(locale) {
     console.log(`🌍 Creating/updating translation file for locale: ${locale}`);
     
     // Read base key mappings
-    const basePath = path.join(projectRoot, 'public', 'translations', 'index.base.json');
+    const basePath = path.join(projectRoot, 'i18n', 'locales', 'index.base.json');
     const baseKeyMap = JSON.parse(await fs.readFile(basePath, 'utf-8'));
     
     // Read existing translation file if it exists
-    const translationPath = path.join(projectRoot, 'public', 'translations', `index.${locale}.json`);
+    const translationPath = path.join(projectRoot, 'i18n', 'locales', `index.${locale}.json`);
     let existingTranslations = {};
     
     try {

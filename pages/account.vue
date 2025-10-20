@@ -2,8 +2,8 @@
   <section class="page-container account-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>{{ $t('page.title') }}</h1>
-        <p class="page-description">{{ $t('page.description') }}</p>
+        <h1>{{ t('page.title') }}</h1>
+        <p class="page-description">{{ t('page.description') }}</p>
       </div>
     </header>
 
@@ -12,8 +12,8 @@
       <div class="warning-header">
         <AppIcon name="info" size="lg" class="warning-icon" />
         <div class="warning-content">
-          <h2>{{ $t('deletion.title') }}</h2>
-          <p>{{ $t('deletion.scheduledMessage', { date: formatDeletionDate(product.flaggedForDeletion) }) }}</p>
+          <h2>{{ t('deletion.title') }}</h2>
+          <p>{{ t('deletion.scheduledMessage', { date: formatDeletionDate(product.flaggedForDeletion) }) }}</p>
           <p class="deletion-countdown">{{ getDeletionCountdown(product.flaggedForDeletion) }}</p>
         </div>
       </div>
@@ -22,16 +22,16 @@
     <!-- Email Verification Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ $t('email.title') }}</h2>
-        <p class="section-description">{{ $t('email.description') }}</p>
+        <h2>{{ t('email.title') }}</h2>
+        <p class="section-description">{{ t('email.description') }}</p>
       </div>
       
       <div class="email-status-container">
         <div class="current-email">
-          <label class="current-label">{{ $t('email.emailAddress') }}:</label>
-          <span class="current-value">{{ userEmail || $t('common.loading') }}</span>
+          <label class="current-label">{{ t('email.emailAddress') }}:</label>
+          <span class="current-value">{{ userEmail || t('common.loading') }}</span>
            <AppButton
-              :label="$t('email.updateEmail')"
+              :label="t('email.updateEmail')"
               color="secondary"
               size="sm"
               margin="left"
@@ -42,13 +42,13 @@
         <div class="verification-status">
           <div v-if="emailVerified" class="status-verified">
             <AppIcon name="check" size="md" class="status-icon" />
-            <span class="status-text">{{ $t('email.verified') }}</span>
+            <span class="status-text">{{ t('email.verified') }}</span>
           </div>
           <div v-else class="status-unverified">
             <AppIcon name="info" size="md" class="status-icon" />
-            <span class="status-text">{{ $t('email.notVerified') }}</span>
+            <span class="status-text">{{ t('email.notVerified') }}</span>
             <AppButton
-              :label="$t('email.sendVerification')"
+              :label="t('email.sendVerification')"
               color="primary"
               size="sm"
               margin="left"
@@ -63,22 +63,22 @@
     <!-- Two-Factor Authentication Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ $t('twoFA.title') }}</h2>
-        <p class="section-description">{{ $t('twoFA.description') }}</p>
+        <h2>{{ t('twoFA.title') }}</h2>
+        <p class="section-description">{{ t('twoFA.description') }}</p>
       </div>
 
       <div class="twofa-container">
         <div class="twofa-status">
           <div class="twofa-info">
-            <h3>{{ twoFactorEnabled ? $t('twoFA.enabled') : $t('twoFA.disabled') }}</h3>
+            <h3>{{ twoFactorEnabled ? t('twoFA.enabled') : t('twoFA.disabled') }}</h3>
             <p v-if="!emailVerified" class="twofa-requirement">
-              {{ $t('twoFA.requirement') }}
+              {{ t('twoFA.requirement') }}
             </p>
             <p v-else-if="!twoFactorEnabled" class="twofa-description">
-              {{ $t('twoFA.enableDescription') }}
+              {{ t('twoFA.enableDescription') }}
             </p>
             <p v-else class="twofa-description">
-              {{ $t('twoFA.protectedMessage') }}
+              {{ t('twoFA.protectedMessage') }}
             </p>
           </div>
           
@@ -100,7 +100,7 @@
     <!-- Change Password Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>{{ $t('password.title') }}</h2>
+        <h2>{{ t('password.title') }}</h2>
         <p class="section-description">Update your account password</p>
       </div>
 
@@ -116,7 +116,7 @@
     <!-- Delete Account Section -->
     <div class="content-section" :class="{ 'danger-section': product?.flaggedForDeletion }">
       <div class="section-header">
-        <h2>{{ $t('deleteAccount.title') }}</h2>
+        <h2>{{ t('deleteAccount.title') }}</h2>
         <p class="section-description">Permanently delete your account and all associated data</p>
       </div>
 
@@ -146,13 +146,13 @@
         <div class="danger-actions">
           <AppButton
             v-if="!product?.flaggedForDeletion"
-            :label="$t('deleteAccount.deleteButton')"
+            :label="t('deleteAccount.deleteButton')"
             color="error"
             @click="handleDeleteAccount"
           />
           <AppButton
             v-else
-            :label="$t('deleteAccount.cancelButton')"
+            :label="t('deleteAccount.cancelButton')"
             color="ok"
             @click="handleCancelDeletion"
           />
@@ -163,11 +163,11 @@
     <!-- Email Change Popup -->
     <AppPopup 
       :show="showEmailChangePopup"
-      :title="$t('email.popup.title')"
+      :title="t('email.popup.title')"
       @close="closeEmailChangePopup"
     >
       <div class="popup-description">
-        <p>{{ $t('email.popup.description') }}</p>
+        <p>{{ t('email.popup.description') }}</p>
       </div>
       
       <MegaForm

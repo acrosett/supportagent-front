@@ -5,7 +5,7 @@
         <i class="fas fa-robot"></i>
         <h1>DirectSupport.ai</h1>
       </div>
-      <h2 class="auth-title">{{ $t('page.title') }}</h2>
+      <h2 class="auth-title">{{ t('page.title') }}</h2>
       <p class="auth-subtitle">{{ $t(subtitleKey) }}</p>
     </div>
 
@@ -15,8 +15,8 @@
         <div class="status-icon">
           <i class="fas fa-spinner fa-spin"></i>
         </div>
-        <h3>{{ $t('status.loading.title') }}</h3>
-        <p>{{ $t('status.loading.message') }}</p>
+        <h3>{{ t('status.loading.title') }}</h3>
+        <p>{{ t('status.loading.message') }}</p>
       </div>
 
       <!-- Success State -->
@@ -24,14 +24,14 @@
         <div class="status-icon">
           <i class="fas fa-check-circle"></i>
         </div>
-        <h3>{{ $t('status.success.title') }}</h3>
-        <p>{{ $t('status.success.message') }}</p>
+        <h3>{{ t('status.success.title') }}</h3>
+        <p>{{ t('status.success.message') }}</p>
         <div class="status-actions">
           <button class="auth-button primary" @click="goToAccount">
-            {{ $t('buttons.goToAccount') }}
+            {{ t('buttons.goToAccount') }}
           </button>
           <button class="auth-button secondary" @click="goToHome">
-            {{ $t('buttons.goToDashboard') }}
+            {{ t('buttons.goToDashboard') }}
           </button>
         </div>
       </div>
@@ -41,14 +41,14 @@
         <div class="status-icon">
           <i class="fas fa-times-circle"></i>
         </div>
-        <h3>{{ $t('status.error.title') }}</h3>
+        <h3>{{ t('status.error.title') }}</h3>
         <p>{{ errorMessage }}</p>
         <div class="status-actions">
           <button class="auth-button primary" @click="resendVerification">
-            {{ $t('buttons.resendVerification') }}
+            {{ t('buttons.resendVerification') }}
           </button>
           <button class="auth-button secondary" @click="goToAccount">
-            {{ $t('buttons.goToAccount') }}
+            {{ t('buttons.goToAccount') }}
           </button>
         </div>
       </div>
