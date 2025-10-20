@@ -34,6 +34,18 @@
   },
   "form": {
     "fields": {
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Select or add tags"
+      },
+      "question": {
+        "label": "Question",
+        "placeholder": "Enter the FAQ question here"
+      },
+      "answer": {
+        "label": "Answer",
+        "placeholder": "Enter the FAQ answer here"
+      }
     },
     "buttons": {
       "cancel": "Cancel",

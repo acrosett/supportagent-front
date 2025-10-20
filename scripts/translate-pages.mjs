@@ -12,13 +12,7 @@ const projectRoot = path.resolve(__dirname, '..');
 // Load environment variables
 config();
 
-/**
- * Translate multiple texts using DeepL API (batch translation)
- * @param {string[]} texts 
- * @param {string} targetLang 
- * @returns {Promise<string[]>}
- */
-async function translateBatchWithDeepL(texts, targetLang) {
+async function translateBatchWithDeepL(textItems, targetLang) {
   const apiKey = process.env.DEEPL_API_KEY;
   if (!apiKey) {
     throw new Error('DEEPL_API_KEY not found in environment variables');
@@ -29,9 +23,12 @@ async function translateBatchWithDeepL(texts, targetLang) {
   const formData = new URLSearchParams();
   formData.append('auth_key', apiKey);
   
-  // Add each text as a separate 'text' parameter
-  texts.forEach(text => {
-    formData.append('text', text);
+  // Add each text and its context as separate parameters
+  textItems.forEach(item => {
+    formData.append('text', item.text);
+    if (item.context) {
+      formData.append('context', item.context);
+    }
   });
   
   formData.append('source_lang', 'EN');
@@ -56,18 +53,15 @@ async function translateBatchWithDeepL(texts, targetLang) {
   } catch (error) {
     console.error(`❌ Batch translation failed:`, error.message);
     // Return original texts if translation fails
-    return texts;
+    return textItems.map(item => item.text);
   }
 }
 
-/**
- * Recursively translate JSON object values
- * @param {Object} obj 
- * @param {string[]} texts 
- * @param {Object} keyToTextMap 
- * @param {Object} existingTranslations 
- */
-function extractTextsFromJson(obj, texts, keyToTextMap, existingTranslations, prefix = '') {
+function generateContextHint(keyPath) {
+  return `UI text for: ${keyPath}`;
+}
+
+function extractTextsFromJson(obj, textItems, keyToTextMap, existingTranslations, prefix = '') {
   Object.entries(obj).forEach(([key, value]) => {
     const fullKey = prefix ? `${prefix}.${key}` : key;
     
@@ -75,34 +69,26 @@ function extractTextsFromJson(obj, texts, keyToTextMap, existingTranslations, pr
       // Check if translation already exists
       const existingValue = getNestedValue(existingTranslations, fullKey);
       if (!existingValue) {
-        texts.push(value);
+        const context = generateContextHint(fullKey);
+        textItems.push({
+          text: value,
+          context: context,
+          keyPath: fullKey
+        });
         keyToTextMap[value] = fullKey;
       }
     } else if (typeof value === 'object' && value !== null) {
-      extractTextsFromJson(value, texts, keyToTextMap, existingTranslations, fullKey);
+      extractTextsFromJson(value, textItems, keyToTextMap, existingTranslations, fullKey);
     }
   });
 }
 
-/**
- * Get nested value from object using dot notation
- * @param {Object} obj 
- * @param {string} path 
- * @returns {*}
- */
 function getNestedValue(obj, path) {
   return path.split('.').reduce((current, key) => {
     return current && current[key] !== undefined ? current[key] : null;
   }, obj);
 }
 
-/**
- * Recursively apply translations to JSON object
- * @param {Object} obj 
- * @param {Object} translationMap 
- * @param {Object} existingTranslations
- * @returns {Object}
- */
 function applyTranslationsToJson(obj, translationMap, existingTranslations = {}) {
   const result = {};
   
@@ -120,11 +106,6 @@ function applyTranslationsToJson(obj, translationMap, existingTranslations = {})
   return result;
 }
 
-/**
- * Translate a single page file for a specific locale
- * @param {string} pageFile 
- * @param {string} locale 
- */
 async function translatePageFile(pageFile, locale) {
   const sourceFile = path.join(projectRoot, 'i18n', 'locales', 'en', pageFile);
   const targetFile = path.join(projectRoot, 'i18n', 'locales', locale, pageFile);
@@ -154,26 +135,32 @@ async function translatePageFile(pageFile, locale) {
     }
     
     // Extract all text strings that need translation (skip existing ones)
-    const textsToTranslate = [];
+    const textItemsToTranslate = [];
     const keyToTextMap = {};
-    extractTextsFromJson(sourceData, textsToTranslate, keyToTextMap, existingTranslations);
+    extractTextsFromJson(sourceData, textItemsToTranslate, keyToTextMap, existingTranslations);
     
-    if (textsToTranslate.length === 0) {
+    if (textItemsToTranslate.length === 0) {
       console.log(`⏭️  No new text to translate in ${pageFile} (all translations exist)`);
       // Still need to merge existing translations with source structure
       await fs.writeFile(targetFile, JSON.stringify(applyTranslationsToJson(sourceData, {}, existingTranslations), null, 2), 'utf-8');
       return;
     }
     
-    // Batch translate all texts
-    console.log(`🔄 Translating ${textsToTranslate.length} strings...`);
+    // Show context examples for first few items
+    console.log(`🔄 Translating ${textItemsToTranslate.length} strings with context...`);
+    if (textItemsToTranslate.length > 0) {
+      console.log(`📋 Example contexts:`);
+      textItemsToTranslate.slice(0, 3).forEach(item => {
+        console.log(`   "${item.text}" → ${item.context}`);
+      });
+    }
     
     // Split into smaller batches to avoid API limits
     const batchSize = 50;
     const batches = [];
     
-    for (let i = 0; i < textsToTranslate.length; i += batchSize) {
-      batches.push(textsToTranslate.slice(i, i + batchSize));
+    for (let i = 0; i < textItemsToTranslate.length; i += batchSize) {
+      batches.push(textItemsToTranslate.slice(i, i + batchSize));
     }
     
     const allTranslations = [];
@@ -194,8 +181,8 @@ async function translatePageFile(pageFile, locale) {
     
     // Create translation map
     const translationMap = {};
-    textsToTranslate.forEach((text, index) => {
-      translationMap[text] = allTranslations[index];
+    textItemsToTranslate.forEach((item, index) => {
+      translationMap[item.text] = allTranslations[index];
     });
     
     // Apply translations to create target structure, preserving existing translations
@@ -212,10 +199,6 @@ async function translatePageFile(pageFile, locale) {
   }
 }
 
-/**
- * Translate all page files for a specific locale
- * @param {string} locale 
- */
 async function translateAllPages(locale) {
   const englishDir = path.join(projectRoot, 'i18n', 'locales', 'en');
   
@@ -238,9 +221,6 @@ async function translateAllPages(locale) {
   }
 }
 
-/**
- * Main function
- */
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0];

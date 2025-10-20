@@ -15,10 +15,6 @@ export class NotificationSubConfig {
 
 export class NotificationConfig {
 
-    @IsNumber()
-    @Min(0)
-    @IsOptional()
-    notificationUnreadCount: number = 0;
 
     @IsBoolean()
     @IsOptional()
@@ -103,6 +99,11 @@ export class Product {
 
     @IsOptional()
     notificationConfig: NotificationConfig = new NotificationConfig();
+
+    @IsNumber()
+    @Min(0)
+    @IsOptional()
+    notificationUnreadCount: number = 0;
 
     // Error tracking
     @IsNumber()

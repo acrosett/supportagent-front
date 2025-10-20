@@ -30,7 +30,10 @@
       "label": "Options",
       "enabledLabel": "ENABLED",
       "disabledLabel": "DISABLED",
-      "off": "OFF"
+      "off": "OFF",
+      "on": "ON",
+      "yes": "YES",
+      "no": "NO"
     },
     "welcomeMessage": {
       "label": "Welcome Message",

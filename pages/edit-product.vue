@@ -2,7 +2,7 @@
   <div class="page-container edit-product-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>{{ isEditing ? t('edit-product.page.title.edit') : t('edit-product.page.title.create') }}</h1>
+        <h1>{{ isEditing ? t('page.title.edit') : t('page.title.create') }}</h1>
       </div>
     </header>
 
@@ -10,7 +10,7 @@
       
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>{{ t('edit-product.page.loading') }}</p>
+        <p>{{ t('page.loading') }}</p>
       </div>
       
       <MegaForm
@@ -37,7 +37,7 @@ const { t } = await useLocalNamespaceAsync('edit-product')
 
 // Meta
 useHead({
-  title: () => t('edit-product.meta.title')
+  title: () => t('meta.title')
 })
 
 const router = useRouter()
@@ -100,42 +100,42 @@ onMounted(() => {
 
 const fieldOverrides: OverrideRecord<Product> = {
   name: {
-    label: t('edit-product.form.fields.name.label'),
-    placeholder: t('edit-product.form.fields.name.placeholder'),
-    description: t('edit-product.form.fields.name.description')
+    label: t('form.fields.name.label'),
+    placeholder: t('form.fields.name.placeholder'),
+    description: t('form.fields.name.description')
   },
   chatOn: {
-    label: t('edit-product.form.fields.chatOn.label'),
-    description: t('edit-product.form.fields.chatOn.description'),
+    label: t('form.fields.chatOn.label'),
+    description: t('form.fields.chatOn.description'),
     titleColor: () => !formData.value.chatOn ? colors.error() : undefined,
   },
   disableGuests: {
-    label: t('edit-product.form.fields.disableGuests.label'),
-    description: t('edit-product.form.fields.disableGuests.description'),
+    label: t('form.fields.disableGuests.label'),
+    description: t('form.fields.disableGuests.description'),
     
   },
   description: {
     maxChars: 4000,
-    label: t('edit-product.form.fields.description.label'),
+    label: t('form.fields.description.label'),
     type: 'richtext',
-    description: t('edit-product.form.fields.description.description'),
+    description: t('form.fields.description.description'),
   },
   webhookUrl: {
-    label: t('edit-product.form.fields.webhookUrl.label'),
-    placeholder: t('edit-product.form.fields.webhookUrl.placeholder'),
-    description: t('edit-product.form.fields.webhookUrl.description'),
+    label: t('form.fields.webhookUrl.label'),
+    placeholder: t('form.fields.webhookUrl.placeholder'),
+    description: t('form.fields.webhookUrl.description'),
   },
   sharedSecret: {
-    label: t('edit-product.form.fields.sharedSecret.label'),
+    label: t('form.fields.sharedSecret.label'),
     type: 'password',
-    placeholder: t('edit-product.form.fields.sharedSecret.placeholder'),
-    description: t('edit-product.form.fields.sharedSecret.description')
+    placeholder: t('form.fields.sharedSecret.placeholder'),
+    description: t('form.fields.sharedSecret.description')
   }
 }
 
 const actions: MegaFormAction[] = [
   {
-    label: isEditing.value ? t('edit-product.form.buttons.update') : t('edit-product.form.buttons.create'),
+    label: isEditing.value ? t('form.buttons.update') : t('form.buttons.create'),
     color: 'primary',
     margin: 'right',
     callback: async (data: any) => {
@@ -150,12 +150,12 @@ const actions: MegaFormAction[] = [
           id: productId.value, 
           owner: nuxtApp.$userId 
         }, updateData);
-        nuxtApp.$toast.show(t('edit-product.messages.success.updated'), 'success')
+        nuxtApp.$toast.show(t('messages.success.updated'), 'success')
       } else {
         // Create new product
         console.log("Creating product with data:", data);
         const res = await nuxtApp.$sp.product.create(data);
-        nuxtApp.$toast.show(t('edit-product.messages.success.created'), 'success')
+        nuxtApp.$toast.show(t('messages.success.created'), 'success')
         // Reload the page to show the created product
         window.location.reload()
       }

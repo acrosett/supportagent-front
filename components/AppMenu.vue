@@ -379,7 +379,7 @@ const checkNotificationCount = () => {
     return
   }
   
-  notificationCount.value = currentProduct?.value.notificationConfig?.notificationUnreadCount || 0
+  notificationCount.value = currentProduct?.value?.notificationUnreadCount || 0
 }
 
 // Close menu when route changes

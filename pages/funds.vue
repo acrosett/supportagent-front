@@ -1,23 +1,23 @@
 <template>
   <div class="page-container">
     <div class="funds-header">
-      <h1>{{ t('funds.page.title') }}</h1>
-      <p>{{ t('funds.page.subtitle') }}</p>
+      <h1>{{ t('page.title') }}</h1>
+      <p>{{ t('page.subtitle') }}</p>
     </div>
 
     <!-- Balance Section -->
     <div class="balance-section">
       <div class="section-header">
-        <h3>{{ t('funds.balance.title') }}</h3>
+        <h3>{{ t('balance.title') }}</h3>
         <div class="balance-actions">
           <AppButton
-            :label="t('funds.balance.buttons.addFunds')"
+            :label="t('balance.buttons.addFunds')"
             color="primary"
             show-plus-icon
             @click="showAddFundsPopup = true"
           />
           <AppButton
-            :label="t('funds.balance.buttons.autoTopup')"
+            :label="t('balance.buttons.autoTopup')"
             color="secondary"
             @click="showAutoTopUpPopup = true"
           />
@@ -32,13 +32,13 @@
           </span>
         </div>
         <p class="balance-subtitle" v-if="currentProduct?.lastComputedBalance">
-          {{ t('funds.balance.verified', { date: formatDate(currentProduct.lastComputedBalance) }) }}
+          {{ t('balance.verified', { date: formatDate(currentProduct.lastComputedBalance) }) }}
         </p>
         
         <!-- Low Balance Warning -->
         <div v-if="currentProduct && (currentProduct.balance || 0) < 1" class="low-balance-warning">
           <AppIcon name="info" size="sm" />
-          <span>{{ t('funds.balance.lowBalance') }}</span>
+          <span>{{ t('balance.lowBalance') }}</span>
         </div>
       </div>
 
@@ -47,17 +47,17 @@
         <div class="auto-topup-info">
           <div class="auto-topup-header">
             <AppIcon name="check" size="sm" />
-            <span class="auto-topup-title">{{ t('funds.balance.autoTopup.enabled') }}</span>
+            <span class="auto-topup-title">{{ t('balance.autoTopup.enabled') }}</span>
           </div>
           <div class="auto-topup-details">
             <span class="auto-topup-amount">${{ currentProduct.autoTopUpAmount }}</span>
-            <span class="auto-topup-trigger">{{ t('funds.balance.autoTopup.trigger', { amount: formatBalance((currentProduct.autoTopUpAmount || 0) * 0.1) }) }}</span>
+            <span class="auto-topup-trigger">{{ t('balance.autoTopup.trigger', { amount: formatBalance((currentProduct.autoTopUpAmount || 0) * 0.1) }) }}</span>
           </div>
         </div>
         <ToggleSwitch
           v-model="autoTopUpEnabled"
-          :on-label="t('funds.balance.autoTopup.toggleOn')"
-          :off-label="t('funds.balance.autoTopup.toggleOff')"
+          :on-label="t('balance.autoTopup.toggleOn')"
+          :off-label="t('balance.autoTopup.toggleOff')"
           @update:model-value="handleAutoTopUpToggle"
         />
       </div>
@@ -66,11 +66,11 @@
     <!-- Subscription Section -->
     <div class="subscription-section">
       <div class="section-header">
-        <h3>{{ t('funds.subscription.title') }}</h3>
+        <h3>{{ t('subscription.title') }}</h3>
         <div class="subscription-actions">
           <AppButton
             :disabled="currentProduct?.subscriptionActive"
-            :label="t('funds.subscription.button')"
+            :label="t('subscription.button')"
             color="primary"
             @click="showSubscriptionPopup = true"
           />
@@ -86,38 +86,38 @@
               size="sm"
             />
             <span :class="['status-text', { active: currentProduct?.subscriptionActive }]">
-              {{ currentProduct?.subscriptionActive ? t('funds.subscription.status.active') : t('funds.subscription.status.inactive') }}
+              {{ currentProduct?.subscriptionActive ? t('subscription.status.active') : t('subscription.status.inactive') }}
             </span>
           </div>
           <div class="subscription-price">
-            <span class="price">{{ t('funds.subscription.price') }}</span>
-            <span class="period">{{ t('funds.subscription.period') }}</span>
+            <span class="price">{{ t('subscription.price') }}</span>
+            <span class="period">{{ t('subscription.period') }}</span>
           </div>
         </div>
         
         <p class="subscription-description">
           {{ currentProduct?.subscriptionActive 
-             ? t('funds.subscription.description.active')
-             : t('funds.subscription.description.inactive') }}
+             ? t('subscription.description.active')
+             : t('subscription.description.inactive') }}
         </p>
 
         <!-- Auto Renew Toggle (only show if subscription is active) -->
         <div class="auto-renew-section">
           <div class="auto-renew-label">
-            <span>{{ t('funds.subscription.autoRenew.label') }}</span>
-            <p class="auto-renew-description">{{ t('funds.subscription.autoRenew.description') }}</p>
+            <span>{{ t('subscription.autoRenew.label') }}</span>
+            <p class="auto-renew-description">{{ t('subscription.autoRenew.description') }}</p>
           </div>
           <ToggleSwitch
             v-model="autoRenewEnabled"
-            :on-label="t('funds.subscription.autoRenew.toggleOn')"
-            :off-label="t('funds.subscription.autoRenew.toggleOff')"
+            :on-label="t('subscription.autoRenew.toggleOn')"
+            :off-label="t('subscription.autoRenew.toggleOff')"
             @update:model-value="handleAutoRenewToggle"
           />
         </div>
 
         <!-- Next billing date (only show if subscription is active) -->
         <div v-if="currentProduct?.subscriptionActive && currentProduct?.lastSubscriptionChecked" class="next-billing">
-          <span class="billing-label">{{ t('funds.subscription.nextBilling', { date: formatNextBillingDate(currentProduct.lastSubscriptionChecked) }) }}</span>
+          <span class="billing-label">{{ t('subscription.nextBilling', { date: formatNextBillingDate(currentProduct.lastSubscriptionChecked) }) }}</span>
         </div>
       </div>
     </div>
@@ -125,9 +125,9 @@
     <!-- Spending Limit Section -->
     <div class="spending-section">
       <div class="section-header">
-        <h3>{{ t('funds.spendingLimit.title') }}</h3>
+        <h3>{{ t('spendingLimit.title') }}</h3>
         <AppButton
-          :label="t('funds.spendingLimit.button')"
+          :label="t('spendingLimit.button')"
           color="secondary"
           show-edit-icon
           margin="left"
@@ -140,20 +140,20 @@
           <span v-if="currentProduct?.maxDepositPerMonth" class="amount">
             ${{ formatBalance(currentProduct.maxDepositPerMonth) }}
           </span>
-          <span v-else class="no-limit">{{ t('funds.spendingLimit.noLimit') }}</span>
-          <span class="period">{{ t('funds.spendingLimit.period') }}</span>
+          <span v-else class="no-limit">{{ t('spendingLimit.noLimit') }}</span>
+          <span class="period">{{ t('spendingLimit.period') }}</span>
         </div>
         <p class="limit-description">
           {{ currentProduct?.maxDepositPerMonth 
-             ? t('funds.spendingLimit.description.set')
-             : t('funds.spendingLimit.description.unset') }}
+             ? t('spendingLimit.description.set')
+             : t('spendingLimit.description.unset') }}
         </p>
       </div>
     </div>
 
     <!-- Transaction History -->
     <div class="history-section">
-      <h3>{{ t('funds.transactions.title') }}</h3>
+      <h3>{{ t('transactions.title') }}</h3>
       
       <!-- Filter Tabs -->
       <div class="filter-tabs">
@@ -170,13 +170,13 @@
       <!-- Transactions List -->
       <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
-        <p>{{ t('funds.transactions.loading') }}</p>
+        <p>{{ t('transactions.loading') }}</p>
       </div>
 
       <div v-else-if="transactions.length === 0" class="empty-state">
         <AppIcon name="credit-card" size="xl" />
-        <h4>{{ t('funds.transactions.empty.title') }}</h4>
-        <p>{{ t('funds.transactions.empty.subtitle') }}</p>
+        <h4>{{ t('transactions.empty.title') }}</h4>
+        <p>{{ t('transactions.empty.subtitle') }}</p>
       </div>
 
       <div v-else class="transactions-list section-card">
@@ -214,7 +214,7 @@
             <button 
               class="detail-button"
               @click="showTransactionDetail(transaction)"
-              :title="t('funds.transactions.viewDetails')"
+              :title="t('transactions.viewDetails')"
             >
               <AppIcon name="eye" />
             </button>
@@ -228,7 +228,7 @@
         </div>
         
         <div v-if="hasMoreTransactions === false && transactions.length > 0" class="end-message">
-          <span>{{ t('funds.transactions.noMore') }}</span>
+          <span>{{ t('transactions.noMore') }}</span>
         </div>
       </div>
     </div>
@@ -236,12 +236,12 @@
     <!-- Add Funds Popup -->
     <AppPopup
       :show="showAddFundsPopup"
-      :title="t('funds.popups.addFunds.title')"
+      :title="t('popups.addFunds.title')"
       @close="showAddFundsPopup = false"
     >
       <div class="add-funds-form">
         <div class="amount-input">
-          <label for="depositAmount">{{ t('funds.popups.addFunds.amountLabel') }}</label>
+          <label for="depositAmount">{{ t('popups.addFunds.amountLabel') }}</label>
           <div class="amount-field">
             <span class="currency-symbol">$</span>
             <input
@@ -268,12 +268,12 @@
 
         <div class="popup-actions">
           <AppButton
-            :label="t('funds.popups.addFunds.buttons.cancel')"
+            :label="t('popups.addFunds.buttons.cancel')"
             color="secondary"
             @click="showAddFundsPopup = false"
           />
           <AppButton
-            :label="t('funds.popups.addFunds.buttons.addFunds')"
+            :label="t('popups.addFunds.buttons.addFunds')"
             color="primary"
             margin="left"
             :disabled="!depositAmount || depositAmount < 1"
@@ -287,16 +287,16 @@
     <!-- Auto Top-up Popup -->
     <AppPopup
       :show="showAutoTopUpPopup"
-      :title="t('funds.popups.autoTopup.title')"
+      :title="t('popups.autoTopup.title')"
       @close="showAutoTopUpPopup = false"
     >
       <div class="auto-topup-form">
         <div class="topup-explanation">
-          <p>{{ t('funds.popups.autoTopup.explanation') }}</p>
+          <p>{{ t('popups.autoTopup.explanation') }}</p>
         </div>
 
         <div class="amount-input">
-          <label for="autoTopUpAmount">{{ t('funds.popups.autoTopup.amountLabel') }}</label>
+          <label for="autoTopUpAmount">{{ t('popups.autoTopup.amountLabel') }}</label>
           <div class="amount-field">
             <span class="currency-symbol">$</span>
             <input
@@ -309,7 +309,7 @@
             />
           </div>
           <div v-if="autoTopUpAmount && autoTopUpAmount < 60" class="minimum-warning">
-            {{ t('funds.popups.autoTopup.minimumWarning') }}
+            {{ t('popups.autoTopup.minimumWarning') }}
           </div>
         </div>
 
@@ -365,7 +365,7 @@
     <!-- Spending Limit Popup -->
     <AppPopup
       :show="showSpendingLimitPopup"
-      :title="t('funds.popups.spendingLimit.title')"
+      :title="t('popups.spendingLimit.title')"
       @close="showSpendingLimitPopup = false"
     >
       <div class="spending-limit-form">
@@ -382,23 +382,23 @@
     <!-- Subscription Activation Popup -->
     <AppPopup
       :show="showSubscriptionPopup"
-      :title="t('funds.popups.subscription.title')"
+      :title="t('popups.subscription.title')"
       @close="showSubscriptionPopup = false"
     >
       <div class="subscription-confirm-form">
 
         <div class="confirmation-question">
-          <p>{{ t('funds.popups.subscription.confirmation') }}</p>
+          <p>{{ t('popups.subscription.confirmation') }}</p>
         </div>
 
         <div class="popup-actions">
           <AppButton
-            :label="t('funds.popups.subscription.buttons.cancel')"
+            :label="t('popups.subscription.buttons.cancel')"
             color="secondary"
             @click="showSubscriptionPopup = false"
           />
           <AppButton
-            :label="t('funds.popups.subscription.buttons.activate')"
+            :label="t('popups.subscription.buttons.activate')"
             color="primary"
             margin="left"
             :loading="subscriptionLoading"
@@ -605,7 +605,7 @@ const { t } = await useLocalNamespaceAsync('funds')
 
 // Meta
 useHead({
-  title: () => t('funds.meta.title')
+  title: () => t('meta.title')
 })
 
 // Reactive state
@@ -643,15 +643,15 @@ const quickAmounts = [10, 25, 50, 100, 250, 500]
 const autoTopUpQuickAmounts = [60, 100, 150, 250, 500, 1000]
 
 const transactionFilters = [
-  { label: t('funds.transactions.filters.all'), value: 'all' },
-  { label: t('funds.transactions.filters.deposits'), value: 'deposits' },
-  { label: t('funds.transactions.filters.spending'), value: 'spending' }
+  { label: t('transactions.filters.all'), value: 'all' },
+  { label: t('transactions.filters.deposits'), value: 'deposits' },
+  { label: t('transactions.filters.spending'), value: 'spending' }
 ]
 
 // MegaForm actions for spending limit
 const spendingLimitActions: MegaFormAction[] = [
   {
-    label: t('funds.popups.addFunds.buttons.cancel'),
+    label: t('popups.addFunds.buttons.cancel'),
     color: 'secondary',
     callback: async () => {
       showSpendingLimitPopup.value = false
@@ -667,11 +667,11 @@ const spendingLimitActions: MegaFormAction[] = [
         if (currentProduct.value) {
           currentProduct.value.maxDepositPerMonth = formData.maxDepositPerMonth
         }
-        $toast.show(t('funds.messages.success.spendingLimitUpdated'), 'success')
+        $toast.show(t('messages.success.spendingLimitUpdated'), 'success')
         showSpendingLimitPopup.value = false
       } catch (error) {
         console.error('Failed to update spending limit:', error)
-        $toast.show(t('funds.messages.error.updateSpendingLimit'), 'error')
+        $toast.show(t('messages.error.updateSpendingLimit'), 'error')
       }
     }
   }
@@ -737,7 +737,7 @@ const checkStripeResult = async () => {
       // Reload product data to get updated auto top-up settings
       await loadProduct()
     } else {
-      $toast.show(t('funds.messages.success.fundsAdded'), 'success')
+      $toast.show(t('messages.success.fundsAdded'), 'success')
       // Reload product data to get updated balance
       await loadProduct()
     }
@@ -750,7 +750,7 @@ const checkStripeResult = async () => {
     if (setupIntent) {
       $toast.show('Auto top-up setup failed. Please try again or contact support.', 'error')
     } else {
-      $toast.show(t('funds.messages.error.addFunds'), 'error')
+      $toast.show(t('messages.error.addFunds'), 'error')
     }
     // Clean up URL parameters
     const url = new URL(window.location.href)
@@ -908,7 +908,7 @@ const loadTransactions = async (reset = false) => {
     
   } catch (error) {
     console.error('Failed to load transactions:', error)
-    $toast.show(t('funds.messages.error.loadTransactions'), 'error')
+    $toast.show(t('messages.error.loadTransactions'), 'error')
   }
 }
 

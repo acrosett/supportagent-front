@@ -21,6 +21,7 @@
   },
   "filters": {
     "status": {
+      "all":"All",
       "title": "Status",
       "queued": "Queued",
       "processing": "Processing",
@@ -29,9 +30,9 @@
     },
     "initiator": {
       "title": "Initiator",
-      "system": "System",
-      "user": "User",
-      "admin": "Admin"
+      "all": "All",
+      "documentUpload": "Document Upload",
+      "staffAgent": "Staff Agent"
     }
   },
   "states": {

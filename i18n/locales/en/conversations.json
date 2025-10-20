@@ -30,7 +30,8 @@
       "high": "High"
     },
     "options": {
-      "showArchived": "Show Archived"
+      "showArchived": "Show Archived",
+      "both": "Both"  
     }
   },
   "status": {
