@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "title": "Contact & Priority - Support Agent"
+  },
+  "page": {
+    "title": "Contact & Priority"
+  },
+  "whatsapp": {
+    "title": "WhatsApp Numbers",
+    "add": "Add Number",
+    "empty": {
+      "title": "No WhatsApp numbers configured",
+      "description": "Add a WhatsApp number to start receiving contacts"
+    },
+    "card": {
+      "unnamed": "Unnamed Number",
+      "status": {
+        "verified": "Verified",
+        "unverified": "Unverified",
+        "nonAssigned": "Non Assigned"
+      },
+      "actions": {
+        "confirm": "Confirm Number",
+        "edit": "Edit"
+      }
+    },
+    "popup": {
+      "addTitle": "Add WhatsApp Number",
+      "editTitle": "Edit WhatsApp Number"
+    }
+  },
+  "config": {
+    "title": "Client Priority Configuration",
+    "description": "Configure contact settings and limits for different client priorities",
+    "tooltip": "Client priority is assigned via your configured webhook. Guest users are assigned lowest priority by default.",
+    "priority": {
+      "high": "High",
+      "regular": "Regular",
+      "lowest": "Lowest"
+    },
+    "fields": {
+      "whatsappNumber": "WhatsApp Number",
+      "notSet": "Not set",
+      "unverified": "(Unverified)",
+      "docUpdates": "Documentation Updates",
+      "issueContacts": "Issue Contacts",
+      "tokensToday": "Tokens Today",
+      "tokensWeek": "Tokens This Week",
+      "messagesToday": "Messages Today",
+      "messagesWeek": "Messages This Week",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "limits": {
+      "dailyGlobal": "Daily Global",
+      "weeklyGlobal": "Weekly Global",
+      "dailyPerUser": "Daily Per User",
+      "weeklyPerUser": "Weekly Per User"
+    }
+  },
+  "verification": {
+    "title": "Verify WhatsApp Number",
+    "instructions": {
+      "title": "Instructions",
+      "text": "Make sure a WhatsApp account is configured for this number before proceeding."
+    }
+  },
+  "delete": {
+    "title": "Delete WhatsApp Number",
+    "confirm": "Are you sure you want to delete this WhatsApp number?",
+    "warning": "This action cannot be undone.",
+    "buttons": {
+      "cancel": "Cancel",
+      "delete": "Delete"
+    }
+  },
+  "actions": {
+    "edit": "Edit"
+  },
+  "messages": {
+    "loadPhoneError": "Failed to load phone numbers",
+    "loadConfigError": "Failed to fetch contact configurations",
+    "phoneCreated": "Phone number added successfully",
+    "phoneCreateError": "Failed to add phone number",
+    "phoneUpdated": "Phone number updated successfully", 
+    "phoneUpdateError": "Failed to update phone number",
+    "phoneDeleted": "Phone number deleted successfully",
+    "phoneDeleteError": "Failed to delete phone number",
+    "configUpdated": "Configuration updated successfully",
+    "configUpdateError": "Failed to update configuration",
+    "verificationSent": "Verification code sent successfully",
+    "verificationSendError": "Failed to send verification code",
+    "phoneVerified": "Phone number verified successfully",
+    "phoneVerifyError": "Failed to verify phone number"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "title": "Issues - Support Agent"
+  },
+  "page": {
+    "title": "Issues",
+    "sections": {
+      "filters": "Filters and Search",
+      "issues": "Issues List"
+    }
+  },
+  "filters": {
+    "showArchived": {
+      "label": "See Archived"
+    },
+    "search": {
+      "placeholder": "Search issues..."
+    },
+    "reset": "Reset Filters",
+    "status": {
+      "title": "Status",
+      "options": {
+        "both": "Both",
+        "open": "Open",
+        "resolved": "Resolved"
+      }
+    },
+    "tags": {
+      "title": "Tags",
+      "noTags": "No tags available"
+    }
+  },
+  "states": {
+    "loading": "Loading issues...",
+    "loadingMore": "Loading more issues...",
+    "empty": {
+      "title": "No issues found",
+      "description": "Issues will appear here when they are created"
+    },
+    "endOfResults": "No more issues to load"
+  },
+  "issue": {
+    "id": "ID",
+    "status": {
+      "open": "Open",
+      "resolved": "Resolved"
+    },
+    "meta": {
+      "created": "Created",
+      "lastComment": "Last comment",
+      "noComments": "No comments yet"
+    },
+    "actions": {
+      "details": "Details",
+      "markResolved": "Mark Resolved",
+      "reopen": "Reopen",
+      "archive": "Archive",
+      "unarchive": "Unarchive"
+    }
+  },
+  "archive": {
+    "dialog": {
+      "title": "Archive Issue",
+      "message": "Are you sure you want to archive this issue?",
+      "cancel": "Cancel",
+      "confirm": "Archive"
+    },
+    "messages": {
+      "success": "Issue archived successfully",
+      "error": "Failed to archive issue",
+      "unarchiveSuccess": "Issue unarchived successfully",
+      "unarchiveError": "Failed to unarchive issue"
+    }
+  },
+  "status": {
+    "messages": {
+      "resolvedSuccess": "Issue resolved successfully",
+      "reopenedSuccess": "Issue reopened successfully",
+      "error": "Failed to update issue status"
+    }
+  },
+  "errors": {
+    "loadIssues": "Failed to load issues",
+    "loadTags": "Error loading available tags"
+  }
+}

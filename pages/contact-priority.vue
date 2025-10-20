@@ -2,16 +2,16 @@
   <section class="page-container contact-priority-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>Contact & Priority</h1>
+        <h1>{{ t('page.title') }}</h1>
       </div>
     </header>
 
     <!-- WhatsApp Numbers Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>WhatsApp Numbers</h2>
+        <h2>{{ t('whatsapp.title') }}</h2>
         <AppButton
-          label="Add Number"
+          :label="t('whatsapp.add')"
           color="primary"
           margin="left"
           :showPlusIcon="true"
@@ -21,8 +21,8 @@
 
       <div v-if="phoneNumbers.length === 0" class="empty-state">
         <AppIcon name="phone" size="xl" class="empty-icon" />
-        <h3>No WhatsApp numbers configured</h3>
-        <p>Add a WhatsApp number to start receiving contacts</p>
+        <h3>{{ t('whatsapp.empty.title') }}</h3>
+        <p>{{ t('whatsapp.empty.description') }}</p>
       </div>
 
       <div v-else class="phone-numbers-grid">
@@ -34,7 +34,7 @@
         >
           <div class="phone-header">
             <div class="phone-info">
-              <h3 class="phone-name">{{ phone.name || 'Unnamed Number' }}</h3>
+              <h3 class="phone-name">{{ phone.name || t('whatsapp.card.unnamed') }}</h3>
               <p class="phone-number">{{ phone.number }}</p>
             </div>
             <div class="phone-status">
@@ -43,18 +43,18 @@
                 class="status-badge verified"
               >
                 <AppIcon name="check" size="sm" />
-                Verified
+                {{ t('whatsapp.card.status.verified') }}
               </span>
               <span v-else class="status-badge unverified">
                 <AppIcon name="time" size="sm" />
-                Unverified
+                {{ t('whatsapp.card.status.unverified') }}
               </span>
               <span
                 v-if="!isPhoneNumberAssigned(phone.id)"
                 class="status-badge non-assigned"
               >
                 <AppIcon name="info" size="sm" />
-                Non Assigned
+                {{ t('whatsapp.card.status.nonAssigned') }}
               </span>
             </div>
           </div>
@@ -62,13 +62,13 @@
           <div class="phone-actions">
             <AppButton
               v-if="!phone.isVerified"
-              label="Confirm Number"
+              :label="t('whatsapp.card.actions.confirm')"
               color="warning"
               size="sm"
               @click="confirmPhoneNumber(phone)"
             />
             <AppButton
-              label="Edit"
+              :label="t('whatsapp.card.actions.edit')"
               color="secondary"
               size="sm"
               @click="editPhoneNumber(phone)"
@@ -89,15 +89,15 @@
     <div class="content-section">
       <div class="section-header">
         <div class="section-title-with-info">
-          <h2>Client Priority Configuration</h2>
+          <h2>{{ t('config.title') }}</h2>
           <FieldTooltip
-            text="Client priority is assigned via your configured webhook. Guest users are assigned lowest priority by default."
+            :text="t('config.tooltip')"
             class="config-info-icon"
           >
              <i class="fas fa-info-circle"></i>
           </FieldTooltip>
         </div>
-        <p class="section-description">Configure contact settings and limits for different client priorities</p>
+        <p class="section-description">{{ t('config.description') }}</p>
       </div>
 
       <div class="config-grid">
@@ -112,7 +112,7 @@
             </h3>
             <div class="config-actions">
               <AppButton
-                label="Edit"
+                :label="t('actions.edit')"
                 color="secondary"
                 size="sm"
                 @click="editContactConfig(config)"
@@ -122,14 +122,14 @@
 
           <div class="config-details">
             <div class="config-row">
-              <span class="config-label">WhatsApp Number:</span>
+              <span class="config-label">{{ t('config.fields.whatsappNumber') }}:</span>
               <span class="config-value">
                 <span v-if="config.phoneNumber && phoneNumbers.find(p => p.id === config.phoneNumber)" class="phone-number-set">
                   {{ phoneNumbers.find(p => p.id === config.phoneNumber)?.number }}
                 </span>
-                <span v-else class="phone-not-set">Not set</span>
+                <span v-else class="phone-not-set">{{ t('config.fields.notSet') }}</span>
                 <span v-if="config.phoneNumber && phoneNumbers.find(p => p.id === config.phoneNumber) && !phoneNumbers.find(p => p.id === config.phoneNumber)?.isVerified" class="unverified-note">
-                  (Unverified)
+                  {{ t('config.fields.unverified') }}
                 </span>
               </span>
             </div>
@@ -156,21 +156,21 @@
               </span>
             </div> -->
             <div class="config-row">
-              <span class="config-label">Documentation Updates:</span>
+              <span class="config-label">{{ t('config.fields.docUpdates') }}:</span>
               <span class="config-value">
                 <AppIcon :name="config.contactForDocumentationUpdate ? 'check' : 'close'" size="sm" />
-                {{ config.contactForDocumentationUpdate ? 'Enabled' : 'Disabled' }}
+                {{ config.contactForDocumentationUpdate ? t('config.fields.enabled') : t('config.fields.disabled') }}
               </span>
             </div>
             <div class="config-row">
-              <span class="config-label">Issue Contacts:</span>
+              <span class="config-label">{{ t('config.fields.issueContacts') }}:</span>
               <span class="config-value">
                 <AppIcon :name="config.contactForIssues ? 'check' : 'close'" size="sm" />
-                {{ config.contactForIssues ? 'Enabled' : 'Disabled' }}
+                {{ config.contactForIssues ? t('config.fields.enabled') : t('config.fields.disabled') }}
               </span>
             </div>
                         <div class="config-row">
-                          <span class="config-label">Tokens Today:</span>
+                          <span class="config-label">{{ t('config.fields.tokensToday') }}:</span>
                           <span class="config-value">
                             <span :class="{ exceeded: (config.tokenCountToday ?? 0) > ((config.MaxMessagesPerDayGlobal || 0) * 18000) }">
                               {{ formatK(config.tokenCountToday ?? 0) }}
@@ -181,7 +181,7 @@
                           </span>
                         </div>
                         <div class="config-row">
-                          <span class="config-label">Tokens This Week:</span>
+                          <span class="config-label">{{ t('config.fields.tokensWeek') }}:</span>
                           <span class="config-value">
                             <span :class="{ exceeded: (config.tokenCountThisWeek ?? 0) > ((config.MaxMessagesPerWeekGlobal || 0) * 18000) }">
                               {{ formatK(config.tokenCountThisWeek ?? 0) }}
@@ -192,7 +192,7 @@
                           </span>
                         </div>
                         <div class="config-row">
-                          <span class="config-label">Messages Today:</span>
+                          <span class="config-label">{{ t('config.fields.messagesToday') }}:</span>
                           <span class="config-value">
                             <span :class="{ exceeded: (config.messageCountToday ?? 0) > (config.MaxMessagesPerDayGlobal || 0) }">
                               {{ formatNumber(config.messageCountToday ?? 0) }}
@@ -203,7 +203,7 @@
                           </span>
                         </div>
                         <div class="config-row">
-                          <span class="config-label">Messages This Week:</span>
+                          <span class="config-label">{{ t('config.fields.messagesWeek') }}:</span>
                           <span class="config-value">
                             <span :class="{ exceeded: (config.messageCountThisWeek ?? 0) > (config.MaxMessagesPerWeekGlobal || 0) }">
                               {{ formatNumber(config.messageCountThisWeek ?? 0) }}
@@ -218,7 +218,7 @@
           <div class="limits-grid">
             <div class="limit-item">
               <span class="limit-label">
-                Daily Global
+                {{ t('config.limits.dailyGlobal') }}
                 <FieldTooltip
                   :text="configFieldOverrides.MaxMessagesPerDayGlobal?.description || ''"
                   class="limit-info-icon"
@@ -230,7 +230,7 @@
             </div>
             <div class="limit-item">
               <span class="limit-label">
-                Weekly Global
+                {{ t('config.limits.weeklyGlobal') }}
                 <FieldTooltip
                   :text="configFieldOverrides.MaxMessagesPerWeekGlobal?.description || ''"
                   class="limit-info-icon"
@@ -242,7 +242,7 @@
             </div>
             <div class="limit-item">
               <span class="limit-label">
-                Daily Per User
+                {{ t('config.limits.dailyPerUser') }}
                 <FieldTooltip
                   :text="configFieldOverrides.MaxMessagesPerDayPerUser?.description || ''"
                   class="limit-info-icon"
@@ -254,7 +254,7 @@
             </div>
             <div class="limit-item">
               <span class="limit-label">
-                Weekly Per User
+                {{ t('config.limits.weeklyPerUser') }}
                 <FieldTooltip
                   :text="configFieldOverrides.MaxMessagesPerWeekPerUser?.description || ''"
                   class="limit-info-icon"
@@ -272,7 +272,7 @@
     <!-- Add/Edit WhatsApp Number Popup -->
     <AppPopup
       :show="showPhonePopup"
-      :title="editingPhone ? 'Edit WhatsApp Number' : 'Add WhatsApp Number'"
+      :title="editingPhone ? t('whatsapp.popup.editTitle') : t('whatsapp.popup.addTitle')"
       size="lg"
       @close="closePhonePopup"
     >
@@ -316,23 +316,23 @@
     <!-- Delete Confirmation Popup -->
     <AppPopup
       :show="showDeleteConfirmation"
-      title="Delete WhatsApp Number"
+      :title="t('delete.title')"
       size="sm"
       @close="closeDeleteConfirmation"
     >
       <div class="delete-confirmation">
-        <p>Are you sure you want to delete this WhatsApp number?</p>
+        <p>{{ t('delete.confirm') }}</p>
         <div class="delete-item">
-          <strong>{{ deletingPhone?.name || 'Unnamed Number' }}</strong>
+          <strong>{{ deletingPhone?.name || t('whatsapp.card.unnamed') }}</strong>
           <br>
           <span class="phone-detail">{{ deletingPhone?.number }}</span>
         </div>
-        <p class="delete-warning">This action cannot be undone.</p>
+        <p class="delete-warning">{{ t('delete.warning') }}</p>
       </div>
       <template #footer>
         <div class="delete-footer">
-          <AppButton label="Cancel" color="secondary" @click="closeDeleteConfirmation" />
-          <AppButton margin="left" label="Delete" color="error" @click="confirmDeletePhone" />
+          <AppButton :label="t('delete.buttons.cancel')" color="secondary" @click="closeDeleteConfirmation" />
+          <AppButton margin="left" :label="t('delete.buttons.delete')" color="error" @click="confirmDeletePhone" />
         </div>
       </template>
     </AppPopup>
@@ -340,7 +340,7 @@
     <!-- WhatsApp Number Verification Popup -->
     <AppPopup
       :show="showVerificationPopup"
-      title="Verify WhatsApp Number"
+      :title="t('verification.title')"
       size="md"
       @close="closeVerificationPopup"
     >
@@ -348,11 +348,11 @@
         <div class="verification-instructions">
           <div class="instruction-header">
             <AppIcon name="info" size="lg" class="instruction-icon" />
-            <h3>Instructions</h3>
+            <h3>{{ t('verification.instructions.title') }}</h3>
           </div>
-          <p>Make sure a WhatsApp account is configured for this number before proceeding.</p>
+          <p>{{ t('verification.instructions.text') }}</p>
           <div class="phone-info">
-            <strong>{{ verifyingPhone?.name || 'Unnamed Number' }}</strong>
+            <strong>{{ verifyingPhone?.name || t('whatsapp.card.unnamed') }}</strong>
             <br>
             <span class="phone-number">{{ verifyingPhone?.number }}</span>
           </div>
@@ -383,6 +383,8 @@ import { SendVerifyDto } from '~/eicrud_exports/services/WHATSAPP-ms/phone-numbe
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import { getPriorityEmoji, formatPriority } from '~/utils/priority'
 
+const { t } = useLocalNamespace('contact-priority')
+
 const phoneNumbers = ref<PhoneNumber[]>([])
 
 const contactConfigs = ref<ContactConfig[]>([])
@@ -397,7 +399,7 @@ const fetchPhoneNumbers = async () => {
     phoneNumbers.value = Array.isArray(result) ? result : (result?.data || [])
   } catch (error) {
     console.error('Failed to fetch phone numbers:', error)
-    useNuxtApp().$toast.show('Failed to load phone numbers', 'error')
+    useNuxtApp().$toast.show(t('messages.loadPhoneError'), 'error')
     phoneNumbers.value = []
   }
 }
@@ -550,7 +552,7 @@ const confirmDeletePhone = async () => {
     
     
     
-    nuxtApp.$toast.show('Phone number deleted successfully', 'success')
+    nuxtApp.$toast.show(t('messages.phoneDeleted'), 'success')
     await fetchPhoneNumbers();
     await fetchContactConfigs();
     closeDeleteConfirmation()
@@ -619,7 +621,7 @@ const phoneFormActions = computed<MegaFormAction[]>(() => [
           )
     
           
-          nuxtApp.$toast.show('Phone number updated successfully', 'success');
+          nuxtApp.$toast.show(t('messages.phoneUpdated'), 'success');
           await fetchPhoneNumbers();
         } else {
           // Create new phone number
@@ -632,7 +634,7 @@ const phoneFormActions = computed<MegaFormAction[]>(() => [
           const createdPhone = await nuxtApp.$sp.phoneNumber.create(newPhoneData)
           phoneNumbers.value.push(createdPhone)
           
-          nuxtApp.$toast.show('Phone number added successfully', 'success')
+          nuxtApp.$toast.show(t('messages.phoneCreated'), 'success')
         }
         
         closePhonePopup()
@@ -668,7 +670,7 @@ const verificationFormActions: MegaFormAction[] = [
           productId: nuxtApp.$userProductId as string
         })
         
-        nuxtApp.$toast.show('Verification code sent to WhatsApp number', 'success')
+        nuxtApp.$toast.show(t('messages.verificationSent'), 'success')
       } catch (error) {
         console.error('Failed to send verification code:', error)
         useNuxtApp().$toast.show(error, 'error')
@@ -721,7 +723,7 @@ const verificationFormActions: MegaFormAction[] = [
           }
         }
         
-        nuxtApp.$toast.show('WhatsApp number verified successfully!', 'success')
+        nuxtApp.$toast.show(t('messages.phoneVerified'), 'success')
         closeVerificationPopup()
       } catch (error) {
         console.error('Verification failed:', error)
@@ -833,7 +835,7 @@ const configFormActions: MegaFormAction[] = [
         // Re-fetch the data to get the latest state
         await fetchContactConfigs()
         
-        nuxtApp.$toast.show('Configuration saved successfully', 'success')
+        nuxtApp.$toast.show(t('messages.configUpdated'), 'success')
         closeConfigPopup()
       } catch (error) {
         console.error('Failed to save configuration:', error)

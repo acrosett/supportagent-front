@@ -4,12 +4,12 @@
       <div class="header-content">
         <AppButton
           fa-icon-left="chevron-left"
-          label="Back to Issues"
+          :label="t('navigation.back')"
           color="secondary"
           size="sm"
           @click="goBack"
         />
-        <h1>Issue Details</h1>
+        <h1>{{ t('page.title') }}</h1>
         <div></div> <!-- Spacer for flexbox alignment -->
       </div>
     </div>
@@ -18,15 +18,15 @@
       <!-- Loading State -->
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading issue details...</p>
+        <p>{{ t('states.loading') }}</p>
       </div>
 
       <!-- Error State -->
       <div v-else-if="!issue" class="error-state">
-        <h3>Issue not found</h3>
-        <p>The requested issue could not be found.</p>
+        <h3>{{ t('states.notFound.title') }}</h3>
+        <p>{{ t('states.notFound.message') }}</p>
         <AppButton
-          label="Back to Issues"
+          :label="t('navigation.back')"
           color="primary"
           @click="goBack"
         />
@@ -39,21 +39,21 @@
         <div class="issue-title-section">
           <h2>{{ issue.title }}</h2>
           <div class="issue-meta">
-            <span class="issue-id">ID: {{ issue.id?.substring(0, 8) }}...</span>
-            <span class="created-date">Created: {{ formatDate(issue.createdAt) }}</span>
+            <span class="issue-id">{{ t('issue.id') }}: {{ issue.id?.substring(0, 8) }}...</span>
+            <span class="created-date">{{ t('issue.meta.created') }}: {{ formatDate(issue.createdAt) }}</span>
             <span 
               class="status-badge"
               :class="{ 'open': issue.status === IssueStatus.OPEN, 'resolved': issue.status === IssueStatus.RESOLVED }"
             >
               <AppIcon :name="issue.status === IssueStatus.OPEN ? 'time' : 'check'" size="sm" />
-              {{ issue.status === IssueStatus.OPEN ? 'Open' : 'Resolved' }}
+              {{ issue.status === IssueStatus.OPEN ? t('issue.status.open') : t('issue.status.resolved') }}
             </span>
           </div>
         </div>
         
         <div class="issue-actions">
           <AppButton
-            :label="issue.status === IssueStatus.RESOLVED ? 'Reopen Issue' : 'Mark Resolved'"
+            :label="issue.status === IssueStatus.RESOLVED ? t('issue.actions.reopen') : t('issue.actions.markResolved')"
             :color="issue.status === IssueStatus.RESOLVED ? 'secondary' : 'ok'"
             @click="toggleResolved"
           />
@@ -77,9 +77,9 @@
       <!-- Tags Section -->
       <div class="tags-section">
         <div class="tags-header">
-          <h4>Tags</h4>
+          <h4>{{ t('tags.title') }}</h4>
           <AppButton
-            label="Manage Tags"
+            :label="t('tags.manage')"
             color="secondary"
             margin="left"
             size="sm"
@@ -98,20 +98,20 @@
             <button 
               @click="removeTagFromIssue(tag)" 
               class="remove-tag-btn"
-              title="Remove tag"
+              :title="t('tags.removeTitle')"
             >
               ×
             </button>
           </span>
           <div v-if="!issue.tags || issue.tags.length === 0" class="no-tags">
-            No tags assigned
+            {{ t('tags.noTags') }}
           </div>
         </div>
       </div>
 
       <!-- Issue Description -->
       <div class="issue-description">
-        <h4>Description</h4>
+        <h4>{{ t('description.title') }}</h4>
         <div class="description-content">
           {{ issue.description }}
         </div>
@@ -119,20 +119,20 @@
 
       <!-- Comments Section -->
       <div class="comments-section">
-        <h4>Comments ({{ comments.length }})</h4>
+        <h4>{{ t('comments.title') }} ({{ comments.length }})</h4>
         
         <!-- Add Comment Form -->
         <div class="add-comment-form">
           <div class="comment-input-container">
             <textarea
               v-model="newComment"
-              placeholder="Client Facing AI will see this comment."
+              :placeholder="t('comments.add.placeholder')"
               rows="3"
               class="comment-input"
             ></textarea>
             <div class="comment-actions">
               <AppButton
-                label="Add Comment"
+                :label="t('comments.add.button')"
                 color="primary"
                 size="sm"
                 :disabled="!newComment.trim()"
@@ -146,7 +146,7 @@
         <!-- Comments List -->
         <div class="comments-list">
           <div v-if="comments.length === 0" class="no-comments">
-            No comments yet.
+            {{ t('comments.noComments') }}
           </div>
           
           <div
@@ -179,7 +179,7 @@
           <!-- Load More Comments -->
           <div v-if="hasMoreComments" class="load-more-section">
             <AppButton
-              label="Load More Comments"
+              :label="t('comments.loadMore')"
               color="secondary"
               size="sm"
               :loading="isLoadingMoreComments"
@@ -194,19 +194,19 @@
     <!-- Archive Confirmation Popup -->
     <AppPopup
       :show="archiveConfirmation.show"
-      title="Archive Issue"
+      :title="t('archive.dialog.title')"
       @close="cancelArchive"
     >
-      <p>Are you sure you want to archive this issue?</p>
+      <p>{{ t('archive.dialog.message') }}</p>
       
       <div class="popup-actions">
         <AppButton
-          label="Cancel"
+          :label="t('archive.dialog.cancel')"
           color="secondary"
           @click="cancelArchive"
         />
         <AppButton
-          label="Archive"
+          :label="t('archive.dialog.confirm')"
           color="warning"
           margin="left"
           @click="confirmArchive"
@@ -235,6 +235,8 @@ import { ref, reactive, onMounted } from 'vue'
 import { Issue, IssueStatus } from '~/eicrud_exports/services/SUPPORT-ms/issue/issue.entity'
 import { IssueComment, CommentFrom } from '~/eicrud_exports/services/SUPPORT-ms/issue-comment/issue-comment.entity'
 import { IssueTag } from '~/eicrud_exports/services/SUPPORT-ms/issue-tag/issue-tag.entity'
+
+const { t } = useLocalNamespace('issue')
 
 // Get issue ID from query params
 const route = useRoute()
@@ -306,10 +308,10 @@ const removeTagFromIssue = async (tagToRemove: string) => {
 
     issue.value.tags = updatedTags
 
-    useNuxtApp().$toast.show('Tag removed successfully', 'success')
+    useNuxtApp().$toast.show(t('messages.tagRemoved'), 'success')
   } catch (error) {
     console.error('Error removing tag:', error)
-    useNuxtApp().$toast.show('Failed to remove tag', 'error')
+    useNuxtApp().$toast.show(t('messages.tagRemoveError'), 'error')
   }
 }
 
@@ -327,7 +329,7 @@ const loadIssue = async () => {
     await loadComments(true)
   } catch (error) {
     console.error('Error loading issue:', error)
-    useNuxtApp().$toast.show('Failed to load issue details', 'error')
+    useNuxtApp().$toast.show(t('messages.loadError'), 'error')
   } finally {
     isLoading.value = false
   }
@@ -363,7 +365,7 @@ const loadComments = async (reset = false) => {
     commentsOffset.value += commentsPageSize
   } catch (error) {
     console.error('Error loading comments:', error)
-    useNuxtApp().$toast.show('Failed to load comments', 'error')
+    useNuxtApp().$toast.show(t('messages.loadCommentsError'), 'error')
   } finally {
     isLoadingMoreComments.value = false
   }
@@ -392,17 +394,17 @@ const addComment = async () => {
     comments.value.unshift(comment)
     newComment.value = ''
 
-    useNuxtApp().$toast.show('Comment added successfully', 'success')
+    useNuxtApp().$toast.show(t('messages.commentAdded'), 'success')
   } catch (error) {
     console.error('Error adding comment:', error)
-    useNuxtApp().$toast.show('Failed to add comment', 'error')
+    useNuxtApp().$toast.show(t('messages.commentAddError'), 'error')
   } finally {
     isAddingComment.value = false
   }
 }
 
 const deleteComment = async (comment: IssueComment) => {
-  const confirmed = await useNuxtApp().$confirmPopup.show('Are you sure you want to delete this comment?')
+  const confirmed = await useNuxtApp().$confirmPopup.show(t('comments.deleteConfirm'))
   if (!confirmed) {
     return
   }
@@ -420,10 +422,10 @@ const deleteComment = async (comment: IssueComment) => {
     // Remove from comments list
     comments.value = comments.value.filter(c => c.id !== comment.id)
 
-    useNuxtApp().$toast.show('Comment deleted successfully', 'success')
+    useNuxtApp().$toast.show(t('messages.commentDeleted'), 'success')
   } catch (error) {
     console.error('Error deleting comment:', error)
-    useNuxtApp().$toast.show('Failed to delete comment', 'error')
+    useNuxtApp().$toast.show(t('messages.commentDeleteError'), 'error')
   }
 }
 
@@ -445,12 +447,12 @@ const toggleResolved = async () => {
     issue.value.status = newStatus
 
     useNuxtApp().$toast.show(
-      `Issue ${newStatus === IssueStatus.RESOLVED ? 'resolved' : 'reopened'} successfully`, 
+      newStatus === IssueStatus.RESOLVED ? t('messages.issueResolved') : t('messages.issueReopened'), 
       'success'
     )
   } catch (error) {
     console.error('Error updating issue status:', error)
-    useNuxtApp().$toast.show('Failed to update issue status', 'error')
+    useNuxtApp().$toast.show(t('messages.statusUpdateError'), 'error')
   }
 }
 
@@ -479,10 +481,10 @@ const confirmArchive = async () => {
     issue.value.isArchived = true
     archiveConfirmation.show = false
 
-    useNuxtApp().$toast.show('Issue archived successfully', 'success')
+    useNuxtApp().$toast.show(t('messages.archived'), 'success')
   } catch (error) {
     console.error('Error archiving issue:', error)
-    useNuxtApp().$toast.show('Failed to archive issue', 'error')
+    useNuxtApp().$toast.show(t('messages.archiveError'), 'error')
   }
 }
 
@@ -502,21 +504,21 @@ const unarchiveIssue = async () => {
 
     issue.value.isArchived = false
 
-    useNuxtApp().$toast.show('Issue unarchived successfully', 'success')
+    useNuxtApp().$toast.show(t('messages.unarchived'), 'success')
   } catch (error) {
     console.error('Error unarchiving issue:', error)
-    useNuxtApp().$toast.show('Failed to unarchive issue', 'error')
+    useNuxtApp().$toast.show(t('messages.unarchiveError'), 'error')
   }
 }
 
 const getCommentFromLabel = (from: CommentFrom): string => {
   switch (from) {
     case CommentFrom.STAFF:
-      return 'Staff'
+      return t('comments.from.staff')
     case CommentFrom.AGENT:
-      return 'AI Agent'
+      return t('comments.from.agent')
     default:
-      return 'Unknown'
+      return t('comments.from.unknown')
   }
 }
 
@@ -536,7 +538,7 @@ const goBack = () => {
 // Lifecycle
 onMounted(() => {
   if (!issueId) {
-    useNuxtApp().$toast.show('No issue ID provided', 'error')
+    useNuxtApp().$toast.show(t('messages.noIssueId'), 'error')
     goBack()
     return
   }

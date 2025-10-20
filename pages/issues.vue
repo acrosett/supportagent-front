@@ -2,11 +2,11 @@
   <section class="page-container issues-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>Issues</h1>
+        <h1>{{ t('page.title') }}</h1>
         <div class="page-actions">
           <ToggleSwitch
             v-model="showArchived"
-            label="See Archived"
+            :label="t('filters.showArchived.label')"
             label-position="left"
             @update:modelValue="handleArchivedToggle"
           />
@@ -22,7 +22,7 @@
             <AppIcon name="search" size="sm" class="search-icon" />
             <input 
               type="text" 
-              placeholder="Search issues..."
+              :placeholder="t('filters.search.placeholder')"
               v-model="searchQuery"
               class="search-input"
             />
@@ -30,7 +30,7 @@
           
           <!-- Reset Filter -->
           <AppButton
-            label="Reset Filters"
+            :label="t('filters.reset')"
             color="secondary"
             size="sm"
             margin="left"
@@ -43,22 +43,22 @@
           <div class="filter-checkboxes">
             <!-- Issue Status Column -->
             <CheckBoxColumn
-              title="Status"
+              :title="t('filters.status.title')"
               name="issueStatus"
               v-model="filters.issueStatus"
               :options="[
-                { value: 'both', label: 'Both' },
-                { value: 'open', label: 'Open' },
-                { value: 'resolved', label: 'Resolved' }
+                { value: 'both', label: t('filters.status.options.both') },
+                { value: 'open', label: t('filters.status.options.open') },
+                { value: 'resolved', label: t('filters.status.options.resolved') }
               ]"
               @change="applyFilters"
             />
             
             <!-- Tags Filter -->
             <div class="filter-column">
-              <h4>Tags</h4>
+              <h4>{{ t('filters.tags.title') }}</h4>
               <div class="tags-filter">
-                <div v-if="availableTags.length === 0" class="no-tags">No tags available</div>
+                <div v-if="availableTags.length === 0" class="no-tags">{{ t('filters.tags.noTags') }}</div>
                 <label 
                   v-else
                   v-for="tag in availableTags" 
@@ -83,13 +83,13 @@
       <!-- Loading State -->
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading issues...</p>
+        <p>{{ t('states.loading') }}</p>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="filteredIssues.length === 0" class="empty-state">
-        <h3>No issues found</h3>
-        <p>Issues will appear here when they are created</p>
+        <h3>{{ t('states.empty.title') }}</h3>
+        <p>{{ t('states.empty.description') }}</p>
       </div>
 
       <!-- Issues List -->
@@ -110,7 +110,7 @@
           <div class="issue-header">
             <div class="issue-info">
               <h3 class="issue-title">{{ issue.title }}</h3>
-              <p class="issue-id">ID: {{ issue.id?.substring(0, 8) }}...</p>
+              <p class="issue-id">{{ t('issue.id') }}: {{ issue.id?.substring(0, 8) }}...</p>
             </div>
             <div class="issue-status">
               <!-- Status Badge -->
@@ -119,7 +119,7 @@
                 :class="{ 'open': issue.status === IssueStatus.OPEN, 'resolved': issue.status === IssueStatus.RESOLVED }"
               >
                 <AppIcon :name="issue.status === IssueStatus.OPEN ? 'time' : 'check'" size="sm" />
-                {{ issue.status === IssueStatus.OPEN ? 'Open' : 'Resolved' }}
+                {{ issue.status === IssueStatus.OPEN ? t('issue.status.open') : t('issue.status.resolved') }}
               </span>
             </div>
           </div>
@@ -144,12 +144,12 @@
           <!-- Last Comment Preview -->
           <div class="issue-meta">
             <span class="last-comment">{{ getLastComment(issue) }}</span>
-            <span class="created-date">Created: {{ formatDate(issue.createdAt) }}</span>
+            <span class="created-date">{{ t('issue.meta.created') }}: {{ formatDate(issue.createdAt) }}</span>
           </div>
 
           <div class="issue-actions">
             <AppButton
-              label="Details"
+              :label="t('issue.actions.details')"
               color="primary"
               size="sm"
               @click="openIssueDetails(issue)"
@@ -171,7 +171,7 @@
               @click="unarchiveIssue(issue)"
             />
             <AppButton
-              :label="issue.status === IssueStatus.RESOLVED ? 'Reopen' : 'Mark Resolved'"
+              :label="issue.status === IssueStatus.RESOLVED ? t('issue.actions.reopen') : t('issue.actions.markResolved')"
               margin="no-margins"
               color="secondary"
               size="sm"
@@ -184,31 +184,31 @@
       <!-- Load More Indicator -->
       <div v-if="isLoadingMore" class="loading-more">
         <div class="spinner"></div>
-        <p>Loading more issues...</p>
+        <p>{{ t('states.loadingMore') }}</p>
       </div>
 
       <!-- End of Results Indicator -->
       <div v-else-if="!hasMoreData && issues.length > 0" class="end-of-results">
-        <p>No more issues to load</p>
+        <p>{{ t('states.endOfResults') }}</p>
       </div>
     </div>
     
     <!-- Archive Confirmation Popup -->
     <AppPopup
       :show="archiveConfirmation.show"
-      title="Archive Issue"
+      :title="t('archive.dialog.title')"
       @close="cancelArchive"
     >
-      <p>Are you sure you want to archive this issue?</p>
+      <p>{{ t('archive.dialog.message') }}</p>
       
       <div class="popup-actions">
         <AppButton
-          label="Cancel"
+          :label="t('archive.dialog.cancel')"
           color="secondary"
           @click="cancelArchive"
         />
         <AppButton
-          label="Archive"
+          :label="t('archive.dialog.confirm')"
           color="warning"
           margin="left"
           @click="confirmArchive"
@@ -228,6 +228,8 @@ import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
 import { Issue, IssueStatus } from '~/eicrud_exports/services/SUPPORT-ms/issue/issue.entity'
 import { IssueComment } from '~/eicrud_exports/services/SUPPORT-ms/issue-comment/issue-comment.entity'
 import { IssueTag } from '~/eicrud_exports/services/SUPPORT-ms/issue-tag/issue-tag.entity'
+
+const { t } = useLocalNamespace('issues')
 
 // Page state
 const issues = ref<Issue[]>([])
@@ -355,7 +357,7 @@ const loadIssues = async (reset = false) => {
 
   } catch (error) {
     console.error('Error loading issues:', error)
-    useNuxtApp().$toast.show('Failed to load issues', 'error')
+    useNuxtApp().$toast.show(t('errors.loadIssues'), 'error')
   } finally {
     isLoading.value = false
     isLoadingMore.value = false
@@ -413,10 +415,10 @@ const confirmArchive = async () => {
     issues.value = issues.value.filter(i => i.id !== issue.id)
     animatingCards.value.delete(issue.id!)
 
-    useNuxtApp().$toast.show('Issue archived successfully', 'success')
+    useNuxtApp().$toast.show(t('archive.messages.success'), 'success')
   } catch (error) {
     console.error('Error archiving issue:', error)
-    useNuxtApp().$toast.show('Failed to archive issue', 'error')
+    useNuxtApp().$toast.show(t('archive.messages.error'), 'error')
     animatingCards.value.delete(archiveConfirmation.issue.id!)
   }
 
@@ -441,10 +443,10 @@ const unarchiveIssue = async (issue: Issue) => {
         if (index !== -1 && issues.value[index]) {
           issues.value[index]!.isArchived = false
         }
-      }    useNuxtApp().$toast.show('Issue unarchived successfully', 'success')
+      }    useNuxtApp().$toast.show(t('archive.messages.unarchiveSuccess'), 'success')
   } catch (error) {
     console.error('Error unarchiving issue:', error)
-    useNuxtApp().$toast.show('Failed to unarchive issue', 'error')
+    useNuxtApp().$toast.show(t('archive.messages.unarchiveError'), 'error')
   }
 }
 
@@ -465,12 +467,12 @@ const toggleResolved = async (issue: Issue) => {
     }
 
     useNuxtApp().$toast.show(
-      `Issue ${newStatus === IssueStatus.RESOLVED ? 'resolved' : 'reopened'} successfully`, 
+      newStatus === IssueStatus.RESOLVED ? t('status.messages.resolvedSuccess') : t('status.messages.reopenedSuccess'), 
       'success'
     )
   } catch (error) {
     console.error('Error updating issue status:', error)
-    useNuxtApp().$toast.show('Failed to update issue status', 'error')
+    useNuxtApp().$toast.show(t('status.messages.error'), 'error')
   }
 }
 
@@ -486,10 +488,10 @@ const getPreviewText = (text: string, maxLength: number): string => {
 
 const getLastComment = (issue: Issue): string => {
   if (!issue.comments || issue.comments.length === 0) {
-    return 'No comments yet'
+    return t('issue.meta.noComments')
   }
   const lastComment = issue.comments[issue.comments.length - 1]
-  return `Last comment: ${getPreviewText(lastComment.content, 80)}`
+  return `${t('issue.meta.lastComment')}: ${getPreviewText(lastComment.content, 80)}`
 }
 
 const formatDate = (date?: Date | string): string => {

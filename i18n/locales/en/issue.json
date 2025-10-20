@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "title": "Issue Details - Support Agent"
+  },
+  "navigation": {
+    "back": "Back to Issues"
+  },
+  "page": {
+    "title": "Issue Details"
+  },
+  "states": {
+    "loading": "Loading issue details...",
+    "notFound": {
+      "title": "Issue not found",
+      "message": "The requested issue could not be found."
+    }
+  },
+  "issue": {
+    "id": "ID",
+    "meta": {
+      "created": "Created"
+    },
+    "status": {
+      "open": "Open",
+      "resolved": "Resolved"
+    },
+    "actions": {
+      "markResolved": "Mark Resolved",
+      "reopen": "Reopen Issue",
+      "archive": "Archive",
+      "unarchive": "Unarchive"
+    }
+  },
+  "tags": {
+    "title": "Tags",
+    "manage": "Manage Tags",
+    "noTags": "No tags assigned",
+    "removeTitle": "Remove tag"
+  },
+  "description": {
+    "title": "Description"
+  },
+  "comments": {
+    "title": "Comments",
+    "add": {
+      "placeholder": "Client Facing AI will see this comment.",
+      "button": "Add Comment"
+    },
+    "noComments": "No comments yet.",
+    "loadMore": "Load More Comments",
+    "from": {
+      "staff": "Staff",
+      "agent": "AI Agent",
+      "unknown": "Unknown"
+    },
+    "deleteConfirm": "Are you sure you want to delete this comment?"
+  },
+  "archive": {
+    "dialog": {
+      "title": "Archive Issue",
+      "message": "Are you sure you want to archive this issue?",
+      "cancel": "Cancel",
+      "confirm": "Archive"
+    }
+  },
+  "messages": {
+    "noIssueId": "No issue ID provided",
+    "tagRemoved": "Tag removed successfully",
+    "tagRemoveError": "Failed to remove tag",
+    "loadError": "Failed to load issue details",
+    "loadCommentsError": "Failed to load comments",
+    "commentAdded": "Comment added successfully",
+    "commentAddError": "Failed to add comment",
+    "commentDeleted": "Comment deleted successfully",
+    "commentDeleteError": "Failed to delete comment",
+    "issueResolved": "Issue resolved successfully",
+    "issueReopened": "Issue reopened successfully",
+    "statusUpdateError": "Failed to update issue status",
+    "archived": "Issue archived successfully",
+    "archiveError": "Failed to archive issue",
+    "unarchived": "Issue unarchived successfully",
+    "unarchiveError": "Failed to unarchive issue"
+  }
+}
