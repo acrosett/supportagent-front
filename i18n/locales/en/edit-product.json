@@ -18,7 +18,7 @@
       },
       "description": {
         "label": "Product Description",
-        "description": "1. What your product is and does.\\n2. A few marketing arguments to sell the product + your pricing model.\\n3. A general overview on how to use your product."
+        "description": "1. What your product is and does. 2. A few marketing arguments to sell the product + your pricing model. 3. A general overview on how to use your product."
       },
       "webhookUrl": {
         "label": "Webhook URL",

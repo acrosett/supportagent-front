@@ -18,7 +18,7 @@
       },
       "description": {
         "label": "Description du produit",
-        "description": "1. Ce qu'est votre produit et ce qu'il fait.\\n2. Quelques arguments marketing pour vendre le produit + votre modèle de prix.\\n3. Une vue d'ensemble de l'utilisation de votre produit."
+        "description": "1. Ce qu'est votre produit et ce qu'il fait. 2. Quelques arguments marketing pour vendre le produit + votre modèle de prix. 3. Une vue d'ensemble de l'utilisation de votre produit."
       },
       "webhookUrl": {
         "label": "URL du Webhook",

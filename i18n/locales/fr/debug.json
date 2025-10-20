@@ -52,7 +52,7 @@
       }
     },
     "button": "Exécuter la suppression du compte",
-    "confirmation": "Êtes-vous sûr de vouloir SUPPRIMER PERMANENTEMENT le compte avec l'ID de produit : {productId}?\\NCette action ne peut pas être annulée et supprimera immédiatement toutes les données associées.\\NReason : {reason}",
+    "confirmation": "Êtes-vous sûr de vouloir SUPPRIMER PERMANENTEMENT le compte avec l'ID de produit : {productId}? Cette action ne peut pas être annulée et supprimera immédiatement toutes les données associées. Reason : {reason}",
     "messages": {
       "executing": "Exécution de la suppression du compte...",
       "success": "La suppression du compte a été exécutée avec succès"

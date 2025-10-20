@@ -164,8 +164,8 @@
       "loadMore": "Failed to load more transactions. Please try again."
     },
     "confirmation": {
-      "disableAutoTopup": "Are you sure you want to disable auto top-up?\\n\\nThis will stop automatic billing when your balance gets low.",
-      "disableAutoRenew": "Are you sure you want to disable auto-renew?\\n\\nYour subscription will not renew automatically next month."
+      "disableAutoTopup": "Are you sure you want to disable auto top-up?  This will stop automatic billing when your balance gets low.",
+      "disableAutoRenew": "Are you sure you want to disable auto-renew?  Your subscription will not renew automatically next month."
     },
     "status": {
       "enabled": "enabled",

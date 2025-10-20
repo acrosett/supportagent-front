@@ -30,7 +30,7 @@
     "title": "Delete Client Data",
     "warning": "⚠️ WARNING: Delete all client messages and data for the current user. This action cannot be undone!",
     "button": "Delete My Client Data",
-    "confirmation": "Are you sure you want to DELETE ALL your client data and messages?\\n\\nThis action CANNOT be undone and will permanently remove all your chat history and client information.",
+    "confirmation": "Are you sure you want to DELETE ALL your client data and messages?  This action CANNOT be undone and will permanently remove all your chat history and client information.",
     "messages": {
       "deleting": "Deleting client data...",
       "success": "Client data deleted successfully"
@@ -52,7 +52,7 @@
       }
     },
     "button": "Execute Account Deletion",
-    "confirmation": "Are you sure you want to PERMANENTLY DELETE the account with Product ID: {productId}?\\n\\nThis action CANNOT be undone and will immediately delete all associated data.\\n\\nReason: {reason}",
+    "confirmation": "Are you sure you want to PERMANENTLY DELETE the account with Product ID: {productId}?  This action CANNOT be undone and will immediately delete all associated data.  Reason: {reason}",
     "messages": {
       "executing": "Executing account deletion...",
       "success": "Account deletion executed successfully"
