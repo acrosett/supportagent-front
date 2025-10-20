@@ -2,28 +2,28 @@
   <section class="page-container notifications-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>Notifications</h1>
+        <h1>{{ t('page.title') }}</h1>
         <AppButton
-          label="Configure Notification Preferences"
+          :label="t('page.actions.configure')"
           color="primary"
           margin="left"
           @click="navigateToNotificationConfig"
         />
       </div>
-      <p class="page-description">Stay updated with alerts, messages, and important updates from your product and chatbot activities.</p>
+      <p class="page-description">{{ t('page.description') }}</p>
     </header>
 
     <div class="content-section">
       <!-- Loading State -->
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading notifications...</p>
+        <p>{{ t('states.loading') }}</p>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="notifications.length === 0" class="empty-state">
-        <h3>No notifications found</h3>
-        <p>You'll receive notifications here when important events occur with your product.</p>
+        <h3>{{ t('states.empty.title') }}</h3>
+        <p>{{ t('states.empty.description') }}</p>
       </div>
 
       <!-- Notifications List -->
@@ -44,7 +44,7 @@
             </div>
             <div class="notification-meta">
               <span class="notification-date">{{ formatDate(notification.createdAt) }}</span>
-              <span v-if="!notification.read" class="unread-indicator">New</span>
+              <span v-if="!notification.read" class="unread-indicator">{{ t('notification.unread') }}</span>
             </div>
           </div>
         </div>
@@ -53,12 +53,12 @@
       <!-- Load More Indicator -->
       <div v-if="isLoadingMore" class="loading-more">
         <div class="spinner"></div>
-        <p>Loading more notifications...</p>
+        <p>{{ t('states.loadingMore') }}</p>
       </div>
 
       <!-- End of Results Indicator -->
       <div v-else-if="!hasMoreData && notifications.length > 0" class="end-of-results">
-        <p>No more notifications to load</p>
+        <p>{{ t('states.endOfResults') }}</p>
       </div>
     </div>
   </section>
@@ -67,6 +67,8 @@
 <script setup lang="ts">
 import AppButton from '~/components/AppButton.vue'
 import { Notification } from '~/eicrud_exports/services/notification/notification.entity'
+
+const { t } = useLocalNamespace('notifications')
 
 // State
 const notifications = ref<Notification[]>([])
@@ -92,7 +94,7 @@ const loadNotifications = async (reset = true) => {
     const productId = useNuxtApp().$userProductId
     
     if (!productId) {
-      throw new Error('User product ID not found')
+      throw new Error(t('errors.noProductId'))
     }
     
     // Setup pagination options
@@ -130,7 +132,7 @@ const loadNotifications = async (reset = true) => {
     
   } catch (error) {
     console.error('Failed to load notifications:', error)
-    useNuxtApp().$toast.show('Failed to load notifications', 'error')
+    useNuxtApp().$toast.show(t('errors.loadNotifications'), 'error')
   } finally {
     isLoading.value = false
     isLoadingMore.value = false
@@ -223,7 +225,7 @@ const markAsRead = async (notification: Notification) => {
     
   } catch (error) {
     console.error('Failed to mark notification as read:', error)
-    useNuxtApp().$toast.show('Failed to update notification', 'error')
+    useNuxtApp().$toast.show(t('errors.updateNotification'), 'error')
   }
 }
 
@@ -258,10 +260,10 @@ const loadMore = () => {
 
 // Format date helper
 const formatDate = (date?: Date | string) => {
-  if (!date) return 'Unknown date'
+  if (!date) return t('date.unknown')
   
   const d = date instanceof Date ? date : new Date(date)
-  if (isNaN(d.getTime())) return 'Invalid date'
+  if (isNaN(d.getTime())) return t('date.invalid')
   
   const now = new Date()
   const diff = now.getTime() - d.getTime()
@@ -270,11 +272,11 @@ const formatDate = (date?: Date | string) => {
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
   if (minutes < 60) {
-    return `${minutes}m ago`
+    return t('date.relative.minutesAgo', { minutes })
   } else if (hours < 24) {
-    return `${hours}h ago`
+    return t('date.relative.hoursAgo', { hours })
   } else if (days < 7) {
-    return `${days}d ago`
+    return t('date.relative.daysAgo', { days })
   } else {
     return d.toLocaleDateString()
   }

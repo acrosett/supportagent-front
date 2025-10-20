@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "Notification Preferences - Support Agent"
+  },
+  "navigation": {
+    "back": "Back to Notifications"
+  },
+  "page": {
+    "title": "Notification Preferences",
+    "description": "Configure how and when you want to receive notifications for your products."
+  },
+  "states": {
+    "loading": "Loading notification preferences..."
+  },
+  "form": {
+    "fields": {
+      "promotionalEmails": {
+        "label": "Promotional Emails",
+        "description": "Receive promotional emails and updates"
+      },
+      "exceededQuota": {
+        "label": "Quota Exceeded Alerts",
+        "description": "Get notified when usage quotas are exceeded"
+      },
+      "lowBalance": {
+        "label": "Low Balance Alerts",
+        "description": "Get notified when account balance is low"
+      },
+      "newIssues": {
+        "label": "New Issue Alerts",
+        "description": "Get notified about new issues or problems"
+      },
+      "whatsappNotifications": "WhatsApp Notifications",
+      "emailNotifications": "Email Notifications"
+    },
+    "common": {
+      "yes": "Yes",
+      "no": "No",
+      "on": "On",
+      "off": "Off"
+    },
+    "actions": {
+      "save": "Save Notification Preferences",
+      "cancel": "Cancel"
+    }
+  },
+  "messages": {
+    "savedSuccess": "Notification preferences saved successfully!"
+  },
+  "errors": {
+    "noProductId": "Product ID not found",
+    "saveFailed": "Failed to save notification preferences",
+    "loadFailed": "Failed to load notification preferences"
+  }
+}

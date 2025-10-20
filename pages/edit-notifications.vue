@@ -3,25 +3,25 @@
     <div class="header">
       <div class="header-content">
         <AppButton
-          label="Back to Notifications"
+          :label="t('navigation.back')"
           color="secondary"
           :showBackIcon="true"
           @click="navigateToNotifications"
         />
         <h1>
-          Notification Preferences
+          {{ t('page.title') }}
         </h1>
         <div></div> <!-- Spacer for flexbox alignment -->
       </div>
     </div>
 
     <div class="content">
-      <p>Configure how and when you want to receive notifications for your products.</p>
+      <p>{{ t('page.description') }}</p>
       
       <!-- Loading State -->
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading notification preferences...</p>
+        <p>{{ t('states.loading') }}</p>
       </div>
       
       <!-- Form -->
@@ -44,6 +44,8 @@ import MegaForm from '~/components/MegaForm.vue'
 import AppButton from '~/components/AppButton.vue'
 import { Product, NotificationConfig, NotificationSubConfig } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
 import type { OverrideRecord, MegaFormAction } from '~/components/MegaForm.vue'
+
+const { t } = useLocalNamespace('edit-notifications')
 
 // Form data
 const formData = ref<Partial<Product>>({
@@ -70,59 +72,59 @@ const fieldOverrides: OverrideRecord<Product> = {
     nestedIncludeFields: ['promotionalEmails', 'exceededQuota', 'lowBalance', 'newIssues'],
     nestedFieldOverrides: {
       promotionalEmails: {
-        label: 'Promotional Emails',
-        description: 'Receive promotional emails and updates',
-        onLabel: 'Yes',
-        offLabel: 'No'
+        label: t('form.fields.promotionalEmails.label'),
+        description: t('form.fields.promotionalEmails.description'),
+        onLabel: t('form.common.yes'),
+        offLabel: t('form.common.no')
       },
       exceededQuota: {
-        label: 'Quota Exceeded Alerts',
-        description: 'Get notified when usage quotas are exceeded',
+        label: t('form.fields.exceededQuota.label'),
+        description: t('form.fields.exceededQuota.description'),
         nestedClass: NotificationSubConfig,
         nestedFieldOverrides: {
           bWhatsapp: {
-            label: 'WhatsApp Notifications',
-            onLabel: 'On',
-            offLabel: 'Off'
+            label: t('form.fields.whatsappNotifications'),
+            onLabel: t('form.common.on'),
+            offLabel: t('form.common.off')
           },
           bEmail: {
-            label: 'Email Notifications',
-            onLabel: 'On',
-            offLabel: 'Off'
+            label: t('form.fields.emailNotifications'),
+            onLabel: t('form.common.on'),
+            offLabel: t('form.common.off')
           }
         }
       },
       lowBalance: {
-        label: 'Low Balance Alerts',
-        description: 'Get notified when account balance is low',
+        label: t('form.fields.lowBalance.label'),
+        description: t('form.fields.lowBalance.description'),
         nestedClass: NotificationSubConfig,
         nestedFieldOverrides: {
           bWhatsapp: {
-            label: 'WhatsApp Notifications',
-            onLabel: 'On',
-            offLabel: 'Off'
+            label: t('form.fields.whatsappNotifications'),
+            onLabel: t('form.common.on'),
+            offLabel: t('form.common.off')
           },
           bEmail: {
-            label: 'Email Notifications',
-            onLabel: 'On',
-            offLabel: 'Off'
+            label: t('form.fields.emailNotifications'),
+            onLabel: t('form.common.on'),
+            offLabel: t('form.common.off')
           }
         }
       },
       newIssues: {
-        label: 'New Issue Alerts',
-        description: 'Get notified about new issues or problems',
+        label: t('form.fields.newIssues.label'),
+        description: t('form.fields.newIssues.description'),
         nestedClass: NotificationSubConfig,
         nestedFieldOverrides: {
           bWhatsapp: {
-            label: 'WhatsApp Notifications',
-            onLabel: 'On',
-            offLabel: 'Off'
+            label: t('form.fields.whatsappNotifications'),
+            onLabel: t('form.common.on'),
+            offLabel: t('form.common.off')
           },
           bEmail: {
-            label: 'Email Notifications',
-            onLabel: 'On',
-            offLabel: 'Off'
+            label: t('form.fields.emailNotifications'),
+            onLabel: t('form.common.on'),
+            offLabel: t('form.common.off')
           }
         }
       }
@@ -133,7 +135,7 @@ const fieldOverrides: OverrideRecord<Product> = {
 // Form actions
 const actions: MegaFormAction[] = [
   {
-    label: 'Save Notification Preferences',
+    label: t('form.actions.save'),
     color: 'primary',
     callback: async (data: Partial<Product>) => {
       try {
@@ -141,7 +143,7 @@ const actions: MegaFormAction[] = [
         const productId = nuxtApp.$userProductId
         
         if (!productId) {
-          throw new Error('Product ID not found')
+          throw new Error(t('errors.noProductId'))
         }
         
         // Update the product with new notification config
@@ -151,16 +153,16 @@ const actions: MegaFormAction[] = [
           notificationConfig: data.notificationConfig
         })
         
-        nuxtApp.$toast.show('Notification preferences saved successfully!', 'success')
+        nuxtApp.$toast.show(t('messages.savedSuccess'), 'success')
       } catch (error) {
         console.error('Error saving notification preferences:', error)
-        useNuxtApp().$toast.show('Failed to save notification preferences', 'error')
+        useNuxtApp().$toast.show(t('errors.saveFailed'), 'error')
         throw error
       }
     }
   },
   {
-    label: 'Cancel',
+    label: t('form.actions.cancel'),
     color: 'secondary',
     margin: 'left',
     skipValidation: true,
@@ -177,7 +179,7 @@ onMounted(async () => {
     const productId = nuxtApp.$userProductId
     
     if (!productId) {
-      throw new Error('Product ID not found')
+      throw new Error(t('errors.noProductId'))
     }
     
     // Load current user's product and notification config
@@ -207,7 +209,7 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error('Error loading notification preferences:', error)
-    useNuxtApp().$toast.show('Failed to load notification preferences', 'error')
+    useNuxtApp().$toast.show(t('errors.loadFailed'), 'error')
   } finally {
     isLoading.value = false
   }

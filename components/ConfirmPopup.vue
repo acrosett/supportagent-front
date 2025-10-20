@@ -8,12 +8,12 @@
         <div class="confirm-actions">
           <AppButton
             v-if="!confirmPopup?.state.singleButton"
-            label="No"
+            :label="t('actions.no')"
             color="secondary"
             @click="confirmPopup?.reject()"
           />
           <AppButton
-            :label="confirmPopup?.state.singleButton ? 'OK' : 'Yes'"
+            :label="confirmPopup?.state.singleButton ? t('actions.ok') : t('actions.yes')"
             :color="confirmPopup?.state.singleButton ? 'primary' : 'warning'"
             :margin="confirmPopup?.state.singleButton ? undefined : 'left'"
             @click="confirmPopup?.confirm()"
@@ -26,6 +26,8 @@
 
 <script setup lang="ts">
 import AppButton from '~/components/AppButton.vue'
+
+const { t } = useLocalNamespace('ConfirmPopup')
 
 const confirmPopup = useNuxtApp().$confirmPopup
 

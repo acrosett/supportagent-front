@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Notifications - Support Agent"
+  },
+  "page": {
+    "title": "Notifications",
+    "description": "Stay updated with alerts, messages, and important updates from your product and chatbot activities.",
+    "actions": {
+      "configure": "Configure Notification Preferences"
+    }
+  },
+  "states": {
+    "loading": "Loading notifications...",
+    "loadingMore": "Loading more notifications...",
+    "empty": {
+      "title": "No notifications found",
+      "description": "You'll receive notifications here when important events occur with your product."
+    },
+    "endOfResults": "No more notifications to load"
+  },
+  "notification": {
+    "unread": "New"
+  },
+  "date": {
+    "unknown": "Unknown date",
+    "invalid": "Invalid date",
+    "relative": {
+      "minutesAgo": "{minutes}m ago",
+      "hoursAgo": "{hours}h ago",
+      "daysAgo": "{days}d ago"
+    }
+  },
+  "errors": {
+    "noProductId": "User product ID not found",
+    "loadNotifications": "Failed to load notifications",
+    "updateNotification": "Failed to update notification"
+  }
+}
