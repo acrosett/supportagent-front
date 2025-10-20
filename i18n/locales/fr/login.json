@@ -1,0 +1,26 @@
+{
+  "page": {
+    "title": "Bienvenue à tous",
+    "subtitle": "Se connecter à son compte"
+  },
+  "form": {
+    "fields": {
+      "expiresInSec": {
+        "label": "Me garder connecté pendant 15 jours",
+        "description": "Prolonge la durée de la session pour plus de commodité"
+      }
+    },
+    "buttons": {
+      "submit": "Connexion"
+    }
+  },
+  "links": {
+    "resetPassword": "Vous n'arrivez pas à vous connecter ? Réinitialisez votre mot de passe",
+    "register": "Pas de compte ? S'inscrire ici"
+  },
+  "messages": {
+    "error": {
+      "loginFailed": "Échec de la connexion"
+    }
+  }
+}

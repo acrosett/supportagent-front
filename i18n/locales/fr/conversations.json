@@ -1,0 +1,89 @@
+{
+  "page": {
+    "title": "Conversations"
+  },
+  "search": {
+    "placeholder": "Recherche de conversations..."
+  },
+  "filters": {
+    "seeArchived": "Voir Archivé",
+    "resetFilters": "Réinitialiser les filtres",
+    "readStatus": {
+      "title": "Lire l'état",
+      "unread": "Non lu",
+      "read": "Lire"
+    },
+    "status": {
+      "title": "Statut",
+      "active": "Actif",
+      "resolved": "Résolu"
+    },
+    "aiStatus": {
+      "title": "État de l'IA",
+      "on": "AI On",
+      "off": "AI Off"
+    },
+    "priority": {
+      "title": "Priorité",
+      "lowest": "le plus bas",
+      "regular": "Régulière",
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Haut"
+    },
+    "options": {
+      "showArchived": "Afficher les archives",
+      "both": "Les deux"
+    }
+  },
+  "status": {
+    "loading": "Chargement des conversations...",
+    "loadingMore": "Chargement d'autres conversations...",
+    "noMoreConversations": "Plus de conversations à charger"
+  },
+  "empty": {
+    "title": "Aucune conversation trouvée",
+    "description": "Les conversations des clients apparaîtront ici lorsqu'ils commenceront à discuter."
+  },
+  "conversation": {
+    "id": "ID",
+    "ai": "AI",
+    "aiOn": "Sur",
+    "aiOff": "Off",
+    "active": "Actif",
+    "resolved": "Résolu",
+    "messages": "messages",
+    "anonymousUser": "Utilisateur anonyme",
+    "noActivity": "Pas d'activité",
+    "invalidDate": "Date invalide",
+    "loadingMessage": "Chargement du message...",
+    "noMessages": "Pas encore de messages"
+  },
+  "actions": {
+    "openChat": "Ouvrir le chat inversé",
+    "reactivate": "Réactiver",
+    "markResolved": "Marque Résolu"
+  },
+  "archive": {
+    "title": "Conversation d'archive",
+    "confirmMessage": "Êtes-vous sûr de vouloir archiver cette conversation ?",
+    "cancel": "Annuler",
+    "confirm": "Archive"
+  },
+  "logs": {
+    "title": "Logs LLM"
+  },
+  "messages": {
+    "success": {
+      "conversationReactivated": "Conversation réactivée",
+      "conversationResolved": "Conversation marquée comme résolue",
+      "conversationArchived": "Conversation archivée",
+      "conversationUnarchived": "Conversation non archivée"
+    },
+    "error": {
+      "updateFailed": "Échec de la mise à jour de la conversation",
+      "archiveFailed": "Échec de l'archivage de la conversation",
+      "missingApiKey": "Clé API de l'utilisateur introuvable"
+    }
+  }
+}

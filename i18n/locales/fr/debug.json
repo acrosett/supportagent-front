@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "title": "Outils de débogage"
+  },
+  "page": {
+    "title": "Outils de débogage",
+    "subtitle": "Utilitaires administratifs de débogage et de test"
+  },
+  "llmReplay": {
+    "title": "Replay LLM Result Parsing",
+    "description": "Récupérer et afficher les données de formation LLM pour une entrée spécifique du journal de formation",
+    "form": {
+      "trainingLogId": {
+        "label": "Journal de formation ID :",
+        "placeholder": "Saisir l'ID du journal de formation..."
+      },
+      "button": "Réexécution de l'analyse"
+    },
+    "results": {
+      "title": "Résultat des données de formation :",
+      "error": "Erreur :"
+    },
+    "messages": {
+      "retrieving": "Récupération des données de formation...",
+      "success": "Données d'entraînement récupérées avec succès (simulation)",
+      "idRequired": "Veuillez saisir un identifiant pour le journal de formation"
+    }
+  },
+  "deleteClientData": {
+    "title": "Supprimer les données du client",
+    "warning": "⚠️ WARNING : Supprimer tous les messages et données du client pour l'utilisateur actuel. Cette action ne peut être annulée !",
+    "button": "Supprimer les données de mes clients",
+    "confirmation": "Êtes-vous sûr de vouloir SUPPRIMER TOUTES les données et tous les messages de vos clients ? Cette action NE PEUT PAS être annulée et supprimera de façon permanente tout votre historique de chat et toutes les informations relatives à vos clients.",
+    "messages": {
+      "deleting": "Suppression des données des clients...",
+      "success": "Les données du client ont été supprimées avec succès"
+    }
+  },
+  "effectiveDelete": {
+    "title": "Suppression efficace d'un compte",
+    "warning": "⚠️ DANGER : Supprimez définitivement un compte et toutes les données qui y sont associées. Cette action ne peut être annulée !",
+    "form": {
+      "productId": {
+        "label": "ID du produit",
+        "placeholder": "Entrez l'ID du produit à supprimer...",
+        "description": "L'ID du produit/compte à supprimer définitivement"
+      },
+      "reason": {
+        "label": "Raison de la suppression",
+        "placeholder": "Saisir le motif de la suppression...",
+        "description": "Expliquer pourquoi ce compte est supprimé (nécessaire pour la piste d'audit)"
+      }
+    },
+    "button": "Exécuter la suppression du compte",
+    "confirmation": "Êtes-vous sûr de vouloir SUPPRIMER PERMANENTEMENT le compte avec l'ID de produit : {productId}?\\NCette action ne peut pas être annulée et supprimera immédiatement toutes les données associées.\\NReason : {reason}",
+    "messages": {
+      "executing": "Exécution de la suppression du compte...",
+      "success": "La suppression du compte a été exécutée avec succès"
+    }
+  },
+  "messages": {
+    "error": {
+      "accessDenied": "Accès refusé : Privilèges d'administrateur requis",
+      "verifyAdmin": "Échec de la vérification des privilèges de l'administrateur",
+      "deleteClient": "Échec de la suppression des données du client",
+      "deleteAccount": "Échec de l'exécution de la suppression du compte"
+    }
+  }
+}

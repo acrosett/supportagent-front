@@ -1,0 +1,34 @@
+{
+  "loading": "Chargement des journaux...",
+  "noLogs": {
+    "title": "Aucun journal trouvé",
+    "subtitle": "Pas de données de formation LLM disponibles pour ce contexte"
+  },
+  "header": {
+    "title": "Historique du traitement ({count} entrées)",
+    "subtitle": "Données de formation LLM et journaux de traitement pour ce contexte"
+  },
+  "entry": {
+    "unknownAgent": "Agent inconnu",
+    "testBadge": "TEST",
+    "errorBadge": "{count} ERROR{pluriel}",
+    "sections": {
+      "input": "Entrée",
+      "output": "Sortie"
+    },
+    "noInput": "Aucune entrée disponible",
+    "noOutput": "Pas de sortie disponible",
+    "copyButton": "Copier"
+  },
+  "timestamps": {
+    "minutesAgo": "Il y a {minutes}m",
+    "hoursAgo": "Il y a {hours}h",
+    "daysAgo": "Il y a {jours}d",
+    "unknown": "Inconnu",
+    "invalid": "Date invalide"
+  },
+  "messages": {
+    "copySuccess": "Entrée LLM copiée dans le presse-papiers !",
+    "copyError": "Échec de la copie dans le presse-papiers"
+  }
+}

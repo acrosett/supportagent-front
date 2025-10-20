@@ -1,0 +1,9 @@
+{
+  "buttons": {
+    "previous": "précédent",
+    "next": "suivant"
+  },
+  "info": {
+    "items": "{count} items"
+  }
+}

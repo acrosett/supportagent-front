@@ -1,0 +1,68 @@
+{
+  "chatInterface": {
+    "status": {
+      "settingUp": "Mise en place du chat..."
+    },
+    "header": {
+      "title": "Agent d'assistance",
+      "subtitle": "Support de chat"
+    },
+    "ai": {
+      "disableLabel": "Désactiver l'IA",
+      "messages": {
+        "enabled": "AI activé",
+        "disabled": "AI désactivé"
+      }
+    },
+    "messages": {
+      "loadingOlder": "Chargement des anciens messages..."
+    },
+    "input": {
+      "placeholder": "Tapez votre message...",
+      "disabledPlaceholder": "Désactiver l'IA pour discuter avec le client"
+    },
+    "toolTrace": {
+      "title": "Détails de la trace de l'outil",
+      "sections": {
+        "toolInfo": "Informations sur l'outil",
+        "input": "Entrée",
+        "output": "Sortie",
+        "error": "Erreur"
+      },
+      "fields": {
+        "toolName": "Nom de l'outil",
+        "status": "Statut",
+        "executedAt": "Exécuté à"
+      },
+      "status": {
+        "unknownTool": "Outil inconnu",
+        "error": "Erreur",
+        "success": "Succès",
+        "unknown": "Inconnu"
+      }
+    }
+  },
+  "chatMessage": {
+    "sender": {
+      "client": "Client",
+      "agent": "Agent d'assistance"
+    },
+    "aiType": {
+      "fast": "Rapide",
+      "smart": "Intelligent",
+      "pro": "Pour"
+    },
+    "followUp": {
+      "label": "Questions suggérées :"
+    },
+    "toolTrace": {
+      "detailsButton": "Détails",
+      "unknownTool": "Outil inconnu",
+      "status": {
+        "error": "Erreur",
+        "success": "Succès",
+        "unknown": "Inconnu"
+      }
+    }
+  }
+}

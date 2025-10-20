@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "Vérification de l'e-mail",
+    "subtitleDefault": "Vérification de votre adresse e-mail...",
+    "subtitleProcessing": "Traitement de votre demande de vérification...",
+    "subtitleSuccess": "Votre courriel a été vérifié avec succès !",
+    "subtitleError": "Il y a eu un problème de vérification de votre email."
+  },
+  "status": {
+    "loading": {
+      "title": "Vérification de votre email...",
+      "message": "Veuillez patienter pendant que nous vérifions votre adresse électronique."
+    },
+    "success": {
+      "title": "L'email a été vérifié avec succès !",
+      "message": "Votre adresse électronique a été vérifiée. Vous pouvez maintenant accéder à toutes les fonctionnalités de votre compte."
+    },
+    "error": {
+      "title": "Échec de la vérification"
+    }
+  },
+  "buttons": {
+    "goToAccount": "Aller au compte",
+    "goToDashboard": "Aller au tableau de bord",
+    "resendVerification": "Renvoyer l'e-mail de vérification"
+  },
+  "messages": {
+    "noToken": "Aucun jeton de vérification n'a été trouvé. Vous serez redirigé vers la page d'accueil.",
+    "success": "Email vérifié avec succès !",
+    "resendInfo": "Veuillez vous rendre dans les paramètres de votre compte pour renvoyer l'e-mail de vérification.",
+    "resendError": "Veuillez réessayer à partir des paramètres de votre compte.",
+    "error": {
+      "expired": "Le lien de vérification a expiré ou n'est pas valide. Veuillez demander un nouvel e-mail de vérification.",
+      "alreadyVerified": "Cette adresse e-mail a déjà été vérifiée.",
+      "failed": "La vérification a échoué. Veuillez réessayer ou contacter le support si le problème persiste.",
+      "unexpected": "Une erreur inattendue s'est produite lors de la vérification. Veuillez réessayer."
+    }
+  }
+}

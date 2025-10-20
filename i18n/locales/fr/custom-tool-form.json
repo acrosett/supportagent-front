@@ -1,0 +1,105 @@
+{
+  "clientPriorities": {
+    "label": "Priorités du client",
+    "description": "Sélectionne les niveaux de priorité des clients qui peuvent utiliser cet outil",
+    "lowest": "Priorité la plus basse",
+    "regular": "Priorité régulière",
+    "high": "Priorité élevée"
+  },
+  "name": {
+    "label": "Nom de l'outil",
+    "placeholder": "mon_outil_personnalisé",
+    "description": "Nom unique pour cet outil (en minuscules, sans espaces)"
+  },
+  "description": {
+    "label": "Description",
+    "placeholder": "Décrire ce que fait cet outil...",
+    "description": "Description détaillée de l'objectif et des fonctionnalités de l'outil"
+  },
+  "url": {
+    "label": "URL",
+    "placeholder": "https://api.example.com/endpoint",
+    "description": "L'URL complète où l'outil effectuera les requêtes"
+  },
+  "method": {
+    "label": "Méthode HTTP",
+    "description": "Méthode HTTP à utiliser pour les requêtes"
+  },
+  "arguments": {
+    "label": "Argument",
+    "description": "Configurer les paramètres qui seront envoyés avec les requêtes à votre outil",
+    "name": {
+      "label": "Nom du paramètre",
+      "placeholder": "nom_du_paramètre",
+      "description": "Nom du paramètre (en minuscules, séparé par un trait de soulignement)"
+    },
+    "paramDescription": {
+      "label": "Description du paramètre",
+      "placeholder": "Décrire ce paramètre...",
+      "description": "Description de l'utilisation de ce paramètre"
+    },
+    "location": {
+      "label": "Lieu",
+      "payload": "Corps de la demande/Charge de paiement",
+      "header": "En-tête HTTP",
+      "urlParam": "Paramètre URL",
+      "queryParam": "Paramètre de requête",
+      "description": "Emplacement de ce paramètre dans la requête HTTP"
+    },
+    "valueType": {
+      "label": "Type de valeur",
+      "setByAi": "Défini par l'IA",
+      "userId": "ID de l'utilisateur",
+      "sharedSecret": "Secret partagé",
+      "constant": "Valeur constante",
+      "description": "Comment la valeur de ce paramètre est déterminée"
+    },
+    "dataType": {
+      "label": "Type de données",
+      "string": "Chaîne",
+      "number": "Nombre",
+      "boolean": "booléen",
+      "object": "Objet",
+      "array": "Tableau",
+      "description": "Le type de données de ce paramètre"
+    },
+    "constantValue": {
+      "label": "Valeur constante",
+      "placeholder": "Entrez la valeur de la constante...",
+      "description": "La valeur fixe à utiliser pour ce paramètre"
+    },
+    "required": {
+      "label": "Requis",
+      "description": "Si ce paramètre est nécessaire pour que l'IA fournisse des informations sur les priorités des clients."
+    },
+    "defaultValue": {
+      "label": "Valeur par défaut",
+      "placeholder": "Saisir la valeur par défaut...",
+      "description": "Valeur par défaut à utiliser si l'IA n'en fournit pas."
+    }
+  },
+  "contentType": {
+    "label": "Type de contenu",
+    "placeholder": "application/json",
+    "description": "Type MIME pour le corps de la requête"
+  },
+  "timeout": {
+    "label": "Délai d'attente (ms)",
+    "placeholder": "5000",
+    "description": "Délai d'attente de la demande en millisecondes"
+  },
+  "enabled": {
+    "label": "Activé",
+    "description": "Si cet outil est disponible pour être utilisé"
+  },
+  "guestAccess": {
+    "label": "Accès des invités",
+    "description": "Autoriser l'utilisation de l'outil par des utilisateurs non connectés"
+  },
+  "actions": {
+    "cancel": "Annuler",
+    "save": "Outil de sauvegarde",
+    "update": "Outil de mise à jour",
+    "create": "Créer un outil"
+  }
+}

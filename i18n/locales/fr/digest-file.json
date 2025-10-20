@@ -1,0 +1,35 @@
+{
+  "tabs": {
+    "upload": "Télécharger le fichier",
+    "paste": "Coller le texte"
+  },
+  "upload": {
+    "title": "Télécharger un document",
+    "instruction": "Déposez votre fichier ici ou cliquez pour le parcourir",
+    "supportedFiles": "Prend en charge : HTML, PDF, Word (.doc, .docx), XML, Texte (.txt), Markdown (.md), JSON, CSV"
+  },
+  "processing": {
+    "message": "Traitement de {nomdefichier}..."
+  },
+  "success": {
+    "message": "Traitement réussi",
+    "uploadAnother": "Télécharger un autre fichier"
+  },
+  "paste": {
+    "label": "Collez le contenu de votre texte",
+    "placeholder": "Collez ou tapez votre contenu ici...",
+    "processButton": "Texte du processus",
+    "defaultFileName": "Texte collé"
+  },
+  "confirm": {
+    "uploadTitle": "Confirmer le téléchargement",
+    "processTitle": "Confirmer le traitement",
+    "uploadMessage": "Vous êtes sur le point de télécharger {nomdufichier} ({tailleKB} KB).",
+    "processMessage": "Vous êtes sur le point de traiter {nomdufichier} ({tailleKB} Ko de texte).",
+    "defaultFileName": "votre fichier",
+    "calculatingCost": "Calculer le coût estimé...",
+    "estimatedCost": "Coût de traitement estimé : ${cost}",
+    "cancel": "Annuler",
+    "process": "Processus avec l'IA"
+  }
+}

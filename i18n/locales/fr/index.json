@@ -1,3 +1,64 @@
 {
-   "dashboard": "Tableau de bord"
+  "meta": {
+    "title": "Tableau de bord - DirectSupport.ai"
+  },
+  "page": {
+    "title": "Tableau de bord",
+    "description": "Bienvenue sur DirectSupport.ai ! Surveillez l'activité de votre compte et obtenez des informations sur les performances de votre support client."
+  },
+  "gettingStarted": {
+    "title": "Commencer",
+    "description": "Étapes d'installation rapide pour tirer le meilleur parti de DirectSupport.ai. Cliquez sur l'une des étapes ci-dessous pour commencer, ou demandez des détails à l'assistance en ligne.",
+    "steps": {
+      "configureProduct": {
+        "title": "Configurez votre produit",
+        "description": "Configurez vos informations sur les produits et les instructions de l'assistant d'IA."
+      },
+      "assignPhone": {
+        "title": "Attribuez votre numéro de téléphone",
+        "description": "Attribuez votre numéro de téléphone pour recevoir les mises à jour et les notifications des clients."
+      },
+      "uploadDocumentation": {
+        "title": "Téléchargez votre documentation",
+        "description": "Téléchargez vos fichiers de documentation pour générer automatiquement votre FAQ."
+      },
+      "installWidget": {
+        "title": "Installer le widget",
+        "description": "Ajoutez le widget de chat à votre site web pour commencer à recevoir les messages des clients."
+      }
+    }
+  },
+  "balance": {
+    "title": "Solde du compte",
+    "description": "Solde de votre compte et informations sur son utilisation",
+    "status": {
+      "sufficient": "L'équilibre suffit",
+      "low": "Solde faible - Envisagez d'ajouter des fonds"
+    },
+    "buttons": {
+      "goToBilling": "Aller à Facturation"
+    }
+  },
+  "activity": {
+    "title": "Activité des messages (14 jours)",
+    "description": "Volume des messages des clients par niveau de priorité",
+    "chart": {
+      "loading": "Chargement des données d'activité...",
+      "title": "Activité des messages des clients par priorité",
+      "xAxisTitle": "Temps",
+      "yAxisTitle": "Nombre de messages",
+      "priorityLabels": {
+        "high": "Haute priorité",
+        "regular": "Priorité ordinaire",
+        "lowest": "Priorité la plus basse"
+      }
+    }
+  },
+  "messages": {
+    "error": {
+      "loadProductData": "Échec du chargement des données produit",
+      "loadChartData": "Échec du chargement des données du graphique",
+      "loadChart": "Échec du chargement du graphique"
+    }
+  }
 }

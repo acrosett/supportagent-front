@@ -18,19 +18,23 @@
         <span></span>
         <span></span>
       </button>
-      <h1 class="mobile-title">
-        <i class="fas fa-robot"></i>
-        DirectSupport.ai
-      </h1>
+      <a href="https://directsupport.ai" target="_blank" class="mobile-title-link">
+        <h1 class="mobile-title">
+          <i class="fas fa-robot"></i>
+          DirectSupport.ai
+        </h1>
+      </a>
     </header>
 
     <!-- Sidebar navigation -->
     <nav class="sidebar" :class="{ 'sidebar-open': isMobileMenuOpen }">
       <div class="sidebar-header">
-        <h2 class="app-title">
-          <i class="fas fa-robot"></i>
-          DirectSupport.ai
-        </h2>
+        <a href="https://directsupport.ai" target="_blank" class="app-title-link">
+          <h2 class="app-title">
+            <i class="fas fa-robot"></i>
+            DirectSupport.ai
+          </h2>
+        </a>
       </div>
       <ul class="nav-list">
         <li>
@@ -458,6 +462,15 @@ onMounted(async () => {
   margin: 0;
 }
 
+.mobile-title-link {
+  text-decoration: none;
+  color: inherit;
+  
+  &:hover .mobile-title {
+    opacity: 0.8;
+  }
+}
+
 .hamburger-btn {
   display: flex;
   flex-direction: column;
@@ -504,6 +517,15 @@ onMounted(async () => {
   font-weight: 700;
   color: $text-white;
   margin: 0;
+}
+
+.app-title-link {
+  text-decoration: none;
+  color: inherit;
+  
+  &:hover .app-title {
+    opacity: 0.9;
+  }
 }
 
 .nav-list {

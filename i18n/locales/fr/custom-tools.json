@@ -1,0 +1,131 @@
+{
+  "page": {
+    "title": "Outils personnalisés"
+  },
+  "aiInstructions": {
+    "title": "Instructions supplémentaires pour AI",
+    "description": "Fournir un contexte et des instructions supplémentaires que les agents en contact avec les clients doivent suivre lorsqu'ils les aident.",
+    "saveButton": "Enregistrer les instructions",
+    "form": {
+      "label": "Instructions supplémentaires",
+      "placeholder": "Saisir des instructions supplémentaires pour l'agent AI...",
+      "description": "Ces instructions seront fournies à l'IA lorsqu'elle répondra aux demandes des clients."
+    }
+  },
+  "domains": {
+    "title": "Domaines vérifiés",
+    "description": "Vérifiez les domaines pour permettre l'intégration d'outils personnalisés dans vos systèmes.",
+    "addButton": "Ajouter un domaine",
+    "empty": {
+      "title": "Aucun domaine vérifié",
+      "description": "Ajouter un domaine pour permettre l'intégration d'outils personnalisés"
+    },
+    "verification": {
+      "instructions": "Pour vérifier ce domaine, choisissez l'une des options suivantes",
+      "option1Title": "Option 1 : Enregistrement DNS TXT",
+      "option1Description": "Ajouter un enregistrement TXT au DNS de votre domaine",
+      "option2Title": "Option 2 : Webhook",
+      "option2Description": "Créer un fichier/webhook accessible à",
+      "option2Returns": "le résultat devrait être"
+    },
+    "status": {
+      "verified": "Vérifié",
+      "unverified": "Non vérifié"
+    },
+    "actions": {
+      "verify": "Vérifier",
+      "delete": "Supprimer"
+    },
+    "form": {
+      "label": "Nom de domaine",
+      "placeholder": "exemple.com",
+      "description": "Entrez le nom de domaine que vous voulez vérifier (sans http:// ou https://)"
+    }
+  },
+  "tools": {
+    "title": "Outils personnalisés",
+    "description": "Créez et gérez des outils personnalisés que les agents (SMART) en contact avec les clients peuvent utiliser pour s'intégrer à vos systèmes.",
+    "addButton": "Ajouter un outil personnalisé",
+    "empty": {
+      "title": "Pas d'outils personnalisés",
+      "description": "Créez votre premier outil personnalisé pour commencer à intégrer des systèmes externes."
+    },
+    "status": {
+      "enabled": "Activé",
+      "disabled": "Désactivé"
+    },
+    "arguments": {
+      "label": "Arguments",
+      "count": "{count} paramètre(s)"
+    },
+    "actions": {
+      "edit": "Editer",
+      "delete": "Supprimer"
+    }
+  },
+  "popups": {
+    "createTool": {
+      "title": "Outil personnalisé (notre chatbot peut les créer pour vous)"
+    },
+    "addDomain": {
+      "title": "Ajouter un domaine",
+      "addButton": "Ajouter un domaine",
+      "cancelButton": "Annuler",
+      "description": "Entrez le nom de domaine que vous souhaitez vérifier et utiliser pour les outils personnalisés."
+    }
+  },
+  "form": {
+    "clientPriorities": {
+      "label": "Priorités du client",
+      "low": "Faible priorité",
+      "medium": "Priorité moyenne",
+      "high": "Haute priorité"
+    },
+    "name": {
+      "label": "Nom de l'outil",
+      "placeholder": "mon_outil_personnalisé",
+      "description": "Nom unique pour cet outil (en minuscules, sans espaces)"
+    },
+    "description": {
+      "label": "Description de la page",
+      "placeholder": "Décrire ce que fait cet outil...",
+      "description": "Description détaillée de l'objectif et des fonctionnalités de l'outil"
+    },
+    "url": {
+      "label": "URL",
+      "placeholder": "https://api.example.com/endpoint",
+      "description": "L'URL complète où l'outil effectuera des requêtes"
+    },
+    "method": {
+      "label": "Méthode HTTP",
+      "description": "Méthode HTTP à utiliser pour les requêtes"
+    },
+    "arguments": {
+      "label": "Argument"
+    },
+    "contentType": {
+      "label": "Type de contenu",
+      "placeholder": "application/json",
+      "description": "Type MIME pour le corps de la demande"
+    },
+    "timeout": {
+      "label": "Délai d'attente (ms)",
+      "placeholder": "5000",
+      "description": "Délai d'attente de la demande en millisecondes"
+    },
+    "enabled": {
+      "label": "Activé",
+      "description": "Si cet outil est disponible pour utilisation"
+    },
+    "guestAccess": {
+      "label": "Accès invité",
+      "description": "Autoriser l'utilisation de l'outil par des utilisateurs non connectés"
+    },
+    "actions": {
+      "cancel": "Annuler",
+      "save": "Outil de sauvegarde",
+      "update": "Outil de mise à jour",
+      "create": "Créer un outil"
+    }
+  }
+}

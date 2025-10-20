@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "title": "Journaux du système"
+  },
+  "page": {
+    "title": "Journaux du système"
+  },
+  "debug": {
+    "toggle": {
+      "label": "Collecter les journaux de débogage",
+      "on": "ON",
+      "off": "OFF"
+    },
+    "messages": {
+      "enabled": "Débogage activé - Avertissement : Cela peut affecter les performances",
+      "disabled": "Débogage désactivé",
+      "error": "Échec de la mise à jour des paramètres de débogage"
+    }
+  },
+  "chart": {
+    "title": "Activité du journal",
+    "loading": "Chargement des données du graphique...",
+    "error": "Échec du chargement des données du graphique",
+    "axis": {
+      "time": "Temps",
+      "count": "Compteur de logs"
+    },
+    "periods": {
+      "week": "Semaine",
+      "weeks": "Semaines"
+    },
+    "filter": {
+      "success": "Filtré sur {start} - {end}"
+    }
+  },
+  "filters": {
+    "search": {
+      "label": "Message de recherche :",
+      "placeholder": "Recherche dans les messages du journal..."
+    },
+    "types": {
+      "label": "Types de journaux :"
+    },
+    "dateRange": {
+      "label": "Période de temps :",
+      "from": "De :",
+      "to": "Vers :"
+    },
+    "buttons": {
+      "refresh": "Rafraîchir",
+      "clear": "Effacer les filtres"
+    }
+  },
+  "list": {
+    "loading": "Chargement des journaux...",
+    "loadingMore": "Chargement d'autres journaux...",
+    "empty": "Aucun journal trouvé correspondant à vos critères.",
+    "noMore": "Plus de journaux à charger.",
+    "clickDetails": "Cliquez pour plus de détails →",
+    "level": "Niveau : {level}",
+    "user": "Utilisateur : {user}"
+  },
+  "details": {
+    "title": "Détails du journal",
+    "sections": {
+      "basicInfo": "Informations de base",
+      "message": "Message",
+      "data": "Données",
+      "query": "Requête",
+      "options": "Options"
+    },
+    "fields": {
+      "type": "Type :",
+      "level": "Niveau :",
+      "service": "Service :",
+      "command": "Commandement :",
+      "userId": "ID de l'utilisateur :",
+      "productId": "ID du produit :",
+      "ipAddress": "Adresse IP :",
+      "currentMs": "Microservice actuel :",
+      "created": "Créé :",
+      "updated": "Mise à jour :",
+      "expiresAt": "Expires At :",
+      "failNotification": "Notification d'échec :",
+      "notAvailable": "N/A",
+      "system": "Système",
+      "never": "Jamais",
+      "yes": "Oui",
+      "no": "Non"
+    }
+  },
+  "messages": {
+    "error": {
+      "loadLogs": "Échec du chargement des journaux",
+      "loadChart": "Échec du chargement du graphique"
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "title": "Fonds et facturation"
+  },
+  "page": {
+    "title": "Fonds et facturation",
+    "subtitle": "Gérez le solde de votre compte, vos dépôts et vos limites de dépenses."
+  },
+  "balance": {
+    "title": "Solde du compte",
+    "verified": "Dernière vérification {date}",
+    "lowBalance": "Solde bas - Ajouter des fonds pour continuer le service",
+    "buttons": {
+      "addFunds": "Ajouter des fonds",
+      "autoTopup": "Recharge automatique"
+    },
+    "autoTopup": {
+      "enabled": "Recharge automatique activée",
+      "trigger": "lorsque le solde est inférieur à ${montant}",
+      "toggleOn": "ON",
+      "toggleOff": "OFF"
+    }
+  },
+  "subscription": {
+    "title": "Abonnement",
+    "price": "$5",
+    "period": "/mois",
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "description": {
+      "active": "Votre abonnement est actif et sera renouvelé automatiquement",
+      "inactive": "Activez votre abonnement pour débloquer toutes les fonctionnalités et activer le chat AI."
+    },
+    "autoRenew": {
+      "label": "Renouvellement automatique de l'abonnement",
+      "description": "Renouveler automatiquement votre abonnement chaque mois",
+      "toggleOn": "ON",
+      "toggleOff": "OFF"
+    },
+    "nextBilling": "Prochaine date de facturation : {date}",
+    "button": "Activer l'abonnement"
+  },
+  "spendingLimit": {
+    "title": "Limite mensuelle de dépenses",
+    "noLimit": "Aucune limite fixée",
+    "period": "/mois",
+    "description": {
+      "set": "Montant maximum pouvant être déposé par mois",
+      "unset": "Fixer une limite mensuelle de dépôt pour contrôler vos coûts"
+    },
+    "button": "Modifier la limite"
+  },
+  "transactions": {
+    "title": "Historique des transactions",
+    "filters": {
+      "all": "Tous",
+      "deposits": "Dépôts",
+      "spending": "Dépenser"
+    },
+    "loading": "Chargement des transactions...",
+    "empty": {
+      "title": "Aucune transaction trouvée",
+      "subtitle": "L'historique de vos transactions apparaîtra ici."
+    },
+    "loadMore": "Charger plus",
+    "noMore": "Plus de transactions à charger",
+    "viewDetails": "Voir les détails",
+    "types": {
+      "deposit": "Dépôt",
+      "spending": "Dépenser"
+    }
+  },
+  "popups": {
+    "addFunds": {
+      "title": "Ajouter des fonds",
+      "amountLabel": "Montant à ajouter",
+      "buttons": {
+        "cancel": "Annuler",
+        "addFunds": "Ajouter des fonds"
+      }
+    },
+    "autoTopup": {
+      "title": "Paramètres de rechargement automatique",
+      "explanation": "Configurez la facturation automatique pour maintenir le solde de votre compte.",
+      "amountLabel": "Montant complémentaire",
+      "minimumWarning": "Le montant minimum du rechargement automatique est de 60",
+      "triggerInfo": "Lorsque votre solde tombe en dessous de ${seuil} (10% du montant de la recharge), vous serez automatiquement facturé jusqu'à concurrence de ${montant}.",
+      "currentStatus": {
+        "amount": "Recharge automatique actuelle :",
+        "trigger": "Seuil de déclenchement :"
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "choosePayment": "Choisir le mode de paiement"
+      }
+    },
+    "subscription": {
+      "title": "Activer l'abonnement",
+      "confirmation": "Vous serez facturé 5 $. Vous pouvez annuler à tout moment.",
+      "buttons": {
+        "cancel": "Annuler",
+        "activate": "Activer (5$/mois)"
+      }
+    },
+    "spendingLimit": {
+      "title": "Limite mensuelle de dépenses"
+    },
+    "transactionDetails": {
+      "title": "Détails de la transaction - {type}",
+      "summary": {
+        "amount": "Montant :",
+        "date": "Date :",
+        "transactionId": "Transaction ID :"
+      },
+      "deposit": {
+        "title": "Informations sur le dépôt",
+        "status": "Statut :",
+        "source": "Source :",
+        "currency": "La monnaie :",
+        "autoTopup": "Recharge automatique :",
+        "paymentDetails": "Détails du paiement",
+        "paymentIntent": "Intention de paiement :",
+        "chargeId": "Charge ID :",
+        "customerId": "ID client :",
+        "refundInfo": "Informations sur les remboursements",
+        "refundedAmount": "Montant remboursé :",
+        "refundedAt": "Remboursé le :",
+        "refundId": "Refund ID :",
+        "yes": "Oui",
+        "no": "Non",
+        "notAvailable": "N/A",
+        "usd": "USD"
+      },
+      "spending": {
+        "title": "Informations sur les dépenses",
+        "service": "Service :",
+        "user": "Utilisateur :",
+        "cost": "Coût :",
+        "model": "Modèle :",
+        "requestId": "Request ID :",
+        "metadata": "Métadonnées"
+      }
+    }
+  },
+  "messages": {
+    "success": {
+      "fundsAdded": "Les fonds ont été ajoutés avec succès ! Votre solde a été mis à jour.",
+      "autoTopupSaved": "Les paramètres de recharge automatique ont été enregistrés avec succès.",
+      "subscriptionActivated": "L'abonnement a été activé avec succès ! Bienvenue à Premium.",
+      "spendingLimitUpdated": "La limite de dépenses a été mise à jour avec succès.",
+      "autoTopupToggled": "Recharge automatique {état} réussie.",
+      "autoRenewToggled": "Renouvellement automatique de {état} réussi."
+    },
+    "error": {
+      "addFunds": "L'ajout de fonds a échoué. Veuillez réessayer.",
+      "saveAutoTopup": "L'enregistrement des paramètres de recharge automatique a échoué. Veuillez réessayer.",
+      "activateSubscription": "Échec de l'activation de l'abonnement. Veuillez réessayer.",
+      "updateSpendingLimit": "Échec de la mise à jour de la limite de dépenses. Veuillez réessayer.",
+      "toggleAutoTopup": "La mise à jour des paramètres de recharge automatique a échoué. Veuillez réessayer.",
+      "toggleAutoRenew": "Échec de la mise à jour du paramètre de renouvellement automatique. Veuillez réessayer.",
+      "loadTransactions": "Échec du chargement des transactions. Veuillez réessayer.",
+      "loadMore": "Échec du chargement d'autres transactions. Veuillez réessayer."
+    },
+    "confirmation": {
+      "disableAutoTopup": "Êtes-vous sûr de vouloir désactiver le rechargement automatique ? Cela arrêtera la facturation automatique lorsque votre solde sera faible.",
+      "disableAutoRenew": "Êtes-vous sûr de vouloir désactiver le renouvellement automatique ? Votre abonnement ne sera pas renouvelé automatiquement le mois prochain."
+    },
+    "status": {
+      "enabled": "activé",
+      "disabled": "désactivé"
+    }
+  }
+}

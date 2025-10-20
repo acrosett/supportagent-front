@@ -1,0 +1,30 @@
+{
+  "page": {
+    "title": "Créer un compte",
+    "subtitle": "Rejoignez-nous pour commencer à automatiser votre support client"
+  },
+  "form": {
+    "fields": {
+      "email": {
+        "label": "Courriel"
+      },
+      "password": {
+        "label": "Mot de passe"
+      },
+      "acceptedEula": {
+        "label": "J'accepte le [Contrat de licence utilisateur final] (https://directsupport.ai/eula)"
+      },
+      "acceptedMarketing": {
+        "label": "J'accepte de recevoir des communications marketing"
+      }
+    },
+    "buttons": {
+      "submit": "Enregistrer"
+    }
+  },
+  "messages": {
+    "error": {
+      "recaptchaFailed": "La vérification reCAPTCHA a échoué. Veuillez réessayer."
+    }
+  }
+}

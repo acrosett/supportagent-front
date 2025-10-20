@@ -1,0 +1,64 @@
+{
+  "page": {
+    "title": "Téléchargement et traitement des documents"
+  },
+  "buttons": {
+    "backToFaq": "Retour à la FAQ",
+    "resetFilters": "Réinitialiser les filtres"
+  },
+  "aiNote": "L'IA utilisera ce contenu pour mettre à jour la FAQ.",
+  "admin": {
+    "rawTextTitle": "Contenu textuel brut (réservé à l'administrateur)",
+    "charactersCount": "{count} caractères",
+    "textPlaceholder": "Le texte traité apparaîtra ici..."
+  },
+  "processingQueue": {
+    "title": "File d'attente de traitement",
+    "description": "Suivez vos tâches de traitement des documents et de mise à jour de la FAQ"
+  },
+  "search": {
+    "placeholder": "Tâches de recherche..."
+  },
+  "filters": {
+    "status": {
+      "all": "Tous",
+      "title": "Statut",
+      "queued": "En attente",
+      "processing": "Traitement",
+      "completed": "Terminé",
+      "failed": "Échec"
+    },
+    "initiator": {
+      "title": "Initiateur",
+      "all": "Tous",
+      "documentUpload": "Téléchargement de documents",
+      "staffAgent": "Agent du personnel"
+    }
+  },
+  "states": {
+    "loading": "Chargement des tâches...",
+    "loadingMore": "Chargement d'autres tâches...",
+    "noMoreTasks": "Plus de tâches à charger",
+    "noTasks": {
+      "title": "Aucune tâche trouvée",
+      "description": "Les tâches de traitement apparaîtront ici lorsque les documents seront téléchargés."
+    }
+  },
+  "taskCard": {
+    "created": "Créé",
+    "updated": "Mise à jour"
+  },
+  "taskDetail": {
+    "title": "Détails de la tâche",
+    "created": "Créé",
+    "updated": "Mise à jour",
+    "knowledgeContent": "Contenu des connaissances",
+    "noContent": "Pas de contenu disponible",
+    "actions": {
+      "close": "Fermer",
+      "reprocess": "Retraiter",
+      "retry": "Réessayer la tâche",
+      "viewLogs": "Voir les journaux"
+    }
+  }
+}

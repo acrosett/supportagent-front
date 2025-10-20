@@ -1,0 +1,56 @@
+{
+  "page": {
+    "title": "Gestion des FAQ"
+  },
+  "header": {
+    "title": "Questions fréquemment posées"
+  },
+  "buttons": {
+    "newFaq": "Nouvelle FAQ",
+    "documentUpload": "Téléchargement de documents",
+    "prev": "Prévoir",
+    "next": "Suivant"
+  },
+  "search": {
+    "placeholder": "Rechercher dans les FAQ..."
+  },
+  "pagination": {
+    "perPage": "Par page",
+    "pageInfo": "Page {current} / {total}"
+  },
+  "states": {
+    "loading": "Chargement des FAQ...",
+    "empty": "Aucune FAQ ne correspond à votre recherche."
+  },
+  "actions": {
+    "toggleAnswer": "Basculer la réponse",
+    "edit": "Editer",
+    "delete": "Supprimer"
+  },
+  "popups": {
+    "create": {
+      "title": "Nouvelle FAQ"
+    },
+    "edit": {
+      "title": "Modifier la FAQ"
+    }
+  },
+  "form": {
+    "fields": {},
+    "buttons": {
+      "cancel": "Annuler",
+      "save": "Sauvegarder la FAQ",
+      "update": "Mise à jour de la FAQ"
+    }
+  },
+  "messages": {
+    "success": {
+      "created": "FAQ créée avec succès",
+      "updated": "FAQ mise à jour avec succès",
+      "deleted": "FAQ supprimée avec succès"
+    },
+    "confirm": {
+      "delete": "Êtes-vous sûr de vouloir supprimer cette FAQ ?"
+    }
+  }
+}

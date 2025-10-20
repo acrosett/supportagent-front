@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "title": "Questions - Agent de support"
+  },
+  "page": {
+    "title": "Enjeux",
+    "sections": {
+      "filters": "Filtres et recherche",
+      "issues": "Liste des questions"
+    }
+  },
+  "filters": {
+    "showArchived": {
+      "label": "Voir Archivé"
+    },
+    "search": {
+      "placeholder": "Questions de recherche..."
+    },
+    "reset": "Réinitialiser les filtres",
+    "status": {
+      "title": "Statut",
+      "options": {
+        "both": "Les deux",
+        "open": "Ouvrir",
+        "resolved": "Résolu"
+      }
+    },
+    "tags": {
+      "title": "Tags",
+      "noTags": "Pas de balises disponibles"
+    }
+  },
+  "states": {
+    "loading": "Problèmes de chargement...",
+    "loadingMore": "Chargement d'autres questions...",
+    "empty": {
+      "title": "Aucun problème trouvé",
+      "description": "Les questions apparaîtront ici lorsqu'elles seront créées"
+    },
+    "endOfResults": "Plus de problèmes à charger"
+  },
+  "issue": {
+    "id": "ID",
+    "status": {
+      "open": "Ouvrir",
+      "resolved": "Résolu"
+    },
+    "meta": {
+      "created": "Créé",
+      "lastComment": "Dernier commentaire",
+      "noComments": "Pas encore de commentaires"
+    },
+    "actions": {
+      "details": "Détails",
+      "markResolved": "Marque résolue",
+      "reopen": "Rouvrir",
+      "archive": "Archives",
+      "unarchive": "Désarchiver"
+    }
+  },
+  "archive": {
+    "dialog": {
+      "title": "Numéro d'archive",
+      "message": "Êtes-vous sûr de vouloir archiver ce numéro ?",
+      "cancel": "Annuler",
+      "confirm": "Archives"
+    },
+    "messages": {
+      "success": "Numéro archivé avec succès",
+      "error": "Échec de l'archivage",
+      "unarchiveSuccess": "Numéro désarchivé avec succès",
+      "unarchiveError": "Échec de la désarchivage"
+    }
+  },
+  "status": {
+    "messages": {
+      "resolvedSuccess": "Problème résolu avec succès",
+      "reopenedSuccess": "Réouverture réussie de la question",
+      "error": "Échec de la mise à jour de l'état de la question"
+    }
+  },
+  "errors": {
+    "loadIssues": "Problèmes de chargement échoués",
+    "loadTags": "Erreur de chargement des balises disponibles"
+  }
+}

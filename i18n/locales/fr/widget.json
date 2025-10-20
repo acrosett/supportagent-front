@@ -1,0 +1,59 @@
+{
+  "page": {
+    "title": "Configuration du widget",
+    "description": "Ajustez l'apparence et le comportement de votre widget de support, puis copiez le snippet intégré."
+  },
+  "status": {
+    "loading": "Chargement de la configuration du widget..."
+  },
+  "embed": {
+    "title": "Embed Snippet",
+    "copyButton": "Copier l'extrait",
+    "copiedMessage": "Copié !"
+  },
+  "fields": {
+    "primaryColor": "Couleur primaire",
+    "secondaryColor": "Couleur secondaire",
+    "bounceAfterInit": "Rebond après l'initialisation (secondes)",
+    "periodicBounce": "Rebond périodique (secondes)",
+    "position": {
+      "label": "Position",
+      "bottomRight": "En bas à droite",
+      "bottomLeft": "En bas à gauche"
+    },
+    "icon": {
+      "label": "Icône",
+      "message": "Message",
+      "headset": "Casque d'écoute",
+      "robot": "Robot"
+    },
+    "options": {
+      "label": "Options",
+      "enabledLabel": "ENABLED",
+      "disabledLabel": "DISABLED",
+      "off": "OFF",
+      "on": "ON",
+      "yes": "OUI",
+      "no": "NON"
+    },
+    "welcomeMessage": {
+      "label": "Message de bienvenue",
+      "placeholder": "👋 Welcome !"
+    },
+    "faqs": {
+      "label": "Afficher la liste des FAQ",
+      "description": "Afficher la liste des FAQ au lieu du formulaire du widget",
+      "placeholder": "Sélectionner les FAQ à afficher"
+    }
+  },
+  "actions": {
+    "save": "Sauvegarder"
+  },
+  "messages": {
+    "success": {
+      "saved": "La configuration du widget a été sauvegardée avec succès",
+      "copied": "Embed snippet copié dans le presse-papiers",
+      "updated": "Widget mis à jour avec succès"
+    }
+  }
+}

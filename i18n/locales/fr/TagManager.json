@@ -1,0 +1,45 @@
+{
+  "titles": {
+    "manageTags": "Gérer les balises",
+    "createNewTag": "Créer un nouveau tag",
+    "deleteTag": "Supprimer un tag"
+  },
+  "sections": {
+    "availableTags": "Tags disponibles"
+  },
+  "messages": {
+    "noTags": "Pas de tags disponibles",
+    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer la balise \"{{nom de la balise}}\" ?",
+    "deleteWarning": "Cela supprimera la balise de tous les numéros qui l'utilisent.",
+    "tagAdded": "Étiquette ajoutée au numéro",
+    "tagRemoved": "Étiquette supprimée de l'édition",
+    "tagCreated": "Étiquette créée avec succès",
+    "tagDeleted": "Étiquette supprimée avec succès",
+    "failedToAddTag": "Échec de l'ajout d'un tag",
+    "failedToRemoveTag": "Échec de la suppression du tag",
+    "failedToCreateTag": "Échec de la création d'un tag",
+    "failedToDeleteTag": "Échec de la suppression du tag",
+    "failedToLoadTags": "Échec du chargement des balises"
+  },
+  "buttons": {
+    "addToIssue": "Ajouter au numéro",
+    "removeFromIssue": "Retirer de l'édition",
+    "createNewTag": "Créer un nouveau tag",
+    "createTag": "Créer un tag",
+    "cancel": "Annuler",
+    "delete": "Supprimer"
+  },
+  "form": {
+    "fields": {
+      "tagColor": {
+        "label": "Couleur de l'étiquette",
+        "description": "Choisir une couleur pour ce tag"
+      },
+      "tagName": {
+        "label": "Nom de l'étiquette",
+        "placeholder": "Saisir le nom de l'étiquette...",
+        "description": "Un nom unique pour ce tag"
+      }
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "page": {
+    "title": "Paramètres du compte",
+    "description": "Gérez votre compte, votre courriel, votre mot de passe et vos paramètres de sécurité."
+  },
+  "common": {
+    "loading": "Chargement..."
+  },
+  "deletion": {
+    "title": "Compte dont la suppression est programmée",
+    "scheduledMessage": "Votre compte a été marqué pour suppression le {date}"
+  },
+  "email": {
+    "title": "Vérification de l'e-mail",
+    "description": "Vérifier votre adresse électronique pour activer des fonctions de sécurité supplémentaires",
+    "emailAddress": "Adresse électronique",
+    "updateEmail": "Mise à jour de l'e-mail",
+    "verified": "Courriel vérifié",
+    "notVerified": "Email non vérifié",
+    "sendVerification": "Envoyer un courriel de vérification",
+    "popup": {
+      "title": "Modifier l'adresse électronique",
+      "description": "Saisissez votre nouvelle adresse e-mail et votre mot de passe actuel pour envoyer un e-mail de vérification."
+    },
+    "fields": {
+      "newEmail": {
+        "label": "Nouvelle adresse électronique",
+        "placeholder": "Entrez votre nouvelle adresse e-mail",
+        "description": "Saisissez la nouvelle adresse électronique que vous souhaitez utiliser pour votre compte"
+      },
+      "password": {
+        "label": "Mot de passe actuel",
+        "placeholder": "Entrez votre mot de passe actuel",
+        "description": "Entrez votre mot de passe actuel pour confirmer ce changement"
+      }
+    }
+  },
+  "twoFA": {
+    "title": "Authentification à deux facteurs (2FA)",
+    "description": "Ajoutez une couche de sécurité supplémentaire à votre compte",
+    "enabled": "Authentification à deux facteurs activée",
+    "disabled": "Authentification à deux facteurs désactivée",
+    "requirement": "Veuillez d'abord vérifier votre adresse e-mail pour activer le 2FA",
+    "enableDescription": "Activer 2FA pour sécuriser votre compte avec une étape d'authentification supplémentaire",
+    "protectedMessage": "Votre compte est protégé par une authentification à deux facteurs"
+  },
+  "password": {
+    "title": "Modifier le mot de passe",
+    "updateButton": "Mise à jour du mot de passe",
+    "fields": {
+      "current": {
+        "label": "Mot de passe actuel",
+        "placeholder": "Entrez votre mot de passe actuel"
+      },
+      "new": {
+        "label": "Nouveau mot de passe",
+        "placeholder": "Entrez votre nouveau mot de passe",
+        "description": "Doit comporter au moins 8 caractères"
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Supprimer un compte",
+    "deleteButton": "Supprimer un compte",
+    "cancelButton": "Annuler la suppression d'un compte"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "title": "Contact & Priorité - Agent de support"
+  },
+  "page": {
+    "title": "Contact et priorité"
+  },
+  "whatsapp": {
+    "title": "WhatsApp Numbers",
+    "add": "Ajouter un numéro",
+    "empty": {
+      "title": "Pas de numéros WhatsApp configurés",
+      "description": "Ajouter un numéro WhatsApp pour commencer à recevoir des contacts"
+    },
+    "card": {
+      "unnamed": "Nombre sans nom",
+      "status": {
+        "verified": "Vérifié",
+        "unverified": "Non vérifié",
+        "nonAssigned": "Non attribué"
+      },
+      "actions": {
+        "confirm": "Confirmer le numéro",
+        "edit": "Editer"
+      }
+    },
+    "popup": {
+      "addTitle": "Ajouter un numéro WhatsApp",
+      "editTitle": "Modifier le numéro WhatsApp"
+    }
+  },
+  "config": {
+    "title": "Configuration de la priorité du client",
+    "description": "Configurer les paramètres de contact et les limites pour les différentes priorités des clients",
+    "tooltip": "La priorité des clients est attribuée via le webhook que vous avez configuré. Les utilisateurs invités ont la priorité la plus basse par défaut.",
+    "priority": {
+      "high": "Haut",
+      "regular": "Régulier",
+      "lowest": "Le plus bas"
+    },
+    "fields": {
+      "whatsappNumber": "Numéro WhatsApp",
+      "notSet": "Non défini",
+      "unverified": "(Non vérifié)",
+      "docUpdates": "Mises à jour de la documentation",
+      "issueContacts": "Contacts pour les questions d'actualité",
+      "tokensToday": "Les jetons aujourd'hui",
+      "tokensWeek": "Les jetons cette semaine",
+      "messagesToday": "Messages aujourd'hui",
+      "messagesWeek": "Messages de la semaine",
+      "enabled": "Activé",
+      "disabled": "Handicapés"
+    },
+    "limits": {
+      "dailyGlobal": "Daily Global",
+      "weeklyGlobal": "Hebdomadaire Global",
+      "dailyPerUser": "Par jour et par utilisateur",
+      "weeklyPerUser": "Hebdomadaire par utilisateur"
+    }
+  },
+  "verification": {
+    "title": "Vérifier le numéro WhatsApp",
+    "instructions": {
+      "title": "Instructions",
+      "text": "Assurez-vous qu'un compte WhatsApp est configuré pour ce numéro avant de continuer."
+    }
+  },
+  "delete": {
+    "title": "Supprimer un numéro WhatsApp",
+    "confirm": "Êtes-vous sûr de vouloir supprimer ce numéro WhatsApp ?",
+    "warning": "Cette action ne peut pas être annulée.",
+    "buttons": {
+      "cancel": "Annuler",
+      "delete": "Supprimer"
+    }
+  },
+  "actions": {
+    "edit": "Editer"
+  },
+  "messages": {
+    "loadPhoneError": "Échec du chargement des numéros de téléphone",
+    "loadConfigError": "Échec de la récupération des configurations de contact",
+    "phoneCreated": "Numéro de téléphone ajouté avec succès",
+    "phoneCreateError": "Échec de l'ajout du numéro de téléphone",
+    "phoneUpdated": "Numéro de téléphone mis à jour avec succès",
+    "phoneUpdateError": "Échec de la mise à jour du numéro de téléphone",
+    "phoneDeleted": "Numéro de téléphone supprimé avec succès",
+    "phoneDeleteError": "Échec de la suppression du numéro de téléphone",
+    "configUpdated": "La configuration a été mise à jour avec succès",
+    "configUpdateError": "Échec de la mise à jour de la configuration",
+    "verificationSent": "Code de vérification envoyé avec succès",
+    "verificationSendError": "Échec de l'envoi du code de vérification",
+    "phoneVerified": "Numéro de téléphone vérifié avec succès",
+    "phoneVerifyError": "Échec de la vérification du numéro de téléphone"
+  }
+}

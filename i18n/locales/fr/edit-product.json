@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "title": "Paramètres du produit"
+  },
+  "page": {
+    "title": {
+      "edit": "Modifier le produit",
+      "create": "Créer un nouveau produit"
+    },
+    "loading": "Chargement du produit..."
+  },
+  "form": {
+    "fields": {
+      "name": {
+        "label": "Nom du produit",
+        "placeholder": "e.g. Mon agent d'assistance",
+        "description": "Un nom unique pour votre produit d'agent d'assistance AI"
+      },
+      "description": {
+        "label": "Description du produit",
+        "description": "1. Ce qu'est votre produit et ce qu'il fait.\\n2. Quelques arguments marketing pour vendre le produit + votre modèle de prix.\\n3. Une vue d'ensemble de l'utilisation de votre produit."
+      },
+      "webhookUrl": {
+        "label": "URL du Webhook",
+        "placeholder": "https://yoursite.com/api/validate-token",
+        "description": "URL de validation des jetons d'utilisateur pour les utilisateurs authentifiés"
+      },
+      "sharedSecret": {
+        "label": "Secret partagé",
+        "placeholder": "Votre secret partagé pour le webhook",
+        "description": "Clé secrète utilisée pour sécuriser les demandes de webhook entre votre système et le nôtre"
+      },
+      "chatOn": {
+        "label": "Fonctionnalité de chat AI",
+        "description": "Activer ou désactiver la fonctionnalité de chat AI pour ce produit"
+      },
+      "disableGuests": {
+        "label": "Désactiver l'accès des visiteurs",
+        "description": "Bloque l'accès des invités (utilisateurs non connectés) au chat intégrable. Désactiver si vous gérez les invités dans votre webhook."
+      }
+    },
+    "buttons": {
+      "update": "Mise à jour du produit",
+      "create": "Créer un produit"
+    }
+  },
+  "messages": {
+    "success": {
+      "updated": "Produit mis à jour !",
+      "created": "Produit créé !"
+    }
+  }
+}

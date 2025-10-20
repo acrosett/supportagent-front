@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "title": "Détails du problème - Agent de support"
+  },
+  "navigation": {
+    "back": "Retour aux numéros"
+  },
+  "page": {
+    "title": "Détails de la question"
+  },
+  "states": {
+    "loading": "Chargement des détails de la question...",
+    "notFound": {
+      "title": "Numéro non trouvé",
+      "message": "La question demandée n'a pas pu être trouvée."
+    }
+  },
+  "issue": {
+    "id": "ID",
+    "meta": {
+      "created": "Créé"
+    },
+    "status": {
+      "open": "Ouvrir",
+      "resolved": "Résolu"
+    },
+    "actions": {
+      "markResolved": "Marque résolue",
+      "reopen": "Rouvrir le dossier",
+      "archive": "Archives",
+      "unarchive": "Désarchiver"
+    }
+  },
+  "tags": {
+    "title": "Tags",
+    "manage": "Gérer les balises",
+    "noTags": "Aucune balise assignée",
+    "removeTitle": "Supprimer la balise"
+  },
+  "description": {
+    "title": "Description de la page"
+  },
+  "comments": {
+    "title": "Commentaires",
+    "add": {
+      "placeholder": "Client Facing AI verra ce commentaire.",
+      "button": "Ajouter un commentaire"
+    },
+    "noComments": "Aucun commentaire pour l'instant.",
+    "loadMore": "Charger plus de commentaires",
+    "from": {
+      "staff": "Personnel",
+      "agent": "Agent AI",
+      "unknown": "Inconnu"
+    },
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce commentaire ?"
+  },
+  "archive": {
+    "dialog": {
+      "title": "Numéro d'archive",
+      "message": "Êtes-vous sûr de vouloir archiver ce numéro ?",
+      "cancel": "Annuler",
+      "confirm": "Archives"
+    }
+  },
+  "messages": {
+    "noIssueId": "Pas de numéro d'identification fourni",
+    "tagRemoved": "Étiquette supprimée avec succès",
+    "tagRemoveError": "Échec de la suppression de la balise",
+    "loadError": "Échec du chargement des détails de la question",
+    "loadCommentsError": "Échec du chargement des commentaires",
+    "commentAdded": "Commentaire ajouté avec succès",
+    "commentAddError": "Échec de l'ajout d'un commentaire",
+    "commentDeleted": "Commentaire supprimé avec succès",
+    "commentDeleteError": "Échec de la suppression du commentaire",
+    "issueResolved": "Problème résolu avec succès",
+    "issueReopened": "Réouverture réussie de la question",
+    "statusUpdateError": "Échec de la mise à jour de l'état de la question",
+    "archived": "Numéro archivé avec succès",
+    "archiveError": "Échec de l'archivage",
+    "unarchived": "Numéro désarchivé avec succès",
+    "unarchiveError": "Échec de la désarchivage"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "title": "Tests ImageCard - DirectSupport.ai"
+  },
+  "page": {
+    "title": "Tests du composant ImageCard",
+    "description": "Test du composant ImageCard amélioré avec de vraies images de Picsum Photos pour démontrer le recadrage et le dimensionnement réactif"
+  },
+  "sections": {
+    "fullContent": "Carte de contenu complet",
+    "imageOnly": "Carte avec image seulement",
+    "titleOnly": "Carte de titre seulement",
+    "noImage": "Pas de carte d'image",
+    "minimal": "Contenu minimal",
+    "onlyMetadata": "Seulement les métadonnées",
+    "landscape": "Image de paysage",
+    "square": "Image carrée",
+    "portrait": "Image de portrait",
+    "longContent": "Test de contenu long"
+  },
+  "cards": {
+    "fullContent": {
+      "title": "Élément de média complet",
+      "description": "Cette carte contient toutes les informations, y compris le titre, la description, le prix et les métadonnées."
+    },
+    "titleOnly": {
+      "title": "Juste un titre"
+    },
+    "noImage": {
+      "title": "Pas d'image disponible",
+      "description": "Cette carte montre ce qui se passe lorsqu'aucune image n'est fournie."
+    },
+    "minimal": {
+      "title": "Minimal"
+    },
+    "landscape": {
+      "title": "Paysage large",
+      "description": "Cette image est plus large que haute - vous verrez comment elle se découpe."
+    },
+    "square": {
+      "title": "Carré parfait",
+      "description": "Il s'agit d'une image carrée pour tester différents rapports d'aspect."
+    },
+    "portrait": {
+      "title": "Grand portrait"
+    },
+    "longContent": {
+      "title": "Titre très long qui devrait être tronqué par des ellipses",
+      "description": "Il s'agit d'une très longue description qui devrait être limitée à quelques lignes afin de vérifier que la hauteur de la carte reste cohérente, même avec un contenu textuel important qui risquerait de perturber la mise en page."
+    }
+  },
+  "metadata": {
+    "date1": "22 janvier 2024",
+    "date2": "15 janvier 2024",
+    "timeAgo1": "il y a 2 heures",
+    "timeAgo2": "Test de texte long",
+    "views1": "143 vues",
+    "views2": "999+ vues",
+    "missingImage": "Image manquante"
+  },
+  "actions": {
+    "edit": "Editer"
+  },
+  "features": {
+    "title": "Nouvelles fonctionnalités",
+    "list": {
+      "optional": "Tous les accessoires sont maintenant optionnels - Vous pouvez créer des cartes avec n'importe quelle combinaison de contenu.",
+      "fixedDimensions": "Dimensions fixes des cartes - Toutes les cartes ont exactement la même hauteur (400px) et la même largeur dans toutes les grilles.",
+      "responsiveImages": "Taille de l'image réactive - La section image grandit/rétrécit en fonction du contenu situé en dessous, tout en conservant la cohérence de la carte.",
+      "textOverflow": "Gestion des débordements de texte - Les titres sont tronqués par des points de suspension, les descriptions sont limitées à 3 lignes max.",
+      "imageCropping": "Recadrage des images (pas de redimensionnement) - Les images utilisent object-fit : cover pour être recadrées et centrées, en préservant le rapport hauteur/largeur.",
+      "clickPreview": "Cliquez pour prévisualiser - Cliquez sur n'importe quelle image pour voir la version complète, non recadrée, dans une fenêtre contextuelle.",
+      "flexibleLayout": "Mise en page flexible - la section Contenu n'apparaît que lorsqu'il y a du contenu à afficher",
+      "accessibility": "Meilleure accessibilité - Retombées correctes du texte alt et navigation au clavier"
+    },
+    "technicalNote": {
+      "title": "Comment fonctionne le dimensionnement des images :",
+      "description": "Chaque carte a une hauteur fixe (400px). La section image utilise flex : 1 pour s'agrandir et remplir l'espace restant après que la section contenu ait pris ce dont elle a besoin. L'image elle-même utilise object-fit : cover pour être recadrée (pas redimensionnée) et centrée dans son conteneur.",
+      "aspectRatios": "Remarquez les différents rapports d'aspect : Les images en format paysage, carré et portrait de Picsum Photos sont toutes recadrées pour s'adapter parfaitement à leur contenant, conservant leur qualité d'origine tout en s'adaptant à l'espace disponible."
+    }
+  }
+}

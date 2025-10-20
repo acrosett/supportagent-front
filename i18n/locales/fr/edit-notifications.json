@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "Préférences de notification - Agent de support"
+  },
+  "navigation": {
+    "back": "Retour à Notifications"
+  },
+  "page": {
+    "title": "Préférences de notification",
+    "description": "Configurez comment et quand vous souhaitez recevoir des notifications pour vos produits."
+  },
+  "states": {
+    "loading": "Chargement des préférences de notification..."
+  },
+  "form": {
+    "fields": {
+      "promotionalEmails": {
+        "label": "Emails promotionnels",
+        "description": "Recevoir des courriels promotionnels et des mises à jour"
+      },
+      "exceededQuota": {
+        "label": "Alertes de dépassement de quota",
+        "description": "Recevoir une notification lorsque les quotas d'utilisation sont dépassés"
+      },
+      "lowBalance": {
+        "label": "Alertes de faible solde",
+        "description": "Recevoir une notification lorsque le solde du compte est faible"
+      },
+      "newIssues": {
+        "label": "Alertes sur les nouveaux numéros",
+        "description": "Recevoir des notifications sur les nouvelles questions ou les nouveaux problèmes"
+      },
+      "whatsappNotifications": "Notifications WhatsApp",
+      "emailNotifications": "Notifications par courriel"
+    },
+    "common": {
+      "yes": "Oui",
+      "no": "Non",
+      "on": "Sur",
+      "off": "Off"
+    },
+    "actions": {
+      "save": "Enregistrer les préférences de notification",
+      "cancel": "Annuler"
+    }
+  },
+  "messages": {
+    "savedSuccess": "Les préférences de notification ont été sauvegardées avec succès !"
+  },
+  "errors": {
+    "noProductId": "ID du produit introuvable",
+    "saveFailed": "Échec de l'enregistrement des préférences de notification",
+    "loadFailed": "Échec du chargement des préférences de notification"
+  }
+}

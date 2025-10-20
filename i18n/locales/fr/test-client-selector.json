@@ -1,0 +1,53 @@
+{
+  "header": {
+    "subtitle": "Choisissez un client pour démarrer une session de chat de test, les clients de test ont accès aux outils personnalisés désactivés."
+  },
+  "status": {
+    "loading": "Chargement des clients de test...",
+    "empty": "Aucun client test trouvé"
+  },
+  "client": {
+    "unnamedClient": "Client sans nom",
+    "id": "ID",
+    "created": "Créé"
+  },
+  "actions": {
+    "deleteClient": "Supprimer le client",
+    "deleteAllClients": "Supprimer tous les clients",
+    "createNewClient": "Créer un nouveau client de test",
+    "cancel": "Annuler"
+  },
+  "modals": {
+    "createClient": {
+      "title": "Créer un client de test",
+      "description": "Créer un nouveau client de test à des fins de débogage.",
+      "create": "Créer un client",
+      "cancel": "Annuler"
+    },
+    "authToken": {
+      "title": "Jeton d'authentification",
+      "description": "Utilisez ce jeton pour vous authentifier en tant que client de test :",
+      "copy": "Copier le jeton",
+      "startChat": "Démarrer la session de chat",
+      "cancel": "Annuler"
+    }
+  },
+  "messages": {
+    "success": {
+      "clientDeleted": "Client de test supprimé",
+      "allClientsDeleted": "Tous les clients de test sont supprimés",
+      "allDeleted": "Tous les clients de test sont supprimés",
+      "clientCreated": "Création d'un client de test"
+    },
+    "error": {
+      "loadFailed": "Échec du chargement des clients de test",
+      "deleteFailed": "Échec de la suppression du client de test",
+      "deleteAllFailed": "Échec de la suppression de tous les clients de test",
+      "createFailed": "Échec de la création d'un client de test"
+    },
+    "confirm": {
+      "deleteClient": "Êtes-vous sûr de vouloir supprimer ce client test ?",
+      "deleteAllClients": "Êtes-vous sûr de vouloir supprimer tous les clients de test ?"
+    }
+  }
+}

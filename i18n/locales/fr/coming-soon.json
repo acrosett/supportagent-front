@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Bientôt disponible - DirectSupport.ai"
+  },
+  "page": {
+    "title": "Bientôt disponible",
+    "subtitle": "Nous sommes en train de construire quelque chose d'extraordinaire. Soyez le premier à être informé de notre lancement !"
+  },
+  "signup": {
+    "title": "Être informé du lancement de notre site",
+    "email": {
+      "label": "Adresse électronique",
+      "placeholder": "Entrez votre email pour être notifié"
+    },
+    "privacyPolicy": {
+      "label": "J'accepte la [Politique de confidentialité](/privacy-policy)"
+    },
+    "button": "Me notifier"
+  },
+  "features": {
+    "title": "Ce qui s'en vient :",
+    "list": {
+      "embeddedChat": "Support de chat intégré à votre site web",
+      "whatsapp": "Filtrage et supervision par l'IA directement via WhatsApp",
+      "knowledgeBase": "Base de connaissances à croissance automatique pour votre produit"
+    }
+  },
+  "messages": {
+    "success": "Nous vous remercions ! Nous vous préviendrons lorsque nous lancerons le projet.",
+    "privacyRequired": "Veuillez accepter la politique de confidentialité pour continuer"
+  }
+}

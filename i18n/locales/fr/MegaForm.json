@@ -1,0 +1,24 @@
+{
+  "labels": {
+    "required": "Obligatoire",
+    "confirm": "Confirmer"
+  },
+  "placeholders": {
+    "selectOption": "Sélectionner une option...",
+    "colorHex": "#FFFFFF"
+  },
+  "buttons": {
+    "add": "+",
+    "remove": "×",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Cacher le mot de passe"
+  },
+  "toggleSwitch": {
+    "on": "ON",
+    "off": "OFF"
+  },
+  "validation": {
+    "required": "est obligatoire.",
+    "fieldsDoNotMatch": "Les champs ne correspondent pas."
+  }
+}
