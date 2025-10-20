@@ -201,15 +201,20 @@
         v-model="newDomain"
         :includeFields="['domain']"
         :fieldOverrides="domainOverrides"
-        :actions="[{
-          label: t('popups.addDomain.addButton'),
-          callback: handleDomainSave,
-          color: 'primary'
-        }, {
+        :actions="[
+           {
           label: t('popups.addDomain.cancelButton'),
           callback: closeDomainForm,
+          skipValidation: true,
           color: 'secondary'
-        }]"
+        },
+        {
+          label: t('popups.addDomain.addButton'),
+          callback: handleDomainSave,
+          color: 'primary',
+          margin: 'left'
+        }
+      ]"
       />
     </AppPopup>
   </section>
@@ -503,7 +508,8 @@ async function handleDomainSave(domainData: any) {
 
     const domain = await nuxtApp.$sp.domain.create({
       ...domainData,
-      product: nuxtApp.$userProductId
+      product: nuxtApp.$userProductId,
+      isVerified: false
     })
     
     verifiedDomains.value.push(domain)

@@ -1,8 +1,9 @@
 {
   "clientPriorities": {
     "label": "Client Priorities",
-    "low": "Low priority",
-    "medium": "Medium priority",
+    "description": "Select which client priority levels can use this tool",
+    "lowest": "Lowest priority",
+    "regular": "Regular priority",
     "high": "High priority"
   },
   "name": {
@@ -25,6 +26,57 @@
     "description": "HTTP method to use for requests"
   },
   "arguments": {
+    "label": "Argument",
+    "description": "Configure parameters that will be sent with requests to your tool",
+    "name": {
+      "label": "Parameter Name",
+      "placeholder": "parameter_name",
+      "description": "Name of the parameter (lowercase, underscore separated)"
+    },
+    "paramDescription": {
+      "label": "Parameter Description", 
+      "placeholder": "Describe this parameter...",
+      "description": "Description of what this parameter is used for"
+    },
+    "location": {
+      "label": "Location",
+      "payload": "Request Body/Payload",
+      "header": "HTTP Header",
+      "urlParam": "URL Parameter",
+      "queryParam": "Query Parameter",
+      "description": "Where this parameter should be placed in the HTTP request"
+    },
+    "valueType": {
+      "label": "Value Type",
+      "setByAi": "Set by AI",
+      "userId": "User ID",
+      "sharedSecret": "Shared Secret",
+      "constant": "Constant Value",
+      "description": "How the value for this parameter is determined"
+    },
+    "dataType": {
+      "label": "Data Type",
+      "string": "String",
+      "number": "Number", 
+      "boolean": "Boolean",
+      "object": "Object",
+      "array": "Array",
+      "description": "The data type of this parameter"
+    },
+    "constantValue": {
+      "label": "Constant Value",
+      "placeholder": "Enter the constant value...",
+      "description": "The fixed value to use for this parameter"
+    },
+    "required": {
+      "label": "Required",
+      "description": "Whether this parameter is required for the AI to provide"
+    },
+    "defaultValue": {
+      "label": "Default Value",
+      "placeholder": "Enter default value...",
+      "description": "Default value to use if the AI doesn't provide one"
+    }
   },
   "contentType": {
     "label": "Content Type",
@@ -47,6 +99,7 @@
   "actions": {
     "cancel": "Cancel",
     "save": "Save Tool",
-    "update": "Update Tool"
+    "update": "Update Tool",
+    "create": "Create Tool"
   }
 }

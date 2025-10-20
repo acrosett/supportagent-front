@@ -25,6 +25,8 @@
     },
     "priority": {
       "title": "Priority",
+      "lowest": "Lowest",
+      "regular": "Regular",
       "low": "Low",
       "medium": "Medium",
       "high": "High"
@@ -80,7 +82,8 @@
     },
     "error": {
       "updateFailed": "Failed to update conversation",
-      "archiveFailed": "Failed to archive conversation"
+      "archiveFailed": "Failed to archive conversation",
+      "missingApiKey": "User API key not found"
     }
   }
 }

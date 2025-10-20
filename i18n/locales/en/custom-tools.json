@@ -21,12 +21,12 @@
       "description": "Add a domain to enable custom tool integrations"
     },
     "verification": {
-      "title": "Domain Verification",
-      "instruction": "To verify this domain, add a file at:",
-      "option1": "Option 1: Create a file at the specified path",
-      "option1Returns": "That returns the verification string",
-      "option2": "Option 2: Create an endpoint at:",
-      "option2Returns": "That returns the verification string"
+      "instructions": "To verify this domain, choose one of the following options",
+      "option1Title": "Option 1: DNS TXT Record",
+      "option1Description": "Add a TXT record to your domain's DNS",
+      "option2Title": "Option 2: Webhook",
+      "option2Description": "Create a file/webhook accessible at",
+      "option2Returns": "result should be"
     },
     "status": {
       "verified": "Verified",
@@ -37,10 +37,9 @@
       "delete": "Delete"
     },
     "form": {
-      "domainName": {
-        "label": "Domain Name",
-        "placeholder": "example.com"
-      }
+      "label": "Domain Name",
+      "placeholder": "example.com",
+      "description": "Enter the domain name you want to verify (without http:// or https://)"
     }
   },
   "tools": {
@@ -70,6 +69,8 @@
     },
     "addDomain": {
       "title": "Add Domain",
+      "addButton": "Add Domain",
+      "cancelButton": "Cancel",
       "description": "Enter the domain name you want to verify and use for custom tools."
     }
   },
@@ -100,6 +101,7 @@
       "description": "HTTP method to use for requests"
     },
     "arguments": {
+      "label": "Argument"
     },
     "contentType": {
       "label": "Content Type",
@@ -122,7 +124,8 @@
     "actions": {
       "cancel": "Cancel",
       "save": "Save Tool",
-      "update": "Update Tool"
+      "update": "Update Tool",
+      "create": "Create Tool"
     }
   }
 }

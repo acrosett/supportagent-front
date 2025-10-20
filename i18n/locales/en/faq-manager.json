@@ -49,6 +49,7 @@
     },
     "buttons": {
       "cancel": "Cancel",
+      "create": "Create FAQ",
       "save": "Save FAQ",
       "update": "Update FAQ"
     }

@@ -21,7 +21,8 @@
     "createClient": {
       "title": "Create Test Client",
       "description": "Create a new test client for debugging purposes.",
-      "create": "Create Client"
+      "create": "Create Client",
+      "cancel": "Cancel"
     },
     "authToken": {
       "title": "Authentication Token",
@@ -35,9 +36,11 @@
     "success": {
       "clientDeleted": "Test client deleted",
       "allClientsDeleted": "All test clients deleted",
+      "allDeleted": "All test clients deleted",
       "clientCreated": "Test client created"
     },
     "error": {
+      "loadFailed": "Failed to load test clients",
       "deleteFailed": "Failed to delete test client",
       "deleteAllFailed": "Failed to delete all test clients",
       "createFailed": "Failed to create test client"

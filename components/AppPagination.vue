@@ -1,7 +1,7 @@
 <template>
   <div v-if="totalPages > 1" class="pagination">
     <AppButton
-      :label="t('AppPagination.buttons.previous')"
+      :label="t('buttons.previous')"
       :disabled="currentPage === 1"
       color="secondary"
       show-back-icon
@@ -20,11 +20,11 @@
           {{ page }}
         </button>
       </span>
-      <span class="total-info">{{ t('AppPagination.info.items', { count: totalItems }) }}</span>
+      <span class="total-info">{{ t('info.items', { count: totalItems }) }}</span>
     </div>
 
     <AppButton
-      :label="t('AppPagination.buttons.next')"
+      :label="t('buttons.next')"
       :disabled="currentPage === totalPages"
       color="secondary"
       @click="goToPage(currentPage + 1)"

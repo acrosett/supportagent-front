@@ -24,7 +24,8 @@
     "icon": {
       "label": "Icon",
       "message": "Message",
-      "headset": "Headset"
+      "headset": "Headset",
+      "robot": "Robot"
     },
     "options": {
       "label": "Options",
@@ -41,7 +42,8 @@
     },
     "faqs": {
       "label": "Show FAQ List",
-      "description": "Show FAQ list instead of the widget form"
+      "description": "Show FAQ list instead of the widget form",
+      "placeholder": "Select FAQs to display"
     }
   },
   "actions": {
@@ -50,7 +52,8 @@
   "messages": {
     "success": {
       "saved": "Widget configuration saved successfully",
-      "copied": "Embed snippet copied to clipboard"
+      "copied": "Embed snippet copied to clipboard",
+      "updated": "Widget updated successfully"
     }
   }
 }

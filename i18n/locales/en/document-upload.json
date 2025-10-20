@@ -56,7 +56,9 @@
     "noContent": "No content available",
     "actions": {
       "close": "Close",
-      "reprocess": "Reprocess"
+      "reprocess": "Reprocess",
+      "retry": "Retry Task",
+      "viewLogs": "View Logs"
     }
   }
 }

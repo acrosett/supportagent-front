@@ -69,7 +69,7 @@ const actions: MegaFormAction[] = [
 
       const res = await useNuxtApp().$sp.user.login(data);
       if(!res){
-        throw Error(t('login.messages.error.loginFailed'));
+        throw Error(t('messages.error.loginFailed'));
       }
       const { userId, accessToken } = res;
 
