@@ -1,0 +1,9 @@
+{
+  "image": {
+    "alt": "Image",
+    "fullSizeAlt": "Full size image"
+  },
+  "actions": {
+    "closePreview": "Close preview"
+  }
+}

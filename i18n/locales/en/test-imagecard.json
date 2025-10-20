@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "title": "ImageCard Tests - DirectSupport.ai"
+  },
+  "page": {
+    "title": "ImageCard Component Tests",
+    "description": "Testing the enhanced ImageCard component with real images from Picsum Photos to demonstrate cropping and responsive sizing"
+  },
+  "sections": {
+    "fullContent": "Full Content Card",
+    "imageOnly": "Image Only Card", 
+    "titleOnly": "Title Only Card",
+    "noImage": "No Image Card",
+    "minimal": "Minimal Content",
+    "onlyMetadata": "Only Metadata",
+    "landscape": "Landscape Image",
+    "square": "Square Image",
+    "portrait": "Portrait Image",
+    "longContent": "Long Content Test"
+  },
+  "cards": {
+    "fullContent": {
+      "title": "Complete Media Item",
+      "description": "This card has all the information including title, description, price, and metadata."
+    },
+    "titleOnly": {
+      "title": "Just a Title"
+    },
+    "noImage": {
+      "title": "No Image Available",
+      "description": "This card demonstrates what happens when there's no image provided."
+    },
+    "minimal": {
+      "title": "Minimal"
+    },
+    "landscape": {
+      "title": "Wide Landscape",
+      "description": "This image is wider than it is tall - you'll see how it crops."
+    },
+    "square": {
+      "title": "Perfect Square",
+      "description": "This is a square image to test different aspect ratios."
+    },
+    "portrait": {
+      "title": "Tall Portrait"
+    },
+    "longContent": {
+      "title": "Very Long Title That Should Get Truncated With Ellipsis",
+      "description": "This is a very long description that should be clamped to only show a few lines to test that the card height remains consistent even with lots of text content that could potentially break the layout."
+    }
+  },
+  "metadata": {
+    "date1": "Jan 22, 2024",
+    "date2": "Jan 15, 2024",
+    "timeAgo1": "2 hours ago",
+    "timeAgo2": "Long text test",
+    "views1": "143 views",
+    "views2": "999+ views",
+    "missingImage": "Missing image"
+  },
+  "actions": {
+    "edit": "Edit"
+  },
+  "features": {
+    "title": "New Features",
+    "list": {
+      "optional": "All props are now optional - You can create cards with any combination of content",
+      "fixedDimensions": "Fixed card dimensions - All cards have exactly the same height (400px) and width in any grid",
+      "responsiveImages": "Responsive image sizing - Image section grows/shrinks based on content below, while maintaining card consistency",
+      "textOverflow": "Text overflow handling - Titles are truncated with ellipsis, descriptions are clamped to 3 lines max",
+      "imageCropping": "Image cropping (not resizing) - Images use object-fit: cover to crop and center, preserving aspect ratio",
+      "clickPreview": "Click to preview - Click on any image to see the full, uncropped version in a popup",
+      "flexibleLayout": "Flexible layout - Content section only appears when there's content to display",
+      "accessibility": "Better accessibility - Proper alt text fallbacks and keyboard navigation"
+    },
+    "technicalNote": {
+      "title": "How the image sizing works:",
+      "description": "Each card has a fixed height (400px). The image section uses flex: 1 to grow and fill whatever space is left after the content section takes what it needs. The image itself uses object-fit: cover to crop (not resize) and center within its container.",
+      "aspectRatios": "Notice the different aspect ratios: The landscape, square, and portrait images from Picsum Photos all get cropped to fit their containers perfectly, maintaining their original quality while adapting to the available space."
+    }
+  }
+}

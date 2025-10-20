@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "title": "Dashboard - DirectSupport.ai"
+  },
+  "page": {
+    "title": "Dashboard",
+    "description": "Welcome to DirectSupport.ai! Monitor your account activity and get insights into your customer support performance."
+  },
+  "gettingStarted": {
+    "title": "Getting Started",
+    "description": "Quick setup steps to get the most out of DirectSupport.ai. Click on any step below to get started, or ask the chat support for any details.",
+    "steps": {
+      "configureProduct": {
+        "title": "Configure Your Product",
+        "description": "Set up your product information and AI assistant instructions."
+      },
+      "assignPhone": {
+        "title": "Assign Your Phone Number",
+        "description": "Assign your phone number to receive client updates and notifications."
+      },
+      "uploadDocumentation": {
+        "title": "Upload Your Documentation",
+        "description": "Upload your documentation files to generate your FAQ automatically."
+      },
+      "installWidget": {
+        "title": "Install Widget",
+        "description": "Add the chat widget to your website to start receiving customer messages."
+      }
+    }
+  },
+  "balance": {
+    "title": "Account Balance",
+    "description": "Your current account balance and usage information",
+    "status": {
+      "sufficient": "Balance is sufficient",
+      "low": "Low balance - Consider adding funds"
+    },
+    "buttons": {
+      "goToBilling": "Go to Billing"
+    }
+  },
+  "activity": {
+    "title": "Message Activity (14 Days)",
+    "description": "Customer message volume by priority level",
+    "chart": {
+      "loading": "Loading activity data...",
+      "title": "Customer Message Activity by Priority",
+      "xAxisTitle": "Time",
+      "yAxisTitle": "Message Count",
+      "priorityLabels": {
+        "high": "High Priority",
+        "regular": "Regular Priority", 
+        "lowest": "Lowest Priority"
+      }
+    }
+  },
+  "messages": {
+    "error": {
+      "loadProductData": "Failed to load product data",
+      "loadChartData": "Failed to load chart data",
+      "loadChart": "Failed to load chart"
+    }
+  }
+}

@@ -15,7 +15,7 @@
             v-if="showCloseButton"
             class="popup-close" 
             @click="handleClose"
-            aria-label="Close popup"
+            :aria-label="t('aria.closePopup')"
           >
             <AppIcon name="close" size="md" />
           </button>
@@ -34,6 +34,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useLocalNamespace('AppPopup')
+
 interface Props {
   show: boolean
   title?: string

@@ -22,7 +22,7 @@
       <img 
         v-if="image" 
         :src="image" 
-        :alt="imageAlt || title || 'Image'"
+        :alt="imageAlt || title || t('image.alt')"
         @error="handleImageError"
       />
       <div v-else class="placeholder-image">
@@ -90,14 +90,14 @@
           <button 
             class="close-button"
             @click="closeImagePreview"
-            title="Close preview"
+            :title="t('actions.closePreview')"
           >
             <AppIcon name="close" size="lg" />
           </button>
           <img 
             v-if="image"
             :src="image" 
-            :alt="imageAlt || title || 'Full size image'"
+            :alt="imageAlt || title || t('image.fullSizeAlt')"
             class="preview-image"
             @click.stop
           />
@@ -109,6 +109,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
+const { t } = useLocalNamespace('ImageCard')
 
 interface CardAction {
   label: string

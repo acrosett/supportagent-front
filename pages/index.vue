@@ -2,48 +2,48 @@
   <section class="page-container dashboard-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>Dashboard</h1>
-        <p class="page-description">Welcome to DirectSupport.ai! Monitor your account activity and get insights into your customer support performance.</p>
+        <h1>{{ t('page.title') }}</h1>
+        <p class="page-description">{{ t('page.description') }}</p>
       </div>
     </header>
 
     <!-- Getting Started Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>Getting Started</h2>
-        <p class="section-description">Quick setup steps to get the most out of DirectSupport.ai. Click on any step below to get started, or ask the chat support for any details.</p>
+        <h2>{{ t('gettingStarted.title') }}</h2>
+        <p class="section-description">{{ t('gettingStarted.description') }}</p>
       </div>
       
       <div class="getting-started-container">
         <div class="step-card" @click="navigateTo('/edit-product')" style="cursor: pointer;">
           <div class="step-number">1</div>
           <div class="step-content">
-            <h3>Configure Your Product</h3>
-            <p>Set up your product information and AI assistant instructions.</p>
+            <h3>{{ t('gettingStarted.steps.configureProduct.title') }}</h3>
+            <p>{{ t('gettingStarted.steps.configureProduct.description') }}</p>
           </div>
         </div>
         
         <div class="step-card" @click="navigateTo('/contact-priority')" style="cursor: pointer;">
           <div class="step-number">2</div>
           <div class="step-content">
-            <h3>Assign Your Phone Number</h3>
-            <p>Assign your phone number to receive client updates and notifications.</p>
+            <h3>{{ t('gettingStarted.steps.assignPhone.title') }}</h3>
+            <p>{{ t('gettingStarted.steps.assignPhone.description') }}</p>
           </div>
         </div>
         
         <div class="step-card" @click="navigateTo('/document-upload')" style="cursor: pointer;">
           <div class="step-number">3</div>
           <div class="step-content">
-            <h3>Upload Your Documentation</h3>
-            <p>Upload your documentation files to generate your FAQ automatically.</p>
+            <h3>{{ t('gettingStarted.steps.uploadDocumentation.title') }}</h3>
+            <p>{{ t('gettingStarted.steps.uploadDocumentation.description') }}</p>
           </div>
         </div>
         
         <div class="step-card" @click="navigateTo('/widget')" style="cursor: pointer;">
           <div class="step-number">4</div>
           <div class="step-content">
-            <h3>Install Widget</h3>
-            <p>Add the chat widget to your website to start receiving customer messages.</p>
+            <h3>{{ t('gettingStarted.steps.installWidget.title') }}</h3>
+            <p>{{ t('gettingStarted.steps.installWidget.description') }}</p>
           </div>
         </div>
       </div>
@@ -52,8 +52,8 @@
     <!-- Current Balance Section -->
     <div class="content-section">
       <div class="section-header">
-        <h2>Account Balance</h2>
-        <p class="section-description">Your current account balance and usage information</p>
+        <h2>{{ t('balance.title') }}</h2>
+        <p class="section-description">{{ t('balance.description') }}</p>
       </div>
       
       <div class="balance-container">
@@ -68,7 +68,7 @@
         </div>
         <div class="balance-actions">
           <AppButton
-            label="Go to Billing"
+            :label="t('balance.buttons.goToBilling')"
             color="primary"
             @click="navigateToBilling"
           />
@@ -79,14 +79,14 @@
     <!-- Activity Overview Chart Section -->
     <div v-if="showChart" class="content-section">
       <div class="section-header">
-        <h2>Message Activity (14 Days)</h2>
-        <p class="section-description">Customer message volume by priority level</p>
+        <h2>{{ t('activity.title') }}</h2>
+        <p class="section-description">{{ t('activity.description') }}</p>
       </div>
       
       <div class="chart-container-wrapper">
         <div v-if="chartLoading" class="chart-loading">
           <div class="spinner"></div>
-          <p>Loading activity data...</p>
+          <p>{{ t('activity.chart.loading') }}</p>
         </div>
         <canvas
           ref="chartContainer"
@@ -105,6 +105,8 @@ import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.en
 import { ProductStat } from '~/eicrud_exports/services/LOG-ms/product-stat/product-stat.entity'
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import 'chartjs-adapter-date-fns'
+
+const { t } = useLocalNamespace('index')
 
 // State
 const product = ref<Product | null>(null)
@@ -144,7 +146,7 @@ const loadProductData = async () => {
     product.value = result
   } catch (error) {
     console.error('Failed to load product data:', error)
-    useNuxtApp().$toast.show('Failed to load product data', 'error')
+    useNuxtApp().$toast.show(t('messages.error.loadProductData'), 'error')
   }
 }
 
@@ -189,7 +191,7 @@ const loadChartData = async () => {
     
   } catch (error) {
     console.error('Error loading chart data:', error)
-    useNuxtApp().$toast.show('Failed to load chart data', 'error')
+    useNuxtApp().$toast.show(t('messages.error.loadChartData'), 'error')
   } finally {
     chartLoading.value = false
   }
@@ -238,7 +240,7 @@ const createChart = async (retryCount = 0) => {
       }))
       
       return {
-        label: priority.charAt(0).toUpperCase() + priority.slice(1) + ' Priority',
+        label: t(`activity.chart.priorityLabels.${priority.toLowerCase()}`),
         data,
         borderColor: priorityColors[priority],
         backgroundColor: priorityColors[priority] + '20',
@@ -269,7 +271,7 @@ const createChart = async (retryCount = 0) => {
             },
             title: {
               display: true,
-              text: 'Time'
+              text: t('activity.chart.xAxisTitle')
             },
             ticks: {
               maxTicksLimit: 20,
@@ -289,14 +291,14 @@ const createChart = async (retryCount = 0) => {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Message Count'
+              text: t('activity.chart.yAxisTitle')
             }
           }
         },
         plugins: {
           title: {
             display: true,
-            text: 'Customer Message Activity by Priority'
+            text: t('activity.chart.title')
           },
           legend: {
             display: true,
@@ -311,7 +313,7 @@ const createChart = async (retryCount = 0) => {
     })
   } catch (error) {
     console.error('Error creating chart:', error)
-    useNuxtApp().$toast.show('Failed to load chart', 'error')
+    useNuxtApp().$toast.show(t('messages.error.loadChart'), 'error')
   }
 }
 
@@ -322,9 +324,9 @@ const formatBalance = (balance: number): string => {
 
 const getBalanceStatusText = (): string => {
   if (isLowBalance.value) {
-    return 'Low balance - Consider adding funds'
+    return t('balance.status.low')
   }
-  return 'Balance is sufficient'
+  return t('balance.status.sufficient')
 }
 
 const navigateToBilling = () => {
