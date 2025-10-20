@@ -126,8 +126,8 @@ function applyTranslationsToJson(obj, translationMap, existingTranslations = {})
  * @param {string} locale 
  */
 async function translatePageFile(pageFile, locale) {
-  const sourceFile = path.join(projectRoot, 'public', 'translations', 'en', pageFile);
-  const targetFile = path.join(projectRoot, 'public', 'translations', locale, pageFile);
+  const sourceFile = path.join(projectRoot, 'i18n', 'locales', 'en', pageFile);
+  const targetFile = path.join(projectRoot, 'i18n', 'locales', locale, pageFile);
   
   try {
     console.log(`🌍 Translating ${pageFile} for locale: ${locale}`);
@@ -217,7 +217,7 @@ async function translatePageFile(pageFile, locale) {
  * @param {string} locale 
  */
 async function translateAllPages(locale) {
-  const englishDir = path.join(projectRoot, 'public', 'translations', 'en');
+  const englishDir = path.join(projectRoot, 'i18n', 'locales', 'en');
   
   try {
     const files = await fs.readdir(englishDir);
@@ -304,8 +304,8 @@ Environment Variables:
   DEEPL_API_KEY - Required for translation
 
 Note: 
-  - Source files are read from public/translations/en/
-  - Translations are written to public/translations/<locale>/
+  - Source files are read from i18n/locales/en/
+  - Translations are written to i18n/locales/<locale>/
   - Existing translations are preserved and only missing ones are added
         `);
         break;

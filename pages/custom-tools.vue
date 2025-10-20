@@ -233,7 +233,7 @@ let aiInstructions = reactive({
   additionalInstructions: ''
 })
 
-const aiInstructionsOverrides = computed(() => ({
+const aiInstructionsOverrides = {
   additionalInstructions: {
     maxChars: 6000,
     type: 'richtext',
@@ -241,7 +241,7 @@ const aiInstructionsOverrides = computed(() => ({
     description: t('aiInstructions.form.description'),
     placeholder: t('aiInstructions.form.placeholder')
   }
-}))
+}
 
 // Custom Tools
 const customTools = ref<CustomTool[]>([])

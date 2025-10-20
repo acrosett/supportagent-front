@@ -4,12 +4,8 @@
       <div class="page-title">
         <h1>{{ t('page.title') }}</h1>
         <div class="page-actions">
-          <ToggleSwitch
-            v-model="showArchived"
-            :label="t('filters.showArchived.label')"
-            label-position="left"
-            @update:modelValue="handleArchivedToggle"
-          />
+          <ToggleSwitch v-model="showArchived" :label="t('filters.showArchived.label')" label-position="left"
+            @update:modelValue="handleArchivedToggle" />
         </div>
       </div>
     </header>
@@ -20,57 +16,32 @@
         <div class="search-and-reset">
           <div class="search-bar">
             <AppIcon name="search" size="sm" class="search-icon" />
-            <input 
-              type="text" 
-              :placeholder="t('filters.search.placeholder')"
-              v-model="searchQuery"
-              class="search-input"
-            />
+            <input type="text" :placeholder="t('filters.search.placeholder')" v-model="searchQuery"
+              class="search-input" />
           </div>
-          
+
           <!-- Reset Filter -->
-          <AppButton
-            :label="t('filters.reset')"
-            color="secondary"
-            size="sm"
-            margin="left"
-            @click="resetFilters"
-          />
+          <AppButton :label="t('filters.reset')" color="secondary" size="sm" margin="left" @click="resetFilters" />
         </div>
-        
+
         <div class="filter-controls">
           <!-- Filter Checkboxes -->
           <div class="filter-checkboxes">
             <!-- Issue Status Column -->
-            <CheckBoxColumn
-              :title="t('filters.status.title')"
-              name="issueStatus"
-              v-model="filters.issueStatus"
+            <CheckBoxColumn :title="t('filters.status.title')" name="issueStatus" v-model="filters.issueStatus"
               :options="[
                 { value: 'both', label: t('filters.status.options.both') },
                 { value: 'open', label: t('filters.status.options.open') },
                 { value: 'resolved', label: t('filters.status.options.resolved') }
-              ]"
-              @change="applyFilters"
-            />
-            
+              ]" @change="applyFilters" />
+
             <!-- Tags Filter -->
             <div class="filter-column">
               <h4>{{ t('filters.tags.title') }}</h4>
               <div class="tags-filter">
                 <div v-if="availableTags.length === 0" class="no-tags">{{ t('filters.tags.noTags') }}</div>
-                <label 
-                  v-else
-                  v-for="tag in availableTags" 
-                  :key="tag.id" 
-                  class="checkbox-label"
-                >
-                  <input 
-                    type="checkbox" 
-                    :value="tag.name"
-                    v-model="filters.selectedTags" 
-                    @change="applyFilters" 
-                  />
+                <label v-else v-for="tag in availableTags" :key="tag.id" class="checkbox-label">
+                  <input type="checkbox" :value="tag.name" v-model="filters.selectedTags" @change="applyFilters" />
                   <span class="tag-color" :style="{ backgroundColor: tag.color }"></span>
                   <span>{{ tag.name }}</span>
                 </label>
@@ -94,19 +65,14 @@
 
       <!-- Issues List -->
       <div v-else class="issues-grid">
-        <div
-          v-for="issue in filteredIssues"
-          :key="issue.id"
-          :ref="(el) => setCardRef(el as Element, issue.id!)"
-          class="issue-card"
-          :class="{ 
-            'open': issue.status === IssueStatus.OPEN, 
+        <div v-for="issue in filteredIssues" :key="issue.id" :ref="(el) => setCardRef(el as Element, issue.id!)"
+          class="issue-card" :class="{
+            'open': issue.status === IssueStatus.OPEN,
             'resolved': issue.status === IssueStatus.RESOLVED,
             'archived': issue.isArchived,
             'animating-out': animatingCards.has(issue.id)
-          }"
-        >
-          
+          }">
+
           <div class="issue-header">
             <div class="issue-info">
               <h3 class="issue-title">{{ issue.title }}</h3>
@@ -114,10 +80,8 @@
             </div>
             <div class="issue-status">
               <!-- Status Badge -->
-              <span
-                class="status-badge"
-                :class="{ 'open': issue.status === IssueStatus.OPEN, 'resolved': issue.status === IssueStatus.RESOLVED }"
-              >
+              <span class="status-badge"
+                :class="{ 'open': issue.status === IssueStatus.OPEN, 'resolved': issue.status === IssueStatus.RESOLVED }">
                 <AppIcon :name="issue.status === IssueStatus.OPEN ? 'time' : 'check'" size="sm" />
                 {{ issue.status === IssueStatus.OPEN ? t('issue.status.open') : t('issue.status.resolved') }}
               </span>
@@ -127,15 +91,11 @@
           <!-- Issue Description Preview -->
           <div class="issue-preview">
             <p class="issue-description">{{ getPreviewText(issue.description, 150) }}</p>
-            
+
             <!-- Tags -->
             <div v-if="issue.tags && issue.tags.length > 0" class="issue-tags">
-              <span 
-                v-for="tag in issue.tags" 
-                :key="tag" 
-                class="tag"
-                :style="{ backgroundColor: getTagColor(tag), color: '#fff' }"
-              >
+              <span v-for="tag in issue.tags" :key="tag" class="tag"
+                :style="{ backgroundColor: getTagColor(tag), color: '#fff' }">
                 {{ tag }}
               </span>
             </div>
@@ -148,35 +108,14 @@
           </div>
 
           <div class="issue-actions">
-            <AppButton
-              :label="t('issue.actions.details')"
-              color="primary"
-              size="sm"
-              @click="openIssueDetails(issue)"
-            />
-            <AppButton
-              v-if="!issue.isArchived"
-              margin="left"
-              color="warning"
-              size="sm"
-              fa-icon-left="archive"
-              @click="showArchiveConfirmation(issue)"
-            />
-            <AppButton
-              v-else
-              margin="left"
-              color="ok"
-              size="sm"
-              fa-icon-left="fa-solid fa-rotate-left"
-              @click="unarchiveIssue(issue)"
-            />
+            <AppButton :label="t('issue.actions.details')" color="primary" size="sm" @click="openIssueDetails(issue)" />
+            <AppButton v-if="!issue.isArchived" margin="left" color="warning" size="sm" fa-icon-left="archive"
+              @click="showArchiveConfirmation(issue)" />
+            <AppButton v-else margin="left" color="ok" size="sm" fa-icon-left="fa-solid fa-rotate-left"
+              @click="unarchiveIssue(issue)" />
             <AppButton
               :label="issue.status === IssueStatus.RESOLVED ? t('issue.actions.reopen') : t('issue.actions.markResolved')"
-              margin="no-margins"
-              color="secondary"
-              size="sm"
-              @click="toggleResolved(issue)"
-            />
+              margin="no-margins" color="secondary" size="sm" @click="toggleResolved(issue)" />
           </div>
         </div>
       </div>
@@ -192,27 +131,14 @@
         <p>{{ t('states.endOfResults') }}</p>
       </div>
     </div>
-    
+
     <!-- Archive Confirmation Popup -->
-    <AppPopup
-      :show="archiveConfirmation.show"
-      :title="t('archive.dialog.title')"
-      @close="cancelArchive"
-    >
+    <AppPopup :show="archiveConfirmation.show" :title="t('archive.dialog.title')" @close="cancelArchive">
       <p>{{ t('archive.dialog.message') }}</p>
-      
+
       <div class="popup-actions">
-        <AppButton
-          :label="t('archive.dialog.cancel')"
-          color="secondary"
-          @click="cancelArchive"
-        />
-        <AppButton
-          :label="t('archive.dialog.confirm')"
-          color="warning"
-          margin="left"
-          @click="confirmArchive"
-        />
+        <AppButton :label="t('archive.dialog.cancel')" color="secondary" @click="cancelArchive" />
+        <AppButton :label="t('archive.dialog.confirm')" color="warning" margin="left" @click="confirmArchive" />
       </div>
     </AppPopup>
   </section>
@@ -279,13 +205,13 @@ const filteredIssues = computed(() => {
   }
 
   // Apply archive filter
-  filtered = filtered.filter(issue => 
+  filtered = filtered.filter(issue =>
     showArchived.value ? issue.isArchived : !issue.isArchived
   )
 
   // Apply tag filter
   if (filters.selectedTags.length > 0) {
-    filtered = filtered.filter(issue => 
+    filtered = filtered.filter(issue =>
       issue.tags && issue.tags.some(tag => filters.selectedTags.includes(tag))
     )
   }
@@ -308,11 +234,11 @@ const loadAvailableTags = async () => {
   try {
     const { $sp } = useNuxtApp()
     const nuxtApp = useNuxtApp()
-    
+
     const response = await $sp.issueTag.find({
       product: nuxtApp.$userProductId
     }, {})
-    
+
     availableTags.value = response.data || []
   } catch (error) {
     console.error('Error loading available tags:', error)
@@ -402,14 +328,14 @@ const confirmArchive = async () => {
 
     // Create animation class
     animatingCards.value.add(issue.id!)
-    
+
     // Wait for animation
     await new Promise(resolve => setTimeout(resolve, 300))
 
     await $sp.issue.patch({
       id: issue.id!,
-      isArchived: true
-    }, {})
+      product: useNuxtApp().$userProductId,
+    }, { isArchived: true })
 
     // Remove from current list
     issues.value = issues.value.filter(i => i.id !== issue.id)
@@ -431,19 +357,21 @@ const unarchiveIssue = async (issue: Issue) => {
 
     await $sp.issue.patch({
       id: issue.id!,
+      product: useNuxtApp().$userProductId,
+    }, {
       isArchived: false
-    }, {})
+    })
 
     // Remove from current list if showing archived
     if (showArchived.value) {
       issues.value = issues.value.filter(i => i.id !== issue.id)
-      } else {
-        // Update in place
-        const index = issues.value.findIndex(i => i.id === issue.id)
-        if (index !== -1 && issues.value[index]) {
-          issues.value[index]!.isArchived = false
-        }
-      }    useNuxtApp().$toast.show(t('archive.messages.unarchiveSuccess'), 'success')
+    } else {
+      // Update in place
+      const index = issues.value.findIndex(i => i.id === issue.id)
+      if (index !== -1 && issues.value[index]) {
+        issues.value[index]!.isArchived = false
+      }
+    } useNuxtApp().$toast.show(t('archive.messages.unarchiveSuccess'), 'success')
   } catch (error) {
     console.error('Error unarchiving issue:', error)
     useNuxtApp().$toast.show(t('archive.messages.unarchiveError'), 'error')
@@ -457,8 +385,10 @@ const toggleResolved = async (issue: Issue) => {
 
     await $sp.issue.patch({
       id: issue.id!,
+      product: useNuxtApp().$userProductId,
+    }, {
       status: newStatus
-    }, {})
+    })
 
     // Update in place
     const index = issues.value.findIndex(i => i.id === issue.id)
@@ -467,7 +397,7 @@ const toggleResolved = async (issue: Issue) => {
     }
 
     useNuxtApp().$toast.show(
-      newStatus === IssueStatus.RESOLVED ? t('status.messages.resolvedSuccess') : t('status.messages.reopenedSuccess'), 
+      newStatus === IssueStatus.RESOLVED ? t('status.messages.resolvedSuccess') : t('status.messages.reopenedSuccess'),
       'success'
     )
   } catch (error) {
@@ -496,15 +426,15 @@ const getLastComment = (issue: Issue): string => {
 
 const formatDate = (date?: Date | string): string => {
   if (!date) return ''
-  
+
   const d = new Date(date)
   if (isNaN(d.getTime())) return ''
-  
+
   const now = new Date()
   const diffMs = now.getTime() - d.getTime()
   const diffHours = diffMs / (1000 * 60 * 60)
   const diffDays = diffMs / (1000 * 60 * 60 * 24)
-  
+
   if (diffHours < 1) {
     const mins = Math.floor(diffMs / (1000 * 60))
     return `${mins}m ago`
@@ -520,10 +450,10 @@ const formatDate = (date?: Date | string): string => {
 // Infinite scroll
 const handleScroll = () => {
   if (isLoadingMore.value || !hasMoreData.value) return
-  
+
   const scrollPosition = window.innerHeight + window.scrollY
   const threshold = document.body.offsetHeight - 1000
-  
+
   if (scrollPosition >= threshold) {
     loadIssues()
   }
@@ -562,7 +492,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   h1 {
     margin: 0;
     color: $text;
@@ -588,7 +518,7 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 1.5rem;
   margin-bottom: 2rem;
-  
+
   @media (max-width: 768px) {
     gap: 1rem;
   }
@@ -598,7 +528,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 1rem;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
@@ -610,7 +540,7 @@ onUnmounted(() => {
   min-width: 300px;
   max-width: 500px;
   flex: 1;
-  
+
   .search-icon {
     position: absolute;
     left: 1rem;
@@ -618,7 +548,7 @@ onUnmounted(() => {
     transform: translateY(-50%);
     color: $muted;
   }
-  
+
   .search-input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
@@ -627,11 +557,11 @@ onUnmounted(() => {
     background: $bg;
     color: $text;
     font-size: 0.9rem;
-    
+
     &::placeholder {
       color: $muted;
     }
-    
+
     &:focus {
       outline: none;
       border-color: $brand;
@@ -644,7 +574,7 @@ onUnmounted(() => {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 2rem;
-  
+
   @media (max-width: 1024px) {
     flex-direction: column;
     gap: 1rem;
@@ -656,12 +586,12 @@ onUnmounted(() => {
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
   flex: 1;
-  
+
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
   }
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -677,7 +607,7 @@ onUnmounted(() => {
     border-bottom: 2px solid $brand;
     padding-bottom: 0.25rem;
   }
-  
+
   .checkbox-label {
     display: flex;
     align-items: center;
@@ -686,30 +616,30 @@ onUnmounted(() => {
     cursor: pointer;
     font-size: 0.9rem;
     color: $text;
-    
+
     input[type="checkbox"] {
       width: 16px;
       height: 16px;
       accent-color: $brand;
       cursor: pointer;
     }
-    
+
     .tag-color {
       width: 12px;
       height: 12px;
       border-radius: 50%;
       border: 1px solid rgba($muted, 0.3);
     }
-    
+
     &:hover {
       color: $brand;
     }
   }
-  
+
   .tags-filter {
     max-height: 150px;
     overflow-y: auto;
-    
+
     .no-tags {
       color: $muted;
       font-style: italic;
@@ -717,14 +647,15 @@ onUnmounted(() => {
   }
 }
 
-.loading-state, .loading-more {
+.loading-state,
+.loading-more {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4rem 1rem;
   color: $muted;
-  
+
   .spinner {
     width: 32px;
     height: 32px;
@@ -734,7 +665,7 @@ onUnmounted(() => {
     animation: spin 1s linear infinite;
     margin-bottom: 1rem;
   }
-  
+
   p {
     margin: 0;
     font-size: 0.9rem;
@@ -743,7 +674,7 @@ onUnmounted(() => {
 
 .loading-more {
   padding: 2rem 1rem;
-  
+
   .spinner {
     width: 24px;
     height: 24px;
@@ -757,13 +688,13 @@ onUnmounted(() => {
   text-align: center;
   padding: 4rem 1rem;
   color: $muted;
-  
+
   h3 {
     margin: 0 0 0.5rem 0;
     color: $text;
     font-size: 1.5rem;
   }
-  
+
   p {
     margin: 0;
   }
@@ -773,7 +704,7 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 1.5rem;
-  
+
   .issue-card {
     background: $bg;
     border: 2px solid $muted;
@@ -784,39 +715,39 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     min-height: 200px;
-    
+
     &:hover {
       border-color: $brand;
       box-shadow: 0 4px 12px rgba($brand, 0.1);
     }
-    
+
     &.open {
       border-color: $brand;
-      
+
       .issue-header {
         border-bottom-color: rgba($brand, 0.2);
       }
     }
-    
+
     &.resolved {
       border-color: $brand-2;
       background: rgba($brand-2, 0.02);
-      
+
       .issue-header {
         border-bottom-color: rgba($brand-2, 0.2);
       }
     }
-    
+
     &.archived {
       opacity: 0.6;
       background: rgba($muted, 0.02);
     }
-    
+
     &.animating-out {
       animation: fadeOut 0.3s ease-out forwards;
       pointer-events: none;
     }
-    
+
     .issue-header {
       display: flex;
       justify-content: space-between;
@@ -824,10 +755,10 @@ onUnmounted(() => {
       margin-bottom: 1rem;
       padding-bottom: 1rem;
       border-bottom: 1px solid rgba($muted, 0.3);
-      
+
       .issue-info {
         flex: 1;
-        
+
         .issue-title {
           color: $text;
           font-size: 1.1rem;
@@ -835,19 +766,19 @@ onUnmounted(() => {
           margin: 0 0 0.25rem 0;
           line-height: 1.3;
         }
-        
+
         .issue-id {
           color: $muted;
           font-size: 0.875rem;
           margin: 0;
         }
       }
-      
+
       .issue-status {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        
+
         .status-badge {
           display: flex;
           align-items: center;
@@ -857,12 +788,12 @@ onUnmounted(() => {
           font-size: 0.75rem;
           font-weight: 500;
           white-space: nowrap;
-          
+
           &.open {
             background: rgba($brand, 0.1);
             color: $brand;
           }
-          
+
           &.resolved {
             background: rgba($brand-2, 0.1);
             color: $brand-2;
@@ -870,21 +801,21 @@ onUnmounted(() => {
         }
       }
     }
-    
+
     .issue-preview {
       margin-bottom: 1rem;
-      
+
       .issue-description {
         color: $text;
         line-height: 1.4;
         margin: 0 0 0.75rem 0;
       }
-      
+
       .issue-tags {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
-        
+
         .tag {
           padding: 0.25rem 0.5rem;
           border-radius: $radius;
@@ -894,25 +825,25 @@ onUnmounted(() => {
         }
       }
     }
-    
+
     .issue-meta {
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
       margin-bottom: 1rem;
-      
+
       .last-comment {
         color: $muted;
         font-size: 0.875rem;
         font-style: italic;
       }
-      
+
       .created-date {
         color: $muted;
         font-size: 0.75rem;
       }
     }
-    
+
     .issue-actions {
       display: flex;
       gap: 0.5rem;
@@ -936,11 +867,13 @@ onUnmounted(() => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes fadeOut {
-  to { 
+  to {
     opacity: 0;
     transform: scale(0.95);
   }
@@ -950,25 +883,25 @@ onUnmounted(() => {
   .issues-page {
     padding: 1rem;
   }
-  
+
   .filters-section {
     .filter-controls .filter-checkboxes {
       grid-template-columns: 1fr;
       gap: 1rem;
     }
   }
-  
+
   .issues-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
-    
+
     .issue-card {
       padding: 1rem;
-      
+
       .issue-header {
         flex-direction: column;
         gap: 0.75rem;
-        
+
         .issue-status {
           align-self: flex-start;
         }

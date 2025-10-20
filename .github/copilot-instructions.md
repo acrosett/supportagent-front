@@ -17,6 +17,9 @@ when api call, catch the error and pass the error object to the $toast function 
 when making API call you will use nuxtApp.$sp.<service>.<method>
 for exemple phoneNumber service dto for basic operations (find, create,delete batch) will be in the file phone-number.entity.ts
 
+Also in your queries (patch, read, delete) always add the product for query autorization
+eg: product: nuxtApp.$userProductId
+
 for non base operations (cmds) you will find a dto in <method>.dto.ts
 
 No JSDoc ever. DO NOT ADD PARAMETER COMMENTS

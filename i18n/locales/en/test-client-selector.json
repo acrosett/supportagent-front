@@ -26,7 +26,9 @@
     "authToken": {
       "title": "Authentication Token",
       "description": "Use this token to authenticate as the test client:",
-      "copy": "Copy Token"
+      "copy": "Copy Token",
+      "startChat": "Start Chat Session",
+      "cancel": "Cancel"
     }
   },
   "messages": {

@@ -4,7 +4,7 @@
   },
   "aiInstructions": {
     "title": "Additional Instructions for AI",
-    "description": "Provide additional context and instructions that (SMART) client-facing agents should follow when assisting your customers.",
+    "description": "Provide additional context and instructions that client-facing agents should follow when assisting your customers.",
     "saveButton": "Save Instructions",
     "form": {
       "label": "Additional Instructions",
