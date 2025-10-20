@@ -132,8 +132,8 @@ import { useMarkdown } from '~/composables/useMarkdown'
 
 const { $sp, $toast, $confirmPopup, $userProductId } = useNuxtApp()
 const { renderMarkdown, highlightCodeBlocks } = useMarkdown()
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('faq-manager')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('faq-manager')
 
 const items = ref<Faq[]>([])
 const loading = ref(false)

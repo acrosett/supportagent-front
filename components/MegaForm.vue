@@ -7,7 +7,7 @@ import ChecklistInput, { type ChecklistOption } from './ChecklistInput.vue'
 import FieldTooltip from './FieldTooltip.vue'
 import ToggleSwitch from './ToggleSwitch.vue'
 
-const { t } = useLocalNamespace('MegaForm')
+const { t } = await useLocalNamespaceAsync('MegaForm')
 
 // Component type mapping
 const componentTypeMap: Record<string, any> = {

@@ -8,8 +8,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick, computed } from 'vue'
 
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('rich-text-editor')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('rich-text-editor')
 
 interface Props {
   modelValue?: string

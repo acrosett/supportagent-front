@@ -216,7 +216,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import MegaForm, { FieldOverride } from '~/components/MegaForm.vue'
 import AppButton from '~/components/AppButton.vue'
 import AppPopup from '~/components/AppPopup.vue'
@@ -225,15 +225,15 @@ import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.en
 import { CustomTool } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
 import { Domain } from '~/eicrud_exports/services/SUPPORT-ms/domain/domain.entity'
 
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('custom-tools')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('custom-tools')
 
 // AI Instructions
 let aiInstructions = reactive({
   additionalInstructions: ''
 })
 
-const aiInstructionsOverrides: Record<string, FieldOverride> = {
+const aiInstructionsOverrides = computed(() => ({
   additionalInstructions: {
     maxChars: 6000,
     type: 'richtext',
@@ -241,7 +241,7 @@ const aiInstructionsOverrides: Record<string, FieldOverride> = {
     description: t('aiInstructions.form.description'),
     placeholder: t('aiInstructions.form.placeholder')
   }
-}
+}))
 
 // Custom Tools
 const customTools = ref<CustomTool[]>([])

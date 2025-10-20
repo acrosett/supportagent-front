@@ -51,8 +51,8 @@ const sendResetFormData = ref({
   email: ''
 })
 
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('reset-password')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('reset-password')
 
 const sendResetFieldOverrides: OverrideRecord<SendPasswordResetEmailDto> = {
   email: {

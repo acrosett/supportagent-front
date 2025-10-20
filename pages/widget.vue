@@ -37,8 +37,8 @@
 import MegaForm, { OverrideRecord, MegaFormAction } from '@/components/MegaForm.vue'
 import { WidgetConfig, WidgetPosition, WidgetIcon } from '@/eicrud_exports/services/SUPPORT-ms/widget-config/widget-config.entity'
 
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('widget')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('widget')
 
 definePageMeta({ layout: 'default' })
 

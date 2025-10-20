@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 // Composables
-const { t } = useLocalNamespace('AppPagination')
+const { t } = await useLocalNamespaceAsync('AppPagination')
 
 interface Props {
   currentPage: number

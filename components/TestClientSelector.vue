@@ -126,8 +126,8 @@ import AppPopup from '~/components/AppPopup.vue'
 import type { OverrideRecord } from '~/components/MegaForm.vue'
 import { IsString } from 'class-validator'
 
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('test-client-selector')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('test-client-selector')
 
 // Token form class for validation
 class TokenForm {

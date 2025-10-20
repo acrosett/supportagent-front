@@ -122,8 +122,8 @@ import { estimateFullDigestCost, FILE_MAX_SIZE } from '~/eicrud_exports/services
 import MegaForm, { type MegaFormAction, type OverrideRecord } from './MegaForm.vue'
 import { DigestFileDto } from '~/eicrud_exports/services/AI-ms/digestor/cmds/digest_file/digest_file.dto'
 
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('digest-file')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('digest-file')
 
 interface Props {
   modelValue?: string

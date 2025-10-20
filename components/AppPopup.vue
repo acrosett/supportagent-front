@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useLocalNamespace('AppPopup')
+const { t } = await useLocalNamespaceAsync('AppPopup')
 
 interface Props {
   show: boolean

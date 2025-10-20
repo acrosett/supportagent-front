@@ -24,14 +24,14 @@ import MegaForm, { MegaFormAction, OverrideRecord } from '~/components/MegaForm.
 import { LoginDto } from '~/eicrud_exports/services/user/cmds/login/login.dto'
 import { isValidRedirect } from '~/utils/redirect-validation'
 import { ref } from 'vue'
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 
 definePageMeta({ layout: 'bare' })
 
-const { t } = useLocalNamespace('login')
+const { t } = await useLocalNamespaceAsync('login')
 
 const links = [
-    { label: t('links.resetPassword'), href: '/reset-password' },
+  { label: t('links.resetPassword'), href: '/reset-password' },
   { label: t('links.register'), href: '/register' },
 ]
 

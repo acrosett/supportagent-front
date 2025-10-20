@@ -6,12 +6,12 @@
           <i class="fas fa-rocket"></i>
           <h1>DirectSupport.ai</h1>
         </a>
-        <h2 class="coming-soon-title">{{ t('coming-soon.page.title') }}</h2>
-        <p class="coming-soon-subtitle">{{ t('coming-soon.page.subtitle') }}</p>
+        <h2 class="coming-soon-title">{{ t('page.title') }}</h2>
+        <p class="coming-soon-subtitle">{{ t('page.subtitle') }}</p>
       </div>
 
       <div class="signup-form">
-        <h3>{{ t('coming-soon.signup.title') }}</h3>
+        <h3>{{ t('signup.title') }}</h3>
         <MegaForm
           :formClass="WaitingList"
           v-model="formData"
@@ -22,11 +22,11 @@
       </div>
 
       <div class="features-preview">
-        <h4>{{ t('coming-soon.features.title') }}</h4>
+        <h4>{{ t('features.title') }}</h4>
         <ul class="feature-list">
-          <li><i class="fas fa-check"></i> {{ t('coming-soon.features.list.embeddedChat') }}</li>
-          <li><i class="fas fa-check"></i> {{ t('coming-soon.features.list.whatsapp') }}</li>
-          <li><i class="fas fa-check"></i> {{ t('coming-soon.features.list.knowledgeBase') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('features.list.embeddedChat') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('features.list.whatsapp') }}</li>
+          <li><i class="fas fa-check"></i> {{ t('features.list.knowledgeBase') }}</li>
         </ul>
       </div>
     </div>
@@ -41,11 +41,11 @@ import { ref } from 'vue'
 definePageMeta({ layout: 'bare' })
 
 // Composables
-const { t } = useLocalNamespace('coming-soon')
+const { t } = await useLocalNamespaceAsync('coming-soon')
 
 // Meta
 useHead({
-  title: () => t('coming-soon.meta.title')
+  title: () => t('meta.title')
 })
 
 const formData = ref({
@@ -56,26 +56,26 @@ const formData = ref({
 const fieldOverrides = {
   email: {
     type: 'email',
-    label: t('coming-soon.signup.email.label'),
-    placeholder: t('coming-soon.signup.email.placeholder')
+    label: t('signup.email.label'),
+    placeholder: t('signup.email.placeholder')
   },
   acceptPrivacyPolicy: {
     type: 'checkbox',
-    label: t('coming-soon.signup.privacyPolicy.label'),
+    label: t('signup.privacyPolicy.label'),
     required: true
   }
 }
 
 const actions: MegaFormAction[] = [
   {
-    label: t('coming-soon.signup.button'),
+    label: t('signup.button'),
     color: 'primary',
     margin: 'right',
     callback: async (data: any) => {
       try {
         // Check if privacy policy is accepted
         if (!data.acceptPrivacyPolicy) {
-          useNuxtApp().$toast.show(t('coming-soon.messages.privacyRequired'), 'error')
+          useNuxtApp().$toast.show(t('messages.privacyRequired'), 'error')
           return
         }
 
@@ -86,7 +86,7 @@ const actions: MegaFormAction[] = [
 
         await useNuxtApp().$sp.waitingList.create(waitingListData)
         
-        useNuxtApp().$toast.show(t('coming-soon.messages.success'), 'success')
+        useNuxtApp().$toast.show(t('messages.success'), 'success')
         
         // Reset form
         formData.value = {

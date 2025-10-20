@@ -144,9 +144,9 @@ import { ToolTrace } from '~/eicrud_exports/services/SUPPORT-ms/tool-trace/tool-
 import { useRecaptcha } from '~/composables/useRecaptcha'
 import { useMarkdown } from '~/composables/useMarkdown'
 import { SendClientMessageDto } from '~/eicrud_exports/services/SUPPORT-ms/message/cmds/send_client_message/send_client_message.dto'
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 
-const { t } = useLocalNamespace('chat')
+const { t } = await useLocalNamespaceAsync('chat')
 
 type ChatMessage = Partial<Message>;
 type ToolTraceMessage = Partial<ToolTrace> & { type: 'tool-trace' };

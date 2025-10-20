@@ -229,7 +229,7 @@ import { Issue, IssueStatus } from '~/eicrud_exports/services/SUPPORT-ms/issue/i
 import { IssueComment } from '~/eicrud_exports/services/SUPPORT-ms/issue-comment/issue-comment.entity'
 import { IssueTag } from '~/eicrud_exports/services/SUPPORT-ms/issue-tag/issue-tag.entity'
 
-const { t } = useLocalNamespace('issues')
+const { t } = await useLocalNamespaceAsync('issues')
 
 // Page state
 const issues = ref<Issue[]>([])

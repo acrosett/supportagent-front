@@ -109,7 +109,7 @@ import MegaForm, { MegaFormAction, FieldOverride, OverrideRecord } from '~/compo
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { IssueTag } from '~/eicrud_exports/services/SUPPORT-ms/issue-tag/issue-tag.entity'
 
-const { t } = useLocalNamespace('TagManager')
+const { t } = await useLocalNamespaceAsync('TagManager')
 
 interface Props {
   show: boolean

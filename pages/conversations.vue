@@ -270,9 +270,9 @@ import LlmLogsPopup from '~/components/LlmLogsPopup.vue'
 import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import { Message } from '~/eicrud_exports/services/SUPPORT-ms/message/message.entity'
 import { getPriorityEmoji } from '~/utils/priority'
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 
-const { t } = useLocalNamespace('conversations')
+const { t } = await useLocalNamespaceAsync('conversations')
 
 // State
 const clients = ref<Client[]>([])

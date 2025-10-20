@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import AppButton from '~/components/AppButton.vue'
 
-const { t } = useLocalNamespace('ConfirmPopup')
+const { t } = await useLocalNamespaceAsync('ConfirmPopup')
 
 const confirmPopup = useNuxtApp().$confirmPopup
 

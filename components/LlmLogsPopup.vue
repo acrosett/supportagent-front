@@ -155,7 +155,7 @@ import AppIcon from '~/components/AppIcon.vue'
 import AppPopup from '~/components/AppPopup.vue'
 
 // Composables
-const { t } = useLocalNamespace('LlmLogsPopup')
+const { t } = await useLocalNamespaceAsync('LlmLogsPopup')
 
 interface Props {
   show: boolean

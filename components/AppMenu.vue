@@ -215,9 +215,9 @@ const showTestClientSelector = ref(false)
 
 // Language selector state
 const showLanguageDropdown = ref(false)
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 const { locale: currentLocale, locales, setLocale } = useI18n()
-const { t } = useLocalNamespace('app-menu')
+const { t } = await useLocalNamespaceAsync('app-menu')
 
 const availableLocales = computed(() => locales.value)
 const currentLocaleDisplay = computed(() => {
@@ -268,9 +268,8 @@ const switchLanguage = async (localeCode: string) => {
     
     showLanguageDropdown.value = false
     closeMobileMenu()
-    
-    // Force page reload to ensure locale is properly applied
-    await navigateTo(useRoute().fullPath, { replace: true })
+
+    window.location.reload()
   } catch (error) {
     console.error('Failed to switch language:', error)
   }

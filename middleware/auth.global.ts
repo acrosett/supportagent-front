@@ -1,5 +1,5 @@
 import { SuperClient } from "~/eicrud_exports/super_client"
-import { PUBLIC_PATHS, isPublicPath } from "../utils/auth-config"
+import { PUBLIC_PATHS, isPublicPath, isPathMatch } from "../utils/auth-config"
 import { isValidRedirect } from "../utils/redirect-validation"
 import { NuxtApp } from "nuxt/app";
 
@@ -25,7 +25,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   });
   
   // Redirect logged-in users away from login page
-  if (to.path === "/login" && loggedIn) {
+  if (isPathMatch(to.path, '/login') && loggedIn) {
     const redirectTo = to.query.redirectTo as string
     if (redirectTo && isValidRedirect(redirectTo)) {
       return navigateTo(redirectTo)

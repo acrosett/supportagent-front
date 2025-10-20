@@ -106,7 +106,7 @@ import { ProductStat } from '~/eicrud_exports/services/LOG-ms/product-stat/produ
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import 'chartjs-adapter-date-fns'
 
-const { t } = useLocalNamespace('index')
+const { t } = await useLocalNamespaceAsync('index')
 
 // State
 const product = ref<Product | null>(null)

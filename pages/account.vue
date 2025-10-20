@@ -191,9 +191,9 @@ import AppButton from '~/components/AppButton.vue'
 import AppIcon from '~/components/AppIcon.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 
-const { t } = useLocalNamespace('account')
+const { t } = await useLocalNamespaceAsync('account')
 
 // Reactive data
 const product = ref<Product | null>(null)

@@ -68,7 +68,7 @@
 import AppButton from '~/components/AppButton.vue'
 import { Notification } from '~/eicrud_exports/services/notification/notification.entity'
 
-const { t } = useLocalNamespace('notifications')
+const { t } = await useLocalNamespaceAsync('notifications')
 
 // State
 const notifications = ref<Notification[]>([])

@@ -37,9 +37,9 @@ useHead({
 })
 
 // Composables
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 const { getRecaptchaToken } = useRecaptcha()
-const { t } = useLocalNamespace('register')
+const { t } = await useLocalNamespaceAsync('register')
 
 const formData = ref({
   email: '',

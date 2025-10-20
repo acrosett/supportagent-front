@@ -33,7 +33,7 @@ import { ref, onMounted, computed } from 'vue'
 definePageMeta({ layout: 'default' })
 
 // Composables
-const { t } = useLocalNamespace('edit-product')
+const { t } = await useLocalNamespaceAsync('edit-product')
 
 // Meta
 useHead({

@@ -65,8 +65,8 @@ definePageMeta({ layout: 'bare' })
 // Get token_id from URL query params
 const route = useRoute()
 const router = useRouter()
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('verify-email')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('verify-email')
 const tokenId = computed(() => route.query.token_id as string || null)
 
 // Reactive state

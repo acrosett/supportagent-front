@@ -295,7 +295,7 @@ import { CrudOptions } from '~/eicrud_exports/CrudOptions'
 import 'chartjs-adapter-date-fns'
 
 // Composables
-const { t } = useLocalNamespace('logs')
+const { t } = await useLocalNamespaceAsync('logs')
 
 // Meta
 useHead({

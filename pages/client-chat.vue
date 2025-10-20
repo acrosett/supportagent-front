@@ -35,9 +35,9 @@
 import AppButton from '~/components/AppButton.vue'
 import { Client, ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
 import { getPriorityEmoji } from '~/utils/priority'
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 
-const { t } = useLocalNamespace('client-chat')
+const { t } = await useLocalNamespaceAsync('client-chat')
 
 definePageMeta({ 
   layout: 'default'

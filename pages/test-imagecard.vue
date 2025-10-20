@@ -151,7 +151,7 @@ definePageMeta({
   layout: 'default'
 })
 
-const { t } = useLocalNamespace('test-imagecard')
+const { t } = await useLocalNamespaceAsync('test-imagecard')
 
 const handleEditClick = () => {
   console.log('Edit button clicked!')

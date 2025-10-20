@@ -37,12 +37,8 @@ export default defineNuxtConfig({
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_locale',
-      cookieDomain: null,
-      cookieSecure: false,
-      redirectOn: 'no prefix',
-      alwaysRedirect: false,
       fallbackLocale: 'en',
-      cookieCrossOrigin: false
+      redirectOn: 'no prefix'
     }
   },
   css: ['~/assets/main.scss', 'highlight.js/styles/github-dark.css' ],

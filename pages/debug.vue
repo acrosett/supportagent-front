@@ -99,7 +99,7 @@ import type { MegaFormAction, OverrideRecord } from '~/components/MegaForm.vue'
 import { EffectiveDeleteAccountDto } from '~/eicrud_exports/services/AUTH-ms/account-deletion/cmds/effective_delete_account/effective_delete_account.dto'
 
 // Composables
-const { t } = useLocalNamespace('debug')
+const { t } = await useLocalNamespaceAsync('debug')
 
 // Meta
 useHead({

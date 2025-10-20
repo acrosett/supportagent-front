@@ -19,6 +19,6 @@ for exemple phoneNumber service dto for basic operations (find, create,delete ba
 
 for non base operations (cmds) you will find a dto in <method>.dto.ts
 
-No JSDoc ever.
+No JSDoc ever. DO NOT ADD PARAMETER COMMENTS
 
 Do the i18n extraction when a display string is needed, only update i18n/locales/en/<pageOrComponent>.json don't do other languages. Import t with useLocalNamespace from '~/composables/useLocalNamespace'. There must be one namespace per page or component (must match the exact name)

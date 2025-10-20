@@ -14,9 +14,9 @@
 
 <script setup lang="ts">
 import FaqManager from '@/components/FaqManager.vue'
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 
-const { t } = useLocalNamespace('faq')
+const { t } = await useLocalNamespaceAsync('faq')
 
 // Set page metadata
 definePageMeta({

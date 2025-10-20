@@ -1,4 +1,4 @@
-import { onBeforeMount, watch, ref } from 'vue'
+import { onBeforeMount, watch, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 /**
@@ -18,7 +18,7 @@ export function useLocalNamespace(ns: string) {
 
   const loading = ref(true)
 
-  async function load(loc = i18n.locale.value) {
+async function load(loc = i18n.locale.value) {
     loading.value = true
     try {
       // Vite handles JSON imports both on server (SSR) and client
@@ -38,6 +38,23 @@ export function useLocalNamespace(ns: string) {
   onBeforeMount(() => load())
   watch(i18n.locale, (loc) => load(loc))
 
-  // expose the local t() and loading state
-  return { t: i18n.t, loading }
+  // Simple translation function
+  const t = (key: string, named?: Record<string, any>) => {
+    if (loading.value) {
+      return key
+    }
+    return named ? i18n.t(key, named) : i18n.t(key)
+  }
+
+  return { t, loading, load }
+}
+
+/**
+ * Async version that waits for translations to load before returning
+ * Usage: const { t } = await useLocalNamespaceAsync('login')
+ */
+export async function useLocalNamespaceAsync(ns: string) {
+  const { t, loading, load } = useLocalNamespace(ns)
+  await load()
+  return { t, loading, load }
 }

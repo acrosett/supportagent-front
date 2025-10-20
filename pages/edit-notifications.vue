@@ -45,7 +45,7 @@ import AppButton from '~/components/AppButton.vue'
 import { Product, NotificationConfig, NotificationSubConfig } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
 import type { OverrideRecord, MegaFormAction } from '~/components/MegaForm.vue'
 
-const { t } = useLocalNamespace('edit-notifications')
+const { t } = await useLocalNamespaceAsync('edit-notifications')
 
 // Form data
 const formData = ref<Partial<Product>>({

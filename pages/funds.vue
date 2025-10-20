@@ -601,7 +601,7 @@ definePageMeta({
 })
 
 // Composables
-const { t } = useLocalNamespace('funds')
+const { t } = await useLocalNamespaceAsync('funds')
 
 // Meta
 useHead({

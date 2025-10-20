@@ -268,8 +268,8 @@ import CheckBoxColumn from '~/components/CheckBoxColumn.vue'
 import LlmLogsPopup from '~/components/LlmLogsPopup.vue'
 import { EditorTask, EditorTaskStatus, EditorTaskInitiator } from '~/eicrud_exports/services/SUPPORT-ms/editor-task/editor-task.entity'
 
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('document-upload')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('document-upload')
 const processedText = ref('')
 const isAdmin = ref(false)
 

@@ -381,11 +381,21 @@ import { ContactConfig } from '~/eicrud_exports/services/WHATSAPP-ms/contact-con
 import { VerifyCodeDto } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/cmds/verify_code/verify_code.dto'
 import { SendVerifyDto } from '~/eicrud_exports/services/WHATSAPP-ms/phone-number/cmds/send_verify/send_verify.dto'
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity'
-import { getPriorityEmoji, formatPriorityTranslated } from '~/utils/priority'
 
-const { t } = useLocalNamespace('contact-priority')
+const { t } = await useLocalNamespaceAsync('contact-priority')
 
-
+// Helper function to format priority with translation
+const formatPriorityTranslated = (priority: ClientPriority): string => {
+  switch (priority) {
+    case ClientPriority.HIGH:
+      return t('config.priority.high')
+    case ClientPriority.REGULAR:
+      return t('config.priority.regular')
+    case ClientPriority.LOWEST:
+    default:
+      return t('config.priority.lowest')
+  }
+}
 
 const phoneNumbers = ref<PhoneNumber[]>([])
 

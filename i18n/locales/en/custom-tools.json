@@ -7,6 +7,7 @@
     "description": "Provide additional context and instructions that (SMART) client-facing agents should follow when assisting your customers.",
     "saveButton": "Save Instructions",
     "form": {
+      "label": "Additional Instructions",
       "placeholder": "Enter additional instructions for the AI agent...",
       "description": "These instructions will be provided to the AI when responding to customer inquiries"
     }

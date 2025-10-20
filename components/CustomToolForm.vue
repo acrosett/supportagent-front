@@ -12,8 +12,8 @@ import { type ChecklistOption } from '~/components/ChecklistInput.vue'
 import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/client.entity';
 import { CustomTool, CustomToolArgument, HttpMethod, ArgumentLocation, ArgumentValueType, ArgumentDataType } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
 
-import { useLocalNamespace } from '~/composables/useLocalNamespace'
-const { t } = useLocalNamespace('custom-tool-form')
+import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+const { t } = await useLocalNamespaceAsync('custom-tool-form')
 
 interface Props {
     tool?: CustomTool | null
@@ -77,35 +77,35 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
     clientPriorities: {
         type: 'checklist',
         isArray: false,
-        description: t('customTools.form.clientPriorities.description'),
+        description: t('clientPriorities.description'),
         props: {
             options: [
-                { label: t('customTools.form.clientPriorities.lowest'), value: ClientPriority.LOWEST },
-                { label: t('customTools.form.clientPriorities.regular'), value: ClientPriority.REGULAR },
-                { label: t('customTools.form.clientPriorities.high'), value: ClientPriority.HIGH },
+                { label: t('clientPriorities.lowest'), value: ClientPriority.LOWEST },
+                { label: t('clientPriorities.regular'), value: ClientPriority.REGULAR },
+                { label: t('clientPriorities.high'), value: ClientPriority.HIGH },
             ] as ChecklistOption[]
         }
     },
     name: {
-        label: t('customTools.form.name.label'),
-        placeholder: t('customTools.form.name.placeholder'),
-        description: t('customTools.form.name.description')
+        label: t('name.label'),
+        placeholder: t('name.placeholder'),
+        description: t('name.description')
     },
     description: {
         maxChars: 2000,
         type: 'richtext',
-        label: t('customTools.form.description.label'),
-        placeholder: t('customTools.form.description.placeholder'),
-        description: t('customTools.form.description.description')
+        label: t('description.label'),
+        placeholder: t('description.placeholder'),
+        description: t('description.description')
     },
     url: {
-        label: t('customTools.form.url.label'),
-        placeholder: t('customTools.form.url.placeholder'),
-        description: t('customTools.form.url.description')
+        label: t('url.label'),
+        placeholder: t('url.placeholder'),
+        description: t('url.description')
     },
     method: {
         type: 'select',
-        label: t('customTools.form.method.label'),
+        label: t('method.label'),
         selectOptions: [
             { label: 'GET', value: HttpMethod.GET },
             { label: 'POST', value: HttpMethod.POST },
@@ -115,7 +115,7 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
             { label: 'HEAD', value: HttpMethod.HEAD },
             { label: 'OPTIONS', value: HttpMethod.OPTIONS }
         ],
-        description: t('customTools.form.method.description')
+        description: t('method.description')
     },
     arguments: {
         isArray: true,
@@ -132,35 +132,35 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
         ],
         nestedFieldOverrides: {
             name: {
-                label: t('customTools.form.arguments.name.label'),
-                placeholder: t('customTools.form.arguments.name.placeholder'),
-                description: t('customTools.form.arguments.name.description')
+                label: t('arguments.name.label'),
+                placeholder: t('arguments.name.placeholder'),
+                description: t('arguments.name.description')
             },
             description: {
                 maxChars: 2000,
-                label: t('customTools.form.arguments.paramDescription.label'),
-                placeholder: t('customTools.form.arguments.paramDescription.placeholder'),
-                description: t('customTools.form.arguments.paramDescription.description')
+                label: t('arguments.paramDescription.label'),
+                placeholder: t('arguments.paramDescription.placeholder'),
+                description: t('arguments.paramDescription.description')
             },
             location: {
                 type: 'select',
-                label: t('customTools.form.arguments.location.label'),
+                label: t('arguments.location.label'),
                 selectOptions: [
-                    { label: t('customTools.form.arguments.location.payload'), value: ArgumentLocation.PAYLOAD },
-                    { label: t('customTools.form.arguments.location.header'), value: ArgumentLocation.HEADER },
-                    { label: t('customTools.form.arguments.location.urlParam'), value: ArgumentLocation.URL_PARAM },
-                    { label: t('customTools.form.arguments.location.queryParam'), value: ArgumentLocation.QUERY_PARAM }
+                    { label: t('arguments.location.payload'), value: ArgumentLocation.PAYLOAD },
+                    { label: t('arguments.location.header'), value: ArgumentLocation.HEADER },
+                    { label: t('arguments.location.urlParam'), value: ArgumentLocation.URL_PARAM },
+                    { label: t('arguments.location.queryParam'), value: ArgumentLocation.QUERY_PARAM }
                 ],
-                description: t('customTools.form.arguments.location.description')
+                description: t('arguments.location.description')
             },
             valueType: {
                 type: 'select',
-                label: t('customTools.form.arguments.valueType.label'),
+                label: t('arguments.valueType.label'),
                 selectOptions: [
-                    { label: t('customTools.form.arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
-                    { label: t('customTools.form.arguments.valueType.userId'), value: ArgumentValueType.USER_ID },
-                    { label: t('customTools.form.arguments.valueType.sharedSecret'), value: ArgumentValueType.SHARED_SECRET },
-                    { label: t('customTools.form.arguments.valueType.constant'), value: ArgumentValueType.CONSTANT }
+                    { label: t('arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
+                    { label: t('arguments.valueType.userId'), value: ArgumentValueType.USER_ID },
+                    { label: t('arguments.valueType.sharedSecret'), value: ArgumentValueType.SHARED_SECRET },
+                    { label: t('arguments.valueType.constant'), value: ArgumentValueType.CONSTANT }
                 ],
                 conditionsFieldsIfValue: [
                     { field: 'constantValue', values: [ArgumentValueType.CONSTANT] },
@@ -168,67 +168,67 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
                     { field: 'required', values: [ArgumentValueType.SET_BY_AI] },
                     { field: 'description', values: [ArgumentValueType.SET_BY_AI] },
                 ],
-                description: t('customTools.form.arguments.valueType.description')
+                description: t('arguments.valueType.description')
             },
             dataType: {
                 type: 'select',
-                label: t('customTools.form.arguments.dataType.label'),
+                label: t('arguments.dataType.label'),
                 selectOptions: [
-                    { label: t('customTools.form.arguments.dataType.string'), value: ArgumentDataType.STRING },
-                    { label: t('customTools.form.arguments.dataType.number'), value: ArgumentDataType.NUMBER },
-                    { label: t('customTools.form.arguments.dataType.boolean'), value: ArgumentDataType.BOOLEAN },
-                    { label: t('customTools.form.arguments.dataType.object'), value: ArgumentDataType.OBJECT },
-                    { label: t('customTools.form.arguments.dataType.array'), value: ArgumentDataType.ARRAY }
+                    { label: t('arguments.dataType.string'), value: ArgumentDataType.STRING },
+                    { label: t('arguments.dataType.number'), value: ArgumentDataType.NUMBER },
+                    { label: t('arguments.dataType.boolean'), value: ArgumentDataType.BOOLEAN },
+                    { label: t('arguments.dataType.object'), value: ArgumentDataType.OBJECT },
+                    { label: t('arguments.dataType.array'), value: ArgumentDataType.ARRAY }
                 ],
-                description: t('customTools.form.arguments.dataType.description')
+                description: t('arguments.dataType.description')
             },
             constantValue: {
-                label: t('customTools.form.arguments.constantValue.label'),
-                placeholder: t('customTools.form.arguments.constantValue.placeholder'),
-                description: t('customTools.form.arguments.constantValue.description'),
+                label: t('arguments.constantValue.label'),
+                placeholder: t('arguments.constantValue.placeholder'),
+                description: t('arguments.constantValue.description'),
                 // Show only when valueType is CONSTANT
             },
             required: {
                 type: 'checkbox',
-                label: t('customTools.form.arguments.required.label'),
-                description: t('customTools.form.arguments.required.description')
+                label: t('arguments.required.label'),
+                description: t('arguments.required.description')
             },
             defaultValue: {
-                label: t('customTools.form.arguments.defaultValue.label'),
-                placeholder: t('customTools.form.arguments.defaultValue.placeholder'),
-                description: t('customTools.form.arguments.defaultValue.description')
+                label: t('arguments.defaultValue.label'),
+                placeholder: t('arguments.defaultValue.placeholder'),
+                description: t('arguments.defaultValue.description')
             }
         },
-        label: t('customTools.form.arguments.label'),
-        description: t('customTools.form.arguments.description')
+        label: t('arguments.label'),
+        description: t('arguments.description')
     },
     contentType: {
-        label: t('customTools.form.contentType.label'),
-        placeholder: t('customTools.form.contentType.placeholder'),
-        description: t('customTools.form.contentType.description')
+        label: t('contentType.label'),
+        placeholder: t('contentType.placeholder'),
+        description: t('contentType.description')
     },
     timeoutMs: {
         type: 'number',
-        label: t('customTools.form.timeout.label'),
-        placeholder: t('customTools.form.timeout.placeholder'),
-        description: t('customTools.form.timeout.description')
+        label: t('timeout.label'),
+        placeholder: t('timeout.placeholder'),
+        description: t('timeout.description')
     },
     enabled: {
         type: 'checkbox',
-        label: t('customTools.form.enabled.label'),
-        description: t('customTools.form.enabled.description')
+        label: t('enabled.label'),
+        description: t('enabled.description')
     },
     provideToolToGuests: {
         type: 'checkbox',
-        label: t('customTools.form.guestAccess.label'),
-        description: t('customTools.form.guestAccess.description')
+        label: t('guestAccess.label'),
+        description: t('guestAccess.description')
     }
 }
 
 // Form actions
 const actions = computed(() => [
     {
-        label: t('customTools.form.actions.cancel'),
+        label: t('actions.cancel'),
         callback: handleCancel,
         color: 'secondary' as const,
         margin: 'right' as const,
@@ -236,7 +236,7 @@ const actions = computed(() => [
     },
     {
         margin: 'left' as const,
-        label: props.tool ? t('customTools.form.actions.update') : t('customTools.form.actions.create'),
+        label: props.tool ? t('actions.update') : t('actions.create'),
         callback: handleSave,
         color: 'primary' as const
     }

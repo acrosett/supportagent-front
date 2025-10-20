@@ -236,7 +236,7 @@ import { Issue, IssueStatus } from '~/eicrud_exports/services/SUPPORT-ms/issue/i
 import { IssueComment, CommentFrom } from '~/eicrud_exports/services/SUPPORT-ms/issue-comment/issue-comment.entity'
 import { IssueTag } from '~/eicrud_exports/services/SUPPORT-ms/issue-tag/issue-tag.entity'
 
-const { t } = useLocalNamespace('issue')
+const { t } = await useLocalNamespaceAsync('issue')
 
 // Get issue ID from query params
 const route = useRoute()

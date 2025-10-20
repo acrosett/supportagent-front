@@ -110,7 +110,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const { t } = useLocalNamespace('ImageCard')
+const { t } = await useLocalNamespaceAsync('ImageCard')
 
 interface CardAction {
   label: string
