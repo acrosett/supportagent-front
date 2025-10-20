@@ -1,7 +1,7 @@
 <template>
   <div v-if="totalPages > 1" class="pagination">
     <AppButton
-      label="Prev"
+      :label="$t('AppPagination.buttons.previous')"
       :disabled="currentPage === 1"
       color="secondary"
       show-back-icon
@@ -20,11 +20,11 @@
           {{ page }}
         </button>
       </span>
-      <span class="total-info">{{ totalItems }} items</span>
+      <span class="total-info">{{ $t('AppPagination.info.items', { count: totalItems }) }}</span>
     </div>
 
     <AppButton
-      label="Next"
+      :label="$t('AppPagination.buttons.next')"
       :disabled="currentPage === totalPages"
       color="secondary"
       @click="goToPage(currentPage + 1)"
@@ -33,6 +33,9 @@
 </template>
 
 <script setup lang="ts">
+// Composables
+const { t } = useLocalNamespace('AppPagination')
+
 interface Props {
   currentPage: number
   totalPages: number

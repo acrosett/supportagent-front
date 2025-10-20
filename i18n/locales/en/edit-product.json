@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "title": "Product Settings"
+  },
+  "page": {
+    "title": {
+      "edit": "Edit Product",
+      "create": "Create New Product"
+    },
+    "loading": "Loading product..."
+  },
+  "form": {
+    "fields": {
+      "name": {
+        "label": "Product Name",
+        "placeholder": "e.g. My Support Agent",
+        "description": "A unique name for your AI support agent product"
+      },
+      "description": {
+        "label": "Product Description",
+        "description": "1. What your product is and does.\\n2. A few marketing arguments to sell the product + your pricing model.\\n3. A general overview on how to use your product."
+      },
+      "webhookUrl": {
+        "label": "Webhook URL",
+        "placeholder": "https://yoursite.com/api/validate-token",
+        "description": "URL endpoint for validating user tokens for authenticated users"
+      },
+      "sharedSecret": {
+        "label": "Shared Secret",
+        "placeholder": "Your webhook shared secret",
+        "description": "Secret key used to secure webhook requests between your system and ours"
+      },
+      "chatOn": {
+        "label": "AI Chat Feature",
+        "description": "Enable or disable AI chat functionality for this product"
+      },
+      "disableGuests": {
+        "label": "Disable Guest Access",
+        "description": "Block guest (non-logged users) access to the embeddable chat. Disable if you are handling guests in your webhook."
+      }
+    },
+    "buttons": {
+      "update": "Update Product",
+      "create": "Create Product"
+    }
+  },
+  "messages": {
+    "success": {
+      "updated": "Product updated!",
+      "created": "Product created!"
+    }
+  }
+}

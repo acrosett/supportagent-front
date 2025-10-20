@@ -2,7 +2,7 @@
   <div class="page-container edit-product-page">
     <header class="page-header">
       <div class="page-title">
-        <h1>{{ isEditing ? 'Edit Product' : 'Create New Product' }}</h1>
+        <h1>{{ isEditing ? $t('edit-product.page.title.edit') : $t('edit-product.page.title.create') }}</h1>
       </div>
     </header>
 
@@ -10,7 +10,7 @@
       
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading product...</p>
+        <p>{{ $t('edit-product.page.loading') }}</p>
       </div>
       
       <MegaForm
@@ -31,6 +31,14 @@ import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.en
 import { ref, onMounted, computed } from 'vue'
 
 definePageMeta({ layout: 'default' })
+
+// Composables
+const { t } = useLocalNamespace('edit-product')
+
+// Meta
+useHead({
+  title: () => t('edit-product.meta.title')
+})
 
 const router = useRouter()
 const nuxtApp = useNuxtApp() // Capture nuxtApp in setup context
@@ -92,45 +100,42 @@ onMounted(() => {
 
 const fieldOverrides: OverrideRecord<Product> = {
   name: {
-    label: 'Product Name',
-    placeholder: 'e.g. My Support Agent',
-    description: 'A unique name for your AI support agent product'
+    label: t('edit-product.form.fields.name.label'),
+    placeholder: t('edit-product.form.fields.name.placeholder'),
+    description: t('edit-product.form.fields.name.description')
   },
   chatOn: {
-    label: 'AI Chat Feature',
-    description: 'Enable or disable AI chat functionality for this product',
+    label: t('edit-product.form.fields.chatOn.label'),
+    description: t('edit-product.form.fields.chatOn.description'),
     titleColor: () => !formData.value.chatOn ? colors.error() : undefined,
   },
   disableGuests: {
-    label: 'Disable Guest Access',
-    description: 'Block guest (non-logged users) access to the embeddable chat. Disable if you are handling guests in your webhook.',
+    label: t('edit-product.form.fields.disableGuests.label'),
+    description: t('edit-product.form.fields.disableGuests.description'),
     
   },
   description: {
     maxChars: 4000,
-    label: 'Product Description',
+    label: t('edit-product.form.fields.description.label'),
     type: 'richtext',
-    description: `1. What your product is and does.  
-2. A few marketing arguments to sell the product + your pricing model.  
-3. A general overview on how to use your product.  
-`,
+    description: t('edit-product.form.fields.description.description'),
   },
   webhookUrl: {
-    label: 'Webhook URL',
-    placeholder: 'https://yoursite.com/api/validate-token',
-    description: 'URL endpoint for validating user tokens for authenticated users',
+    label: t('edit-product.form.fields.webhookUrl.label'),
+    placeholder: t('edit-product.form.fields.webhookUrl.placeholder'),
+    description: t('edit-product.form.fields.webhookUrl.description'),
   },
   sharedSecret: {
-    label: 'Shared Secret',
+    label: t('edit-product.form.fields.sharedSecret.label'),
     type: 'password',
-    placeholder: 'Your webhook shared secret',
-    description: 'Secret key used to secure webhook requests between your system and ours'
+    placeholder: t('edit-product.form.fields.sharedSecret.placeholder'),
+    description: t('edit-product.form.fields.sharedSecret.description')
   }
 }
 
 const actions: MegaFormAction[] = [
   {
-    label: isEditing.value ? 'Update Product' : 'Create Product',
+    label: isEditing.value ? t('edit-product.form.buttons.update') : t('edit-product.form.buttons.create'),
     color: 'primary',
     margin: 'right',
     callback: async (data: any) => {
@@ -145,12 +150,12 @@ const actions: MegaFormAction[] = [
           id: productId.value, 
           owner: nuxtApp.$userId 
         }, updateData);
-        nuxtApp.$toast.show('Product updated!', 'success')
+        nuxtApp.$toast.show(t('edit-product.messages.success.updated'), 'success')
       } else {
         // Create new product
         console.log("Creating product with data:", data);
         const res = await nuxtApp.$sp.product.create(data);
-        nuxtApp.$toast.show('Product created!', 'success')
+        nuxtApp.$toast.show(t('edit-product.messages.success.created'), 'success')
         // Reload the page to show the created product
         window.location.reload()
       }

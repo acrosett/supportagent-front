@@ -1,33 +1,33 @@
 <template>
   <div class="page-container debug-page">
     <div class="page-header">
-      <h1>Debug Tools</h1>
-      <p>Administrative debugging and testing utilities</p>
+      <h1>{{ $t('debug.page.title') }}</h1>
+      <p>{{ $t('debug.page.subtitle') }}</p>
     </div>
 
     <div class="debug-sections">
       <!-- LLM Result Parsing Replay Section -->
       <div class="debug-section">
         <div class="section-header">
-          <h2>Replay LLM Result Parsing</h2>
-          <p>Retrieve and display LLM training data for a specific training log entry</p>
+          <h2>{{ $t('debug.llmReplay.title') }}</h2>
+          <p>{{ $t('debug.llmReplay.description') }}</p>
         </div>
         
         <div class="section-content">
           <div class="input-group">
-            <label for="trainingLogId">Training Log ID:</label>
+            <label for="trainingLogId">{{ $t('debug.llmReplay.form.trainingLogId.label') }}</label>
             <input
               id="trainingLogId"
               v-model="trainingLogId"
               type="text"
-              placeholder="Enter training log ID..."
+              :placeholder="$t('debug.llmReplay.form.trainingLogId.placeholder')"
               class="text-input"
             />
           </div>
           
           <div class="action-buttons">
             <AppButton
-              label="Re-run parsing"
+              :label="$t('debug.llmReplay.form.button')"
               color="primary"
               :disabled="!trainingLogId.trim() || isReplaying"
               :loading="isReplaying"
@@ -37,7 +37,7 @@
           
           <!-- Result Display -->
           <div v-if="replayResult" class="result-section">
-            <h3>Training Data Result:</h3>
+            <h3>{{ $t('debug.llmReplay.results.title') }}</h3>
             <div class="result-content">
               <pre>{{ JSON.stringify(replayResult, null, 2) }}</pre>
             </div>
@@ -45,7 +45,7 @@
           
           <!-- Error Display -->
           <div v-if="replayError" class="error-section">
-            <h3>Error:</h3>
+            <h3>{{ $t('debug.llmReplay.results.error') }}</h3>
             <div class="error-content">
               <pre>{{ replayError }}</pre>
             </div>
@@ -56,14 +56,14 @@
       <!-- Delete Client Data Section -->
       <div class="debug-section">
         <div class="section-header">
-          <h2>Delete Client Data</h2>
-          <p class="warning-text">⚠️ WARNING: Delete all client messages and data for the current user. This action cannot be undone!</p>
+          <h2>{{ $t('debug.deleteClientData.title') }}</h2>
+          <p class="warning-text">{{ $t('debug.deleteClientData.warning') }}</p>
         </div>
         
         <div class="section-content">
           <div class="action-buttons">
             <AppButton
-              label="Delete My Client Data"
+              :label="$t('debug.deleteClientData.button')"
               color="error"
               :loading="isDeletingClientData"
               @click="deleteClientData"
@@ -75,8 +75,8 @@
       <!-- Effective Delete Account Section -->
       <div class="debug-section">
         <div class="section-header">
-          <h2>Effective Account Deletion</h2>
-          <p class="warning-text">⚠️ DANGER: Permanently delete an account and all associated data. This action cannot be undone!</p>
+          <h2>{{ $t('debug.effectiveDelete.title') }}</h2>
+          <p class="warning-text">{{ $t('debug.effectiveDelete.warning') }}</p>
         </div>
         
         <div class="section-content">
@@ -98,6 +98,14 @@ import MegaForm from '~/components/MegaForm.vue'
 import type { MegaFormAction, OverrideRecord } from '~/components/MegaForm.vue'
 import { EffectiveDeleteAccountDto } from '~/eicrud_exports/services/AUTH-ms/account-deletion/cmds/effective_delete_account/effective_delete_account.dto'
 
+// Composables
+const { t } = useLocalNamespace('debug')
+
+// Meta
+useHead({
+  title: () => t('debug.meta.title')
+})
+
 const trainingLogId = ref('')
 const isReplaying = ref(false)
 const replayResult = ref<any>(null)
@@ -115,38 +123,41 @@ const deleteAccountFormData = ref<EffectiveDeleteAccountDto>({
 // Form configuration
 const deleteAccountFieldOverrides: OverrideRecord<EffectiveDeleteAccountDto> = {
   productId: {
-    label: 'Product ID',
-    placeholder: 'Enter the product ID to delete...',
-    description: 'The ID of the product/account to be permanently deleted'
+    label: t('debug.effectiveDelete.form.productId.label'),
+    placeholder: t('debug.effectiveDelete.form.productId.placeholder'),
+    description: t('debug.effectiveDelete.form.productId.description')
   },
   reason: {
-    label: 'Deletion Reason',
+    label: t('debug.effectiveDelete.form.reason.label'),
     type: 'textarea',
-    placeholder: 'Enter the reason for deletion...',
-    description: 'Explain why this account is being deleted (required for audit trail)'
+    placeholder: t('debug.effectiveDelete.form.reason.placeholder'),
+    description: t('debug.effectiveDelete.form.reason.description')
   }
 }
 
 // Form actions
 const deleteAccountActions: MegaFormAction[] = [
   {
-    label: 'Execute Account Deletion',
+    label: t('debug.effectiveDelete.button'),
     color: 'error',
     callback: async (data: EffectiveDeleteAccountDto) => {
       try {
         const nuxtApp = useNuxtApp()
         
         const confirmed = await nuxtApp.$confirmPopup.show(
-          `Are you sure you want to PERMANENTLY DELETE the account with Product ID: ${data.productId}?\n\nThis action CANNOT be undone and will immediately delete all associated data.\n\nReason: ${data.reason}`
+          t('debug.effectiveDelete.confirmation', { 
+            productId: data.productId, 
+            reason: data.reason 
+          })
         )
         
         if (!confirmed) return
         
-        nuxtApp.$toast.show('Executing account deletion...', 'info')
+        nuxtApp.$toast.show(t('debug.effectiveDelete.messages.executing'), 'info')
         
         const result = await nuxtApp.$sp.accountDeletion.effective_delete_account(data)
         
-        nuxtApp.$toast.show('Account deletion executed successfully', 'success')
+        nuxtApp.$toast.show(t('debug.effectiveDelete.messages.success'), 'success')
         
         // Reset form
         deleteAccountFormData.value = {
@@ -158,7 +169,7 @@ const deleteAccountActions: MegaFormAction[] = [
         
       } catch (error) {
         console.error('Failed to delete account:', error)
-        useNuxtApp().$toast.show('Failed to execute account deletion', 'error')
+        useNuxtApp().$toast.show(t('debug.messages.error.deleteAccount'), 'error')
         throw error
       }
     }
@@ -170,13 +181,13 @@ onMounted(async () => {
   try {
     const role = await useNuxtApp().$userRole;
     if (role !== 'admin') {
-      useNuxtApp().$toast.show('Access denied: Admin privileges required', 'error')
+      useNuxtApp().$toast.show(t('debug.messages.error.accessDenied'), 'error')
       await navigateTo('/')
       return
     }
   } catch (error) {
     console.error('Failed to check admin role:', error)
-    useNuxtApp().$toast.show('Failed to verify admin privileges', 'error')
+    useNuxtApp().$toast.show(t('debug.messages.error.verifyAdmin'), 'error')
     await navigateTo('/')
   }
 })
@@ -186,20 +197,20 @@ const deleteClientData = async () => {
     const nuxtApp = useNuxtApp()
     
     const confirmed = await nuxtApp.$confirmPopup.show(
-      'Are you sure you want to DELETE ALL your client data and messages?\n\nThis action CANNOT be undone and will permanently remove all your chat history and client information.'
+      t('debug.deleteClientData.confirmation')
     )
     
     if (!confirmed) return
     
     isDeletingClientData.value = true
-    nuxtApp.$toast.show('Deleting client data...', 'info')
+    nuxtApp.$toast.show(t('debug.deleteClientData.messages.deleting'), 'info')
     
     await nuxtApp.$sp.message.admin_delete_client({
       clientUniqueId: nuxtApp.$userId,
       productId: nuxtApp.$userProductId
     })
     
-    nuxtApp.$toast.show('Client data deleted successfully', 'success')
+    nuxtApp.$toast.show(t('debug.deleteClientData.messages.success'), 'success')
     
   } catch (error) {
     console.error('Failed to delete client data:', error)
@@ -211,7 +222,7 @@ const deleteClientData = async () => {
 
 const replayLLMParsing = async () => {
   if (!trainingLogId.value.trim()) {
-    useNuxtApp().$toast.show('Please enter a training log ID', 'error')
+    useNuxtApp().$toast.show(t('debug.llmReplay.messages.idRequired'), 'error')
     return
   }
 
@@ -220,7 +231,7 @@ const replayLLMParsing = async () => {
   replayError.value = null
 
   try {
-    useNuxtApp().$toast.show('Retrieving training data...', 'info')
+    useNuxtApp().$toast.show(t('debug.llmReplay.messages.retrieving'), 'info')
     
     // For now, we'll just try to find and display the training data
     // You can replace this with the actual replay endpoint when available
@@ -229,7 +240,7 @@ const replayLLMParsing = async () => {
     })
   
     
-    useNuxtApp().$toast.show('Training data retrieved successfully (simulation)', 'success')
+    useNuxtApp().$toast.show(t('debug.llmReplay.messages.success'), 'success')
   } catch (error: any) {
     console.error('Failed to replay LLM parsing:', error)
     replayError.value = error?.response?.data?.message || error?.message || 'Unknown error occurred'

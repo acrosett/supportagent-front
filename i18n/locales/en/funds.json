@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "title": "Funds & Billing"
+  },
+  "page": {
+    "title": "Funds & Billing",
+    "subtitle": "Manage your account balance, deposits, and spending limits."
+  },
+  "balance": {
+    "title": "Account Balance",
+    "verified": "Last verified {date}",
+    "lowBalance": "Low balance - Add funds to continue service",
+    "buttons": {
+      "addFunds": "Add Funds",
+      "autoTopup": "Auto Top-up"
+    },
+    "autoTopup": {
+      "enabled": "Auto top-up enabled",
+      "trigger": "when balance drops below ${amount}",
+      "toggleOn": "ON",
+      "toggleOff": "OFF"
+    }
+  },
+  "subscription": {
+    "title": "Subscription",
+    "price": "$5",
+    "period": "/month",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "description": {
+      "active": "Your subscription is active and will renew automatically",
+      "inactive": "Activate your subscription to unlock all features and enable AI chat."
+    },
+    "autoRenew": {
+      "label": "Auto-renew subscription",
+      "description": "Automatically renew your subscription each month",
+      "toggleOn": "ON",
+      "toggleOff": "OFF"
+    },
+    "nextBilling": "Next billing date: {date}",
+    "button": "Activate Subscription"
+  },
+  "spendingLimit": {
+    "title": "Monthly Spending Limit",
+    "noLimit": "No limit set",
+    "period": "/month",
+    "description": {
+      "set": "Maximum amount that can be deposited per month",
+      "unset": "Set a monthly deposit limit to control your costs"
+    },
+    "button": "Edit Limit"
+  },
+  "transactions": {
+    "title": "Transaction History",
+    "filters": {
+      "all": "All",
+      "deposits": "Deposits",
+      "spending": "Spending"
+    },
+    "loading": "Loading transactions...",
+    "empty": {
+      "title": "No transactions found",
+      "subtitle": "Your transaction history will appear here."
+    },
+    "loadMore": "Load More",
+    "noMore": "No more transactions to load",
+    "viewDetails": "View Details",
+    "types": {
+      "deposit": "Deposit",
+      "spending": "Spending"
+    }
+  },
+  "popups": {
+    "addFunds": {
+      "title": "Add Funds",
+      "amountLabel": "Amount to add",
+      "buttons": {
+        "cancel": "Cancel",
+        "addFunds": "Add Funds"
+      }
+    },
+    "autoTopup": {
+      "title": "Auto Top-up Settings",
+      "explanation": "Set up automatic billing to maintain your account balance.",
+      "amountLabel": "Top-up amount",
+      "minimumWarning": "Minimum auto top-up amount is $60",
+      "triggerInfo": "When your balance drops below ${threshold} (10% of top-up amount), you will be automatically billed up to ${amount}.",
+      "currentStatus": {
+        "amount": "Current auto top-up:",
+        "trigger": "Trigger threshold:"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "choosePayment": "Choose Payment Method"
+      }
+    },
+    "subscription": {
+      "title": "Activate Subscription",
+      "confirmation": "You will be charged $5. You can cancel anytime.",
+      "buttons": {
+        "cancel": "Cancel",
+        "activate": "Activate ($5/month)"
+      }
+    },
+    "spendingLimit": {
+      "title": "Monthly Spending Limit"
+    },
+    "transactionDetails": {
+      "title": "Transaction Details - {type}",
+      "summary": {
+        "amount": "Amount:",
+        "date": "Date:",
+        "transactionId": "Transaction ID:"
+      },
+      "deposit": {
+        "title": "Deposit Information",
+        "status": "Status:",
+        "source": "Source:",
+        "currency": "Currency:",
+        "autoTopup": "Auto Top-up:",
+        "paymentDetails": "Payment Details",
+        "paymentIntent": "Payment Intent:",
+        "chargeId": "Charge ID:",
+        "customerId": "Customer ID:",
+        "refundInfo": "Refund Information",
+        "refundedAmount": "Refunded Amount:",
+        "refundedAt": "Refunded At:",
+        "refundId": "Refund ID:",
+        "yes": "Yes",
+        "no": "No",
+        "notAvailable": "N/A",
+        "usd": "USD"
+      },
+      "spending": {
+        "title": "Spending Information",
+        "service": "Service:",
+        "user": "User:",
+        "cost": "Cost:",
+        "model": "Model:",
+        "requestId": "Request ID:",
+        "metadata": "Metadata"
+      }
+    }
+  },
+  "messages": {
+    "success": {
+      "fundsAdded": "Funds added successfully! Your balance has been updated.",
+      "autoTopupSaved": "Auto top-up settings saved successfully.",
+      "subscriptionActivated": "Subscription activated successfully! Welcome to Premium.",
+      "spendingLimitUpdated": "Spending limit updated successfully.",
+      "autoTopupToggled": "Auto top-up {status} successfully.",
+      "autoRenewToggled": "Auto-renew {status} successfully."
+    },
+    "error": {
+      "addFunds": "Failed to add funds. Please try again.",
+      "saveAutoTopup": "Failed to save auto top-up settings. Please try again.",
+      "activateSubscription": "Failed to activate subscription. Please try again.",
+      "updateSpendingLimit": "Failed to update spending limit. Please try again.",
+      "toggleAutoTopup": "Failed to update auto top-up setting. Please try again.",
+      "toggleAutoRenew": "Failed to update auto-renew setting. Please try again.",
+      "loadTransactions": "Failed to load transactions. Please try again.",
+      "loadMore": "Failed to load more transactions. Please try again."
+    },
+    "confirmation": {
+      "disableAutoTopup": "Are you sure you want to disable auto top-up?\\n\\nThis will stop automatic billing when your balance gets low.",
+      "disableAutoRenew": "Are you sure you want to disable auto-renew?\\n\\nYour subscription will not renew automatically next month."
+    },
+    "status": {
+      "enabled": "enabled",
+      "disabled": "disabled"
+    }
+  }
+}

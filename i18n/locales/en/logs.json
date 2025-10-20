@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "title": "System Logs"
+  },
+  "page": {
+    "title": "System Logs"
+  },
+  "debug": {
+    "toggle": {
+      "label": "Collect Debug Logs",
+      "on": "ON",
+      "off": "OFF"
+    },
+    "messages": {
+      "enabled": "Debug logging enabled - Warning: This may affect performance",
+      "disabled": "Debug logging disabled",
+      "error": "Failed to update debug setting"
+    }
+  },
+  "chart": {
+    "title": "Log Activity",
+    "loading": "Loading chart data...",
+    "error": "Failed to load chart data",
+    "axis": {
+      "time": "Time",
+      "count": "Log Count"
+    },
+    "periods": {
+      "week": "Week",
+      "weeks": "Weeks"
+    },
+    "filter": {
+      "success": "Filtered to {start} - {end}"
+    }
+  },
+  "filters": {
+    "search": {
+      "label": "Search Message:",
+      "placeholder": "Search in log messages..."
+    },
+    "types": {
+      "label": "Log Types:"
+    },
+    "dateRange": {
+      "label": "Date Range:",
+      "from": "From:",
+      "to": "To:"
+    },
+    "buttons": {
+      "refresh": "Refresh",
+      "clear": "Clear Filters"
+    }
+  },
+  "list": {
+    "loading": "Loading logs...",
+    "loadingMore": "Loading more logs...",
+    "empty": "No logs found matching your criteria.",
+    "noMore": "No more logs to load.",
+    "clickDetails": "Click for details →",
+    "level": "Level: {level}",
+    "user": "User: {user}"
+  },
+  "details": {
+    "title": "Log Details",
+    "sections": {
+      "basicInfo": "Basic Information",
+      "message": "Message",
+      "data": "Data",
+      "query": "Query",
+      "options": "Options"
+    },
+    "fields": {
+      "type": "Type:",
+      "level": "Level:",
+      "service": "Service:",
+      "command": "Command:",
+      "userId": "User ID:",
+      "productId": "Product ID:",
+      "ipAddress": "IP Address:",
+      "currentMs": "Current Microservice:",
+      "created": "Created:",
+      "updated": "Updated:",
+      "expiresAt": "Expires At:",
+      "failNotification": "Fail Notification:",
+      "notAvailable": "N/A",
+      "system": "System",
+      "never": "Never",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "messages": {
+    "error": {
+      "loadLogs": "Failed to load logs",
+      "loadChart": "Failed to load chart"
+    }
+  }
+}

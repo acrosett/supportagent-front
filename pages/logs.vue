@@ -2,18 +2,18 @@
   <div class="logs-page">
     <div class="header">
       <div class="header-content">
-        <h1>System Logs</h1>
+        <h1>{{ $t('logs.page.title') }}</h1>
         <div class="debug-toggle-container">
           <div class="debug-toggle">
             <label class="debug-label">
               <span v-if="debugEnabled">⚠️</span>
-              Collect Debug Logs
+              {{ $t('logs.debug.toggle.label') }}
             </label>
             <ToggleSwitch
               :model-value="debugEnabled"
               :disabled="debugLoading"
-              on-label="ON"
-              off-label="OFF"
+              :on-label="$t('logs.debug.toggle.on')"
+              :off-label="$t('logs.debug.toggle.off')"
               @update:model-value="toggleDebug"
             />
           </div>
@@ -25,13 +25,13 @@
       <!-- Chart Section -->
       <div class="chart-section">
         <div class="chart-header">
-          <h3>Log Activity</h3>
+          <h3>{{ $t('logs.chart.title') }}</h3>
           <div class="chart-controls">
             <div class="time-period-buttons">
               <AppButton
                 v-for="weeks in [1, 2, 3, 4]"
                 :key="weeks"
-                :label="`${weeks} Week${weeks > 1 ? 's' : ''}`"
+                :label="weeks === 1 ? `${weeks} ${$t('logs.chart.periods.week')}` : `${weeks} ${$t('logs.chart.periods.weeks')}`"
                 :color="chartWeeks === weeks ? 'primary' : 'secondary'"
                 size="small"
                 @click="changeChartWeeks(weeks)"
@@ -42,7 +42,7 @@
         
         <div class="chart-container-wrapper">
           <div v-if="chartLoading" class="chart-loading">
-            <p>Loading chart data...</p>
+            <p>{{ $t('logs.chart.loading') }}</p>
           </div>
           <canvas
             ref="chartContainer"
@@ -54,19 +54,19 @@
 
       <div class="filters">
         <div class="filter-group">
-          <label for="message-search">Search Message:</label>
+          <label for="message-search">{{ $t('logs.filters.search.label') }}</label>
           <input
             id="message-search"
             v-model="searchMessage"
             type="text"
-            placeholder="Search in log messages..."
+            :placeholder="$t('logs.filters.search.placeholder')"
             class="filter-input"
             @input="debouncedSearch"
           />
         </div>
         
         <div class="filter-group">
-          <label>Log Types:</label>
+          <label>{{ $t('logs.filters.types.label') }}</label>
           <div class="log-types-checklist">
             <div
               v-for="type in logTypes"
@@ -91,10 +91,10 @@
         </div>
         
         <div class="filter-group date-range-group">
-          <label>Date Range:</label>
+          <label>{{ $t('logs.filters.dateRange.label') }}</label>
           <div class="date-range-inputs">
             <div class="date-input-wrapper">
-              <label for="start-date" class="date-label">From:</label>
+              <label for="start-date" class="date-label">{{ $t('logs.filters.dateRange.from') }}</label>
               <input
                 id="start-date"
                 v-model="startDate"
@@ -104,7 +104,7 @@
               />
             </div>
             <div class="date-input-wrapper">
-              <label for="end-date" class="date-label">To:</label>
+              <label for="end-date" class="date-label">{{ $t('logs.filters.dateRange.to') }}</label>
               <input
                 id="end-date"
                 v-model="endDate"
@@ -118,14 +118,14 @@
         
         <div class="filter-actions">
           <AppButton
-            label="Refresh"
+            :label="$t('logs.filters.buttons.refresh')"
             color="primary"
             fa-icon-left="refresh"
             :loading="loading"
             @click="refreshLogs"
           />
           <AppButton
-            label="Clear Filters"
+            :label="$t('logs.filters.buttons.clear')"
             color="secondary"
             margin="left"
             @click="clearFilters"
@@ -135,11 +135,11 @@
 
       <div class="logs-container">
         <div v-if="loading && logs.length === 0" class="loading-state">
-          <p>Loading logs...</p>
+          <p>{{ $t('logs.list.loading') }}</p>
         </div>
 
         <div v-else-if="logs.length === 0 && !loading" class="empty-state">
-          <p>No logs found matching your criteria.</p>
+          <p>{{ $t('logs.list.empty') }}</p>
         </div>
 
         <div v-else class="logs-list">
@@ -168,19 +168,19 @@
             </div>
             
             <div class="log-footer">
-              <span class="log-level">Level: {{ log.level }}</span>
-              <span class="log-user">User: {{ log.userId || 'System' }}</span>
-              <span class="log-details-trigger">Click for details →</span>
+              <span class="log-level">{{ $t('logs.list.level', { level: log.level }) }}</span>
+              <span class="log-user">{{ $t('logs.list.user', { user: log.userId || $t('logs.details.fields.system') }) }}</span>
+              <span class="log-details-trigger">{{ $t('logs.list.clickDetails') }}</span>
             </div>
           </div>
         </div>
 
         <div v-if="loading && logs.length > 0" class="loading-more">
-          <p>Loading more logs...</p>
+          <p>{{ $t('logs.list.loadingMore') }}</p>
         </div>
 
         <div v-if="!hasMore && logs.length > 0" class="end-message">
-          <p>No more logs to load.</p>
+          <p>{{ $t('logs.list.noMore') }}</p>
         </div>
       </div>
     </div>
@@ -188,90 +188,90 @@
     <!-- Log Details Popup -->
     <AppPopup
       :show="showLogDetails"
-      title="Log Details"
+      :title="$t('logs.details.title')"
       size="lg"
       @close="showLogDetails = false"
     >
       <div v-if="selectedLog" class="log-details">
         <div class="detail-section">
-          <h3>Basic Information</h3>
+          <h3>{{ $t('logs.details.sections.basicInfo') }}</h3>
           <div class="detail-grid">
             <div class="detail-item">
-              <label>Type:</label>
+              <label>{{ $t('logs.details.fields.type') }}</label>
               <span class="log-type-badge" :class="`badge-${selectedLog.type.toLowerCase()}`">
                 {{ selectedLog.type }}
               </span>
             </div>
             <div class="detail-item">
-              <label>Level:</label>
+              <label>{{ $t('logs.details.fields.level') }}</label>
               <span>{{ selectedLog.level }}</span>
             </div>
             <div class="detail-item">
-              <label>Service:</label>
+              <label>{{ $t('logs.details.fields.service') }}</label>
               <span>{{ selectedLog.serviceName }}</span>
             </div>
             <div class="detail-item">
-              <label>Command:</label>
-              <span>{{ selectedLog.cmdName || 'N/A' }}</span>
+              <label>{{ $t('logs.details.fields.command') }}</label>
+              <span>{{ selectedLog.cmdName || $t('logs.details.fields.notAvailable') }}</span>
             </div>
             <div class="detail-item">
-              <label>User ID:</label>
-              <span>{{ selectedLog.userId || 'System' }}</span>
+              <label>{{ $t('logs.details.fields.userId') }}</label>
+              <span>{{ selectedLog.userId || $t('logs.details.fields.system') }}</span>
             </div>
             <div class="detail-item">
-              <label>Product ID:</label>
-              <span>{{ selectedLog.productId || 'N/A' }}</span>
+              <label>{{ $t('logs.details.fields.productId') }}</label>
+              <span>{{ selectedLog.productId || $t('logs.details.fields.notAvailable') }}</span>
             </div>
             <div class="detail-item">
-              <label>IP Address:</label>
-              <span>{{ selectedLog.ip || 'N/A' }}</span>
+              <label>{{ $t('logs.details.fields.ipAddress') }}</label>
+              <span>{{ selectedLog.ip || $t('logs.details.fields.notAvailable') }}</span>
             </div>
             <div class="detail-item">
-              <label>Current Microservice:</label>
-              <span>{{ selectedLog.currentMs || 'N/A' }}</span>
+              <label>{{ $t('logs.details.fields.currentMs') }}</label>
+              <span>{{ selectedLog.currentMs || $t('logs.details.fields.notAvailable') }}</span>
             </div>
             <div class="detail-item">
-              <label>Created:</label>
+              <label>{{ $t('logs.details.fields.created') }}</label>
               <span>{{ formatFullDate(selectedLog.createdAt) }}</span>
             </div>
             <div class="detail-item">
-              <label>Updated:</label>
+              <label>{{ $t('logs.details.fields.updated') }}</label>
               <span>{{ formatFullDate(selectedLog.updatedAt) }}</span>
             </div>
             <div class="detail-item">
-              <label>Expires At:</label>
-              <span>{{ selectedLog.expireAt ? formatFullDate(selectedLog.expireAt) : 'Never' }}</span>
+              <label>{{ $t('logs.details.fields.expiresAt') }}</label>
+              <span>{{ selectedLog.expireAt ? formatFullDate(selectedLog.expireAt) : $t('logs.details.fields.never') }}</span>
             </div>
             <div class="detail-item">
-              <label>Fail Notification:</label>
-              <span>{{ selectedLog.failNotif ? 'Yes' : 'No' }}</span>
+              <label>{{ $t('logs.details.fields.failNotification') }}</label>
+              <span>{{ selectedLog.failNotif ? $t('logs.details.fields.yes') : $t('logs.details.fields.no') }}</span>
             </div>
           </div>
         </div>
 
         <div class="detail-section">
-          <h3>Message</h3>
+          <h3>{{ $t('logs.details.sections.message') }}</h3>
           <div class="detail-content">
             <pre>{{ selectedLog.message }}</pre>
           </div>
         </div>
 
         <div class="detail-section">
-          <h3>Data</h3>
+          <h3>{{ $t('logs.details.sections.data') }}</h3>
           <div class="detail-content">
             <pre>{{ formatJsonData(selectedLog.data) }}</pre>
           </div>
         </div>
 
         <div class="detail-section">
-          <h3>Query</h3>
+          <h3>{{ $t('logs.details.sections.query') }}</h3>
           <div class="detail-content">
             <pre>{{ formatJsonData(selectedLog.query) }}</pre>
           </div>
         </div>
 
         <div class="detail-section">
-          <h3>Options</h3>
+          <h3>{{ $t('logs.details.sections.options') }}</h3>
           <div class="detail-content">
             <pre>{{ formatJsonData(selectedLog.options) }}</pre>
           </div>
@@ -293,6 +293,14 @@ import AppPopup from '~/components/AppPopup.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
 import { CrudOptions } from '~/eicrud_exports/CrudOptions'
 import 'chartjs-adapter-date-fns'
+
+// Composables
+const { t } = useLocalNamespace('logs')
+
+// Meta
+useHead({
+  title: () => t('logs.meta.title')
+})
 
 // Define middleware to check admin access
 definePageMeta({
@@ -393,7 +401,7 @@ const loadLogs = async (reset = false) => {
     
   } catch (error) {
     console.error('Error loading logs:', error)
-    useNuxtApp().$toast.show('Failed to load logs', 'error')
+    useNuxtApp().$toast.show(t('logs.messages.error.loadLogs'), 'error')
   } finally {
     loading.value = false
   }
@@ -447,7 +455,7 @@ const loadChartData = async () => {
     
   } catch (error) {
     console.error('Error loading chart data:', error)
-    useNuxtApp().$toast.show('Failed to load chart data', 'error')
+    useNuxtApp().$toast.show(t('logs.messages.error.loadChart'), 'error')
   } finally {
     chartLoading.value = false
   }
@@ -531,21 +539,23 @@ const createChart = async (retryCount = 0) => {
             },
             title: {
               display: true,
-              text: 'Time'
+              text: t('logs.chart.axis.time')
             }
           },
           y: {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Log Count'
+              text: t('logs.chart.axis.count')
             }
           }
         },
         plugins: {
           title: {
             display: true,
-            text: `Log Activity (${chartWeeks.value} week${chartWeeks.value > 1 ? 's' : ''})`
+            text: chartWeeks.value === 1 
+              ? `${t('logs.chart.title')} (${chartWeeks.value} ${t('logs.chart.periods.week')})`
+              : `${t('logs.chart.title')} (${chartWeeks.value} ${t('logs.chart.periods.weeks')})`
           },
           legend: {
             display: true,
@@ -577,7 +587,10 @@ const createChart = async (retryCount = 0) => {
               resetAndSearch()
               
               // Show toast
-              useNuxtApp().$toast.show(`Filtered to ${bucketStart.toLocaleString()} - ${bucketEnd.toLocaleString()}`, 'info')
+              useNuxtApp().$toast.show(t('logs.chart.filter.success', { 
+                start: bucketStart.toLocaleString(), 
+                end: bucketEnd.toLocaleString() 
+              }), 'info')
             }
           }
         }
@@ -585,7 +598,7 @@ const createChart = async (retryCount = 0) => {
     })
   } catch (error) {
     console.error('Error creating chart:', error)
-    useNuxtApp().$toast.show('Failed to load chart', 'error')
+    useNuxtApp().$toast.show(t('logs.messages.error.loadChart'), 'error')
   }
 }
 
@@ -614,8 +627,8 @@ const toggleDebug = async (enabled: boolean) => {
     debugEnabled.value = enabled
     
     const message = enabled 
-      ? 'Debug logging enabled - Warning: This may affect performance'
-      : 'Debug logging disabled'
+      ? t('logs.debug.messages.enabled')
+      : t('logs.debug.messages.disabled')
     const type = enabled ? 'warning' : 'success'
     
     useNuxtApp().$toast.show(message, type)
@@ -623,7 +636,7 @@ const toggleDebug = async (enabled: boolean) => {
     console.error('Error setting debug status:', error)
     // Revert the toggle
     debugEnabled.value = !enabled
-    useNuxtApp().$toast.show('Failed to update debug setting', 'error')
+    useNuxtApp().$toast.show(t('logs.debug.messages.error'), 'error')
   } finally {
     debugLoading.value = false
   }

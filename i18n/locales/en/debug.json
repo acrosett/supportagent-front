@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "title": "Debug Tools"
+  },
+  "page": {
+    "title": "Debug Tools",
+    "subtitle": "Administrative debugging and testing utilities"
+  },
+  "llmReplay": {
+    "title": "Replay LLM Result Parsing",
+    "description": "Retrieve and display LLM training data for a specific training log entry",
+    "form": {
+      "trainingLogId": {
+        "label": "Training Log ID:",
+        "placeholder": "Enter training log ID..."
+      },
+      "button": "Re-run parsing"
+    },
+    "results": {
+      "title": "Training Data Result:",
+      "error": "Error:"
+    },
+    "messages": {
+      "retrieving": "Retrieving training data...",
+      "success": "Training data retrieved successfully (simulation)",
+      "idRequired": "Please enter a training log ID"
+    }
+  },
+  "deleteClientData": {
+    "title": "Delete Client Data",
+    "warning": "⚠️ WARNING: Delete all client messages and data for the current user. This action cannot be undone!",
+    "button": "Delete My Client Data",
+    "confirmation": "Are you sure you want to DELETE ALL your client data and messages?\\n\\nThis action CANNOT be undone and will permanently remove all your chat history and client information.",
+    "messages": {
+      "deleting": "Deleting client data...",
+      "success": "Client data deleted successfully"
+    }
+  },
+  "effectiveDelete": {
+    "title": "Effective Account Deletion",
+    "warning": "⚠️ DANGER: Permanently delete an account and all associated data. This action cannot be undone!",
+    "form": {
+      "productId": {
+        "label": "Product ID",
+        "placeholder": "Enter the product ID to delete...",
+        "description": "The ID of the product/account to be permanently deleted"
+      },
+      "reason": {
+        "label": "Deletion Reason",
+        "placeholder": "Enter the reason for deletion...",
+        "description": "Explain why this account is being deleted (required for audit trail)"
+      }
+    },
+    "button": "Execute Account Deletion",
+    "confirmation": "Are you sure you want to PERMANENTLY DELETE the account with Product ID: {productId}?\\n\\nThis action CANNOT be undone and will immediately delete all associated data.\\n\\nReason: {reason}",
+    "messages": {
+      "executing": "Executing account deletion...",
+      "success": "Account deletion executed successfully"
+    }
+  },
+  "messages": {
+    "error": {
+      "accessDenied": "Access denied: Admin privileges required",
+      "verifyAdmin": "Failed to verify admin privileges",
+      "deleteClient": "Failed to delete client data",
+      "deleteAccount": "Failed to execute account deletion"
+    }
+  }
+}

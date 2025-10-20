@@ -1,0 +1,34 @@
+{
+  "loading": "Loading logs...",
+  "noLogs": {
+    "title": "No logs found",
+    "subtitle": "No LLM training data available for this context"
+  },
+  "header": {
+    "title": "Processing History ({count} entries)",
+    "subtitle": "LLM training data and processing logs for this context"
+  },
+  "entry": {
+    "unknownAgent": "Unknown Agent",
+    "testBadge": "TEST",
+    "errorBadge": "{count} ERROR{plural}",
+    "sections": {
+      "input": "Input",
+      "output": "Output"
+    },
+    "noInput": "No input available",
+    "noOutput": "No output available",
+    "copyButton": "Copy"
+  },
+  "timestamps": {
+    "minutesAgo": "{minutes}m ago",
+    "hoursAgo": "{hours}h ago", 
+    "daysAgo": "{days}d ago",
+    "unknown": "Unknown",
+    "invalid": "Invalid date"
+  },
+  "messages": {
+    "copySuccess": "LLM Input copied to clipboard!",
+    "copyError": "Failed to copy to clipboard"
+  }
+}
