@@ -45,7 +45,8 @@
   "tools": {
     "title": "Custom Tools",
     "description": "Create and manage custom tools that (SMART) client-facing agents can use to integrate with your systems.",
-    "addButton": "Add Custom Tool",
+    "publicToolsButton": "Public Tools",
+    "addButton": "Create Custom Tool",
     "empty": {
       "title": "No custom tools",
       "description": "Create your first custom tool to start integrating with external systems."
@@ -72,6 +73,9 @@
       "addButton": "Add Domain",
       "cancelButton": "Cancel",
       "description": "Enter the domain name you want to verify and use for custom tools."
+    },
+    "publicTools": {
+      "title": "Browse Public Tools"
     }
   },
   "form": {

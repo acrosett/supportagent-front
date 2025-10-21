@@ -45,7 +45,7 @@
   "tools": {
     "title": "Outils personnalisés",
     "description": "Créez et gérez des outils personnalisés que les agents (SMART) en contact avec les clients peuvent utiliser pour s'intégrer à vos systèmes.",
-    "addButton": "Ajouter un outil personnalisé",
+    "addButton": "Créer un outil personnalisé",
     "empty": {
       "title": "Pas d'outils personnalisés",
       "description": "Créez votre premier outil personnalisé pour commencer à intégrer des systèmes externes."

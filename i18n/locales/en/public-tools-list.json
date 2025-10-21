@@ -1,0 +1,20 @@
+{
+  "search": {
+    "placeholder": "Search public tools..."
+  },
+  "status": {
+    "loading": "Loading public tools...",
+    "loadingMore": "Loading more tools...",
+    "noMoreTools": "No more tools available"
+  },
+  "empty": {
+    "title": "No Public Tools Found",
+    "description": "No public tools match your search criteria. Try adjusting your search terms."
+  },
+  "tool": {
+    "perCall": "per API call"
+  },
+  "actions": {
+    "useTool": "Use Tool"
+  }
+}

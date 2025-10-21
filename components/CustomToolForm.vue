@@ -32,22 +32,35 @@ let formData = reactive<Record<string, any>>({
     contentType: 'application/json',
     timeoutMs: 30000,
     enabled: true,
-    clientPriorities: []
+    clientPriorities: [],
+    extends: null
 })
 
-// Include fields for CustomTool
-const includeFields = [
-    'name',
-    'description',
-    'url',
-    'method',
-    'arguments',
-    'contentType',
-    'timeoutMs',
-    'enabled',
-    'clientPriorities',
-    'provideToolToGuests'
-]
+// Include fields for CustomTool - conditional based on extends
+const includeFields = computed(() => {
+    if (formData.extends) {
+        // For extended tools, only allow these fields to be modified
+        return [
+            'arguments',
+            'clientPriorities',
+            'provideToolToGuests'
+        ]
+    }
+    
+    return [
+        'name',
+        'description',
+        'url',
+        'method',
+        'arguments',
+        'contentType',
+        'timeoutMs',
+        'enabled',
+        'clientPriorities',
+        'provideToolToGuests',
+        'resultValidityMin'
+    ]
+})
 
 // Watch for tool prop changes
 watch(() => props.tool, (newTool) => {
@@ -67,13 +80,14 @@ watch(() => props.tool, (newTool) => {
             contentType: 'application/json',
             timeoutMs: 30000,
             enabled: true,
-            clientPriorities: []
+            clientPriorities: [],
+            extends: null
         })
     }
 }, { immediate: true })
 
-// Field overrides
-const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
+// Field overrides - computed based on extends
+const fieldOverrides = computed((): OverrideRecord<CustomTool, CustomToolArgument> => ({
     clientPriorities: {
         type: 'checklist',
         isArray: false,
@@ -120,16 +134,19 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
     arguments: {
         isArray: true,
         nestedClass: CustomToolArgument,
-        nestedIncludeFields: [
-            'name',
-            'description',
-            'location',
-            'valueType',
-            'dataType',
-            'constantValue',
-            'required',
-            'defaultValue',
-        ],
+        nestedIncludeFields: formData.extends ? [
+                'valueType',
+                'constantValue'
+            ] : [
+                'name',
+                'description',
+                'location',
+                'valueType',
+                'dataType',
+                'constantValue',
+                'required',
+                'defaultValue',
+            ],
         nestedFieldOverrides: {
             name: {
                 label: t('arguments.name.label'),
@@ -156,7 +173,10 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
             valueType: {
                 type: 'select',
                 label: t('arguments.valueType.label'),
-                selectOptions: [
+                selectOptions: formData.extends ? [
+                    { label: t('arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
+                    { label: t('arguments.valueType.constant'), value: ArgumentValueType.CONSTANT }
+                ] : [
                     { label: t('arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
                     { label: t('arguments.valueType.userId'), value: ArgumentValueType.USER_ID },
                     { label: t('arguments.valueType.sharedSecret'), value: ArgumentValueType.SHARED_SECRET },
@@ -223,7 +243,7 @@ const fieldOverrides: OverrideRecord<CustomTool, CustomToolArgument> = {
         label: t('guestAccess.label'),
         description: t('guestAccess.description')
     }
-}
+}))
 
 // Form actions
 const actions = computed(() => [

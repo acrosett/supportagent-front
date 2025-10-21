@@ -112,12 +112,20 @@
     <div class="content-section">
       <div class="section-header">
         <h2>{{ t('tools.title') }}</h2>
-        <AppButton
-          :label="t('tools.addButton')"
-          color="primary"
-          margin="left"
-          @click="showCreateTool = true"
-        />
+        <div class="header-actions">
+          <AppButton
+            :label="t('tools.publicToolsButton')"
+            color="secondary"
+            margin="no-margins"
+            @click="showPublicTools = true"
+          />
+          <AppButton
+            :label="t('tools.addButton')"
+            color="primary"
+            margin="left"
+            @click="showCreateTool = true"
+          />
+        </div>
       </div>
       
       <p class="section-description">
@@ -217,6 +225,17 @@
       ]"
       />
     </AppPopup>
+
+    <!-- Public Tools Popup -->
+    <AppPopup
+      v-if="showPublicTools"
+      :show="showPublicTools"
+      :title="t('popups.publicTools.title')"
+      @close="showPublicTools = false"
+      size="xl"
+    >
+      <PublicToolsList @use-tool="handleUsePublicTool" />
+    </AppPopup>
   </section>
 </template>
 
@@ -226,6 +245,7 @@ import MegaForm, { FieldOverride } from '~/components/MegaForm.vue'
 import AppButton from '~/components/AppButton.vue'
 import AppPopup from '~/components/AppPopup.vue'
 import CustomToolForm from '~/components/CustomToolForm.vue'
+import PublicToolsList from '~/components/PublicToolsList.vue'
 import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
 import { CustomTool } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
 import { Domain } from '~/eicrud_exports/services/SUPPORT-ms/domain/domain.entity'
@@ -252,6 +272,7 @@ const aiInstructionsOverrides = {
 const customTools = ref<CustomTool[]>([])
 const showCreateTool = ref(false)
 const selectedTool = ref<CustomTool | null>(null)
+const showPublicTools = ref(false)
 
 // Domain management
 const verifiedDomains = ref<Domain[]>([])
@@ -529,6 +550,33 @@ async function closeDomainForm() {
   newDomain.domain = ''
 }
 
+async function handleUsePublicTool(publicTool: CustomTool) {
+  // Filter arguments to only include those that are SET_BY_AI
+  const filteredArguments = (publicTool.arguments || []).filter((arg: any) => 
+    arg.valueType === 'SET_BY_AI'
+  )
+  
+  // Create a new custom tool based on the public tool
+  selectedTool.value = {
+    id: undefined,
+    name: publicTool.publicName,
+    description: publicTool.publicDescription,
+    url: '',
+    method: 'POST',
+    arguments: filteredArguments,
+    contentType: 'application/json',
+    timeoutMs: 30000,
+    enabled: true,
+    clientPriorities: [],
+    provideToolToGuests: false,
+    extends: publicTool.id
+  } as any
+  
+  // Close public tools popup and open custom tool form
+  showPublicTools.value = false
+  showCreateTool.value = true
+}
+
 async function copyToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text)
@@ -573,6 +621,12 @@ async function copyToClipboard(text: string) {
     margin: 0;
     color: $text;
     font-size: 1.5rem;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   @media (max-width: 768px) {
