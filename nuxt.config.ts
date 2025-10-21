@@ -138,7 +138,6 @@ export default defineNuxtConfig({
             // Separate chunk for widget components
             'widget': [
               './pages/test-chat.vue',
-              './components/TrainingDataPanel.vue'
             ]
           }
         }

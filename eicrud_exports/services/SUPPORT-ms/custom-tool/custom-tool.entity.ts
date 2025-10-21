@@ -88,8 +88,20 @@ export class CustomTool {
     name: string;
 
     @IsString()
+    @MinLength(1)
+    @IsOptional()
+    publicName: string;
+
+    @IsString()
     @IsOptional()
     description?: string;
+
+    @IsString()
+    @IsOptional()
+    publicDescription?: string;
+
+    @IsOptional()
+    price?: number;
 
     @IsUrl({require_tld: false})
     @Matches(/^https:\/\//, { message: 'URL must start with https://' })
@@ -125,8 +137,12 @@ export class CustomTool {
     version: number = 1;
 
     @IsString()
+    @IsOptional()
     product: Product | string;
 
+    @IsString()
+    @IsOptional()
+    extends?: CustomTool | string;
     
     @IsBoolean()
     @IsOptional()

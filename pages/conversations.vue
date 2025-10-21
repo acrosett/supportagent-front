@@ -787,11 +787,12 @@ onMounted(() => {
   setupIntersectionObserver()
   loadConversations(true)
   
-  // Add scroll listener for infinite scroll
-  const handleScroll = () => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-    const scrollHeight = document.documentElement.scrollHeight
-    const clientHeight = document.documentElement.clientHeight
+  // Add scroll listener for infinite scroll to the main content element
+  const handleScroll = (event: Event) => {
+    const target = event.target as HTMLElement
+    const scrollTop = target.scrollTop
+    const scrollHeight = target.scrollHeight
+    const clientHeight = target.clientHeight
     
     // Check if user scrolled near the bottom (within 200px)
     if (scrollTop + clientHeight >= scrollHeight - 200) {
@@ -801,11 +802,17 @@ onMounted(() => {
     }
   }
   
-  window.addEventListener('scroll', handleScroll)
+  const mainElement = document.querySelector('main.main-content')
+  if (mainElement) {
+    mainElement.addEventListener('scroll', handleScroll)
+  }
   
   // Cleanup scroll listener and intersection observer
   onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll)
+    const mainElement = document.querySelector('main.main-content')
+    if (mainElement) {
+      mainElement.removeEventListener('scroll', handleScroll)
+    }
     if (observer.value) {
       observer.value.disconnect()
     }

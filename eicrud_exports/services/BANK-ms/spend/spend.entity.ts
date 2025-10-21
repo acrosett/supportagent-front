@@ -13,6 +13,7 @@ export enum SpendType {
   SUBSCRIPTION = 'subscription',
   CACHED = 'cached',
   EMBEDDING = 'embedding',
+  TOOL_USE = 'tool_use',
   UNKNOWN = 'unknown',
 }
 
