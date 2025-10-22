@@ -79,6 +79,10 @@ export class Spend {
   @IsOptional()
   think?: Think;
 
+  @IsOptional()
+  @IsString()
+  publicToolId?: string;
+
   createdAt: Date;
 
   updatedAt: Date;

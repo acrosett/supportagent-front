@@ -189,21 +189,21 @@
           <div class="transaction-basic">
             <div class="transaction-icon">
               <AppIcon
-                :name="transaction.type === 'deposit' ? 'plus' : 'credit-card'"
-                :color="transaction.type === 'deposit' ? 'var(--success-color)' : 'var(--error-color)'"
+                :name="transaction.transactionType === 'deposit' ? 'plus' : 'credit-card'"
+                :color="transaction.transactionType === 'deposit' ? 'var(--success-color)' : 'var(--error-color)'"
               />
             </div>
             
             <div class="transaction-info">
               <div class="transaction-main">
                 <span class="transaction-type">
-                  {{ transaction.type === 'deposit' ? 'Deposit' : 'Spending' }}
-                  <span v-if="transaction.isAutoTopUp" class="auto-badge">Auto</span>
-                  <span v-if="transaction.type === 'spend' && transaction.spendType == 'subscription'" class="spend-type-badge">{{ transaction.spendType }}</span>
-                  <span v-if="transaction.type === 'spend' && transaction.spendType != 'subscription'" class="spend-type-grey">({{ transaction.think?.agentType }})</span>
+                  {{ transaction.transactionType === 'deposit' ? 'Deposit' : 'Spending' }}
+                  <span v-if="transaction.transactionType === 'deposit' && transaction.isAutoTopUp" class="auto-badge">Auto</span>
+                  <span v-if="transaction.transactionType === 'spend' && transaction.spendType === 'subscription'" class="spend-type-badge">{{ transaction.spendType }}</span>
+                  <span v-if="transaction.transactionType === 'spend' && transaction.spendType !== 'subscription'" class="spend-type-grey">({{ transaction.think?.agentType || transaction.spendType }})</span>
                 </span>
-                <span :class="['transaction-amount', transaction.type]">
-                  {{ transaction.type === 'deposit' ? '+' : '-' }}${{ formatBalance(transaction.amount) }}
+                <span :class="['transaction-amount', transaction.transactionType]">
+                  {{ transaction.transactionType === 'deposit' ? '+' : '-' }}${{ formatBalance(transaction.amount) }}
                 </span>
               </div>
               <div class="transaction-date">
@@ -411,7 +411,7 @@
     <!-- Transaction Details Popup -->
     <AppPopup
       :show="showTransactionDetailPopup"
-      :title="`Transaction Details - ${selectedTransaction?.type === 'deposit' ? 'Deposit' : 'Spending'}`"
+      :title="`Transaction Details - ${selectedTransaction?.transactionType === 'deposit' ? 'Deposit' : 'Spending'}`"
       @close="showTransactionDetailPopup = false"
     >
       <div v-if="selectedTransaction" class="transaction-detail-popup">
@@ -419,8 +419,8 @@
         <div class="transaction-summary">
           <div class="summary-row">
             <span class="summary-label">Amount:</span>
-            <span :class="['summary-value', 'amount', selectedTransaction.type]">
-              {{ selectedTransaction.type === 'deposit' ? '+' : '-' }}${{ formatBalance(selectedTransaction.amount) }}
+            <span :class="['summary-value', 'amount', selectedTransaction.transactionType]">
+              {{ selectedTransaction.transactionType === 'deposit' ? '+' : '-' }}${{ formatBalance(selectedTransaction.amount) }}
             </span>
           </div>
           <div class="summary-row">
@@ -434,63 +434,63 @@
         </div>
 
         <!-- Deposit Details -->
-        <div v-if="selectedTransaction.type === 'deposit'" class="deposit-details">
+        <div v-if="selectedTransaction.transactionType === 'deposit'" class="deposit-details">
           <h4>Deposit Information</h4>
           <div class="detail-grid">
             <div class="detail-item">
               <span class="detail-label">Status:</span>
-              <span :class="['detail-value', 'status', selectedTransaction.status]">
-                {{ selectedTransaction.status }}
+              <span :class="['detail-value', 'status', (selectedTransaction as TransactionDeposit).status]">
+                {{ (selectedTransaction as TransactionDeposit).status }}
               </span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Source:</span>
-              <span class="detail-value">{{ selectedTransaction.source || 'N/A' }}</span>
+              <span class="detail-value">{{ (selectedTransaction as TransactionDeposit).source || 'N/A' }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Currency:</span>
-              <span class="detail-value">{{ selectedTransaction.currency || 'USD' }}</span>
+              <span class="detail-value">{{ (selectedTransaction as TransactionDeposit).currency || 'USD' }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Auto Top-up:</span>
-              <span class="detail-value">{{ selectedTransaction.isAutoTopUp ? 'Yes' : 'No' }}</span>
+              <span class="detail-value">{{ (selectedTransaction as TransactionDeposit).isAutoTopUp ? 'Yes' : 'No' }}</span>
             </div>
           </div>
 
           <!-- Stripe Information -->
-          <div v-if="selectedTransaction.stripePaymentIntentId" class="stripe-info">
+          <div v-if="(selectedTransaction as TransactionDeposit).stripePaymentIntentId" class="stripe-info">
             <h5>Payment Details</h5>
             <div class="detail-grid">
-              <div v-if="selectedTransaction.stripePaymentIntentId" class="detail-item">
+              <div v-if="(selectedTransaction as TransactionDeposit).stripePaymentIntentId" class="detail-item">
                 <span class="detail-label">Payment Intent:</span>
-                <span class="detail-value code">{{ selectedTransaction.stripePaymentIntentId }}</span>
+                <span class="detail-value code">{{ (selectedTransaction as TransactionDeposit).stripePaymentIntentId }}</span>
               </div>
-              <div v-if="selectedTransaction.stripeChargeId" class="detail-item">
+              <div v-if="(selectedTransaction as TransactionDeposit).stripeChargeId" class="detail-item">
                 <span class="detail-label">Charge ID:</span>
-                <span class="detail-value code">{{ selectedTransaction.stripeChargeId }}</span>
+                <span class="detail-value code">{{ (selectedTransaction as TransactionDeposit).stripeChargeId }}</span>
               </div>
-              <div v-if="selectedTransaction.stripeCustomerId" class="detail-item">
+              <div v-if="(selectedTransaction as TransactionDeposit).stripeCustomerId" class="detail-item">
                 <span class="detail-label">Customer ID:</span>
-                <span class="detail-value code">{{ selectedTransaction.stripeCustomerId }}</span>
+                <span class="detail-value code">{{ (selectedTransaction as TransactionDeposit).stripeCustomerId }}</span>
               </div>
             </div>
           </div>
 
           <!-- Refund Information -->
-          <div v-if="selectedTransaction.refundedAmount" class="refund-info">
+          <div v-if="(selectedTransaction as TransactionDeposit).refundedAmount" class="refund-info">
             <h5>Refund Information</h5>
             <div class="detail-grid">
               <div class="detail-item">
                 <span class="detail-label">Refunded Amount:</span>
-                <span class="detail-value refund">-${{ formatBalance(selectedTransaction.refundedAmount) }}</span>
+                <span class="detail-value refund">-${{ formatBalance((selectedTransaction as TransactionDeposit).refundedAmount!) }}</span>
               </div>
-              <div v-if="selectedTransaction.refundedAt" class="detail-item">
+              <div v-if="(selectedTransaction as TransactionDeposit).refundedAt" class="detail-item">
                 <span class="detail-label">Refunded At:</span>
-                <span class="detail-value">{{ formatDate(selectedTransaction.refundedAt) }}</span>
+                <span class="detail-value">{{ formatDate((selectedTransaction as TransactionDeposit).refundedAt!) }}</span>
               </div>
-              <div v-if="selectedTransaction.stripeRefundId" class="detail-item">
+              <div v-if="(selectedTransaction as TransactionDeposit).stripeRefundId" class="detail-item">
                 <span class="detail-label">Refund ID:</span>
-                <span class="detail-value code">{{ selectedTransaction.stripeRefundId }}</span>
+                <span class="detail-value code">{{ (selectedTransaction as TransactionDeposit).stripeRefundId }}</span>
               </div>
             </div>
           </div>
@@ -502,72 +502,76 @@
           <div class="detail-grid">
             <div class="detail-item">
               <span class="detail-label">Spend Type:</span>
-              <span class="detail-value spend-type">{{ selectedTransaction.spendType || 'N/A' }}</span>
+              <span class="detail-value spend-type">{{ (selectedTransaction as TransactionSpend).spendType || 'N/A' }}</span>
             </div>
-            <div v-if="selectedTransaction.clientPriority" class="detail-item">
+            <div v-if="(selectedTransaction as TransactionSpend).clientPriority" class="detail-item">
               <span class="detail-label">Priority:</span>
-              <span class="detail-value priority">{{ selectedTransaction.clientPriority }}</span>
+              <span class="detail-value priority">{{ (selectedTransaction as TransactionSpend).clientPriority }}</span>
             </div>
-            <div v-if="selectedTransaction.think?.agentType" class="detail-item">
+            <div v-if="(selectedTransaction as TransactionSpend).think?.agentType" class="detail-item">
               <span class="detail-label">Agent Type:</span>
-              <span class="detail-value">{{ selectedTransaction.think.agentType }}</span>
+              <span class="detail-value">{{ (selectedTransaction as TransactionSpend).think!.agentType }}</span>
+            </div>
+            <div v-if="(selectedTransaction as TransactionSpend).publicToolId" class="detail-item">
+              <span class="detail-label">Public Tool ID:</span>
+              <span class="detail-value code">{{ (selectedTransaction as TransactionSpend).publicToolId }}</span>
             </div>
           </div>
 
           <!-- Token Count Details -->
-          <div v-if="selectedTransaction.think" class="token-details">
+          <div v-if="(selectedTransaction as TransactionSpend).think" class="token-details">
             <h5>Token Usage Details</h5>
             <div class="token-grid">
-              <div v-if="selectedTransaction.think.inputBaseTokenCount" class="token-item">
+              <div v-if="(selectedTransaction as TransactionSpend).think!.inputBaseTokenCount" class="token-item">
                 <span class="token-label">
                   Input Base:
                   <FieldTooltip text="Base tokens the AI needs to function.">
                     <AppIcon name="info" size="xs" />
                   </FieldTooltip>
                 </span>
-                <span class="token-value">{{ selectedTransaction.think.inputBaseTokenCount.toLocaleString() }}</span>
+                <span class="token-value">{{ (selectedTransaction as TransactionSpend).think!.inputBaseTokenCount!.toLocaleString() }}</span>
               </div>
               
-              <div v-if="selectedTransaction.think.inputProductConfigTokenCount" class="token-item">
+              <div v-if="(selectedTransaction as TransactionSpend).think!.inputProductConfigTokenCount" class="token-item">
                 <span class="token-label">
                   Product Config:
                   <FieldTooltip text="Tokens used for product configuration and settings. You can reduce this by simplifying your product description, custom tools description and additional agent instructions.">
                     <AppIcon name="info" size="xs" />
                   </FieldTooltip>
                 </span>
-                <span class="token-value">{{ selectedTransaction.think.inputProductConfigTokenCount.toLocaleString() }}</span>
+                <span class="token-value">{{ (selectedTransaction as TransactionSpend).think!.inputProductConfigTokenCount!.toLocaleString() }}</span>
               </div>
               
-              <div v-if="selectedTransaction.think.inputHistoryTokenCount" class="token-item">
+              <div v-if="(selectedTransaction as TransactionSpend).think!.inputHistoryTokenCount" class="token-item">
                 <span class="token-label">
                   History:
                   <FieldTooltip text="Tokens used for conversation history and context. You can reduce this by limiting your custom tools' output.">
                     <AppIcon name="info" size="xs" />
                   </FieldTooltip>
                 </span>
-                <span class="token-value">{{ selectedTransaction.think.inputHistoryTokenCount.toLocaleString() }}</span>
+                <span class="token-value">{{ (selectedTransaction as TransactionSpend).think!.inputHistoryTokenCount!.toLocaleString() }}</span>
               </div>
               
-              <div v-if="selectedTransaction.think.outputTokenCount" class="token-item">
+              <div v-if="(selectedTransaction as TransactionSpend).think!.outputTokenCount" class="token-item">
                 <span class="token-label">
                   Output:
                   <FieldTooltip text="Tokens generated in the response. You can reduce this making your custom tools take less arguments.">
                     <AppIcon name="info" size="xs" />
                   </FieldTooltip>
                 </span>
-                <span class="token-value">{{ selectedTransaction.think.outputTokenCount.toLocaleString() }}</span>
+                <span class="token-value">{{ (selectedTransaction as TransactionSpend).think!.outputTokenCount!.toLocaleString() }}</span>
               </div>
             </div>
 
             <!-- Additional AI Details -->
             <div class="ai-details">
-              <div v-if="selectedTransaction.think.outputType" class="detail-item">
+              <div v-if="(selectedTransaction as TransactionSpend).think!.outputType" class="detail-item">
                 <span class="detail-label">Output Type:</span>
-                <span class="detail-value">{{ selectedTransaction.think.outputType }}</span>
+                <span class="detail-value">{{ (selectedTransaction as TransactionSpend).think!.outputType }}</span>
               </div>
-              <div v-if="selectedTransaction.think.modelType" class="detail-item model-type">
+              <div v-if="(selectedTransaction as TransactionSpend).think!.modelType" class="detail-item model-type">
                 <span class="detail-label">Model Type:</span>
-                <span class="detail-value model-badge">{{ selectedTransaction.think.modelType }}</span>
+                <span class="detail-value model-badge">{{ (selectedTransaction as TransactionSpend).think!.modelType }}</span>
               </div>
             </div>
           </div>
@@ -588,13 +592,25 @@
 <script setup lang="ts">
 import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
 import { Deposit } from '~/eicrud_exports/services/BANK-ms/deposit/deposit.entity'
-import { Spend } from '~/eicrud_exports/services/BANK-ms/spend/spend.entity'
+import { Spend, SpendType } from '~/eicrud_exports/services/BANK-ms/spend/spend.entity'
 import { CheckoutMode, StripeDepositDto } from '~/eicrud_exports/services/BANK-ms/product-vault/cmds/stripe_deposit/stripe_deposit.dto'
 import { ToggleAutoTopUpDto } from '~/eicrud_exports/services/BANK-ms/spend/cmds/toggle_auto_top_up/toggle_auto_top_up.dto'
 import MegaForm, { MegaFormAction } from '~/components/MegaForm.vue'
 import ToggleSwitch from '~/components/ToggleSwitch.vue'
 import FieldTooltip from '~/components/FieldTooltip.vue'
 import { CrudOptions } from '~/eicrud_exports/CrudOptions'
+
+// Transaction types for display
+interface TransactionDeposit extends Deposit {
+  transactionType: 'deposit'
+}
+
+interface TransactionSpend extends Spend {
+  transactionType: 'spend'
+  spendType: SpendType
+}
+
+type Transaction = TransactionDeposit | TransactionSpend
 
 definePageMeta({
   layout: 'default'
@@ -632,8 +648,8 @@ const autoRenewEnabled = ref(true)
 const autoTopUpEnabled = ref(false)
 
 // Transaction history
-const transactions = ref<any[]>([])
-const selectedTransaction = ref<any>(null)
+const transactions = ref<Transaction[]>([])
+const selectedTransaction = ref<Transaction | null>(null)
 const loadingMore = ref(false)
 const hasMoreTransactions = ref(true)
 const currentOffset = ref(0)
@@ -805,7 +821,7 @@ const loadTransactions = async (reset = false) => {
       offset: currentOffset.value
     }
     
-    let newTransactions: any[] = []
+    let newTransactions: Transaction[] = []
     let totalCount = 0
     
     if (activeFilter.value === 'deposits') {
@@ -813,20 +829,24 @@ const loadTransactions = async (reset = false) => {
       const depositResult = await $sp.deposit.find(baseQuery, options)
       const depositData = Array.isArray(depositResult) ? depositResult : (depositResult?.data || [])
       totalCount = depositResult?.total || 0
-      newTransactions = depositData.map((deposit: any) => ({
+      newTransactions = depositData.map((deposit: Deposit): TransactionDeposit => ({
         ...deposit,
-        type: 'deposit' as const
+        transactionType: 'deposit' as const
       }))
     } else if (activeFilter.value === 'spending') {
       // Load only spends
       const spendResult = await $sp.spend.find(baseQuery, options)
       const spendData = Array.isArray(spendResult) ? spendResult : (spendResult?.data || [])
       totalCount = spendResult?.total || 0
-      newTransactions = spendData.map((spend: any) => ({
+      newTransactions = spendData.map((spend: Spend): TransactionSpend => ({
         ...spend,
-        type: 'spend' as const,
+        transactionType: 'spend' as const,
         spendType: spend.type // Map spend.type to spendType to avoid confusion
       }))
+      
+      // Debug: Check if publicToolId is present in spend data
+      console.log('Spend-only data sample:', spendData[0])
+      console.log('Mapped spend-only sample:', newTransactions[0])
     } else {
       // For 'all' transactions, we need a different strategy since we're combining two APIs
       // Always get fresh totals to ensure accuracy
@@ -867,19 +887,23 @@ const loadTransactions = async (reset = false) => {
       const depositData = Array.isArray(depositResult) ? depositResult : (depositResult?.data || [])
       const spendData = Array.isArray(spendResult) ? spendResult : (spendResult?.data || [])
       
-      const deposits = depositData.map((deposit: any) => ({
+      const deposits: TransactionDeposit[] = depositData.map((deposit: Deposit): TransactionDeposit => ({
         ...deposit,
-        type: 'deposit' as const
+        transactionType: 'deposit' as const
       }))
       
-      const spends = spendData.map((spend: any) => ({
+      const spends: TransactionSpend[] = spendData.map((spend: Spend): TransactionSpend => ({
         ...spend,
-        type: 'spend' as const,
+        transactionType: 'spend' as const,
         spendType: spend.type
       }))
       
+      // Debug: Check if publicToolId is present in spend data
+      console.log('Spend data sample:', spendData[0])
+      console.log('Mapped spends sample:', spends[0])
+      
       // Combine and sort chronologically
-      let allTransactions = [...deposits, ...spends]
+      let allTransactions: Transaction[] = [...deposits, ...spends]
       allTransactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       
       // Filter out any transactions we already have (to avoid duplicates)
@@ -1095,6 +1119,23 @@ const handleAutoRenewToggle = async (enabled: boolean) => {
 }
 
 const formatBalance = (amount: number, toFixed = 4): string => {
+  if (amount === 0) return "0"
+  
+  // For very small numbers, count zeros and set minimum precision
+  if (amount > 0 && amount < 1) {
+    const str = amount.toString()
+    
+    // Count leading zeros after decimal point
+    const match = str.match(/^0\.0*/)
+    if (match) {
+      const leadingZeros = match[0].length - 2 // subtract "0."
+      const minPrecision = leadingZeros + 1 // +1 to show the first non-zero digit
+      const precision = Math.max(toFixed, minPrecision)
+      return amount.toFixed(precision).replace(/\.?0+$/, '')
+    }
+  }
+  
+  // For regular numbers, use the original logic
   return amount.toFixed(toFixed).replace(/\.?0+$/, '')
 }
 

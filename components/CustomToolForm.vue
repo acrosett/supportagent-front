@@ -46,7 +46,8 @@ const includeFields = computed(() => {
             'description',
             'arguments',
             'clientPriorities',
-            'provideToolToGuests'
+            'provideToolToGuests',
+            'enabled'
         ]
     }
     
