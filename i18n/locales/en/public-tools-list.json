@@ -3,9 +3,7 @@
     "placeholder": "Search public tools..."
   },
   "status": {
-    "loading": "Loading public tools...",
-    "loadingMore": "Loading more tools...",
-    "noMoreTools": "No more tools available"
+    "loading": "Loading public tools..."
   },
   "empty": {
     "title": "No Public Tools Found",
@@ -16,5 +14,11 @@
   },
   "actions": {
     "useTool": "Use Tool"
+  },
+  "tools": {
+    "meteoForecast": {
+      "title": "Weather Forecast",
+      "description": "Get detailed weather forecasts with hourly or daily data for up to 16 days ahead. Includes temperature, precipitation, wind, and other meteorological information."
+    }
   }
 }

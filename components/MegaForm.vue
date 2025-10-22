@@ -29,6 +29,7 @@ export interface FieldOverride<T = any, V = any> {
   };
   doubleCheck?: boolean;
   isArray?: boolean;
+  fixedArray?: boolean; // If true, prevent adding/removing items in array fields
   mapObjectField?: string; // Field to display from objects (e.g. "name") while keeping full objects
   conditionsFields?: (keyof T)[]; // Conditions the following fields (on truthy)
   invertedConditionsFields?: (keyof T)[]; 
@@ -472,7 +473,7 @@ defineExpose({
               <div class="megaform-nested-header">
                 <span v-if="showArrayIndex" class="megaform-array-index">{{ idx + 1 }}.</span>
                 <span class="megaform-nested-title">{{ field.label }} {{ idx + 1 }}</span>
-                <button type="button" class="megaform-array-remove" @click="removeNestedArrayItem(field.key, idx)">×</button>
+                <button v-if="!fieldOverrides?.[field.key]?.fixedArray" type="button" class="megaform-array-remove" @click="removeNestedArrayItem(field.key, idx)">×</button>
               </div>
               <MegaForm
                 :ref="(el: any) => { if (el) nestedFormRefs[`${field.key}-${idx}`] = el }"
@@ -483,7 +484,7 @@ defineExpose({
                 class="megaform-nested"
               />
             </div>
-            <button type="button" class="megaform-array-add" @click="addArrayItem(field.key)">+</button>
+            <button v-if="!fieldOverrides?.[field.key]?.fixedArray" type="button" class="megaform-array-add" @click="addArrayItem(field.key)">+</button>
           </template>
           <!-- Regular Array Input -->
           <template v-else>
@@ -499,9 +500,9 @@ defineExpose({
                 :placeholder="field.placeholder"
                 class="megaform-input"
               />
-              <button type="button" class="megaform-array-remove" @click="formData[field.key].splice(idx, 1)">×</button>
+              <button v-if="!fieldOverrides?.[field.key]?.fixedArray" type="button" class="megaform-array-remove" @click="formData[field.key].splice(idx, 1)">×</button>
             </div>
-            <button type="button" class="megaform-array-add" @click="addArrayItem(field.key)">+</button>
+            <button v-if="!fieldOverrides?.[field.key]?.fixedArray" type="button" class="megaform-array-add" @click="addArrayItem(field.key)">+</button>
           </template>
         </template>
         <!-- Nested MegaForm (single object) -->

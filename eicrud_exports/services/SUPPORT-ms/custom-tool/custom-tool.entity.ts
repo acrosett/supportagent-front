@@ -88,20 +88,8 @@ export class CustomTool {
     name: string;
 
     @IsString()
-    @MinLength(1)
-    @IsOptional()
-    publicName: string;
-
-    @IsString()
     @IsOptional()
     description?: string;
-
-    @IsString()
-    @IsOptional()
-    publicDescription?: string;
-
-    @IsOptional()
-    price?: number;
 
     @IsUrl({require_tld: false})
     @Matches(/^https:\/\//, { message: 'URL must start with https://' })
@@ -123,6 +111,8 @@ export class CustomTool {
     @IsOptional()
     timeoutMs?: number = 30000; // Request timeout in milliseconds
 
+    @IsOptional()
+    resultValidityMin?: number; // Result validity in minutes
 
     @IsArray()
     @IsEnum(ClientPriority, { each: true })
@@ -137,12 +127,9 @@ export class CustomTool {
     version: number = 1;
 
     @IsString()
-    @IsOptional()
     product: Product | string;
 
-    @IsString()
-    @IsOptional()
-    extends?: CustomTool | string;
+    publicToolId?: string;
     
     @IsBoolean()
     @IsOptional()

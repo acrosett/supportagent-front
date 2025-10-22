@@ -99,7 +99,7 @@
             <AppButton
               :label="t('domains.actions.delete')"
               color="error"
-              :margin="domain.isVerified ? 'no-margins' : 'left'"
+              margin="left"
               size="sm"
               @click="deleteDomain(domain)"
             />
@@ -183,15 +183,15 @@
     </div>
 
     <!-- Create/Edit Tool Modal -->
-        <!-- Create/Edit Tool Popup -->
+    <!-- Create/Edit Tool Popup -->
     <AppPopup
       v-if="showCreateTool"
       :show="showCreateTool"
-      :title="t('popups.createTool.title')"
+      :title="selectedTool?.publicToolId ? t('popups.extendTool.title',selectedTool) : t('popups.createTool.title')"
       @close="closeToolForm"
     >
       <CustomToolForm
-        :tool="selectedTool"
+        :tool="selectedTool as any"
         @save="handleToolSave"
         @cancel="closeToolForm"
       />
@@ -234,7 +234,7 @@
       @close="showPublicTools = false"
       size="xl"
     >
-      <PublicToolsList @use-tool="handleUsePublicTool" />
+      <PublicToolsList ref="publicToolsListRef" @use-tool="handleUsePublicTool" />
     </AppPopup>
   </section>
 </template>
@@ -247,7 +247,7 @@ import AppPopup from '~/components/AppPopup.vue'
 import CustomToolForm from '~/components/CustomToolForm.vue'
 import PublicToolsList from '~/components/PublicToolsList.vue'
 import { Product } from '~/eicrud_exports/services/SUPPORT-ms/product/product.entity'
-import { CustomTool } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
+import { ArgumentValueType, CustomTool, CustomToolArgument } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
 import { Domain } from '~/eicrud_exports/services/SUPPORT-ms/domain/domain.entity'
 
 import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
@@ -271,8 +271,9 @@ const aiInstructionsOverrides = {
 // Custom Tools
 const customTools = ref<CustomTool[]>([])
 const showCreateTool = ref(false)
-const selectedTool = ref<CustomTool | null>(null)
+const selectedTool = ref<Partial<CustomTool> & { publicName?: string} | null>(null)
 const showPublicTools = ref(false)
+const publicToolsListRef = ref()
 
 // Domain management
 const verifiedDomains = ref<Domain[]>([])
@@ -418,10 +419,20 @@ async function handleToolSave(tool: CustomTool) {
       }
     } else {
       // Create new tool
-      const savedTool = await nuxtApp.$sp.customTool.create({
-        ...tool,
-        product: nuxtApp.$userProductId
-      })
+      let savedTool;
+      
+      if(selectedTool.value?.publicToolId){
+        savedTool = await nuxtApp.$sp.customTool.extend_public_tool({
+          ...tool,
+          product: nuxtApp.$userProductId
+        })
+      }else{
+        savedTool = await nuxtApp.$sp.customTool.create({
+          ...tool,
+          product: nuxtApp.$userProductId
+        })
+      }
+
       
       customTools.value.push(savedTool)
     }
@@ -550,17 +561,17 @@ async function closeDomainForm() {
   newDomain.domain = ''
 }
 
-async function handleUsePublicTool(publicTool: CustomTool) {
+async function handleUsePublicTool(publicTool: any) {
   // Filter arguments to only include those that are SET_BY_AI
   const filteredArguments = (publicTool.arguments || []).filter((arg: any) => 
-    arg.valueType === 'SET_BY_AI'
+    arg.valueType != ArgumentValueType.SET_BY_AI
   )
   
   // Create a new custom tool based on the public tool
   selectedTool.value = {
     id: undefined,
-    name: publicTool.publicName,
-    description: publicTool.publicDescription,
+    name: publicTool.name,
+    description: publicTool.description,
     url: '',
     method: 'POST',
     arguments: filteredArguments,
@@ -569,8 +580,9 @@ async function handleUsePublicTool(publicTool: CustomTool) {
     enabled: true,
     clientPriorities: [],
     provideToolToGuests: false,
-    extends: publicTool.id
-  } as any
+    publicToolId: publicTool.id,
+    publicName: publicTool.publicName
+  } as Partial<CustomTool> & { publicName?: string };
   
   // Close public tools popup and open custom tool form
   showPublicTools.value = false

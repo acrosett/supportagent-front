@@ -68,6 +68,9 @@
     "createTool": {
       "title": "Custom Tool (our chatbot can create them for you)"
     },
+    "extendTool": {
+      "title": "Extend {publicName} tool"
+    },
     "addDomain": {
       "title": "Add Domain",
       "addButton": "Add Domain",

@@ -1,4 +1,5 @@
 import { SearchDto, SearchReturnDto } from './cmds/search/search.dto';
+import { ExtendPublicToolDto, ExtendPublicToolReturnDto } from './cmds/extend_public_tool/extend_public_tool.dto';
 import { CreateToolForClientDto, CreateToolForClientReturnDto } from './cmds/create_tool_for_client/create_tool_for_client.dto';
 import { SuperClientConfig, ClientOptions, CrudClient } from "@eicrud/client";
 import { ICrudOptions } from "@eicrud/shared/interfaces";
@@ -40,6 +41,38 @@ export class CustomToolClient extends CrudClient<CustomTool> {
       copts?: ClientOptions,
     ): Promise<SearchReturnDto> {
       return super.cmdSL('search', dto, options, copts) as any;
+  }
+
+  async extend_public_tool(
+      dto: ExtendPublicToolDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ExtendPublicToolReturnDto> {
+      return super.cmd('extend_public_tool', dto, options, copts);
+  }
+
+  async extend_public_toolS(
+      dto: ExtendPublicToolDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ExtendPublicToolReturnDto> {
+      return super.cmdS('extend_public_tool', dto, options, copts);
+  }
+
+  async extend_public_toolL(
+      dto: ExtendPublicToolDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ExtendPublicToolReturnDto> {
+      return super.cmdL('extend_public_tool', dto, options, copts) as any;
+  }
+
+  async extend_public_toolSL(
+      dto: ExtendPublicToolDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<ExtendPublicToolReturnDto> {
+      return super.cmdSL('extend_public_tool', dto, options, copts) as any;
   }
 
   async create_tool_for_client(

@@ -1,6 +1,6 @@
 <template>
     <div class="custom-tool-form">
-        <MegaForm :formClass="CustomTool" v-model="formData" :fieldOverrides="fieldOverrides"
+        <MegaForm :formClass="formData.publicToolId ? ExtendPublicToolDto : CustomTool" v-model="formData" :fieldOverrides="fieldOverrides"
             :includeFields="includeFields" :actions="actions" />
     </div>
 </template>
@@ -13,6 +13,7 @@ import { ClientPriority } from '~/eicrud_exports/services/SUPPORT-ms/client/clie
 import { CustomTool, CustomToolArgument, HttpMethod, ArgumentLocation, ArgumentValueType, ArgumentDataType } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/custom-tool.entity'
 
 import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
+import { ExtendPublicToolDto } from '~/eicrud_exports/services/SUPPORT-ms/custom-tool/cmds/extend_public_tool/extend_public_tool.dto';
 const { t } = await useLocalNamespaceAsync('custom-tool-form')
 
 interface Props {
@@ -23,7 +24,7 @@ const props = defineProps<Props>()
 const emit = defineEmits(['save', 'cancel'])
 
 // Form data
-let formData = reactive<Record<string, any>>({
+let formData = reactive<Partial<CustomTool>>({
     name: '',
     description: '',
     url: '',
@@ -33,14 +34,16 @@ let formData = reactive<Record<string, any>>({
     timeoutMs: 30000,
     enabled: true,
     clientPriorities: [],
-    extends: null
+    publicToolId: null as any,
 })
 
 // Include fields for CustomTool - conditional based on extends
 const includeFields = computed(() => {
-    if (formData.extends) {
+    if (formData.publicToolId) {
         // For extended tools, only allow these fields to be modified
         return [
+            'name',
+            'description',
             'arguments',
             'clientPriorities',
             'provideToolToGuests'
@@ -133,10 +136,14 @@ const fieldOverrides = computed((): OverrideRecord<CustomTool, CustomToolArgumen
     },
     arguments: {
         isArray: true,
+        fixedArray: !!formData.publicToolId,
         nestedClass: CustomToolArgument,
-        nestedIncludeFields: formData.extends ? [
+        nestedIncludeFields: formData.publicToolId ? [
                 'valueType',
-                'constantValue'
+                'constantValue',
+                'defaultValue',
+                'name',
+                'description',
             ] : [
                 'name',
                 'description',
@@ -149,6 +156,9 @@ const fieldOverrides = computed((): OverrideRecord<CustomTool, CustomToolArgumen
             ],
         nestedFieldOverrides: {
             name: {
+                props: {
+                    disabled: !!formData.publicToolId
+                },
                 label: t('arguments.name.label'),
                 placeholder: t('arguments.name.placeholder'),
                 description: t('arguments.name.description')
@@ -173,7 +183,7 @@ const fieldOverrides = computed((): OverrideRecord<CustomTool, CustomToolArgumen
             valueType: {
                 type: 'select',
                 label: t('arguments.valueType.label'),
-                selectOptions: formData.extends ? [
+                selectOptions: formData.publicToolId ? [
                     { label: t('arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
                     { label: t('arguments.valueType.constant'), value: ArgumentValueType.CONSTANT }
                 ] : [

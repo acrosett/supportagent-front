@@ -34,14 +34,14 @@
         class="tool-card"
       >
         <div class="tool-header">
-          <h3 class="tool-name">{{ tool.publicname }}</h3>
+          <h3 class="tool-name">{{ getToolTitle(tool) }}</h3>
           <div class="tool-price">
             ${{ tool.price }} {{ t('tool.perCall') }}
           </div>
         </div>
 
         <div class="tool-content">
-          <p class="tool-description">{{ tool.publicdescription }}</p>
+          <p class="tool-description">{{ getToolDescription(tool) }}</p>
         </div>
 
         <div class="tool-actions">
@@ -53,17 +53,6 @@
           />
         </div>
       </div>
-    </div>
-
-    <!-- Load More Indicator -->
-    <div v-if="isLoadingMore" class="loading-more">
-      <div class="spinner"></div>
-      <p>{{ t('status.loadingMore') }}</p>
-    </div>
-
-    <!-- End of Results -->
-    <div v-else-if="!hasMoreData && publicTools.length > 0" class="end-of-results">
-      <p>{{ t('status.noMoreTools') }}</p>
     </div>
   </div>
 </template>
@@ -78,10 +67,19 @@ const { t } = await useLocalNamespaceAsync('public-tools-list')
 
 interface PublicTool {
   id: string
-  publicname: string
-  publicdescription: string
+  name: string
+  description: string
   price: number
   arguments?: any[]
+  publicName?: string
+}
+
+// Map of public tools with i18n keys
+const publicToolsMap: Record<string, { title: string; desc: string }> = {
+  'meteo-forecast-001': {
+    title: 'tools.meteoForecast.title',
+    desc: 'tools.meteoForecast.description'
+  }
 }
 
 const emit = defineEmits(['use-tool'])
@@ -89,24 +87,14 @@ const emit = defineEmits(['use-tool'])
 // State
 const publicTools = ref<PublicTool[]>([])
 const isLoading = ref(true)
-const isLoadingMore = ref(false)
 const searchQuery = ref('')
-const hasMoreData = ref(true)
-const currentPage = ref(0)
-const pageSize = 20
 
 let searchTimeout: NodeJS.Timeout | null = null
 
 // Load public tools
-const loadPublicTools = async (reset = true) => {
+const loadPublicTools = async () => {
   try {
-    if (reset) {
-      isLoading.value = true
-      currentPage.value = 0
-      hasMoreData.value = true
-    } else {
-      isLoadingMore.value = true
-    }
+    isLoading.value = true
     
     const { $sp } = useNuxtApp()
     
@@ -115,67 +103,49 @@ const loadPublicTools = async (reset = true) => {
       text: searchQuery.value || undefined
     }
     
-    // Setup pagination options
-    const options: any = {
-      limit: pageSize,
-      offset: reset ? 0 : currentPage.value * pageSize,
-      orderBy: {
-        publicname: 'asc'
-      }
-    }
-    
-    // Search for public tools
-    const result = await $sp.customTool.search(searchParams, options)
+    // Search for public tools (all tools returned, no pagination)
+    const result = await $sp.customTool.search(searchParams)
     
     const newTools = (result.data || []) as PublicTool[]
-    
-    if (reset) {
-      publicTools.value = newTools
-    } else {
-      publicTools.value = [...publicTools.value, ...newTools]
-    }
-    
-    // Check if there's more data
-    hasMoreData.value = newTools.length === pageSize
-    
-    // Increment page for next load
-    if (!reset) {
-      currentPage.value++
-    }
+    publicTools.value = newTools
     
   } catch (error) {
     console.error('Failed to load public tools:', error)
     useNuxtApp().$toast.show(error, 'error')
   } finally {
     isLoading.value = false
-    isLoadingMore.value = false
   }
 }
 
 const loadMore = () => {
-  if (!isLoadingMore.value && hasMoreData.value) {
-    currentPage.value++
-    loadPublicTools(false)
-  }
+  // No pagination needed - all tools returned in single call
 }
 
 const useTool = (tool: PublicTool) => {
+  (tool).publicName = getToolTitle(tool)
   emit('use-tool', tool)
 }
 
-// Setup scroll listener for infinite scroll
-const handleScroll = (event: Event) => {
-  const target = event.target as HTMLElement
-  const scrollTop = target.scrollTop
-  const scrollHeight = target.scrollHeight
-  const clientHeight = target.clientHeight
-  
-  // Check if user scrolled near the bottom (within 200px)
-  if (scrollTop + clientHeight >= scrollHeight - 200) {
-    if (!isLoadingMore.value && hasMoreData.value) {
-      loadMore()
-    }
+// Helper functions to get localized tool info
+const getToolTitle = (tool: PublicTool) => {
+  const mapping = publicToolsMap[tool.id]
+  if (mapping) {
+    return t(mapping.title)
   }
+  return tool.name
+}
+
+const getToolDescription = (tool: PublicTool) => {
+  const mapping = publicToolsMap[tool.id]
+  if (mapping) {
+    return t(mapping.desc)
+  }
+  return tool.description
+}
+
+// Setup scroll listener for infinite scroll (disabled - no pagination)
+const handleScroll = (event: Event) => {
+  // No pagination needed - all tools returned in single call
 }
 
 // Watch search query for real-time search
@@ -183,13 +153,13 @@ watch(searchQuery, () => {
   // Debounce the search to avoid too many API calls
   if (searchTimeout) clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    loadPublicTools(true) // Reset to first page when searching
+    loadPublicTools() // Reload tools with new search
   }, 500)
 })
 
 // Load data on mount
 onMounted(() => {
-  loadPublicTools(true)
+  loadPublicTools()
   
   // Add scroll listener to popup content (assuming this will be in a popup)
   // We'll use a more generic approach that works with popup scroll
@@ -210,6 +180,7 @@ onUnmounted(() => {
     popupContent.removeEventListener('scroll', handleScroll)
   }
 })
+
 </script>
 
 <style scoped lang="scss">
@@ -255,8 +226,7 @@ onUnmounted(() => {
   }
 }
 
-.loading-state,
-.loading-more {
+.loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -280,21 +250,6 @@ onUnmounted(() => {
   }
 }
 
-.loading-more {
-  padding: 1rem;
-  
-  .spinner {
-    width: 24px;
-    height: 24px;
-    border-width: 2px;
-    margin-bottom: 0.5rem;
-  }
-  
-  p {
-    font-size: 0.9rem;
-  }
-}
-
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -314,19 +269,6 @@ onUnmounted(() => {
   p {
     margin: 0;
     line-height: 1.6;
-  }
-}
-
-.end-of-results {
-  text-align: center;
-  padding: 2rem;
-  color: $muted;
-  border-top: 1px solid rgba($muted, 0.2);
-  margin-top: 1rem;
-  
-  p {
-    margin: 0;
-    font-size: 0.9rem;
   }
 }
 
