@@ -96,6 +96,11 @@
     "label": "Guest Access",
     "description": "Allow the tool to be used by non-logged users"
   },
+  "resultValidity": {
+    "label": "Result Validity (minutes)",
+    "placeholder": "60",
+    "description": "How long the tool result should be considered valid and still available to the AI"
+  },
   "actions": {
     "cancel": "Cancel",
     "save": "Save Tool",

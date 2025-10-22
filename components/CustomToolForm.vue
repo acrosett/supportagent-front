@@ -285,6 +285,12 @@ const fieldOverrides = computed((): OverrideRecord<CustomTool, CustomToolArgumen
         type: 'checkbox',
         label: t('guestAccess.label'),
         description: t('guestAccess.description')
+    },
+    resultValidityMin: {
+        type: 'number',
+        label: t('resultValidity.label'),
+        placeholder: t('resultValidity.placeholder'),
+        description: t('resultValidity.description')
     }
 }))
 
