@@ -86,6 +86,7 @@ const emit = defineEmits(['use-tool'])
 
 // State
 const publicTools = ref<PublicTool[]>([])
+const allPublicTools = ref<PublicTool[]>([]) // Store all tools for local filtering
 const isLoading = ref(true)
 const searchQuery = ref('')
 
@@ -98,16 +99,14 @@ const loadPublicTools = async () => {
     
     const { $sp } = useNuxtApp()
     
-    // Build search parameters
-    const searchParams: any = {
-      text: searchQuery.value || undefined
-    }
-    
-    // Search for public tools (all tools returned, no pagination)
-    const result = await $sp.customTool.search(searchParams)
+    // Get all public tools without any search parameters
+    const result = await $sp.customTool.search({})
     
     const newTools = (result.data || []) as PublicTool[]
-    publicTools.value = newTools
+    allPublicTools.value = newTools
+    
+    // Apply local filtering
+    filterTools()
     
   } catch (error) {
     console.error('Failed to load public tools:', error)
@@ -115,6 +114,28 @@ const loadPublicTools = async () => {
   } finally {
     isLoading.value = false
   }
+}
+
+// Filter tools locally based on search query
+const filterTools = () => {
+  if (!searchQuery.value.trim()) {
+    publicTools.value = allPublicTools.value
+    return
+  }
+  
+  const query = searchQuery.value.toLowerCase().trim()
+  
+  publicTools.value = allPublicTools.value.filter(tool => {
+    const searchableText = [
+      tool.id.toLowerCase(),
+      tool.name.toLowerCase(),
+      tool.description.toLowerCase(),
+      getToolTitle(tool).toLowerCase(),
+      getToolDescription(tool).toLowerCase()
+    ].join(' ')
+    
+    return searchableText.includes(query)
+  })
 }
 
 const loadMore = () => {
@@ -150,11 +171,11 @@ const handleScroll = (event: Event) => {
 
 // Watch search query for real-time search
 watch(searchQuery, () => {
-  // Debounce the search to avoid too many API calls
+  // Debounce the search to avoid too many filter operations
   if (searchTimeout) clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    loadPublicTools() // Reload tools with new search
-  }, 500)
+    filterTools() // Filter tools locally instead of API call
+  }, 300) // Reduced debounce time since it's local filtering
 })
 
 // Load data on mount

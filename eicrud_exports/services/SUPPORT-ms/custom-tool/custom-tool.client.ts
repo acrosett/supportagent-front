@@ -1,3 +1,4 @@
+import { TestToolDto, TestToolReturnDto } from './cmds/test_tool/test_tool.dto';
 import { SearchDto, SearchReturnDto } from './cmds/search/search.dto';
 import { ExtendPublicToolDto, ExtendPublicToolReturnDto } from './cmds/extend_public_tool/extend_public_tool.dto';
 import { CreateToolForClientDto, CreateToolForClientReturnDto } from './cmds/create_tool_for_client/create_tool_for_client.dto';
@@ -11,6 +12,38 @@ export class CustomToolClient extends CrudClient<CustomTool> {
     super({...config, serviceName: 'custom-tool'});
   }
   // GENERATED START
+  async test_tool(
+      dto: TestToolDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<TestToolReturnDto> {
+      return super.cmd('test_tool', dto, options, copts);
+  }
+
+  async test_toolS(
+      dto: TestToolDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<TestToolReturnDto> {
+      return super.cmdS('test_tool', dto, options, copts);
+  }
+
+  async test_toolL(
+      dto: TestToolDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<TestToolReturnDto> {
+      return super.cmdL('test_tool', dto, options, copts) as any;
+  }
+
+  async test_toolSL(
+      dto: TestToolDto,
+      options: ICrudOptions = undefined,
+      copts?: ClientOptions,
+    ): Promise<TestToolReturnDto> {
+      return super.cmdSL('test_tool', dto, options, copts) as any;
+  }
+
   async search(
       dto: SearchDto,
       options: ICrudOptions = undefined,

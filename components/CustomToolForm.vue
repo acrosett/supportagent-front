@@ -68,7 +68,7 @@ const includeFields = computed(() => {
 // Watch for tool prop changes
 watch(() => props.tool, (newTool) => {
     if (newTool) {
-        Object.assign(formData, {
+        Object.assign(formData, { 
             ...newTool,
             arguments: newTool.arguments || []
         })
@@ -88,6 +88,112 @@ watch(() => props.tool, (newTool) => {
         })
     }
 }, { immediate: true })
+
+// Helper function to get argument field overrides
+const getArgumentFieldOverrides = () => {
+    const baseOverrides = {
+        name: {
+            label: t('arguments.name.label'),
+            placeholder: t('arguments.name.placeholder'),
+            description: t('arguments.name.description')
+        },
+        description: {
+            maxChars: 2000,
+            label: t('arguments.paramDescription.label'),
+            placeholder: t('arguments.paramDescription.placeholder'),
+            description: t('arguments.paramDescription.description')
+        },
+        constantValue: {
+            label: t('arguments.constantValue.label'),
+            placeholder: t('arguments.constantValue.placeholder'),
+            description: t('arguments.constantValue.description')
+        },
+        defaultValue: {
+            label: t('arguments.defaultValue.label'),
+            placeholder: t('arguments.defaultValue.placeholder'),
+            description: t('arguments.defaultValue.description')
+        }
+    }
+
+    const extendedOverrides = {
+        location: {
+            type: 'select',
+            label: t('arguments.location.label'),
+            selectOptions: [
+                { label: t('arguments.location.payload'), value: ArgumentLocation.PAYLOAD },
+                { label: t('arguments.location.header'), value: ArgumentLocation.HEADER },
+                { label: t('arguments.location.urlParam'), value: ArgumentLocation.URL_PARAM },
+                { label: t('arguments.location.queryParam'), value: ArgumentLocation.QUERY_PARAM }
+            ],
+            description: t('arguments.location.description')
+        },
+        dataType: {
+            type: 'select',
+            label: t('arguments.dataType.label'),
+            selectOptions: [
+                { label: t('arguments.dataType.string'), value: ArgumentDataType.STRING },
+                { label: t('arguments.dataType.number'), value: ArgumentDataType.NUMBER },
+                { label: t('arguments.dataType.boolean'), value: ArgumentDataType.BOOLEAN },
+                { label: t('arguments.dataType.object'), value: ArgumentDataType.OBJECT },
+                { label: t('arguments.dataType.array'), value: ArgumentDataType.ARRAY }
+            ],
+            description: t('arguments.dataType.description')
+        },
+        required: {
+            type: 'checkbox',
+            label: t('arguments.required.label'),
+            description: t('arguments.required.description')
+        }
+    }
+
+    const valueTypeOverride = {
+        type: 'select',
+        label: t('arguments.valueType.label'),
+        description: t('arguments.valueType.description')
+    }
+
+    if (formData.publicToolId) {
+        return {
+            ...baseOverrides,
+            name: {
+                ...baseOverrides.name,
+                props: { disabled: true }
+            },
+            valueType: {
+                ...valueTypeOverride,
+                selectOptions: [
+                    { label: t('arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
+                    { label: t('arguments.valueType.constant'), value: ArgumentValueType.CONSTANT }
+                ],
+                conditionsFieldsIfValue: [
+                    { field: 'constantValue' as keyof CustomToolArgument, values: [ArgumentValueType.CONSTANT] },
+                    { field: 'defaultValue' as keyof CustomToolArgument, values: [ArgumentValueType.SET_BY_AI] },
+                    { field: 'description' as keyof CustomToolArgument, values: [ArgumentValueType.SET_BY_AI] },
+                ]
+            }
+        }
+    }
+
+    return {
+        ...baseOverrides,
+        ...extendedOverrides,
+        valueType: {
+            ...valueTypeOverride,
+            selectOptions: [
+                { label: t('arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
+                { label: t('arguments.valueType.userId'), value: ArgumentValueType.USER_ID },
+                { label: t('arguments.valueType.sharedSecret'), value: ArgumentValueType.SHARED_SECRET },
+                { label: t('arguments.valueType.constant'), value: ArgumentValueType.CONSTANT }
+            ],
+            conditionsFieldsIfValue: [
+                { field: 'constantValue' as keyof CustomToolArgument, values: [ArgumentValueType.CONSTANT] },
+                { field: 'defaultValue' as keyof CustomToolArgument, values: [ArgumentValueType.SET_BY_AI] },
+                { field: 'required' as keyof CustomToolArgument, values: [ArgumentValueType.SET_BY_AI] },
+                { field: 'description' as keyof CustomToolArgument, values: [ArgumentValueType.SET_BY_AI] },
+            ]
+        }
+    }
+}
 
 // Field overrides - computed based on extends
 const fieldOverrides = computed((): OverrideRecord<CustomTool, CustomToolArgument> => ({
@@ -139,96 +245,22 @@ const fieldOverrides = computed((): OverrideRecord<CustomTool, CustomToolArgumen
         fixedArray: !!formData.publicToolId,
         nestedClass: CustomToolArgument,
         nestedIncludeFields: formData.publicToolId ? [
-                'valueType',
-                'constantValue',
-                'defaultValue',
-                'name',
-                'description',
-            ] : [
-                'name',
-                'description',
-                'location',
-                'valueType',
-                'dataType',
-                'constantValue',
-                'required',
-                'defaultValue',
-            ],
-        nestedFieldOverrides: {
-            name: {
-                props: {
-                    disabled: !!formData.publicToolId
-                },
-                label: t('arguments.name.label'),
-                placeholder: t('arguments.name.placeholder'),
-                description: t('arguments.name.description')
-            },
-            description: {
-                maxChars: 2000,
-                label: t('arguments.paramDescription.label'),
-                placeholder: t('arguments.paramDescription.placeholder'),
-                description: t('arguments.paramDescription.description')
-            },
-            location: {
-                type: 'select',
-                label: t('arguments.location.label'),
-                selectOptions: [
-                    { label: t('arguments.location.payload'), value: ArgumentLocation.PAYLOAD },
-                    { label: t('arguments.location.header'), value: ArgumentLocation.HEADER },
-                    { label: t('arguments.location.urlParam'), value: ArgumentLocation.URL_PARAM },
-                    { label: t('arguments.location.queryParam'), value: ArgumentLocation.QUERY_PARAM }
-                ],
-                description: t('arguments.location.description')
-            },
-            valueType: {
-                type: 'select',
-                label: t('arguments.valueType.label'),
-                selectOptions: formData.publicToolId ? [
-                    { label: t('arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
-                    { label: t('arguments.valueType.constant'), value: ArgumentValueType.CONSTANT }
-                ] : [
-                    { label: t('arguments.valueType.setByAi'), value: ArgumentValueType.SET_BY_AI },
-                    { label: t('arguments.valueType.userId'), value: ArgumentValueType.USER_ID },
-                    { label: t('arguments.valueType.sharedSecret'), value: ArgumentValueType.SHARED_SECRET },
-                    { label: t('arguments.valueType.constant'), value: ArgumentValueType.CONSTANT }
-                ],
-                conditionsFieldsIfValue: [
-                    { field: 'constantValue', values: [ArgumentValueType.CONSTANT] },
-                    { field: 'defaultValue', values: [ArgumentValueType.SET_BY_AI] },
-                    { field: 'required', values: [ArgumentValueType.SET_BY_AI] },
-                    { field: 'description', values: [ArgumentValueType.SET_BY_AI] },
-                ],
-                description: t('arguments.valueType.description')
-            },
-            dataType: {
-                type: 'select',
-                label: t('arguments.dataType.label'),
-                selectOptions: [
-                    { label: t('arguments.dataType.string'), value: ArgumentDataType.STRING },
-                    { label: t('arguments.dataType.number'), value: ArgumentDataType.NUMBER },
-                    { label: t('arguments.dataType.boolean'), value: ArgumentDataType.BOOLEAN },
-                    { label: t('arguments.dataType.object'), value: ArgumentDataType.OBJECT },
-                    { label: t('arguments.dataType.array'), value: ArgumentDataType.ARRAY }
-                ],
-                description: t('arguments.dataType.description')
-            },
-            constantValue: {
-                label: t('arguments.constantValue.label'),
-                placeholder: t('arguments.constantValue.placeholder'),
-                description: t('arguments.constantValue.description'),
-                // Show only when valueType is CONSTANT
-            },
-            required: {
-                type: 'checkbox',
-                label: t('arguments.required.label'),
-                description: t('arguments.required.description')
-            },
-            defaultValue: {
-                label: t('arguments.defaultValue.label'),
-                placeholder: t('arguments.defaultValue.placeholder'),
-                description: t('arguments.defaultValue.description')
-            }
-        },
+            'valueType',
+            'constantValue',
+            'defaultValue',
+            'name',
+            'description',
+        ] : [
+            'name',
+            'description',
+            'location',
+            'valueType',
+            'dataType',
+            'constantValue',
+            'required',
+            'defaultValue',
+        ],
+        nestedFieldOverrides: getArgumentFieldOverrides(),
         label: t('arguments.label'),
         description: t('arguments.description')
     },

@@ -1,8 +1,31 @@
 import { IsString, IsOptional, ArrayMinSize, IsArray, IsBoolean, IsEnum, MinLength, ValidateNested } from "class-validator";
 import { ClientPriority } from "../../../client/client.entity";
 import { Product } from "../../../product/product.entity";
-import { CustomTool, CustomToolArgument } from "../../custom-tool.entity";
+import { ArgumentValueType, CustomTool } from "../../custom-tool.entity";
 
+
+export class PublicToolArgument {
+    @IsString()
+    @MinLength(3)
+    name: string;
+
+
+    @IsEnum(ArgumentValueType)
+    valueType: ArgumentValueType;
+
+    @IsString()
+    @IsOptional()
+    constantValue?: string; // Only used when valueType is CONSTANT
+
+    @IsString()
+    @IsOptional()
+    defaultValue?: string;
+    
+    @IsString()
+    @IsOptional()
+    description?: string;
+
+}
 
 export class ExtendPublicToolDto {
 
@@ -17,7 +40,7 @@ export class ExtendPublicToolDto {
     @IsArray()
     @ValidateNested({ each: true })
     @IsOptional()
-    arguments?: CustomToolArgument[] = [];
+    arguments?: PublicToolArgument[] = [];
 
     @IsArray()
     @IsEnum(ClientPriority, { each: true })

@@ -129,6 +129,8 @@ export class CustomTool {
     @IsString()
     product: Product | string;
 
+    @IsString()
+    @IsOptional()
     publicToolId?: string;
     
     @IsBoolean()

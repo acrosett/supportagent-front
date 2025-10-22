@@ -55,6 +55,9 @@
       "enabled": "Enabled",
       "disabled": "Disabled"
     },
+    "publicTool": {
+      "label": "Public Tool"
+    },
     "arguments": {
       "label": "Arguments",
       "count": "{count} parameter(s)"

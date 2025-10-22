@@ -160,8 +160,10 @@
           <div class="tool-details">
             <p v-if="tool.description" class="tool-description">{{ tool.description }}</p>
             <div class="tool-meta">
-              <span class="tool-method">{{ tool.method }}</span>
-              <span class="tool-url">{{ tool.url }}</span>
+              <span v-if="tool.publicToolId" class="tool-public-label">{{ t('tools.publicTool.label') }}</span>
+              <span v-if="tool.publicToolId" class="tool-public-id">{{ tool.publicToolId }}</span>
+              <span v-if="!tool.publicToolId" class="tool-method">{{ tool.method }}</span>
+              <span v-if="tool.url" class="tool-url">{{ tool.url }}</span>
               <span class="tool-enabled" :class="{ disabled: !tool.enabled }">
                 {{ tool.enabled ? t('tools.status.enabled') : t('tools.status.disabled') }}
               </span>
@@ -424,7 +426,8 @@ async function handleToolSave(tool: CustomTool) {
       if(selectedTool.value?.publicToolId){
         savedTool = await nuxtApp.$sp.customTool.extend_public_tool({
           ...tool,
-          product: nuxtApp.$userProductId
+          product: nuxtApp.$userProductId,
+          publicToolId: selectedTool.value.publicToolId
         })
       }else{
         savedTool = await nuxtApp.$sp.customTool.create({
@@ -565,7 +568,13 @@ async function handleUsePublicTool(publicTool: any) {
   // Filter arguments to only include those that are SET_BY_AI
   const filteredArguments = (publicTool.arguments || []).filter((arg: any) => 
     arg.valueType != ArgumentValueType.SET_BY_AI
-  )
+  ).map((arg: CustomToolArgument) => ({
+    name: arg.name,
+    description: arg.description,
+    valueType: arg.valueType,
+    constantValue: arg.constantValue,
+    defaultValue: arg.defaultValue
+  })) as CustomToolArgument[]
   
   // Create a new custom tool based on the public tool
   selectedTool.value = {
@@ -721,6 +730,20 @@ async function copyToClipboard(text: string) {
     background: rgba($brand, 0.1);
     color: $brand;
     text-transform: uppercase;
+  }
+
+  .tool-public-label {
+    background: rgba($brand-2, 0.1);
+    color: $brand-2;
+    font-weight: 600;
+  }
+
+  .tool-public-id {
+    background: rgba($text-muted, 0.05);
+    color: $text-muted;
+    font-family: monospace;
+    font-size: 0.8em;
+    border: 1px solid rgba($text-muted, 0.2);
   }
 
   .tool-url {
