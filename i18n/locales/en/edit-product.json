@@ -18,8 +18,9 @@
       },
       "description": {
         "label": "Product Description",
-        "description": "1. What your product is and does. 2. A few marketing arguments to sell the product + your pricing model. 3. A general overview on how to use your product."
-      },
+        "description": "1. What your product is and does. 2. A few marketing arguments to sell the product + your pricing model. 3. A general overview on how to use your product.",
+        "placeholder": "To work correctly, the AI agent needs the following information about your product:\n\n## 1. What your product is and does.\n   *Example: Our app helps small businesses manage invoices quickly and securely.*\n\n## 2. A few marketing arguments to sell the product + your pricing model.\n   *Example: Save time, reduce errors, and scale your business — all for just $19/month.*\n\n## 3. A general overview on how to use your product.\n   *Example:\n   - Go to the **Sign Up** page and create your account.\n   - Verify your email through the confirmation link.\n   - Log in and head to the **Dashboard**.\n   - Navigate to the **Settings** page to connect your bank account.\n- Go to the **Invoices** page to create your first invoice.\n   - Use the **Reports** page to track payments and business performance.*\n \n "
+            },
       "webhookUrl": {
         "label": "Webhook URL",
         "placeholder": "https://yoursite.com/api/validate-token",

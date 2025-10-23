@@ -86,6 +86,8 @@ foreach ($key in $envVars.Keys) {
     "$key=$($envVars[$key])" | Out-File -FilePath "build.env" -Append -Encoding utf8
 }
 
+Write-Host "Created build.env with $(($envVars.Keys).Count) environment variables"
+
 # 4) Docker login and build
 Write-Host "Logging into Docker registry..."
 docker login $REGISTRY
@@ -95,20 +97,9 @@ if ($LASTEXITCODE -ne 0) {
 
 $TAG = "$REGISTRY/${IMAGE_NAME}:${NEW_VER}"
 
-# Build args: create array of build arguments
-$BUILD_ARGS = @()
-if (Test-Path "build.env") {
-    Get-Content "build.env" | ForEach-Object {
-        if ($_ -match "^([A-Za-z_][A-Za-z0-9_]*)=(.*)$") {
-            $BUILD_ARGS += "--build-arg"
-            $BUILD_ARGS += "$($matches[1])=$($matches[2])"
-        }
-    }
-}
-
 Write-Host "Building $TAG"
 $env:DOCKER_BUILDKIT = "1"
-& docker build @BUILD_ARGS -t $TAG .
+docker build -t $TAG .
 if ($LASTEXITCODE -ne 0) {
     throw "Docker build failed"
 }

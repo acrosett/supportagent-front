@@ -4,14 +4,18 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-ARG NUXT_PUBLIC_API_BASE_URL
-ARG NUXT_PUBLIC_SOCKET_BASE_URL
-ARG APP_VERSION
-ENV NUXT_PUBLIC_API_BASE_URL=$NUXT_PUBLIC_API_BASE_URL
-ENV NUXT_PUBLIC_SOCKET_BASE_URL=$NUXT_PUBLIC_SOCKET_BASE_URL
-ENV APP_VERSION=$APP_VERSION
+
+# Copy the build.env file created by the build script
+COPY build.env ./
+
+# Source all environment variables from build.env
+RUN set -a && . ./build.env && set +a && env
+
+# Set NODE_ENV for production build
 ENV NODE_ENV=production
-RUN npm run generate  # or: npx nuxi generate
+
+# Run the build with all environment variables loaded
+RUN set -a && . ./build.env && npm run generate
 
 
 FROM alpine:3.20

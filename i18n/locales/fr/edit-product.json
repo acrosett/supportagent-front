@@ -18,7 +18,8 @@
       },
       "description": {
         "label": "Description du produit",
-        "description": "1. Ce qu'est votre produit et ce qu'il fait. 2. Quelques arguments marketing pour vendre le produit + votre modèle de prix. 3. Une vue d'ensemble de l'utilisation de votre produit."
+        "description": "1. Ce qu'est votre produit et ce qu'il fait. 2. Quelques arguments marketing pour vendre le produit + votre modèle de prix. 3. Une vue d'ensemble de l'utilisation de votre produit.",
+        "placeholder": "Pour fonctionner correctement, l'agent AI a besoin des informations suivantes sur votre produit :\n\n## 1. Ce qu'est votre produit et ce qu'il fait.\n   *Exemple : Notre application aide les petites entreprises à gérer leurs factures rapidement et en toute sécurité.\n\n## 2. Quelques arguments marketing pour vendre le produit + votre modèle de tarification.\n   *Exemple : Gagnez du temps, réduisez les erreurs et faites évoluer votre entreprise - le tout pour seulement 19 $/mois.*\n\n## 3. Un aperçu général de l'utilisation de votre produit.\n   *Exemple :\n   - Allez sur la page **Sign Up** et créez votre compte.\n   - Vérifiez votre adresse électronique en cliquant sur le lien de confirmation.\n   - Connectez-vous et accédez au **Tableau de bord**.\n   - Naviguez jusqu'à la page **Réglages** pour connecter votre compte bancaire.\n- Allez sur la page **Factures** pour créer votre première facture.\n   - Utilisez la page **Rapports** pour suivre les paiements et les performances de votre entreprise.\n \n "
       },
       "webhookUrl": {
         "label": "URL du Webhook",

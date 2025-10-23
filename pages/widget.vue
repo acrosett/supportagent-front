@@ -116,9 +116,10 @@ const buildAttributes = () => {
 }
 
 const snippet = computed(() => {
+  const { $config } = useNuxtApp()
   // Use a placeholder to avoid prematurely closing the surrounding script context
   const closingTag = '<' + '/script>'
-  return `<script src='${window.location.origin}/embed.js'\n        ${buildAttributes()}\n>${closingTag}`
+  return `<script src='${$config.public.cdnBaseUrl}/embed.js'\n        ${buildAttributes()}\n>${closingTag}`
 })
 
 const copied = ref(false)
@@ -141,9 +142,10 @@ const cleanupPreview = () => {
 
 const buildPreview = () => {
   cleanupPreview()
+  const nuxtApp = useNuxtApp()
   const s = document.createElement('script')
   s.id = 'widget-preview-script'
-  s.src = `${window.location.origin}/embed.js`
+  s.src = `${nuxtApp.$config.public.cdnBaseUrl}/embed.js`
   const f = formData.value
   s.setAttribute('data-api-token', apiToken.value)
   s.setAttribute('data-position', f.position)

@@ -119,6 +119,7 @@ const fieldOverrides: OverrideRecord<Product> = {
     label: t('form.fields.description.label'),
     type: 'richtext',
     description: t('form.fields.description.description'),
+    placeholder: t('form.fields.description.placeholder'),
   },
   webhookUrl: {
     label: t('form.fields.webhookUrl.label'),

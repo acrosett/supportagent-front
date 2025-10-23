@@ -72,6 +72,8 @@ export default defineNuxtConfig({
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3200',
       socketBaseUrl: process.env.NUXT_PUBLIC_SOCKET_BASE_URL || 'ws://localhost:3200',
+      frontBaseUrl: process.env.NUXT_PUBLIC_FRONT_BASE_URL || 'http://localhost:3000',
+      cdnBaseUrl: process.env.NUXT_PUBLIC_CDN_BASE_URL || 'http://localhost:3000',
       appVersion: process.env.APP_VERSION || 'dev'
     }
   },

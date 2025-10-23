@@ -1,0 +1,24 @@
+{
+  "search": {
+    "placeholder": "Recherche d'outils publics..."
+  },
+  "status": {
+    "loading": "Chargement des outils publics..."
+  },
+  "empty": {
+    "title": "Aucun outil public n'a été trouvé",
+    "description": "Aucun outil public ne correspond à vos critères de recherche. Essayez d'ajuster vos termes de recherche."
+  },
+  "tool": {
+    "perCall": "par appel API"
+  },
+  "actions": {
+    "useTool": "Utiliser l'outil"
+  },
+  "tools": {
+    "meteoForecast": {
+      "title": "Prévisions météorologiques",
+      "description": "Obtenez des prévisions météorologiques détaillées avec des données horaires ou quotidiennes jusqu'à 16 jours à l'avance. Inclut la température, les précipitations, le vent et d'autres informations météorologiques."
+    }
+  }
+}

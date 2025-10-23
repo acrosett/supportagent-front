@@ -28,15 +28,16 @@
 
     <!-- Sidebar navigation -->
     <nav class="sidebar" :class="{ 'sidebar-open': isMobileMenuOpen }">
-      <div class="sidebar-header">
-        <a href="https://directsupport.ai" target="_blank" class="app-title-link">
-          <h2 class="app-title">
-            <i class="fas fa-robot"></i>
-            DirectSupport.ai
-          </h2>
-        </a>
-      </div>
-      <ul class="nav-list">
+      <div class="sidebar-scroll">
+        <div class="sidebar-header">
+          <a href="https://directsupport.ai" target="_blank" class="app-title-link">
+            <h2 class="app-title">
+              <i class="fas fa-robot"></i>
+              DirectSupport.ai
+            </h2>
+          </a>
+        </div>
+        <ul class="nav-list">
         <li>
           <NuxtLink to="/" @click="closeMobileMenu">
             <AppIcon name="home" size="md" class="nav-icon" />
@@ -186,6 +187,7 @@
           </a>
         </li>
       </ul>
+      </div>
     </nav>
     
     <!-- Test Client Selector Popup -->
@@ -494,14 +496,28 @@ onMounted(async () => {
 .sidebar {
   position: fixed;
   top: 0;
-  left: 0;
+  left: -280px;
   width: 280px;
-  height: 100vh;
+  height: 100dvh;
   background: linear-gradient(135deg, $panel 0%, color.adjust($panel, $lightness: -3%) 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
   z-index: 1000;
-  overflow-y: auto;
+  overflow: hidden;
   box-shadow: $shadow;
+  transition: left 0.25s ease;
+}
+
+/* Fallback for browsers without 100dvh support */
+@supports not (height: 100dvh) {
+  .sidebar { 
+    height: 100vh; 
+  }
+}
+
+.sidebar-scroll {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
 }
@@ -758,12 +774,8 @@ onMounted(async () => {
     display: flex;
   }
   
-  .sidebar {
-    transform: translateX(-100%);
-  }
-  
   .sidebar-open {
-    transform: translateX(0);
+    left: 0;
   }
   
   .mobile-overlay {
@@ -794,11 +806,7 @@ onMounted(async () => {
   }
   
   .sidebar {
-    position: relative;
-    transform: none;
-    width: 280px;
-    height: 100vh;
-    position: fixed;
+    left: 0;
   }
 }
 </style>

@@ -15,8 +15,9 @@ import AppMenu from '~/components/AppMenu.vue'
 import Toast from '~/components/Toast.vue'
 import ConfirmPopup from '~/components/ConfirmPopup.vue'
 
-// Get current route
+// Get current route and runtime config
 const route = useRoute()
+const { $config } = useNuxtApp()
 
 // Add scripts to the head (except on /widget page)
 useHead({
@@ -33,12 +34,11 @@ useHead({
       // },
       // AI Support widget
       {
-        src: 'http://localhost:3000/embed.js',
+        src: `${$config.public.cdnBaseUrl}/embed.js`,
         'data-api-token': '68ce983b17ff8a182e27c4c7',
         'data-width': '400px',
         'data-height': '600px',
         'data-position': 'bottom-right',
-        'data-domain': 'http://localhost:3000',
         'data-welcome-message': '👋 Welcome! How can I help you today?',
         'data-icon': 'message',
         'data-start-open': 'false',

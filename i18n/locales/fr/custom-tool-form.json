@@ -96,6 +96,11 @@
     "label": "Accès des invités",
     "description": "Autoriser l'utilisation de l'outil par des utilisateurs non connectés"
   },
+  "resultValidity": {
+    "label": "Validité du résultat (minutes)",
+    "placeholder": "60",
+    "description": "Durée pendant laquelle le résultat de l'outil doit être considéré comme valide et toujours disponible pour l'IA."
+  },
   "actions": {
     "cancel": "Annuler",
     "save": "Outil de sauvegarde",

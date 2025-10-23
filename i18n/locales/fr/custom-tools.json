@@ -45,6 +45,7 @@
   "tools": {
     "title": "Outils personnalisés",
     "description": "Créez et gérez des outils personnalisés que les agents (SMART) en contact avec les clients peuvent utiliser pour s'intégrer à vos systèmes.",
+    "publicToolsButton": "Outils publics",
     "addButton": "Créer un outil personnalisé",
     "empty": {
       "title": "Pas d'outils personnalisés",
@@ -53,6 +54,9 @@
     "status": {
       "enabled": "Activé",
       "disabled": "Désactivé"
+    },
+    "publicTool": {
+      "label": "Outil public"
     },
     "arguments": {
       "label": "Arguments",
@@ -67,11 +71,17 @@
     "createTool": {
       "title": "Outil personnalisé (notre chatbot peut les créer pour vous)"
     },
+    "extendTool": {
+      "title": "Étendre l'outil {nom public}"
+    },
     "addDomain": {
       "title": "Ajouter un domaine",
       "addButton": "Ajouter un domaine",
       "cancelButton": "Annuler",
       "description": "Entrez le nom de domaine que vous souhaitez vérifier et utiliser pour les outils personnalisés."
+    },
+    "publicTools": {
+      "title": "Parcourir les outils publics"
     }
   },
   "form": {
