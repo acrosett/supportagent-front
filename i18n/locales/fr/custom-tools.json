@@ -72,7 +72,7 @@
       "title": "Outil personnalisé (notre chatbot peut les créer pour vous)"
     },
     "extendTool": {
-      "title": "Étendre l'outil {nom public}"
+      "title": "Étendre l'outil {publicName}"
     },
     "addDomain": {
       "title": "Ajouter un domaine",

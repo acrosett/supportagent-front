@@ -3,6 +3,7 @@
 import { resolve } from 'path';
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
+import { sourceMapsEnabled } from 'process';
 
 export default defineNuxtConfig({
   ssr: false, // SPA
@@ -65,6 +66,11 @@ export default defineNuxtConfig({
   build: {
     transpile: ['tslib', 'eicrud_exports']
   },
+  sourcemap: {
+    server: true,
+    client: true
+  },
+
   runtimeConfig: {
     // Private keys (only available on server-side)
     
@@ -125,6 +131,7 @@ export default defineNuxtConfig({
     },
     esbuild: {
       target: 'esnext',
+      legalComments: 'eof',     // keep license comments (optional)
       tsconfigRaw: {
         compilerOptions: {
           experimentalDecorators: true,
@@ -134,6 +141,7 @@ export default defineNuxtConfig({
     },
     build: {
       target: 'esnext',
+      sourcemap: true,
       rollupOptions: {
         output: {
           manualChunks: {
@@ -148,7 +156,9 @@ export default defineNuxtConfig({
     plugins: [
       wasm(),
       topLevelAwait()
-    ]
+    ],
   },
-
+  nitro: {
+      sourceMap: true
+  },
 })

@@ -215,7 +215,7 @@ function validateForm() {
     if (key in formData) {
       let value = formData[key]
       
-      // Apply mapValue transformation if defined BEFORE validation
+      // Apply mapValue transformation if defined
       value = applyMapValueTransformation(key, value)
       
       instance[key] = value
@@ -272,6 +272,16 @@ function validateForm() {
 }
 
 function handleAction(idx: number, action: MegaFormAction) {
+  // Clean form data by mapping empty strings to null BEFORE validation
+  const visibleFields = fields.value.filter(f => f.show).map(f => f.key)
+  visibleFields.forEach(key => {
+    if (key in formData) {
+      const value = formData[key]
+      if (value === '' || (typeof value === 'string' && value.trim() === '')) {
+        formData[key] = null
+      }
+    }
+  })
 
   if (!action.skipValidation) {
     const isValid = validateForm()
@@ -286,7 +296,6 @@ function handleAction(idx: number, action: MegaFormAction) {
   }
   loading.value[idx] = true
   // Only send visible fields in callback
-  const visibleFields = fields.value.filter(f => f.show).map(f => f.key)
   const sendData: Record<string, any> = {}
   visibleFields.forEach(key => { 
     let value = formData[key]
@@ -347,7 +356,7 @@ function getLabelStyle(field: any) {
 
 // Function to parse markdown links in labels
 function parseMarkdownLinks(text: string): string {
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const linkRegex = /\[([^\]]+)\] ?\(([^)]+)\)/g;
   return text.replace(linkRegex, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 }
 
@@ -414,6 +423,7 @@ function validateNestedForms(): boolean {
 }
 
 watch(formData, () => {
+  // Clean the data by mapping empty strings to null before emitting
   emit('update:modelValue', { ...formData })
 })
 

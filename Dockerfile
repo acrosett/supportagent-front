@@ -14,8 +14,10 @@ RUN set -a && . ./build.env && set +a && env
 # Set NODE_ENV for production build
 ENV NODE_ENV=production
 
-# Run the build with all environment variables loaded
-RUN set -a && . ./build.env && npm run generate
+# Clear any existing cache and run the build
+RUN rm -rf node_modules/.vite && \
+    rm -rf .nuxt && \
+    set -a && . ./build.env && npm run generate
 
 
 FROM alpine:3.20

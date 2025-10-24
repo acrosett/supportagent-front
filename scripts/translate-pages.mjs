@@ -33,6 +33,8 @@ async function translateBatchWithDeepL(textItems, targetLang) {
   
   formData.append('source_lang', 'EN');
   formData.append('target_lang', targetLang.toUpperCase());
+  formData.append('tag_handling', 'xml');
+  formData.append('ignore_tags', 'placeholder');
   
   try {
     const response = await fetch(url, {
@@ -61,6 +63,16 @@ function generateContextHint(keyPath) {
   return `UI text for: ${keyPath}`;
 }
 
+function protectPlaceholders(text) {
+  // Wrap i18n placeholders in XML tags to protect them from translation
+  return text.replace(/\{([^}]+)\}/g, '<placeholder>$1</placeholder>');
+}
+
+function restorePlaceholders(text) {
+  // Restore protected placeholders back to original format
+  return text.replace(/<placeholder>([^<]+)<\/placeholder>/g, '{$1}');
+}
+
 function extractTextsFromJson(obj, textItems, keyToTextMap, existingTranslations, prefix = '') {
   Object.entries(obj).forEach(([key, value]) => {
     const fullKey = prefix ? `${prefix}.${key}` : key;
@@ -71,7 +83,8 @@ function extractTextsFromJson(obj, textItems, keyToTextMap, existingTranslations
       if (!existingValue) {
         const context = generateContextHint(fullKey);
         textItems.push({
-          text: value,
+          text: protectPlaceholders(value), // Protect placeholders before translation
+          originalText: value, // Keep original for reference
           context: context,
           keyPath: fullKey
         });
@@ -182,7 +195,8 @@ async function translatePageFile(pageFile, locale) {
     // Create translation map
     const translationMap = {};
     textItemsToTranslate.forEach((item, index) => {
-      translationMap[item.text] = allTranslations[index];
+      // Restore placeholders in translated text and map to original text
+      translationMap[item.originalText] = restorePlaceholders(allTranslations[index]);
     });
     
     // Apply translations to create target structure, preserving existing translations

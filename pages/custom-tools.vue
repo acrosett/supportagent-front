@@ -189,7 +189,7 @@
     <AppPopup
       v-if="showCreateTool"
       :show="showCreateTool"
-      :title="selectedTool?.publicToolId ? t('popups.extendTool.title',selectedTool) : t('popups.createTool.title')"
+      :title="selectedTool?.publicToolId ? t('popups.extendTool.title', { publicName: selectedTool.publicName || 'Unknown' }) : t('popups.createTool.title')"
       @close="closeToolForm"
     >
       <CustomToolForm
