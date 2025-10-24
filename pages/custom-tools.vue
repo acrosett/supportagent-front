@@ -15,9 +15,16 @@
         {{ t('aiInstructions.description') }}
       </p>
       
+      <!-- Loading State -->
+      <div v-if="aiInstructionsLoading" class="loading-state">
+        <p>{{ t('aiInstructions.loading') }}</p>
+      </div>
+      
+      <!-- Form -->
       <MegaForm
+        v-else
         :formClass="Product"
-        v-model="aiInstructions"
+        :modelValue="aiInstructions"
         :fieldOverrides="aiInstructionsOverrides"
         :includeFields="['additionalInstructions']"
         :actions="[{
@@ -208,7 +215,7 @@
     >
       <MegaForm
         :formClass="Domain"
-        v-model="newDomain"
+        :modelValue="newDomain"
         :includeFields="['domain']"
         :fieldOverrides="domainOverrides"
         :actions="[
@@ -256,9 +263,10 @@ import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 const { t } = await useLocalNamespaceAsync('custom-tools')
 
 // AI Instructions
-let aiInstructions = reactive({
+const aiInstructions = ref({
   additionalInstructions: ''
 })
+const aiInstructionsLoading = ref(true)
 
 const aiInstructionsOverrides = {
   additionalInstructions: {
@@ -280,7 +288,7 @@ const publicToolsListRef = ref()
 // Domain management
 const verifiedDomains = ref<Domain[]>([])
 const showAddDomain = ref(false)
-let newDomain = reactive({
+const newDomain = ref({
   domain: ''
 })
 
@@ -311,13 +319,19 @@ async function loadAiInstructions() {
     })
     
     if (result) {
-      aiInstructions.additionalInstructions = result.additionalInstructions || ''
+      aiInstructions.value = {
+        additionalInstructions: result.additionalInstructions || ''
+      }
     }
   } catch (error) {
     console.error('Error loading AI instructions:', error)
     useNuxtApp().$toast.show(error, 'error')
+  } finally {
+    aiInstructionsLoading.value = false
   }
 }
+
+
 
 async function saveAiInstructions(data: any) {
   try {
@@ -549,7 +563,7 @@ async function handleDomainSave(domainData: any) {
     
     verifiedDomains.value.push(domain)
     showAddDomain.value = false
-    newDomain.domain = ''
+    newDomain.value.domain = ''
     useNuxtApp().$toast.show('Domain created successfully! Please verify it to enable custom tool integrations.', 'success')
   } catch (error: any) {
     console.error('Failed to create domain:', error)
@@ -561,7 +575,7 @@ async function handleDomainSave(domainData: any) {
 
 async function closeDomainForm() {
   showAddDomain.value = false
-  newDomain.domain = ''
+  newDomain.value.domain = ''
 }
 
 async function handleUsePublicTool(publicTool: any) {

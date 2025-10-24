@@ -818,7 +818,7 @@ const loadTransactions = async (reset = false) => {
     const options: CrudOptions = {
       orderBy: { createdAt: 'DESC' as const },
       limit: itemsPerPage,
-      offset: currentOffset.value
+      offset: currentOffset.value || 0,
     }
     
     let newTransactions: Transaction[] = []
@@ -880,7 +880,7 @@ const loadTransactions = async (reset = false) => {
         $sp.spend.find(baseQuery, { 
           ...options, 
           limit: batchSize, 
-          offset: spendOffset
+          offset: spendOffset || 0
         })
       ])
       

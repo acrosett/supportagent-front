@@ -8,7 +8,11 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "build:cdn": "node ./scripts/build-cdn.mjs"
+    "build:cdn": "node ./scripts/build-cdn.mjs",
+    "clean": "npm run clean:cache && npm run clean:deps && npm run clean:build",
+    "clean:cache": "npm cache clean --force",
+    "clean:deps": "rimraf node_modules package-lock.json",
+    "clean:build": "rimraf .nuxt .nitro .output dist"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.22",
@@ -33,6 +37,7 @@
   },
   "devDependencies": {
     "google-closure-compiler": "^20250903.0.0",
+    "rimraf": "^6.0.1",
     "vite-plugin-top-level-await": "^1.6.0",
     "vite-plugin-wasm": "^3.5.0"
   }

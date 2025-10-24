@@ -16,7 +16,12 @@ export default defineNuxtRouteMiddleware((to) => {
   // If we have a non-default locale and the path doesn't start with it, redirect
   if (currentLocale !== defaultLocale && !to.path.startsWith(`/${currentLocale}`)) {
     const localizedPath = `/${currentLocale}${to.path === '/' ? '' : to.path}`
-    console.log(`[i18n middleware] Redirecting from ${to.path} to ${localizedPath} (locale: ${currentLocale})`)
-    return navigateTo(localizedPath)
+    
+    // Preserve query parameters and hash
+    const queryAndHash = to.fullPath.substring(to.path.length)
+    const finalPath = localizedPath + queryAndHash
+    
+    console.log(`[i18n middleware] Redirecting from ${to.fullPath} to ${finalPath} (locale: ${currentLocale})`)
+    return navigateTo(finalPath)
   }
 })

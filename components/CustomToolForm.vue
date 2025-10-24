@@ -160,6 +160,10 @@ const getArgumentFieldOverrides = () => {
                 ...baseOverrides.name,
                 props: { disabled: true }
             },
+            description: {
+                ...baseOverrides.description,
+                props: { disabled: true }
+            },
             valueType: {
                 ...valueTypeOverride,
                 selectOptions: [
@@ -169,7 +173,6 @@ const getArgumentFieldOverrides = () => {
                 conditionsFieldsIfValue: [
                     { field: 'constantValue' as keyof CustomToolArgument, values: [ArgumentValueType.CONSTANT] },
                     { field: 'defaultValue' as keyof CustomToolArgument, values: [ArgumentValueType.SET_BY_AI] },
-                    { field: 'description' as keyof CustomToolArgument, values: [ArgumentValueType.SET_BY_AI] },
                 ]
             }
         }

@@ -77,13 +77,13 @@ const errorMessage = ref('')
 // Computed subtitle text
 const subtitleKey = computed(() => {
   if (isVerifying.value) {
-    return 'verifyEmail.page.subtitleProcessing'
+    return 'page.subtitleProcessing'
   } else if (verificationResult.value === 'success') {
-    return 'verifyEmail.page.subtitleSuccess'
+    return 'page.subtitleSuccess'
   } else if (verificationResult.value === 'error') {
-    return 'verifyEmail.page.subtitleError'
+    return 'page.subtitleError'
   } else {
-    return 'verifyEmail.page.subtitleDefault'
+    return 'page.subtitleDefault'
   }
 })
 
