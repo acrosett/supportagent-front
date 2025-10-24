@@ -770,6 +770,14 @@ const createWidget = (config) => {
 
             // Initialize guest ID when widget is ready (but don't store yet)
             getGuestId();
+
+            // Start sending parent page URL every 150ms for real-time SPA navigation tracking
+            setInterval(() => {
+              sendMessage({
+                type: 'parent-page-url',
+                data: { url: window.location.hostname + window.location.pathname }
+              });
+            }, 150);
        
             break;
           case 'user-message':
@@ -785,6 +793,7 @@ const createWidget = (config) => {
               isNew: guestInfo.isNew
             });
             break;
+
           case 'widget-resize':
             if (data.height) {
               container.style.height = data.height + 'px';

@@ -50,6 +50,7 @@
           :is-last-message="isLastMessage(index)"
           :streaming-message-id="streamingMessageId"
           :is-inverted-mode="isInvertedMode"
+          :dark-mode="widgetConfig.darkMode"
           @send-message="sendMessage"
           @show-tool-trace-details="showToolTraceDetails"
         />
@@ -204,6 +205,7 @@ const isInvertedMode = ref(false)
 const aiEnabled = ref(true)
 const isNewGuest = ref(false) // Track if this is a new guest
 const hasScrolledOnVisibility = ref(false) // Track if we've already scrolled when widget became visible
+const parentPageUrl = ref('') // Store parent page URL when in iframe
 
 // Simulated typing indicator for first message
 const simulatedTypingTimeout = ref<number | null>(null)
@@ -529,7 +531,7 @@ const sendMessage = async (msg?: string) => {
       content: messageContent,
       apiKey: widgetConfig.value.apiToken || '',
       inverted: isInvertedMode.value,
-      customerCurrentPageUrl: window.location.hostname + window.location.pathname
+      customerCurrentPageUrl: parentPageUrl.value || window.location.hostname + window.location.pathname
     }
 
     // If this is a new guest's first message, get reCAPTCHA token
@@ -1304,6 +1306,13 @@ onMounted(() => {
             // Initialize chat with the received token
             const nuxtApp = useNuxtApp()
             initializeChat(nuxtApp)
+          }
+          break
+        case 'parent-page-url':
+          // Handle parent page URL from embed.js
+          console.log('Parent page URL received:', data?.url)
+          if (data?.url) {
+            parentPageUrl.value = data.url
           }
           break
         case 'set-config':

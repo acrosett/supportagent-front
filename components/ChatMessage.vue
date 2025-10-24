@@ -1,5 +1,5 @@
 <template>
-  <div class="message-wrapper">
+  <div class="message-wrapper" :class="{ 'dark-mode': darkMode }">
     <!-- Regular chat message -->
     <div v-if="message.type !== 'tool-trace'" :class="['message', getMessageClass(message.type), { 'message-streaming': isStreaming(message.id) }]" :data-message-id="message.id">
       <div class="message-header">
@@ -66,12 +66,14 @@ interface Props {
   isLastMessage?: boolean
   streamingMessageId?: string | null
   isInvertedMode?: boolean
+  darkMode?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isLastMessage: false,
   streamingMessageId: null,
-  isInvertedMode: false
+  isInvertedMode: false,
+  darkMode: false
 })
 
 const emit = defineEmits<{
@@ -185,12 +187,12 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
   border-bottom-left-radius: 6px; 
 }
 
-:global(.dark-mode) .message-model { 
+.dark-mode .message-model { 
   background: #26262b; 
   color: #e6e8ef; 
 }
 
-:global(.dark-mode) .message-fan { 
+.dark-mode .message-fan { 
   background: var(--primary-color, #667eea); 
 }
 
@@ -271,7 +273,7 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
   background: rgba(255,255,255,.34); 
 }
 
-:global(.dark-mode) .message-content :deep(pre) { 
+.dark-mode .message-content :deep(pre) { 
   scrollbar-color: rgba(255,255,255,.25) transparent; 
 }
 
@@ -308,16 +310,16 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
   border-color: var(--primary-color,#667eea); 
 }
 
-:global(.dark-mode) .message-content :deep(pre) { 
+.dark-mode .message-content :deep(pre) { 
   background: #111114; 
 }
 
-:global(.dark-mode) .message-content :deep(pre .code-copy-btn) { 
+.dark-mode .message-content :deep(pre .code-copy-btn) { 
   background: #24242a; 
   border-color: #2f2f37; 
 }
 
-:global(.dark-mode) .message-content :deep(pre .code-copy-btn:hover) { 
+.dark-mode .message-content :deep(pre .code-copy-btn:hover) { 
   background: #2f2f37; 
 }
 
@@ -339,7 +341,7 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
   border-top-color: rgba(0, 0, 0, 0.1);
 }
 
-:global(.dark-mode) .message-model .follow-up-questions {
+.dark-mode .message-model .follow-up-questions {
   border-top-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -380,13 +382,13 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
   border-color: rgba(0, 0, 0, 0.15);
 }
 
-:global(.dark-mode) .message-model .follow-up-button {
+.dark-mode .message-model .follow-up-button {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.12);
   color: #e6e8ef;
 }
 
-:global(.dark-mode) .message-model .follow-up-button:hover {
+.dark-mode .message-model .follow-up-button:hover {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.2);
 }
@@ -401,7 +403,7 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
   align-self: flex-end;
 }
 
-:global(.dark-mode) .tool-trace-message {
+.dark-mode .tool-trace-message {
   background: #2a2a31;
   border-color: #3a3a42;
 }
@@ -429,7 +431,7 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
   color: #495057;
 }
 
-:global(.dark-mode) .tool-trace-name {
+.dark-mode .tool-trace-name {
   color: #e9ecef;
 }
 
@@ -459,19 +461,19 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
   border: 1px solid #d6d8db;
 }
 
-:global(.dark-mode) .status-success {
+.dark-mode .status-success {
   background: #155724;
   color: #d4edda;
   border-color: #0f4419;
 }
 
-:global(.dark-mode) .status-error {
+.dark-mode .status-error {
   background: #721c24;
   color: #f8d7da;
   border-color: #5a161c;
 }
 
-:global(.dark-mode) .status-unknown {
+.dark-mode .status-unknown {
   background: #495057;
   color: #e9ecef;
   border-color: #3a3a42;
