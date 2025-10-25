@@ -287,24 +287,26 @@ const deleteClient = async (client: Client) => {
 const deleteAllClients = async () => {
   if (testClients.value.length === 0) return
   
-  const confirmed = await useNuxtApp().$confirmPopup.show(t('messages.confirm.deleteAll', { count: testClients.value.length }))
+  const confirmed = await useNuxtApp().$confirmPopup.show(t('messages.confirm.deleteAllClients', { count: testClients.value.length }))
   if (!confirmed) {
     return
   }
   
   try {
-    const { $sp } = useNuxtApp()
-    
-    // Delete all test clients
+    const nuxtApp = useNuxtApp()
+
+    // Delete all test clients using delete_test_client event and include product for authorization
     await Promise.all(
-      testClients.value.map(client => $sp.client.delete({ id: client.id }))
+      testClients.value.map(client =>
+        nuxtApp.$sp.message.delete_test_client({ id: client.id, product: nuxtApp.$userProductId })
+      )
     )
-    
+
     testClients.value = []
-    useNuxtApp().$toast.show(t('messages.success.allDeleted'), 'success')
+    nuxtApp.$toast.show(t('messages.success.allDeleted'), 'success')
   } catch (error) {
     console.error('Failed to delete all test clients:', error)
-    useNuxtApp().$toast.show(t('messages.error.deleteAllFailed'), 'error')
+    useNuxtApp().$toast.show(error, 'error')
     // Reload to get current state
     await loadTestClients()
   }
@@ -350,7 +352,7 @@ const createNewClient = async (data: any) => {
       email: data.isGuest ? undefined : (data.email?.trim() || undefined),
       isTest: true,
       isGuest: data.isGuest,
-      priority: ClientPriority.REGULAR,
+      priority: data.priority || ClientPriority.LOWEST,
       conversationResolved: false,
       conversationArchived: false,
       aiOn: true,
