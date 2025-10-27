@@ -1,0 +1,141 @@
+{
+  "page": {
+    "title": "Herramientas personalizadas"
+  },
+  "aiInstructions": {
+    "title": "Instrucciones adicionales para AI",
+    "description": "Proporcione contexto e instrucciones adicionales que los agentes de cara al cliente deben seguir al atender a sus clientes.",
+    "saveButton": "Guardar instrucciones",
+    "form": {
+      "label": "Instrucciones adicionales",
+      "placeholder": "Introduzca instrucciones adicionales para el agente de IA...",
+      "description": "Estas instrucciones se proporcionarán a la IA cuando responda a las consultas de los clientes"
+    }
+  },
+  "domains": {
+    "title": "Dominios verificados",
+    "description": "Verifique los dominios para permitir integraciones de herramientas personalizadas con sus sistemas.",
+    "addButton": "Añadir dominio",
+    "empty": {
+      "title": "No hay dominios verificados",
+      "description": "Añadir un dominio para permitir integraciones de herramientas personalizadas"
+    },
+    "verification": {
+      "instructions": "Para verificar este dominio, elija una de las siguientes opciones",
+      "option1Title": "Opción 1: Registro DNS TXT",
+      "option1Description": "Añadir un registro TXT al DNS de su dominio",
+      "option2Title": "Opción 2: Webhook",
+      "option2Description": "Crear un archivo/webhook accesible en",
+      "option2Returns": "resultado debe ser"
+    },
+    "status": {
+      "verified": "Verificado",
+      "unverified": "No verificado"
+    },
+    "actions": {
+      "verify": "Verifique",
+      "delete": "Borrar"
+    },
+    "form": {
+      "label": "Nombre de dominio",
+      "placeholder": "ejemplo.com",
+      "description": "Introduzca el nombre de dominio que desea verificar (sin http:// o https://)"
+    }
+  },
+  "tools": {
+    "title": "Herramientas personalizadas",
+    "description": "Cree y gestione herramientas personalizadas que los agentes (SMART) orientados al cliente puedan utilizar para integrarse con sus sistemas.",
+    "publicToolsButton": "Herramientas públicas",
+    "addButton": "Crear herramienta personalizada",
+    "empty": {
+      "title": "Sin herramientas personalizadas",
+      "description": "Crea tu primera herramienta personalizada para empezar a integrarte con sistemas externos."
+    },
+    "status": {
+      "enabled": "Habilitado",
+      "disabled": "Desactivado"
+    },
+    "publicTool": {
+      "label": "Herramienta pública"
+    },
+    "arguments": {
+      "label": "Argumentos",
+      "count": "{count} parámetro(s)"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Borrar"
+    }
+  },
+  "popups": {
+    "createTool": {
+      "title": "Herramienta personalizada (nuestro chatbot puede crearlas por usted)"
+    },
+    "extendTool": {
+      "title": "Ampliar la herramienta {publicName} "
+    },
+    "addDomain": {
+      "title": "Añadir dominio",
+      "addButton": "Añadir dominio",
+      "cancelButton": "Cancelar",
+      "description": "Introduzca el nombre de dominio que desea verificar y utilizar para las herramientas personalizadas."
+    },
+    "publicTools": {
+      "title": "Examinar herramientas públicas"
+    }
+  },
+  "form": {
+    "clientPriorities": {
+      "label": "Prioridades de los clientes",
+      "low": "Prioridad baja",
+      "medium": "Prioridad media",
+      "high": "Alta prioridad"
+    },
+    "name": {
+      "label": "Nombre de la herramienta",
+      "placeholder": "mi_herramienta_personalizada",
+      "description": "Nombre único para esta herramienta (minúsculas, sin espacios)"
+    },
+    "description": {
+      "label": "Descripción",
+      "placeholder": "Describa lo que hace esta herramienta...",
+      "description": "Descripción detallada de la finalidad y funcionalidad de la herramienta"
+    },
+    "url": {
+      "label": "URL",
+      "placeholder": "https://api.example.com/endpoint",
+      "description": "La URL completa donde la herramienta hará las peticiones"
+    },
+    "method": {
+      "label": "Método HTTP",
+      "description": "Método HTTP a utilizar para las peticiones"
+    },
+    "arguments": {
+      "label": "Argumento"
+    },
+    "contentType": {
+      "label": "Tipo de contenido",
+      "placeholder": "application/json",
+      "description": "Tipo MIME para el cuerpo de la solicitud"
+    },
+    "timeout": {
+      "label": "Tiempo de espera (ms)",
+      "placeholder": "5000",
+      "description": "Tiempo de espera en milisegundos"
+    },
+    "enabled": {
+      "label": "Habilitado",
+      "description": "Si esta herramienta está disponible para su uso"
+    },
+    "guestAccess": {
+      "label": "Acceso de invitados",
+      "description": "Permitir que la herramienta sea utilizada por usuarios no registrados"
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "save": "Herramienta Guardar",
+      "update": "Herramienta de actualización",
+      "create": "Crear herramienta"
+    }
+  }
+}

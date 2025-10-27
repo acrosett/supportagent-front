@@ -1,0 +1,34 @@
+{
+  "loading": "Cargando registros...",
+  "noLogs": {
+    "title": "No se han encontrado registros",
+    "subtitle": "No hay datos de entrenamiento LLM disponibles para este contexto"
+  },
+  "header": {
+    "title": "Historial de procesamiento ({count} entradas)",
+    "subtitle": "Datos de entrenamiento LLM y registros de procesamiento para este contexto"
+  },
+  "entry": {
+    "unknownAgent": "Agente desconocido",
+    "testBadge": "PRUEBA",
+    "errorBadge": "{count} ERROR{plural}",
+    "sections": {
+      "input": "Entrada",
+      "output": "Salida"
+    },
+    "noInput": "Ninguna entrada disponible",
+    "noOutput": "No hay salida disponible",
+    "copyButton": "Copiar"
+  },
+  "timestamps": {
+    "minutesAgo": "{minutes}m hace",
+    "hoursAgo": "{hours}h hace",
+    "daysAgo": "{days}d hace",
+    "unknown": "Desconocido",
+    "invalid": "Fecha no válida"
+  },
+  "messages": {
+    "copySuccess": "Entrada LLM copiada en el portapapeles",
+    "copyError": "Error al copiar al portapapeles"
+  }
+}

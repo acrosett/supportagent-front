@@ -1,0 +1,110 @@
+{
+  "clientPriorities": {
+    "label": "Prioridades del cliente",
+    "description": "Seleccione qué niveles de prioridad de cliente pueden utilizar esta herramienta",
+    "lowest": "Prioridad más baja",
+    "regular": "Prioridad normal",
+    "high": "Alta prioridad"
+  },
+  "name": {
+    "label": "Nombre de la herramienta",
+    "placeholder": "mi_herramienta_personalizada",
+    "description": "Nombre único para esta herramienta (minúsculas, sin espacios)"
+  },
+  "description": {
+    "label": "Descripción",
+    "placeholder": "Describe lo que hace esta herramienta...",
+    "description": "Descripción detallada de la finalidad y funcionalidad de la herramienta."
+  },
+  "url": {
+    "label": "URL",
+    "placeholder": "https://api.example.com/endpoint",
+    "description": "La URL completa donde la herramienta realizará las peticiones"
+  },
+  "method": {
+    "label": "Método HTTP",
+    "description": "Método HTTP a utilizar para las peticiones"
+  },
+  "arguments": {
+    "label": "Argumento",
+    "description": "Configure los parámetros que se enviarán con las solicitudes a su herramienta",
+    "name": {
+      "label": "Nombre del parámetro",
+      "placeholder": "nombre_parámetro",
+      "description": "Nombre del parámetro (minúsculas, guión bajo separado)"
+    },
+    "paramDescription": {
+      "label": "Descripción del parámetro",
+      "placeholder": "Describir este parámetro...",
+      "description": "Descripción de para qué se utiliza este parámetro"
+    },
+    "location": {
+      "label": "Ubicación",
+      "payload": "Cuerpo de la solicitud/Carga",
+      "header": "Encabezado HTTP",
+      "urlParam": "Parámetro URL",
+      "queryParam": "Parámetro de consulta",
+      "description": "Dónde debe colocarse este parámetro en la petición HTTP"
+    },
+    "valueType": {
+      "label": "Tipo de valor",
+      "setByAi": "Establecido por la IA",
+      "userId": "ID de usuario",
+      "sharedSecret": "Secreto compartido",
+      "constant": "Valor constante",
+      "description": "Cómo se determina el valor de este parámetro"
+    },
+    "dataType": {
+      "label": "Tipo de datos",
+      "string": "Cadena",
+      "number": "Número",
+      "boolean": "Booleano",
+      "object": "Objeto",
+      "array": "Matriz",
+      "description": "El tipo de datos de este parámetro"
+    },
+    "constantValue": {
+      "label": "Valor constante",
+      "placeholder": "Introduzca el valor constante...",
+      "description": "El valor fijo a utilizar para este parámetro"
+    },
+    "required": {
+      "label": "Requerido",
+      "description": "Si este parámetro es necesario para que la IA proporcione"
+    },
+    "defaultValue": {
+      "label": "Valor por defecto",
+      "placeholder": "Introducir valor por defecto...",
+      "description": "Valor por defecto a utilizar si la IA no proporciona uno."
+    }
+  },
+  "contentType": {
+    "label": "Tipo de contenido",
+    "placeholder": "application/json",
+    "description": "Tipo MIME para el cuerpo de la solicitud"
+  },
+  "timeout": {
+    "label": "Tiempo de espera (ms)",
+    "placeholder": "5000",
+    "description": "Tiempo de espera de la solicitud en milisegundos"
+  },
+  "enabled": {
+    "label": "Activado",
+    "description": "Si esta herramienta está disponible para su uso"
+  },
+  "guestAccess": {
+    "label": "Acceso de invitados",
+    "description": "Permitir que la herramienta sea utilizada por usuarios no registrados"
+  },
+  "resultValidity": {
+    "label": "Validez del resultado (minutos)",
+    "placeholder": "60",
+    "description": "Tiempo durante el cual el resultado de la herramienta debe considerarse válido y seguir estando disponible para la IA."
+  },
+  "actions": {
+    "cancel": "Cancelar",
+    "save": "Herramienta Guardar",
+    "update": "Herramienta de actualización",
+    "create": "Crear herramienta"
+  }
+}

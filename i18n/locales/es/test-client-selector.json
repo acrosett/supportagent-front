@@ -1,0 +1,53 @@
+{
+  "header": {
+    "subtitle": "Elija un cliente para iniciar una sesión de chat de prueba, los clientes de prueba tienen acceso a las herramientas personalizadas deshabilitadas."
+  },
+  "status": {
+    "loading": "Cargando clientes de prueba...",
+    "empty": "No se han encontrado clientes de prueba"
+  },
+  "client": {
+    "unnamedClient": "Cliente sin nombre",
+    "id": "ID",
+    "created": "Creado"
+  },
+  "actions": {
+    "deleteClient": "Borrar cliente",
+    "deleteAllClients": "Borrar todos los clientes",
+    "createNewClient": "Crear nuevo cliente de prueba",
+    "cancel": "Cancelar"
+  },
+  "modals": {
+    "createClient": {
+      "title": "Crear cliente de prueba",
+      "description": "Crear un nuevo cliente de prueba con fines de depuración.",
+      "create": "Crear cliente",
+      "cancel": "Cancelar"
+    },
+    "authToken": {
+      "title": "Token de autenticación",
+      "description": "Utilice este token para autenticarse como cliente de prueba:",
+      "copy": "Copiar token",
+      "startChat": "Iniciar sesión de chat",
+      "cancel": "Cancelar"
+    }
+  },
+  "messages": {
+    "success": {
+      "clientDeleted": "Cliente de prueba eliminado",
+      "allClientsDeleted": "Todos los clientes de prueba eliminados",
+      "allDeleted": "Todos los clientes de prueba eliminados",
+      "clientCreated": "Cliente de prueba creado"
+    },
+    "error": {
+      "loadFailed": "Error al cargar clientes de prueba",
+      "deleteFailed": "Error al borrar cliente de prueba",
+      "deleteAllFailed": "Error al borrar todos los clientes de prueba",
+      "createFailed": "Error al crear cliente de prueba"
+    },
+    "confirm": {
+      "deleteClient": "¿Está seguro de que desea eliminar este cliente de prueba?",
+      "deleteAllClients": "¿Está seguro de que desea eliminar todos los clientes de prueba?"
+    }
+  }
+}

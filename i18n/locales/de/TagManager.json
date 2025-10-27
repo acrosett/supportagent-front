@@ -1,0 +1,45 @@
+{
+  "titles": {
+    "manageTags": "Tags verwalten",
+    "createNewTag": "Neues Tag erstellen",
+    "deleteTag": "Tag löschen"
+  },
+  "sections": {
+    "availableTags": "Verfügbare Tags"
+  },
+  "messages": {
+    "noTags": "Keine Tags verfügbar",
+    "deleteConfirmation": "Sind Sie sicher, dass Sie den Tag \"{{tagName}}\" löschen wollen?",
+    "deleteWarning": "Dadurch wird das Tag aus allen Ausgaben entfernt, die es verwenden.",
+    "tagAdded": "Tag zur Ausgabe hinzugefügt",
+    "tagRemoved": "Tag aus Ausgabe entfernt",
+    "tagCreated": "Tag erfolgreich erstellt",
+    "tagDeleted": "Tag erfolgreich gelöscht",
+    "failedToAddTag": "Tag kann nicht hinzugefügt werden",
+    "failedToRemoveTag": "Tag konnte nicht entfernt werden",
+    "failedToCreateTag": "Tag kann nicht erstellt werden",
+    "failedToDeleteTag": "Tag konnte nicht gelöscht werden",
+    "failedToLoadTags": "Tags konnten nicht geladen werden"
+  },
+  "buttons": {
+    "addToIssue": "Zur Ausgabe hinzufügen",
+    "removeFromIssue": "Aus Ausgabe entfernen",
+    "createNewTag": "Neues Tag erstellen",
+    "createTag": "Tag erstellen",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
+  "form": {
+    "fields": {
+      "tagColor": {
+        "label": "Tag-Farbe",
+        "description": "Wählen Sie eine Farbe für diesen Tag"
+      },
+      "tagName": {
+        "label": "Tag-Name",
+        "placeholder": "Tag-Namen eingeben...",
+        "description": "Ein eindeutiger Name für diesen Tag"
+      }
+    }
+  }
+}

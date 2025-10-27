@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "Preferencias de notificación - Agente de soporte"
+  },
+  "navigation": {
+    "back": "Volver a Notificaciones"
+  },
+  "page": {
+    "title": "Preferencias de notificación",
+    "description": "Configura cómo y cuándo quieres recibir notificaciones de tus productos."
+  },
+  "states": {
+    "loading": "Cargando preferencias de notificación..."
+  },
+  "form": {
+    "fields": {
+      "promotionalEmails": {
+        "label": "Correos electrónicos promocionales",
+        "description": "Recibir correos electrónicos promocionales y actualizaciones"
+      },
+      "exceededQuota": {
+        "label": "Alertas de cuota superada",
+        "description": "Recibe notificaciones cuando se superen las cuotas de uso"
+      },
+      "lowBalance": {
+        "label": "Alertas de saldo bajo",
+        "description": "Recibir una notificación cuando el saldo de la cuenta es bajo"
+      },
+      "newIssues": {
+        "label": "Alertas de nuevos números",
+        "description": "Recibir notificaciones sobre nuevas incidencias o problemas"
+      },
+      "whatsappNotifications": "Notificaciones de WhatsApp",
+      "emailNotifications": "Notificaciones por correo electrónico"
+    },
+    "common": {
+      "yes": "Sí",
+      "no": "No",
+      "on": "En",
+      "off": "Fuera de"
+    },
+    "actions": {
+      "save": "Guardar preferencias de notificación",
+      "cancel": "Cancelar"
+    }
+  },
+  "messages": {
+    "savedSuccess": "¡Preferencias de notificación guardadas correctamente!"
+  },
+  "errors": {
+    "noProductId": "ID de producto no encontrado",
+    "saveFailed": "Error al guardar las preferencias de notificación",
+    "loadFailed": "Error al cargar las preferencias de notificación"
+  }
+}

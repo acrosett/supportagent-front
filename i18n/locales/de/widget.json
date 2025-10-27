@@ -1,0 +1,63 @@
+{
+  "page": {
+    "title": "Widget-Konfiguration",
+    "description": "Passen Sie Aussehen und Verhalten Ihres Support-Widgets an, und kopieren Sie dann das eingebettete Snippet."
+  },
+  "status": {
+    "loading": "Laden der Widget-Konfiguration..."
+  },
+  "embed": {
+    "title": "Schnipsel einbetten",
+    "copyButton": "Schnipsel kopieren",
+    "copiedMessage": "Kopiert!"
+  },
+  "fields": {
+    "primaryColor": "Primärfarbe",
+    "secondaryColor": "Sekundärfarbe",
+    "bounceAfterInit": "Absprung nach Init (Sekunden)",
+    "periodicBounce": "Periodischer Bounce (Sekunden)",
+    "position": {
+      "label": "Position",
+      "bottomRight": "Unten rechts",
+      "bottomLeft": "Unten links"
+    },
+    "icon": {
+      "label": "Icon",
+      "message": "Nachricht",
+      "headset": "Headset",
+      "robot": "Roboter"
+    },
+    "options": {
+      "label": "Optionen",
+      "enabledLabel": "AKTIVIERT",
+      "disabledLabel": "ABGESCHALTET",
+      "off": "AUS",
+      "on": "ON",
+      "yes": "JA",
+      "no": "NEIN"
+    },
+    "welcomeMessage": {
+      "label": "Willkommensnachricht",
+      "placeholder": "👋 Willkommen!"
+    },
+    "faqs": {
+      "label": "FAQ-Liste anzeigen",
+      "description": "FAQ-Liste anstelle des Widget-Formulars anzeigen",
+      "placeholder": "FAQs zur Anzeige auswählen"
+    },
+    "showAiDisclaimer": {
+      "label": "AI-Haftungsausschluss anzeigen",
+      "description": "Anzeige eines Haftungsausschlusses, dass Antworten von AI generiert werden"
+    }
+  },
+  "actions": {
+    "save": "Speichern"
+  },
+  "messages": {
+    "success": {
+      "saved": "Widget-Konfiguration erfolgreich gespeichert",
+      "copied": "In die Zwischenablage kopiertes Snippet einbetten",
+      "updated": "Widget erfolgreich aktualisiert"
+    }
+  }
+}

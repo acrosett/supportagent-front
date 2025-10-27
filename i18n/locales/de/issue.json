@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "title": "Problemdetails - Support Agent"
+  },
+  "navigation": {
+    "back": "Zurück zu Ausgaben"
+  },
+  "page": {
+    "title": "Ausgabe Details"
+  },
+  "states": {
+    "loading": "Laden der Ausgabedetails...",
+    "notFound": {
+      "title": "Ausgabe nicht gefunden",
+      "message": "Die gewünschte Ausgabe konnte nicht gefunden werden."
+    }
+  },
+  "issue": {
+    "id": "ID",
+    "meta": {
+      "created": "Erstellt"
+    },
+    "status": {
+      "open": "Öffnen Sie",
+      "resolved": "Gelöst"
+    },
+    "actions": {
+      "markResolved": "Markieren Aufgelöst",
+      "reopen": "Ausgabe wieder öffnen",
+      "archive": "Archiv",
+      "unarchive": "Unarchivieren"
+    }
+  },
+  "tags": {
+    "title": "Tags",
+    "manage": "Tags verwalten",
+    "noTags": "Keine Tags zugewiesen",
+    "removeTitle": "Tag entfernen"
+  },
+  "description": {
+    "title": "Beschreibung"
+  },
+  "comments": {
+    "title": "Kommentare",
+    "add": {
+      "placeholder": "Client Facing AI wird diesen Kommentar sehen.",
+      "button": "Kommentar hinzufügen"
+    },
+    "noComments": "Noch keine Kommentare.",
+    "loadMore": "Mehr Kommentare laden",
+    "from": {
+      "staff": "Personal",
+      "agent": "AI-Agent",
+      "unknown": "Unbekannt"
+    },
+    "deleteConfirm": "Sind Sie sicher, dass Sie diesen Kommentar löschen möchten?"
+  },
+  "archive": {
+    "dialog": {
+      "title": "Archiv Ausgabe",
+      "message": "Sind Sie sicher, dass Sie diese Ausgabe archivieren wollen?",
+      "cancel": "Abbrechen",
+      "confirm": "Archiv"
+    }
+  },
+  "messages": {
+    "noIssueId": "Keine Problem-ID angegeben",
+    "tagRemoved": "Tag erfolgreich entfernt",
+    "tagRemoveError": "Tag konnte nicht entfernt werden",
+    "loadError": "Details zur Ausgabe konnten nicht geladen werden",
+    "loadCommentsError": "Kommentare konnten nicht geladen werden",
+    "commentAdded": "Kommentar erfolgreich hinzugefügt",
+    "commentAddError": "Kommentar kann nicht hinzugefügt werden",
+    "commentDeleted": "Kommentar erfolgreich gelöscht",
+    "commentDeleteError": "Kommentar konnte nicht gelöscht werden",
+    "issueResolved": "Problem erfolgreich behoben",
+    "issueReopened": "Problem erfolgreich wiedereröffnet",
+    "statusUpdateError": "Aktualisierung des Problemstatus fehlgeschlagen",
+    "archived": "Ausgabe erfolgreich archiviert",
+    "archiveError": "Fehler beim Archivieren der Ausgabe",
+    "unarchived": "Ausgabe erfolgreich entarchiviert",
+    "unarchiveError": "Fehler beim Dearchivieren der Ausgabe"
+  }
+}

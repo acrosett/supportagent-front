@@ -1,0 +1,110 @@
+{
+  "clientPriorities": {
+    "label": "Client-Prioritäten",
+    "description": "Wählen Sie aus, welche Client-Prioritätsstufen dieses Tool verwenden können",
+    "lowest": "Niedrigste Priorität",
+    "regular": "Reguläre Priorität",
+    "high": "Hohe Priorität"
+  },
+  "name": {
+    "label": "Werkzeug-Name",
+    "placeholder": "my_custom_tool",
+    "description": "Eindeutiger Name für dieses Tool (Kleinbuchstaben, keine Leerzeichen)"
+  },
+  "description": {
+    "label": "Beschreibung",
+    "placeholder": "Beschreiben Sie, was dieses Werkzeug tut...",
+    "description": "Detaillierte Beschreibung des Zwecks und der Funktionalität des Tools"
+  },
+  "url": {
+    "label": "URL",
+    "placeholder": "https://api.example.com/endpoint",
+    "description": "Die vollständige URL, an die das Tool Anfragen richten wird"
+  },
+  "method": {
+    "label": "HTTP-Methode",
+    "description": "Zu verwendende HTTP-Methode für Anfragen"
+  },
+  "arguments": {
+    "label": "Argument",
+    "description": "Konfigurieren Sie Parameter, die mit Anfragen an Ihr Tool gesendet werden",
+    "name": {
+      "label": "Parameter Name",
+      "placeholder": "parameter_name",
+      "description": "Name des Parameters (Kleinbuchstaben, Unterstrich getrennt)"
+    },
+    "paramDescription": {
+      "label": "Parameter Beschreibung",
+      "placeholder": "Beschreiben Sie diesen Parameter...",
+      "description": "Beschreibung, wofür dieser Parameter verwendet wird"
+    },
+    "location": {
+      "label": "Standort",
+      "payload": "Anfrage Body/Payload",
+      "header": "HTTP-Kopfzeile",
+      "urlParam": "URL-Parameter",
+      "queryParam": "Abfrage-Parameter",
+      "description": "Wo dieser Parameter in der HTTP-Anfrage platziert werden soll"
+    },
+    "valueType": {
+      "label": "Wert Typ",
+      "setByAi": "Von AI eingestellt",
+      "userId": "Benutzer-ID",
+      "sharedSecret": "Gemeinsames Geheimnis",
+      "constant": "Konstanter Wert",
+      "description": "Wie der Wert für diesen Parameter bestimmt wird"
+    },
+    "dataType": {
+      "label": "Datentyp",
+      "string": "Zeichenfolge",
+      "number": "Nummer",
+      "boolean": "Boolescher Wert",
+      "object": "Objekt",
+      "array": "Array",
+      "description": "Der Datentyp dieses Parameters"
+    },
+    "constantValue": {
+      "label": "Konstanter Wert",
+      "placeholder": "Geben Sie den konstanten Wert ein...",
+      "description": "Der für diesen Parameter zu verwendende feste Wert"
+    },
+    "required": {
+      "label": "Erforderlich",
+      "description": "Ob dieser Parameter für die KI erforderlich ist, um die"
+    },
+    "defaultValue": {
+      "label": "Standardwert",
+      "placeholder": "Standardwert eingeben...",
+      "description": "Standardwert, der zu verwenden ist, wenn die KI keinen Wert vorgibt"
+    }
+  },
+  "contentType": {
+    "label": "Inhalt Typ",
+    "placeholder": "anwendung/json",
+    "description": "MIME-Typ für den Körper der Anfrage"
+  },
+  "timeout": {
+    "label": "Zeitüberschreitung (ms)",
+    "placeholder": "5000",
+    "description": "Anfrage-Timeout in Millisekunden"
+  },
+  "enabled": {
+    "label": "Aktiviert",
+    "description": "Ob dieses Werkzeug zur Verwendung verfügbar ist"
+  },
+  "guestAccess": {
+    "label": "Gastzugang",
+    "description": "Zulassen, dass das Tool von nicht angemeldeten Benutzern verwendet werden kann"
+  },
+  "resultValidity": {
+    "label": "Gültigkeit des Ergebnisses (Minuten)",
+    "placeholder": "60",
+    "description": "Wie lange das Ergebnis des Werkzeugs als gültig und für die KI noch verfügbar gelten soll"
+  },
+  "actions": {
+    "cancel": "Abbrechen",
+    "save": "Werkzeug speichern",
+    "update": "Werkzeug aktualisieren",
+    "create": "Werkzeug erstellen"
+  }
+}

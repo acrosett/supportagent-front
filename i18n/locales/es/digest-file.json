@@ -1,0 +1,35 @@
+{
+  "tabs": {
+    "upload": "Cargar archivo",
+    "paste": "Pegar texto"
+  },
+  "upload": {
+    "title": "Cargar documento",
+    "instruction": "Suelte su archivo aquí o haga clic para examinar",
+    "supportedFiles": "Soporta: HTML, PDF, Word (.doc, .docx), XML, Texto (.txt), Markdown (.md), JSON, CSV"
+  },
+  "processing": {
+    "message": "Procesando {fileName}..."
+  },
+  "success": {
+    "message": "Procesado con éxito",
+    "uploadAnother": "Cargar otro archivo"
+  },
+  "paste": {
+    "label": "Pegue su contenido de texto",
+    "placeholder": "Pegue o escriba aquí su contenido...",
+    "processButton": "Texto del proceso",
+    "defaultFileName": "Texto pegado"
+  },
+  "confirm": {
+    "uploadTitle": "Confirmar carga",
+    "processTitle": "Confirmar proceso",
+    "uploadMessage": "Está a punto de cargar {fileName} ({sizeKB} KB).",
+    "processMessage": "Está a punto de procesar {fileName} ({sizeKB} KB de texto).",
+    "defaultFileName": "su archivo",
+    "calculatingCost": "Calcular el coste estimado...",
+    "estimatedCost": "Coste estimado de procesamiento: ${cost}",
+    "cancel": "Cancelar",
+    "process": "Proceso con AI"
+  }
+}

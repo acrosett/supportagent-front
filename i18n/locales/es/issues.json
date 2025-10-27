@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "title": "Problemas - Agente de soporte"
+  },
+  "page": {
+    "title": "Temas",
+    "sections": {
+      "filters": "Filtros y búsqueda",
+      "issues": "Lista de temas"
+    }
+  },
+  "filters": {
+    "showArchived": {
+      "label": "Ver archivado"
+    },
+    "search": {
+      "placeholder": "Buscar temas..."
+    },
+    "reset": "Restablecer filtros",
+    "status": {
+      "title": "Estado",
+      "options": {
+        "both": "Ambos",
+        "open": "Abrir",
+        "resolved": "Resuelto"
+      }
+    },
+    "tags": {
+      "title": "Etiquetas",
+      "noTags": "No hay etiquetas disponibles"
+    }
+  },
+  "states": {
+    "loading": "Problemas de carga...",
+    "loadingMore": "Cargando más temas...",
+    "empty": {
+      "title": "No se han encontrado problemas",
+      "description": "Los temas aparecerán aquí cuando se creen"
+    },
+    "endOfResults": "No más problemas de carga"
+  },
+  "issue": {
+    "id": "ID",
+    "status": {
+      "open": "Abrir",
+      "resolved": "Resuelto"
+    },
+    "meta": {
+      "created": "Creado",
+      "lastComment": "Último comentario",
+      "noComments": "Aún no hay comentarios"
+    },
+    "actions": {
+      "details": "Detalles",
+      "markResolved": "Marca Resuelto",
+      "reopen": "Vuelva a abrir",
+      "archive": "Archivo",
+      "unarchive": "Desarchivar"
+    }
+  },
+  "archive": {
+    "dialog": {
+      "title": "Edición de archivo",
+      "message": "¿Seguro que quieres archivar este tema?",
+      "cancel": "Cancelar",
+      "confirm": "Archivo"
+    },
+    "messages": {
+      "success": "Edición archivada correctamente",
+      "error": "Fallo al archivar",
+      "unarchiveSuccess": "Edición desarchivada correctamente",
+      "unarchiveError": "Error al desarchivar"
+    }
+  },
+  "status": {
+    "messages": {
+      "resolvedSuccess": "Problema resuelto con éxito",
+      "reopenedSuccess": "Asunto reabierto con éxito",
+      "error": "Error al actualizar el estado de la incidencia"
+    }
+  },
+  "errors": {
+    "loadIssues": "Problemas de carga",
+    "loadTags": "Error al cargar las etiquetas disponibles"
+  }
+}

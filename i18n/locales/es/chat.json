@@ -1,0 +1,72 @@
+{
+  "chatInterface": {
+    "status": {
+      "settingUp": "Configurando el chat..."
+    },
+    "header": {
+      "title": "Agente de soporte",
+      "subtitle": "Soporte de Chat IA"
+    },
+    "ai": {
+      "disableLabel": "Desactivar IA",
+      "disclaimer": "Las respuestas son generadas por IA y pueden ser inexactas.",
+      "messages": {
+        "enabled": "IA activada",
+        "disabled": "IA desactivada"
+      }
+    },
+    "messages": {
+      "loadingOlder": "Cargando mensajes antiguos..."
+    },
+    "input": {
+      "placeholder": "Escriba su mensaje...",
+      "disabledPlaceholder": "Desactivar IA para chatear con el cliente"
+    },
+    "toolTrace": {
+      "title": "Detalles de la herramienta",
+      "sections": {
+        "toolInfo": "Información de la herramienta",
+        "input": "Entrada",
+        "output": "Salida",
+        "error": "Error"
+      },
+      "fields": {
+        "toolName": "Nombre de la herramienta",
+        "status": "Estado",
+        "executedAt": "Ejecutado en"
+      },
+      "status": {
+        "unknownTool": "Herramienta desconocida",
+        "error": "Error",
+        "success": "Éxito",
+        "unknown": "Desconocido"
+      }
+    }
+  },
+  "chatMessage": {
+    "sender": {
+      "client": "Cliente",
+      "agent": "Agente de soporte"
+    },
+    "badges": {
+      "human": "Personal"
+    },
+    "aiType": {
+      "fast": "Rápido",
+      "smart": "Inteligente",
+      "pro": "Pro"
+    },
+    "followUp": {
+      "label": "Preguntas sugeridas:"
+    },
+    "toolTrace": {
+      "detailsButton": "Detalles",
+      "unknownTool": "Herramienta desconocida",
+      "status": {
+        "error": "Error",
+        "success": "Éxito",
+        "unknown": "Desconocido"
+      }
+    }
+  }
+}

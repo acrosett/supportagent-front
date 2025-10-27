@@ -110,6 +110,13 @@ if ($LASTEXITCODE -ne 0) {
     throw "Docker push failed"
 }
 
+# Clean up local image to save disk space
+Write-Host "Removing local image $TAG to save disk space..."
+docker rmi $TAG
+if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Failed to remove local image $TAG (this is non-critical)"
+}
+
 # 5) Output for CI
 Write-Host "::set-output name=version::$NEW_VER"
 Write-Host "Built and pushed $TAG"

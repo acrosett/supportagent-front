@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "title": "Probleme - Support Agent"
+  },
+  "page": {
+    "title": "Ausgaben",
+    "sections": {
+      "filters": "Filter und Suche",
+      "issues": "Liste der Probleme"
+    }
+  },
+  "filters": {
+    "showArchived": {
+      "label": "Siehe Archiviert"
+    },
+    "search": {
+      "placeholder": "Probleme suchen..."
+    },
+    "reset": "Filter zurücksetzen",
+    "status": {
+      "title": "Status",
+      "options": {
+        "both": "Beide",
+        "open": "Öffnen Sie",
+        "resolved": "Gelöst"
+      }
+    },
+    "tags": {
+      "title": "Tags",
+      "noTags": "Keine Tags verfügbar"
+    }
+  },
+  "states": {
+    "loading": "Probleme beim Laden...",
+    "loadingMore": "Weitere Ausgaben laden...",
+    "empty": {
+      "title": "Keine Probleme gefunden",
+      "description": "Ausgaben werden hier erscheinen, wenn sie erstellt werden"
+    },
+    "endOfResults": "Keine Probleme mehr beim Laden"
+  },
+  "issue": {
+    "id": "ID",
+    "status": {
+      "open": "Öffnen Sie",
+      "resolved": "Gelöst"
+    },
+    "meta": {
+      "created": "Erstellt",
+      "lastComment": "Letzter Kommentar",
+      "noComments": "Noch keine Kommentare"
+    },
+    "actions": {
+      "details": "Einzelheiten",
+      "markResolved": "Markieren Aufgelöst",
+      "reopen": "Neu öffnen",
+      "archive": "Archiv",
+      "unarchive": "Unarchivieren"
+    }
+  },
+  "archive": {
+    "dialog": {
+      "title": "Archiv Ausgabe",
+      "message": "Sind Sie sicher, dass Sie diese Ausgabe archivieren wollen?",
+      "cancel": "Abbrechen",
+      "confirm": "Archiv"
+    },
+    "messages": {
+      "success": "Ausgabe erfolgreich archiviert",
+      "error": "Fehler beim Archivieren der Ausgabe",
+      "unarchiveSuccess": "Ausgabe erfolgreich entarchiviert",
+      "unarchiveError": "Fehler beim Dearchivieren der Ausgabe"
+    }
+  },
+  "status": {
+    "messages": {
+      "resolvedSuccess": "Problem erfolgreich behoben",
+      "reopenedSuccess": "Problem erfolgreich wiedereröffnet",
+      "error": "Aktualisierung des Problemstatus fehlgeschlagen"
+    }
+  },
+  "errors": {
+    "loadIssues": "Fehlgeschlagene Ladevorgänge",
+    "loadTags": "Fehler beim Laden verfügbarer Tags"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "header": {
+    "title": "Preguntas más frecuentes"
+  },
+  "buttons": {
+    "newFaq": "Nuevo FAQ",
+    "documentUpload": "Carga de documentos",
+    "prev": "Anterior",
+    "next": "Siguiente"
+  },
+  "search": {
+    "placeholder": "Buscar FAQs..."
+  },
+  "pagination": {
+    "perPage": "Por página",
+    "pageInfo": "Página {current} / {total}"
+  },
+  "states": {
+    "loading": "Cargando FAQs...",
+    "empty": "No hay FAQs que coincidan con su búsqueda."
+  },
+  "actions": {
+    "toggleAnswer": "Alternar respuesta",
+    "edit": "Editar",
+    "delete": "Borrar"
+  },
+  "popups": {
+    "create": {
+      "title": "Nuevo FAQ"
+    },
+    "edit": {
+      "title": "Editar FAQ"
+    }
+  },
+  "form": {
+    "fields": {
+      "tags": {
+        "label": "Etiquetas",
+        "placeholder": "Seleccionar o añadir etiquetas"
+      },
+      "question": {
+        "label": "Pregunta",
+        "placeholder": "Introduzca aquí la pregunta FAQ"
+      },
+      "answer": {
+        "label": "Respuesta",
+        "placeholder": "Introduzca aquí la respuesta a las FAQ"
+      }
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "create": "Crear FAQ",
+      "save": "Guardar FAQ",
+      "update": "Actualizar FAQ"
+    }
+  },
+  "messages": {
+    "success": {
+      "created": "FAQ creado con éxito",
+      "updated": "FAQ actualizado correctamente",
+      "deleted": "FAQ eliminado con éxito"
+    },
+    "confirm": {
+      "delete": "¿Estás seguro de que quieres borrar esta FAQ?"
+    }
+  }
+}

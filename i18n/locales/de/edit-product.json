@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "title": "Produkt Einstellungen"
+  },
+  "page": {
+    "title": {
+      "edit": "Produkt bearbeiten",
+      "create": "Neues Produkt erstellen"
+    },
+    "loading": "Produkt laden..."
+  },
+  "form": {
+    "fields": {
+      "name": {
+        "label": "Produktname",
+        "placeholder": "z.B. Mein Support Agent",
+        "description": "Ein eindeutiger Name für Ihr AI-Support-Agent-Produkt"
+      },
+      "description": {
+        "label": "Produkt Beschreibung",
+        "description": "1. Was Ihr Produkt ist und tut. 2. Ein paar Marketing-Argumente, um das Produkt zu verkaufen + Ihr Preismodell. 3. Ein allgemeiner Überblick darüber, wie Ihr Produkt zu verwenden ist.",
+        "placeholder": "Damit der KI-Agent richtig funktioniert, benötigt er die folgenden Informationen über Ihr Produkt:\n\n## 1. Was Ihr Produkt ist und tut.\n   *Beispiel: Unsere App hilft kleinen Unternehmen, Rechnungen schnell und sicher zu verwalten.\n\n## 2. Ein paar Marketingargumente für den Verkauf des Produkts und Ihr Preismodell.\n   *Beispiel: Sparen Sie Zeit, reduzieren Sie Fehler und skalieren Sie Ihr Unternehmen - und das alles für nur $19/Monat.\n\n## 3. Ein allgemeiner Überblick darüber, wie Ihr Produkt zu verwenden ist.\n   *Beispiel:\n   - Rufen Sie die Seite **Anmelden** auf und erstellen Sie Ihr Konto.\n   - Bestätigen Sie Ihre E-Mail über den Bestätigungslink.\n   - Melden Sie sich an und gehen Sie zum **Dashboard**.\n   - Navigieren Sie zur Seite **Einstellungen**, um Ihr Bankkonto zu verbinden.\n- Gehen Sie auf die Seite **Rechnungen**, um Ihre erste Rechnung zu erstellen.\n   - Verwenden Sie die Seite **Berichte**, um Zahlungen und Geschäftsergebnisse zu verfolgen.\n \n "
+      },
+      "webhookUrl": {
+        "label": "Webhook-URL",
+        "placeholder": "https://yoursite.com/api/validate-token",
+        "description": "URL-Endpunkt für die Validierung von Benutzer-Tokens für authentifizierte Benutzer"
+      },
+      "sharedSecret": {
+        "label": "Gemeinsames Geheimnis",
+        "placeholder": "Ihr gemeinsames Webhook-Geheimnis",
+        "description": "Geheimer Schlüssel, der zur Sicherung von Webhook-Anfragen zwischen Ihrem und unserem System verwendet wird"
+      },
+      "chatOn": {
+        "label": "AI-Chat-Funktion",
+        "description": "Aktivieren oder Deaktivieren der KI-Chat-Funktion für dieses Produkt"
+      },
+      "disableGuests": {
+        "label": "Gastzugang deaktivieren",
+        "description": "Blockieren Sie den Zugriff von Gästen (nicht angemeldeten Benutzern) auf den einbettbaren Chat. Deaktivieren, wenn Sie Gäste in Ihrem Webhook behandeln."
+      }
+    },
+    "buttons": {
+      "update": "Produkt aktualisieren",
+      "create": "Produkt erstellen"
+    }
+  },
+  "messages": {
+    "success": {
+      "updated": "Produkt aktualisiert!",
+      "created": "Produkt erstellt!"
+    }
+  }
+}

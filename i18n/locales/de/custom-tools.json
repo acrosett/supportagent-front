@@ -1,0 +1,141 @@
+{
+  "page": {
+    "title": "Benutzerdefinierte Tools"
+  },
+  "aiInstructions": {
+    "title": "Zusätzliche Anweisungen für AI",
+    "description": "Geben Sie zusätzlichen Kontext und Anweisungen an, die Ihre Kundenbetreuer bei der Unterstützung Ihrer Kunden befolgen sollten.",
+    "saveButton": "Anweisungen speichern",
+    "form": {
+      "label": "Zusätzliche Anweisungen",
+      "placeholder": "Geben Sie zusätzliche Anweisungen für den KI-Agenten ein...",
+      "description": "Diese Anweisungen werden der KI bei der Beantwortung von Kundenanfragen zur Verfügung gestellt"
+    }
+  },
+  "domains": {
+    "title": "Überprüfte Domains",
+    "description": "Überprüfen Sie Domains, um benutzerdefinierte Tool-Integrationen mit Ihren Systemen zu ermöglichen.",
+    "addButton": "Domäne hinzufügen",
+    "empty": {
+      "title": "Keine verifizierten Domains",
+      "description": "Eine Domain hinzufügen, um benutzerdefinierte Tool-Integrationen zu ermöglichen"
+    },
+    "verification": {
+      "instructions": "Um diese Domäne zu überprüfen, wählen Sie eine der folgenden Optionen",
+      "option1Title": "Option 1: DNS-TXT-Eintrag",
+      "option1Description": "Fügen Sie einen TXT-Eintrag zum DNS Ihrer Domain hinzu",
+      "option2Title": "Option 2: Webhook",
+      "option2Description": "Erstellen Sie eine Datei/Webhook, die unter",
+      "option2Returns": "Das Ergebnis sollte sein"
+    },
+    "status": {
+      "verified": "Geprüft",
+      "unverified": "Nicht verifiziert"
+    },
+    "actions": {
+      "verify": "Überprüfen Sie",
+      "delete": "Löschen"
+    },
+    "form": {
+      "label": "Domänenname",
+      "placeholder": "beispiel.de",
+      "description": "Geben Sie den zu überprüfenden Domänennamen ein (ohne http:// oder https://)"
+    }
+  },
+  "tools": {
+    "title": "Benutzerdefinierte Tools",
+    "description": "Erstellen und verwalten Sie benutzerdefinierte Tools, die (SMART-)Agenten mit Kundenkontakt zur Integration in Ihre Systeme verwenden können.",
+    "publicToolsButton": "Öffentliche Tools",
+    "addButton": "Benutzerdefiniertes Werkzeug erstellen",
+    "empty": {
+      "title": "Keine benutzerdefinierten Tools",
+      "description": "Erstellen Sie Ihr erstes benutzerdefiniertes Tool, um die Integration mit externen Systemen zu beginnen."
+    },
+    "status": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert"
+    },
+    "publicTool": {
+      "label": "Öffentliches Werkzeug"
+    },
+    "arguments": {
+      "label": "Argumente",
+      "count": "{count} Parameter(s)"
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    }
+  },
+  "popups": {
+    "createTool": {
+      "title": "Benutzerdefiniertes Tool (unser Chatbot kann sie für Sie erstellen)"
+    },
+    "extendTool": {
+      "title": "Erweitern Sie das Werkzeug {publicName} "
+    },
+    "addDomain": {
+      "title": "Domäne hinzufügen",
+      "addButton": "Domäne hinzufügen",
+      "cancelButton": "Abbrechen",
+      "description": "Geben Sie den Domänennamen ein, den Sie überprüfen und für benutzerdefinierte Tools verwenden möchten."
+    },
+    "publicTools": {
+      "title": "Öffentliche Tools durchsuchen"
+    }
+  },
+  "form": {
+    "clientPriorities": {
+      "label": "Kundenprioritäten",
+      "low": "Niedrige Priorität",
+      "medium": "Mittlere Priorität",
+      "high": "Hohe Priorität"
+    },
+    "name": {
+      "label": "Werkzeug Name",
+      "placeholder": "my_custom_tool",
+      "description": "Eindeutiger Name für dieses Werkzeug (Kleinbuchstaben, keine Leerzeichen)"
+    },
+    "description": {
+      "label": "Beschreibung",
+      "placeholder": "Beschreiben Sie, was dieses Werkzeug tut...",
+      "description": "Detaillierte Beschreibung des Zwecks und der Funktionalität des Tools"
+    },
+    "url": {
+      "label": "URL",
+      "placeholder": "https://api.example.com/endpoint",
+      "description": "Die vollständige URL, an die das Tool Anfragen richten wird"
+    },
+    "method": {
+      "label": "HTTP-Methode",
+      "description": "Zu verwendende HTTP-Methode für Anfragen"
+    },
+    "arguments": {
+      "label": "Argument"
+    },
+    "contentType": {
+      "label": "Inhalt Typ",
+      "placeholder": "anwendung/json",
+      "description": "MIME-Typ für Anfragekörper"
+    },
+    "timeout": {
+      "label": "Zeitüberschreitung (ms)",
+      "placeholder": "5000",
+      "description": "Anfrage-Timeout in Millisekunden"
+    },
+    "enabled": {
+      "label": "Aktiviert",
+      "description": "Ob dieses Werkzeug zur Verwendung verfügbar ist"
+    },
+    "guestAccess": {
+      "label": "Gastzugang",
+      "description": "Erlauben, dass das Werkzeug von nicht angemeldeten Benutzern verwendet werden kann"
+    },
+    "actions": {
+      "cancel": "Abbrechen",
+      "save": "Werkzeug speichern",
+      "update": "Werkzeug aktualisieren",
+      "create": "Werkzeug erstellen"
+    }
+  }
+}

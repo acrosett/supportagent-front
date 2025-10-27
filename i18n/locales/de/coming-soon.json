@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "title": "Demnächst verfügbar - DirectSupport.ai"
+  },
+  "page": {
+    "title": "Demnächst",
+    "subtitle": "Wir bauen etwas Erstaunliches. Sei der Erste, der erfährt, wenn wir starten!"
+  },
+  "signup": {
+    "title": "Werden Sie benachrichtigt, wenn wir starten",
+    "email": {
+      "label": "E-Mail Adresse",
+      "placeholder": "Geben Sie Ihre E-Mail ein, um benachrichtigt zu werden"
+    },
+    "privacyPolicy": {
+      "label": "Ich stimme der [Datenschutzrichtlinie](/privacy-policy) zu"
+    },
+    "button": "Benachrichtigen Sie mich"
+  },
+  "features": {
+    "title": "Was noch kommt:",
+    "list": {
+      "embeddedChat": "Eingebetteter Chat-Support auf Ihrer Website",
+      "whatsapp": "Filtern und KI-Überwachung direkt über WhatsApp",
+      "knowledgeBase": "Automatisch wachsende Wissensdatenbank für Ihr Produkt"
+    }
+  },
+  "messages": {
+    "success": "Wir danken Ihnen! Wir werden Sie benachrichtigen, wenn wir starten.",
+    "privacyRequired": "Bitte akzeptieren Sie die Datenschutzbestimmungen, um fortzufahren"
+  }
+}

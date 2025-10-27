@@ -1,0 +1,89 @@
+{
+  "page": {
+    "title": "Conversaciones"
+  },
+  "search": {
+    "placeholder": "Buscar conversaciones..."
+  },
+  "filters": {
+    "seeArchived": "Ver archivado",
+    "resetFilters": "Restablecer filtros",
+    "readStatus": {
+      "title": "Leer estado",
+      "unread": "No leído",
+      "read": "Leer"
+    },
+    "status": {
+      "title": "Estado",
+      "active": "Activo",
+      "resolved": "Resuelto"
+    },
+    "aiStatus": {
+      "title": "Estado de la IA",
+      "on": "AI On",
+      "off": "IA desactivada"
+    },
+    "priority": {
+      "title": "Prioridad",
+      "lowest": "Más bajo",
+      "regular": "Regular",
+      "low": "Bajo",
+      "medium": "Medio",
+      "high": "Alta"
+    },
+    "options": {
+      "showArchived": "Mostrar archivado",
+      "both": "Ambos"
+    }
+  },
+  "status": {
+    "loading": "Cargando conversaciones...",
+    "loadingMore": "Cargando más conversaciones...",
+    "noMoreConversations": "No más conversaciones para cargar"
+  },
+  "empty": {
+    "title": "No se han encontrado conversaciones",
+    "description": "Las conversaciones de los clientes aparecerán aquí cuando empiecen a chatear"
+  },
+  "conversation": {
+    "id": "ID",
+    "ai": "AI",
+    "aiOn": "En",
+    "aiOff": "Off",
+    "active": "Activo",
+    "resolved": "Resuelto",
+    "messages": "mensajes",
+    "anonymousUser": "Usuario anónimo",
+    "noActivity": "Sin actividad",
+    "invalidDate": "Fecha no válida",
+    "loadingMessage": "Cargando mensaje...",
+    "noMessages": "Aún no hay mensajes"
+  },
+  "actions": {
+    "openChat": "Abrir chat invertido",
+    "reactivate": "Reactivar",
+    "markResolved": "Marca Resuelto"
+  },
+  "archive": {
+    "title": "Archivo Conversación",
+    "confirmMessage": "¿Estás seguro de que quieres archivar esta conversación?",
+    "cancel": "Cancelar",
+    "confirm": "Archivo"
+  },
+  "logs": {
+    "title": "Registros LLM"
+  },
+  "messages": {
+    "success": {
+      "conversationReactivated": "Conversación reactivada",
+      "conversationResolved": "Conversación marcada como resuelta",
+      "conversationArchived": "Conversación archivada",
+      "conversationUnarchived": "Conversación no archivada"
+    },
+    "error": {
+      "updateFailed": "Error al actualizar la conversación",
+      "archiveFailed": "Error al archivar la conversación",
+      "missingApiKey": "Clave API de usuario no encontrada"
+    }
+  }
+}

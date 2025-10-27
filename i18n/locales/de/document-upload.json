@@ -1,0 +1,64 @@
+{
+  "page": {
+    "title": "Upload und Verarbeitung von Dokumenten"
+  },
+  "buttons": {
+    "backToFaq": "Zurück zu FAQ",
+    "resetFilters": "Filter zurücksetzen"
+  },
+  "aiNote": "Die KI wird diesen Inhalt verwenden, um die FAQ zu aktualisieren.",
+  "admin": {
+    "rawTextTitle": "Rohtext-Inhalt (nur für Administratoren)",
+    "charactersCount": "{count} Zeichen",
+    "textPlaceholder": "Der verarbeitete Text wird hier erscheinen..."
+  },
+  "processingQueue": {
+    "title": "Warteschlange verarbeiten",
+    "description": "Verfolgen Sie Ihre Aufgaben zur Dokumentenverarbeitung und FAQ-Aktualisierung"
+  },
+  "search": {
+    "placeholder": "Suchaufgaben..."
+  },
+  "filters": {
+    "status": {
+      "all": "Alle",
+      "title": "Status",
+      "queued": "Warteschlange",
+      "processing": "Verarbeitung",
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen"
+    },
+    "initiator": {
+      "title": "Initiator",
+      "all": "Alle",
+      "documentUpload": "Dokument hochladen",
+      "staffAgent": "Personalvertreter"
+    }
+  },
+  "states": {
+    "loading": "Aufgaben laden...",
+    "loadingMore": "Weitere Aufgaben laden...",
+    "noMoreTasks": "Keine Aufgaben mehr zu laden",
+    "noTasks": {
+      "title": "Keine Aufgaben gefunden",
+      "description": "Verarbeitungsaufgaben werden hier angezeigt, wenn Dokumente hochgeladen werden"
+    }
+  },
+  "taskCard": {
+    "created": "Erstellt",
+    "updated": "Aktualisiert"
+  },
+  "taskDetail": {
+    "title": "Aufgabe Details",
+    "created": "Erstellt",
+    "updated": "Aktualisiert",
+    "knowledgeContent": "Wissen Inhalt",
+    "noContent": "Kein Inhalt verfügbar",
+    "actions": {
+      "close": "Schließen",
+      "reprocess": "Neu verarbeiten",
+      "retry": "Aufgabe wiederholen",
+      "viewLogs": "Protokolle ansehen"
+    }
+  }
+}

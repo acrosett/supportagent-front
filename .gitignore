@@ -27,3 +27,6 @@ build.env
 public/landing/index_de.html
 public/landing/index_es.html
 public/landing/index_fr.html
+public/embed.js
+public/landing/index.html
+public/landing/index_dev.html

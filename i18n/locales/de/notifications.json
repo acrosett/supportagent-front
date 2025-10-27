@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Benachrichtigungen - Support Agent"
+  },
+  "page": {
+    "title": "Benachrichtigungen",
+    "description": "Bleiben Sie auf dem Laufenden mit Warnungen, Nachrichten und wichtigen Updates von Ihrem Produkt und Chatbot-Aktivitäten.",
+    "actions": {
+      "configure": "Benachrichtigungspräferenzen konfigurieren"
+    }
+  },
+  "states": {
+    "loading": "Benachrichtigungen werden geladen...",
+    "loadingMore": "Weitere Benachrichtigungen laden...",
+    "empty": {
+      "title": "Keine Benachrichtigungen gefunden",
+      "description": "Hier erhalten Sie Benachrichtigungen, wenn wichtige Ereignisse mit Ihrem Produkt eintreten."
+    },
+    "endOfResults": "Keine Benachrichtigungen mehr zu laden"
+  },
+  "notification": {
+    "unread": "Neu"
+  },
+  "date": {
+    "unknown": "Unbekanntes Datum",
+    "invalid": "Ungültiges Datum",
+    "relative": {
+      "minutesAgo": "{minutes}m vor",
+      "hoursAgo": "{hours}h vor",
+      "daysAgo": "{days}d vor"
+    }
+  },
+  "errors": {
+    "noProductId": "Benutzerprodukt-ID nicht gefunden",
+    "loadNotifications": "Benachrichtigungen konnten nicht geladen werden",
+    "updateNotification": "Benachrichtigung konnte nicht aktualisiert werden"
+  }
+}

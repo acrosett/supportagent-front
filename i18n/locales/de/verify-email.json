@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "E-Mail-Überprüfung",
+    "subtitleDefault": "Überprüfen Sie Ihre E-Mail-Adresse...",
+    "subtitleProcessing": "Bearbeitung Ihrer Verifizierungsanfrage...",
+    "subtitleSuccess": "Ihre E-Mail wurde erfolgreich verifiziert!",
+    "subtitleError": "Es gab ein Problem bei der Verifizierung Ihrer E-Mail."
+  },
+  "status": {
+    "loading": {
+      "title": "Überprüfen Ihrer E-Mail...",
+      "message": "Bitte warten Sie, während wir Ihre E-Mail-Adresse verifizieren."
+    },
+    "success": {
+      "title": "E-Mail erfolgreich verifiziert!",
+      "message": "Ihre E-Mail Adresse wurde verifiziert. Sie können nun auf alle Funktionen Ihres Kontos zugreifen."
+    },
+    "error": {
+      "title": "Verifizierung fehlgeschlagen"
+    }
+  },
+  "buttons": {
+    "goToAccount": "Gehe zu Konto",
+    "goToDashboard": "Zum Dashboard gehen",
+    "resendVerification": "Verifizierungs-E-Mail erneut senden"
+  },
+  "messages": {
+    "noToken": "Kein Verifizierungs-Token gefunden. Sie werden zur Homepage weitergeleitet.",
+    "success": "E-Mail erfolgreich verifiziert!",
+    "resendInfo": "Bitte gehen Sie zu Ihren Kontoeinstellungen, um die Bestätigungs-E-Mail erneut zu senden.",
+    "resendError": "Bitte versuchen Sie es erneut über Ihre Kontoeinstellungen.",
+    "error": {
+      "expired": "Der Verifizierungslink ist abgelaufen oder ungültig. Bitte fordern Sie eine neue Bestätigungs-E-Mail an.",
+      "alreadyVerified": "Diese E-Mail-Adresse wurde bereits überprüft.",
+      "failed": "Die Verifizierung ist fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
+      "unexpected": "Bei der Überprüfung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+    }
+  }
+}

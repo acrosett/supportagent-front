@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Notificaciones - Agente de soporte"
+  },
+  "page": {
+    "title": "Notificaciones",
+    "description": "Mantente actualizado con alertas, mensajes y actualizaciones importantes de las actividades de tu producto y chatbot.",
+    "actions": {
+      "configure": "Configurar las preferencias de notificación"
+    }
+  },
+  "states": {
+    "loading": "Cargando notificaciones...",
+    "loadingMore": "Cargando más notificaciones...",
+    "empty": {
+      "title": "No se han encontrado notificaciones",
+      "description": "Aquí recibirá notificaciones cuando se produzcan eventos importantes con su producto."
+    },
+    "endOfResults": "No más notificaciones para cargar"
+  },
+  "notification": {
+    "unread": "Nuevo"
+  },
+  "date": {
+    "unknown": "Fecha desconocida",
+    "invalid": "Fecha no válida",
+    "relative": {
+      "minutesAgo": "{minutes}m hace",
+      "hoursAgo": "{hours}h hace",
+      "daysAgo": "{days}d hace"
+    }
+  },
+  "errors": {
+    "noProductId": "No se ha encontrado el ID de producto del usuario",
+    "loadNotifications": "Error al cargar las notificaciones",
+    "updateNotification": "Error al actualizar la notificación"
+  }
+}

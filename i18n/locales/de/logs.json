@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "title": "System-Protokolle"
+  },
+  "page": {
+    "title": "System-Protokolle"
+  },
+  "debug": {
+    "toggle": {
+      "label": "Debug-Protokolle sammeln",
+      "on": "ON",
+      "off": "AUS"
+    },
+    "messages": {
+      "enabled": "Debug-Protokollierung aktiviert - Warnung: Dies kann die Leistung beeinträchtigen",
+      "disabled": "Debug-Protokollierung deaktiviert",
+      "error": "Aktualisierung der Debug-Einstellung fehlgeschlagen"
+    }
+  },
+  "chart": {
+    "title": "Aktivität protokollieren",
+    "loading": "Laden von Diagrammdaten...",
+    "error": "Diagrammdaten konnten nicht geladen werden",
+    "axis": {
+      "time": "Zeit",
+      "count": "Log Anzahl"
+    },
+    "periods": {
+      "week": "Woche",
+      "weeks": "Wochen"
+    },
+    "filter": {
+      "success": "Gefiltert auf {start} - {end}"
+    }
+  },
+  "filters": {
+    "search": {
+      "label": "Suchmeldung:",
+      "placeholder": "Suche in Logmeldungen..."
+    },
+    "types": {
+      "label": "Log-Typen:"
+    },
+    "dateRange": {
+      "label": "Datumsbereich:",
+      "from": "Von:",
+      "to": "Zu:"
+    },
+    "buttons": {
+      "refresh": "Aktualisieren",
+      "clear": "Filter löschen"
+    }
+  },
+  "list": {
+    "loading": "Laden von Protokollen...",
+    "loadingMore": "Weitere Protokolle laden...",
+    "empty": "Keine Logs gefunden, die Ihren Kriterien entsprechen.",
+    "noMore": "Keine Protokolle mehr zu laden.",
+    "clickDetails": "Klicken Sie für Details →",
+    "level": "Ebene: {level}",
+    "user": "Benutzer: {user}"
+  },
+  "details": {
+    "title": "Log Details",
+    "sections": {
+      "basicInfo": "Grundlegende Informationen",
+      "message": "Nachricht",
+      "data": "Daten",
+      "query": "Abfrage",
+      "options": "Optionen"
+    },
+    "fields": {
+      "type": "Typ:",
+      "level": "Ebene:",
+      "service": "Dienstleistung:",
+      "command": "Befehl:",
+      "userId": "Benutzer-ID:",
+      "productId": "Produkt-ID:",
+      "ipAddress": "IP-Adresse:",
+      "currentMs": "Aktueller Microservice:",
+      "created": "Erstellt:",
+      "updated": "Aktualisiert:",
+      "expiresAt": "Läuft ab am:",
+      "failNotification": "Fail-Benachrichtigung:",
+      "notAvailable": "N/A",
+      "system": "System",
+      "never": "Niemals",
+      "yes": "Ja",
+      "no": "Keine"
+    }
+  },
+  "messages": {
+    "error": {
+      "loadLogs": "Protokolle konnten nicht geladen werden",
+      "loadChart": "Diagramm konnte nicht geladen werden"
+    }
+  }
+}

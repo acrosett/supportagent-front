@@ -1,0 +1,35 @@
+{
+  "tabs": {
+    "upload": "Datei hochladen",
+    "paste": "Text einfügen"
+  },
+  "upload": {
+    "title": "Dokument hochladen",
+    "instruction": "Legen Sie Ihre Datei hier ab oder klicken Sie zum Durchsuchen",
+    "supportedFiles": "Unterstützt: HTML, PDF, Word (.doc, .docx), XML, Text (.txt), Markdown (.md), JSON, CSV"
+  },
+  "processing": {
+    "message": "Verarbeitung {fileName}..."
+  },
+  "success": {
+    "message": "Erfolgreich verarbeitet",
+    "uploadAnother": "Eine weitere Datei hochladen"
+  },
+  "paste": {
+    "label": "Fügen Sie Ihren Textinhalt ein",
+    "placeholder": "Fügen Sie hier Ihren Inhalt ein oder geben Sie ihn ein...",
+    "processButton": "Text verarbeiten",
+    "defaultFileName": "Eingefügter Text"
+  },
+  "confirm": {
+    "uploadTitle": "Upload bestätigen",
+    "processTitle": "Bestätigen Sie die Verarbeitung",
+    "uploadMessage": "Sie sind im Begriff, {fileName} ({sizeKB} KB) hochzuladen.",
+    "processMessage": "Sie sind dabei, {fileName} ({sizeKB} KB Text) zu verarbeiten.",
+    "defaultFileName": "Ihre Datei",
+    "calculatingCost": "Berechnung der geschätzten Kosten...",
+    "estimatedCost": "Geschätzte Verarbeitungskosten: ${cost}",
+    "cancel": "Abbrechen",
+    "process": "Mit AI verarbeiten"
+  }
+}

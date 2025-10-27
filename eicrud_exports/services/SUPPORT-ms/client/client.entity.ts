@@ -15,8 +15,6 @@ export class Client {
     @IsOptional()
     id: string;
 
-    
-
     @IsString()
     product: Product | string;
 

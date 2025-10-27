@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "Einstellungen für Benachrichtigungen - Support Agent"
+  },
+  "navigation": {
+    "back": "Zurück zu Benachrichtigungen"
+  },
+  "page": {
+    "title": "Präferenzen für Benachrichtigungen",
+    "description": "Legen Sie fest, wie und wann Sie Benachrichtigungen für Ihre Produkte erhalten möchten."
+  },
+  "states": {
+    "loading": "Benachrichtigungseinstellungen laden..."
+  },
+  "form": {
+    "fields": {
+      "promotionalEmails": {
+        "label": "Werbe-E-Mails",
+        "description": "Erhalten Sie Werbe-E-Mails und Updates"
+      },
+      "exceededQuota": {
+        "label": "Warnungen bei Quotenüberschreitung",
+        "description": "Erhalten Sie eine Benachrichtigung, wenn die Nutzungsquoten überschritten werden"
+      },
+      "lowBalance": {
+        "label": "Warnungen bei niedrigem Kontostand",
+        "description": "Benachrichtigt werden, wenn der Kontostand niedrig ist"
+      },
+      "newIssues": {
+        "label": "Benachrichtigungen über neue Ausgaben",
+        "description": "Über neue Themen oder Probleme benachrichtigt werden"
+      },
+      "whatsappNotifications": "WhatsApp-Benachrichtigungen",
+      "emailNotifications": "E-Mail-Benachrichtigungen"
+    },
+    "common": {
+      "yes": "Ja",
+      "no": "Nein",
+      "on": "Auf",
+      "off": "Aus"
+    },
+    "actions": {
+      "save": "Präferenzen für Benachrichtigungen speichern",
+      "cancel": "Abbrechen"
+    }
+  },
+  "messages": {
+    "savedSuccess": "Benachrichtigungseinstellungen erfolgreich gespeichert!"
+  },
+  "errors": {
+    "noProductId": "Produkt-ID nicht gefunden",
+    "saveFailed": "Benachrichtigungseinstellungen konnten nicht gespeichert werden",
+    "loadFailed": "Benachrichtigungseinstellungen konnten nicht geladen werden"
+  }
+}

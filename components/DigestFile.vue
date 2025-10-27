@@ -121,6 +121,7 @@
 import { estimateFullDigestCost, FILE_MAX_SIZE } from '~/eicrud_exports/services/AI-ms/digestor/shared.utils'
 import MegaForm, { type MegaFormAction, type OverrideRecord } from './MegaForm.vue'
 import { DigestFileDto } from '~/eicrud_exports/services/AI-ms/digestor/cmds/digest_file/digest_file.dto'
+import { useDebounceFn } from '@vueuse/core'
 
 import { useLocalNamespaceAsync } from '~/composables/useLocalNamespace'
 const { t } = await useLocalNamespaceAsync('digest-file')
@@ -162,6 +163,41 @@ const pasteFormData = ref({
   fileText: '',
   productId: ''
 })
+
+// SessionStorage key for persistence
+const PASTE_FORM_STORAGE_KEY = 'digest-file-paste-form-data'
+
+// Load saved data from sessionStorage on component mount
+onMounted(() => {
+  try {
+    const savedData = sessionStorage.getItem(PASTE_FORM_STORAGE_KEY)
+    if (savedData) {
+      const parsedData = JSON.parse(savedData)
+      pasteFormData.value = { ...pasteFormData.value, ...parsedData }
+      
+      // If we have saved text, also set it as processed text
+      if (parsedData.fileText) {
+        processedText.value = parsedData.fileText
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to load saved paste form data:', error)
+  }
+})
+
+// Debounced save function to avoid performance issues while typing
+const debouncedSave = useDebounceFn((data: any) => {
+  try {
+    sessionStorage.setItem(PASTE_FORM_STORAGE_KEY, JSON.stringify(data))
+  } catch (error) {
+    console.warn('Failed to save paste form data:', error)
+  }
+}, 500) // Save 500ms after user stops typing
+
+// Save paste form data to sessionStorage with debouncing
+watch(pasteFormData, (newData) => {
+  debouncedSave(newData)
+}, { deep: true })
 
 // Watch for external changes
 watch(() => props.modelValue, (newValue) => {
@@ -233,6 +269,14 @@ const resetUpload = () => {
   estimatedCost.value = 0
   isCalculatingCost.value = false
   pasteFormData.value.fileText = ''
+  
+  // Clear sessionStorage when resetting
+  try {
+    sessionStorage.removeItem(PASTE_FORM_STORAGE_KEY)
+  } catch (error) {
+    console.warn('Failed to clear paste form data from storage:', error)
+  }
+  
   if (fileInput.value) {
     fileInput.value.value = ''
   }
@@ -356,6 +400,13 @@ const confirmUpload = async () => {
       
       // Clear the paste form
       pasteFormData.value.fileText = ''
+      
+      // Clear sessionStorage after successful processing
+      try {
+        sessionStorage.removeItem(PASTE_FORM_STORAGE_KEY)
+      } catch (error) {
+        console.warn('Failed to clear paste form data from storage:', error)
+      }
     }
 
     activeTab.value = 'upload'

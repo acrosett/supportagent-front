@@ -1,0 +1,67 @@
+{
+  "page": {
+    "title": "Kontoeinstellungen",
+    "description": "Verwalten Sie Ihr Konto, Ihre E-Mail, Ihr Passwort und Ihre Sicherheitseinstellungen."
+  },
+  "common": {
+    "loading": "Laden..."
+  },
+  "deletion": {
+    "title": "Zur Löschung vorgesehenes Konto",
+    "scheduledMessage": "Ihr Konto wurde zur Löschung vorgemerkt am {date}"
+  },
+  "email": {
+    "title": "E-Mail-Überprüfung",
+    "description": "Überprüfen Sie Ihre E-Mail-Adresse, um zusätzliche Sicherheitsfunktionen zu aktivieren",
+    "emailAddress": "E-Mail Adresse",
+    "updateEmail": "E-Mail aktualisieren",
+    "verified": "E-Mail verifiziert",
+    "notVerified": "E-Mail nicht verifiziert",
+    "sendVerification": "Verifizierungs-E-Mail senden",
+    "popup": {
+      "title": "E-Mail Adresse ändern",
+      "description": "Geben Sie Ihre neue E-Mail-Adresse und Ihr aktuelles Passwort ein, um eine Bestätigungs-E-Mail zu senden."
+    },
+    "fields": {
+      "newEmail": {
+        "label": "Neue E-Mail Adresse",
+        "placeholder": "Geben Sie Ihre neue E-Mail-Adresse ein",
+        "description": "Geben Sie die neue E-Mail-Adresse ein, die Sie für Ihr Konto verwenden möchten"
+      },
+      "password": {
+        "label": "Aktuelles Passwort",
+        "placeholder": "Geben Sie Ihr aktuelles Passwort ein",
+        "description": "Geben Sie Ihr aktuelles Passwort ein, um diese Änderung zu bestätigen"
+      }
+    }
+  },
+  "twoFA": {
+    "title": "Zwei-Faktoren-Authentifizierung (2FA)",
+    "description": "Fügen Sie eine zusätzliche Sicherheitsebene zu Ihrem Konto hinzu",
+    "enabled": "Zwei-Faktoren-Authentifizierung aktiviert",
+    "disabled": "Zwei-Faktoren-Authentifizierung deaktiviert",
+    "requirement": "Bitte verifizieren Sie zunächst Ihre E-Mail-Adresse, um 2FA zu aktivieren",
+    "enableDescription": "Aktivieren Sie 2FA, um Ihr Konto durch einen zusätzlichen Authentifizierungsschritt zu sichern",
+    "protectedMessage": "Ihr Konto ist mit Zwei-Faktor-Authentifizierung geschützt"
+  },
+  "password": {
+    "title": "Passwort ändern",
+    "updateButton": "Passwort aktualisieren",
+    "fields": {
+      "current": {
+        "label": "Aktuelles Passwort",
+        "placeholder": "Geben Sie Ihr aktuelles Passwort ein"
+      },
+      "new": {
+        "label": "Neues Passwort",
+        "placeholder": "Geben Sie Ihr neues Passwort ein",
+        "description": "Muss mindestens 8 Zeichen lang sein"
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Konto löschen",
+    "deleteButton": "Konto löschen",
+    "cancelButton": "Konto-Löschung abbrechen"
+  }
+}

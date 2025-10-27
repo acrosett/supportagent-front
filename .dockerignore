@@ -11,6 +11,12 @@ pnpm-lock.yaml
 .output
 dist
 
+# cache directories that can cause sourcemap issues
+node_modules/.vite
+node_modules/.cache
+.vite
+*.tsbuildinfo
+
 # envs (but keep example and build.env)
 .env
 .env.* 

@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "title": "Debug-Tools"
+  },
+  "page": {
+    "title": "Debug-Tools",
+    "subtitle": "Administrative Dienstprogramme zur Fehlersuche und zum Testen"
+  },
+  "llmReplay": {
+    "title": "Replay LLM Ergebnis Parsing",
+    "description": "Abrufen und Anzeigen von LLM-Trainingsdaten für einen bestimmten Trainingstagebucheintrag",
+    "form": {
+      "trainingLogId": {
+        "label": "Training Log ID:",
+        "placeholder": "Trainingsprotokoll-ID eingeben..."
+      },
+      "button": "Parsing neu starten"
+    },
+    "results": {
+      "title": "Ergebnis der Trainingsdaten:",
+      "error": "Fehler:"
+    },
+    "messages": {
+      "retrieving": "Abrufen von Trainingsdaten...",
+      "success": "Trainingsdaten erfolgreich abgerufen (Simulation)",
+      "idRequired": "Bitte geben Sie eine Trainingsprotokoll-ID ein"
+    }
+  },
+  "deleteClientData": {
+    "title": "Kundendaten löschen",
+    "warning": "⚠️ WARNUNG: Lösche alle Client-Nachrichten und -Daten für den aktuellen Benutzer. Diese Aktion kann nicht rückgängig gemacht werden!",
+    "button": "Meine Kundendaten löschen",
+    "confirmation": "Sind Sie sicher, dass Sie ALLE Ihre Kundendaten und -nachrichten LÖSCHEN wollen?  Diese Aktion kann NICHT rückgängig gemacht werden und wird alle Ihre Chatverläufe und Kundendaten dauerhaft löschen.",
+    "messages": {
+      "deleting": "Löschen von Kundendaten...",
+      "success": "Kundendaten erfolgreich gelöscht"
+    }
+  },
+  "effectiveDelete": {
+    "title": "Effektive Kontolöschung",
+    "warning": "⚠️ GEFAHR: Dauerhaftes Löschen eines Kontos und aller damit verbundenen Daten. Diese Aktion kann nicht rückgängig gemacht werden!",
+    "form": {
+      "productId": {
+        "label": "Produkt-ID",
+        "placeholder": "Geben Sie die zu löschende Produkt-ID ein...",
+        "description": "Die ID des dauerhaft zu löschenden Produkts/Kontos"
+      },
+      "reason": {
+        "label": "Grund der Löschung",
+        "placeholder": "Geben Sie den Grund für die Löschung ein...",
+        "description": "Erläutern Sie, warum dieses Konto gelöscht wird (erforderlich für den Prüfpfad)"
+      }
+    },
+    "button": "Kontolöschung durchführen",
+    "confirmation": "Sind Sie sicher, dass Sie das Konto mit der Produkt-ID PERMANENT LÖSCHEN wollen: {productId}?  Diese Aktion kann NICHT rückgängig gemacht werden und löscht sofort alle zugehörigen Daten.  Grund: {reason}",
+    "messages": {
+      "executing": "Ausführen der Kontolöschung...",
+      "success": "Kontolöschung erfolgreich durchgeführt"
+    }
+  },
+  "messages": {
+    "error": {
+      "accessDenied": "Zugriff verweigert: Admin-Rechte erforderlich",
+      "verifyAdmin": "Überprüfung der Admin-Rechte fehlgeschlagen",
+      "deleteClient": "Löschen von Kundendaten fehlgeschlagen",
+      "deleteAccount": "Kontolöschung konnte nicht ausgeführt werden"
+    }
+  }
+}

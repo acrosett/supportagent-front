@@ -1,0 +1,32 @@
+{
+  "brand": "DirectSupport.ai",
+  "navigation": {
+    "toggleMenu": "Alternar menú",
+    "dashboard": "Cuadro de mandos",
+    "editProduct": "Editar producto",
+    "contactPriority": "Contacto y prioridad",
+    "faqManagement": "Gestión de preguntas frecuentes",
+    "widgetBuilder": "Creador de widgets",
+    "conversations": "Conversaciones",
+    "issues": "Temas",
+    "customTools": "Herramientas personalizadas",
+    "testChat": "Chat de prueba",
+    "notifications": "Notificaciones",
+    "systemLogs": "Registros del sistema",
+    "debug": "Depurar",
+    "billingUsage": "Facturación y uso",
+    "accountSettings": "Configuración de la cuenta",
+    "logout": "Cierre de sesión",
+    "changeLanguage": "Cambiar idioma"
+  },
+  "popup": {
+    "selectTestClient": {
+      "title": "Seleccionar cliente de prueba"
+    }
+  },
+  "messages": {
+    "confirm": {
+      "logout": "¿Seguro que quieres cerrar sesión?"
+    }
+  }
+}

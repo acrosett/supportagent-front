@@ -18,7 +18,10 @@
     "@dqbd/tiktoken": "^1.0.22",
     "@eicrud/client": "^0.9.3",
     "@highlightjs/vue-plugin": "^2.1.0",
+    "@intlify/core-base": "^11.1.12",
+    "@intlify/message-compiler": "^11.1.12",
     "@nuxtjs/i18n": "^10.1.1",
+    "@vueuse/core": "^14.0.0",
     "chart.js": "^4.5.0",
     "chartjs-adapter-date-fns": "^3.0.0",
     "class-transformer": "^0.5.1",
@@ -33,6 +36,7 @@
     "pdf-parse": "^1.1.1",
     "sass-embedded": "^1.90.0",
     "vue": "^3.5.18",
+    "vue-i18n": "^11.1.12",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {

@@ -2,7 +2,7 @@
 FROM node:20 AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --include=dev 
 COPY . .
 
 # Copy the build.env file created by the build script
@@ -16,7 +16,10 @@ ENV NODE_ENV=production
 
 # Clear any existing cache and run the build
 RUN rm -rf node_modules/.vite && \
+    rm -rf node_modules/.cache && \
+    rm -rf .vite && \
     rm -rf .nuxt && \
+    rm -rf .output && \
     set -a && . ./build.env && npm run generate
 
 

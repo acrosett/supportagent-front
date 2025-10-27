@@ -61,6 +61,7 @@ const defaultConfig = (): Partial<WidgetConfig> => ({
   periodicBounce: 20,
   startOpen: false,
   darkMode: false,
+  showAiDisclaimer: false,
   draggable: true,
   soundOn: true,
 
@@ -108,6 +109,7 @@ const buildAttributes = () => {
   if (f.periodicBounce != null) attrs.push(`data-periodic-bounce='${f.periodicBounce}'`)
   if (f.startOpen) attrs.push(`data-start-open='true'`)
   if (f.darkMode) attrs.push(`data-dark-mode='true'`)
+  if (f.showAiDisclaimer) attrs.push(`data-show-ai-disclaimer='true'`)
   if (!f.draggable) attrs.push(`data-draggable='false'`)
   if (!f.soundOn) attrs.push(`data-sound-on='false'`)
   attrs.push(`data-debug='true'`)
@@ -125,7 +127,9 @@ const snippet = computed(() => {
 const copied = ref(false)
 const codeEl = ref<HTMLElement | null>(null)
 let previewBuildTimer: any = null
+let cleanupTimer: any = null
 const PREVIEW_DEBOUNCE = 160
+const isInitializing = ref(false)
 
 const copySnippet = async () => {
   await navigator.clipboard.writeText(snippet.value)
@@ -135,47 +139,85 @@ const copySnippet = async () => {
 
 const cleanupPreview = () => {
   sessionStorage.removeItem('ai-support-guest-id');
-  document.querySelectorAll('#ai-support-widget').forEach(el => el.remove())
-  document.querySelectorAll('#ai-support-widget-bubble').forEach(el => el.remove())
-  document.querySelectorAll('#widget-preview-script').forEach(el => el.remove())
+  
+  // More aggressive cleanup with retries for browser differences
+  const cleanup = () => {
+    document.querySelectorAll('#ai-support-widget').forEach(el => el.remove())
+    document.querySelectorAll('#ai-support-widget-bubble').forEach(el => el.remove())
+    document.querySelectorAll('#widget-preview-script').forEach(el => el.remove())
+  }
+  
+  // Immediate cleanup
+  cleanup()
+  
+  // Retry cleanup after a short delay to catch any delayed DOM updates
+  cleanupTimer = setTimeout(cleanup, 50)
 }
 
 const buildPreview = () => {
-  cleanupPreview()
-  const nuxtApp = useNuxtApp()
-  const s = document.createElement('script')
-  s.id = 'widget-preview-script'
-  s.src = `${nuxtApp.$config.public.cdnBaseUrl}/embed.js`
-  const f = formData.value
-  s.setAttribute('data-api-token', apiToken.value)
-  s.setAttribute('data-position', f.position)
-  s.setAttribute('data-width', f.width)
-  s.setAttribute('data-height', f.height)
-  s.setAttribute('data-primary-color', f.primaryColor)
-  s.setAttribute('data-secondary-color', f.secondaryColor)
-  s.setAttribute('data-icon', f.icon)
-  s.setAttribute('data-welcome-message', f.welcomeMessage)
-  if (f.faqs && f.faqs.length > 0) {
-    s.setAttribute('data-faqs', JSON.stringify(f.faqs))
+  // Prevent multiple simultaneous builds
+  if (previewBuildTimer) {
+    clearTimeout(previewBuildTimer)
+    previewBuildTimer = null
   }
-  if (f.bounceAfterInit != null) s.setAttribute('data-bounce-after-init', String(f.bounceAfterInit))
-  if (f.periodicBounce != null) s.setAttribute('data-periodic-bounce', String(f.periodicBounce))
-  if (f.startOpen) s.setAttribute('data-start-open', 'true')
-  if (f.darkMode) s.setAttribute('data-dark-mode', 'true')
-  if (!f.draggable) s.setAttribute('data-draggable', 'false')
-  s.setAttribute('data-sound-on', 'false')
-  document.body.appendChild(s)
+  
+  cleanupPreview()
+  
+  // Add small delay to ensure cleanup completes and prevent race conditions
+  setTimeout(() => {
+    const nuxtApp = useNuxtApp()
+    const s = document.createElement('script')
+    s.id = 'widget-preview-script'
+    s.src = `${nuxtApp.$config.public.cdnBaseUrl}/embed.js`
+    const f = formData.value
+    s.setAttribute('data-api-token', apiToken.value)
+    s.setAttribute('data-position', f.position)
+    s.setAttribute('data-width', f.width)
+    s.setAttribute('data-height', f.height)
+    s.setAttribute('data-primary-color', f.primaryColor)
+    s.setAttribute('data-secondary-color', f.secondaryColor)
+    s.setAttribute('data-icon', f.icon)
+    s.setAttribute('data-welcome-message', f.welcomeMessage)
+    if (f.faqs && f.faqs.length > 0) {
+      s.setAttribute('data-faqs', JSON.stringify(f.faqs))
+    }
+    if (f.bounceAfterInit != null) s.setAttribute('data-bounce-after-init', String(f.bounceAfterInit))
+    if (f.periodicBounce != null) s.setAttribute('data-periodic-bounce', String(f.periodicBounce))
+    if (f.startOpen) s.setAttribute('data-start-open', 'true')
+    if (f.darkMode) s.setAttribute('data-dark-mode', 'true')
+    if (f.showAiDisclaimer) s.setAttribute('data-show-ai-disclaimer', 'true')
+    if (!f.draggable) s.setAttribute('data-draggable', 'false')
+    s.setAttribute('data-sound-on', 'false')
+    document.body.appendChild(s)
+  }, 100)
 }
 
 const schedulePreview = () => {
+  // Don't schedule during initialization to prevent race conditions
+  if (isInitializing.value) return
+  
   if (previewBuildTimer) clearTimeout(previewBuildTimer)
   previewBuildTimer = setTimeout(buildPreview, PREVIEW_DEBOUNCE)
 }
 
 watch(() => ({...formData.value, apiToken: apiToken.value}), () => schedulePreview(), { deep: true })
 
-onMounted(async () => { await loadConfig(); buildPreview() })
-onBeforeUnmount(() => { if (previewBuildTimer) clearTimeout(previewBuildTimer); cleanupPreview() })
+onMounted(async () => { 
+  isInitializing.value = true
+  await loadConfig()
+  
+  // Wait a bit longer for initial load to ensure everything is ready
+  setTimeout(() => {
+    isInitializing.value = false
+    buildPreview()
+  }, 300)
+})
+
+onBeforeUnmount(() => { 
+  if (previewBuildTimer) clearTimeout(previewBuildTimer)
+  cleanupPreview() 
+  if (cleanupTimer) clearTimeout(cleanupTimer)
+})
 
 const fieldOverrides: OverrideRecord<WidgetConfig> = {
   position: { selectOptions: [
@@ -193,6 +235,7 @@ const fieldOverrides: OverrideRecord<WidgetConfig> = {
   periodicBounce: { type: 'number', label: t('fields.periodicBounce') },
   startOpen: { type: 'checkbox', onLabel: t('fields.options.yes'), offLabel: t('fields.options.no') },
   darkMode: { type: 'checkbox', onLabel: t('fields.options.on'), offLabel: t('fields.options.off') },
+  showAiDisclaimer: { type: 'checkbox', onLabel: t('fields.options.on'), offLabel: t('fields.options.off'), label: t('fields.showAiDisclaimer.label') },
   draggable: { type: 'checkbox', onLabel: t('fields.options.on'), offLabel: t('fields.options.off') },
   soundOn: { type: 'checkbox', onLabel: t('fields.options.on'), offLabel: t('fields.options.off') },
   welcomeMessage: { type: "richtext", placeholder: t('fields.welcomeMessage.placeholder'), label: t('fields.welcomeMessage.label') },

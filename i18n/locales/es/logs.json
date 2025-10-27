@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "title": "Registros del sistema"
+  },
+  "page": {
+    "title": "Registros del sistema"
+  },
+  "debug": {
+    "toggle": {
+      "label": "Recopilar registros de depuración",
+      "on": "EN",
+      "off": "OFF"
+    },
+    "messages": {
+      "enabled": "Registro de depuración activado - Advertencia: Esto puede afectar al rendimiento",
+      "disabled": "Registro de depuración desactivado",
+      "error": "Error al actualizar la configuración de depuración"
+    }
+  },
+  "chart": {
+    "title": "Registro de actividad",
+    "loading": "Cargando datos del gráfico...",
+    "error": "Error al cargar los datos del gráfico",
+    "axis": {
+      "time": "Tiempo",
+      "count": "Recuento de registros"
+    },
+    "periods": {
+      "week": "Semana",
+      "weeks": "Semanas"
+    },
+    "filter": {
+      "success": "Filtrado a {start} - {end}"
+    }
+  },
+  "filters": {
+    "search": {
+      "label": "Mensaje de búsqueda:",
+      "placeholder": "Buscar en los mensajes de registro..."
+    },
+    "types": {
+      "label": "Tipos de registro:"
+    },
+    "dateRange": {
+      "label": "Intervalo de fechas:",
+      "from": "De:",
+      "to": "Para:"
+    },
+    "buttons": {
+      "refresh": "Actualizar",
+      "clear": "Borrar filtros"
+    }
+  },
+  "list": {
+    "loading": "Cargando logs...",
+    "loadingMore": "Cargando más registros...",
+    "empty": "No se han encontrado registros que coincidan con sus criterios.",
+    "noMore": "No más registros para cargar.",
+    "clickDetails": "Haga clic para más detalles →",
+    "level": "Nivel: {level}",
+    "user": "Usuario: {user}"
+  },
+  "details": {
+    "title": "Detalles del registro",
+    "sections": {
+      "basicInfo": "Información básica",
+      "message": "Mensaje",
+      "data": "Datos",
+      "query": "Consulta",
+      "options": "Opciones"
+    },
+    "fields": {
+      "type": "Tipo:",
+      "level": "Nivel:",
+      "service": "Servicio:",
+      "command": "Comando:",
+      "userId": "ID de usuario:",
+      "productId": "ID del producto:",
+      "ipAddress": "Dirección IP:",
+      "currentMs": "Microservicio actual:",
+      "created": "Creado:",
+      "updated": "Actualizado:",
+      "expiresAt": "Expira en:",
+      "failNotification": "Notificación de fallo:",
+      "notAvailable": "N/A",
+      "system": "Sistema",
+      "never": "Nunca",
+      "yes": "Sí",
+      "no": "No"
+    }
+  },
+  "messages": {
+    "error": {
+      "loadLogs": "Error al cargar registros",
+      "loadChart": "Error al cargar el gráfico"
+    }
+  }
+}

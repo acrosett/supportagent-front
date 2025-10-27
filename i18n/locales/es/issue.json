@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "title": "Detalles de la incidencia - Agente de soporte"
+  },
+  "navigation": {
+    "back": "Volver a Ediciones"
+  },
+  "page": {
+    "title": "Detalles del problema"
+  },
+  "states": {
+    "loading": "Cargando detalles de la incidencia...",
+    "notFound": {
+      "title": "Número no encontrado",
+      "message": "No se ha encontrado el tema solicitado."
+    }
+  },
+  "issue": {
+    "id": "ID",
+    "meta": {
+      "created": "Creado"
+    },
+    "status": {
+      "open": "Abrir",
+      "resolved": "Resuelto"
+    },
+    "actions": {
+      "markResolved": "Marca Resuelto",
+      "reopen": "Reabrir tema",
+      "archive": "Archivo",
+      "unarchive": "Desarchivar"
+    }
+  },
+  "tags": {
+    "title": "Etiquetas",
+    "manage": "Gestionar etiquetas",
+    "noTags": "No hay etiquetas asignadas",
+    "removeTitle": "Eliminar etiqueta"
+  },
+  "description": {
+    "title": "Descripción"
+  },
+  "comments": {
+    "title": "Comentarios",
+    "add": {
+      "placeholder": "Client Facing AI verá este comentario.",
+      "button": "Añadir comentario"
+    },
+    "noComments": "Aún no hay comentarios.",
+    "loadMore": "Cargar más comentarios",
+    "from": {
+      "staff": "Personal",
+      "agent": "Agente AI",
+      "unknown": "Desconocido"
+    },
+    "deleteConfirm": "¿Seguro que quieres borrar este comentario?"
+  },
+  "archive": {
+    "dialog": {
+      "title": "Edición de archivo",
+      "message": "¿Seguro que quieres archivar este tema?",
+      "cancel": "Cancelar",
+      "confirm": "Archivo"
+    }
+  },
+  "messages": {
+    "noIssueId": "No se proporciona ID de incidencia",
+    "tagRemoved": "Etiqueta eliminada correctamente",
+    "tagRemoveError": "Error al eliminar la etiqueta",
+    "loadError": "Error al cargar los detalles de la incidencia",
+    "loadCommentsError": "Error al cargar comentarios",
+    "commentAdded": "Comentario añadido correctamente",
+    "commentAddError": "Error al añadir comentario",
+    "commentDeleted": "Comentario eliminado correctamente",
+    "commentDeleteError": "Error al borrar comentario",
+    "issueResolved": "Problema resuelto con éxito",
+    "issueReopened": "Asunto reabierto con éxito",
+    "statusUpdateError": "Error al actualizar el estado de la incidencia",
+    "archived": "Edición archivada correctamente",
+    "archiveError": "Fallo al archivar",
+    "unarchived": "Edición desarchivada correctamente",
+    "unarchiveError": "Error al desarchivar"
+  }
+}

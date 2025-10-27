@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "title": "Pruebas de ImageCard - DirectSupport.ai"
+  },
+  "page": {
+    "title": "Pruebas del componente ImageCard",
+    "description": "Pruebas del componente ImageCard mejorado con imágenes reales de Picsum Photos para demostrar el recorte y el tamaño adaptable."
+  },
+  "sections": {
+    "fullContent": "Tarjeta de contenido completo",
+    "imageOnly": "Tarjeta de sólo imagen",
+    "titleOnly": "Tarjeta de sólo título",
+    "noImage": "Sin tarjeta de imagen",
+    "minimal": "Contenido mínimo",
+    "onlyMetadata": "Sólo metadatos",
+    "landscape": "Imagen del paisaje",
+    "square": "Imagen cuadrada",
+    "portrait": "Imagen de retrato",
+    "longContent": "Prueba de contenido largo"
+  },
+  "cards": {
+    "fullContent": {
+      "title": "Artículo multimedia completo",
+      "description": "Esta tarjeta contiene toda la información, incluidos el título, la descripción, el precio y los metadatos."
+    },
+    "titleOnly": {
+      "title": "Sólo un título"
+    },
+    "noImage": {
+      "title": "No hay imagen disponible",
+      "description": "Esta tarjeta muestra lo que ocurre cuando no se proporciona ninguna imagen."
+    },
+    "minimal": {
+      "title": "Mínimo"
+    },
+    "landscape": {
+      "title": "Paisaje ancho",
+      "description": "Esta imagen es más ancha que alta - verás cómo se recorta."
+    },
+    "square": {
+      "title": "Cuadrado perfecto",
+      "description": "Esta es una imagen cuadrada para probar diferentes relaciones de aspecto."
+    },
+    "portrait": {
+      "title": "Retrato alto"
+    },
+    "longContent": {
+      "title": "Título muy largo que debería truncarse con elipsis",
+      "description": "Se trata de una descripción muy larga que debería limitarse a unas pocas líneas para comprobar que la altura de la tarjeta se mantiene constante incluso con mucho contenido de texto que podría romper el diseño."
+    }
+  },
+  "metadata": {
+    "date1": "22 de enero de 2024",
+    "date2": "15 de enero de 2024",
+    "timeAgo1": "hace 2 horas",
+    "timeAgo2": "Prueba de texto largo",
+    "views1": "143 vistas",
+    "views2": "999+ visitas",
+    "missingImage": "Falta imagen"
+  },
+  "actions": {
+    "edit": "Editar"
+  },
+  "features": {
+    "title": "Novedades",
+    "list": {
+      "optional": "Todos los accesorios son ahora opcionales - Puede crear tarjetas con cualquier combinación de contenido",
+      "fixedDimensions": "Dimensiones fijas de las tarjetas: todas las tarjetas tienen exactamente la misma altura (400px) y anchura en cualquier cuadrícula.",
+      "responsiveImages": "Tamaño de imagen adaptable: la sección de imágenes crece o decrece en función del contenido inferior, manteniendo la coherencia de la tarjeta.",
+      "textOverflow": "Gestión del desbordamiento de texto - Los títulos se truncan con elipsis, las descripciones se limitan a un máximo de 3 líneas.",
+      "imageCropping": "Recorte de imágenes (no redimensionamiento) - Las imágenes utilizan object-fit: cover para recortar y centrar, preservando la relación de aspecto.",
+      "clickPreview": "Haga clic en cualquier imagen para ver la versión completa, sin recortar, en una ventana emergente.",
+      "flexibleLayout": "Diseño flexible: la sección Contenido sólo aparece cuando hay contenido que mostrar.",
+      "accessibility": "Mejor accesibilidad: texto alternativo adecuado y navegación mediante teclado"
+    },
+    "technicalNote": {
+      "title": "Cómo funciona el tamaño de las imágenes:",
+      "description": "Cada tarjeta tiene una altura fija (400px). La sección de imagen utiliza flex: 1 para crecer y rellenar el espacio que quede después de que la sección de contenido tome lo que necesita. La propia imagen utiliza object-fit: cover para recortar (no redimensionar) y centrar dentro de su contenedor.",
+      "aspectRatios": "Observa las diferentes relaciones de aspecto: Las imágenes apaisadas, cuadradas y verticales de Picsum Photos se recortan para ajustarse perfectamente a sus contenedores, manteniendo su calidad original y adaptándose al espacio disponible."
+    }
+  }
+}

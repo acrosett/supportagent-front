@@ -818,7 +818,7 @@ const loadTransactions = async (reset = false) => {
     const options: CrudOptions = {
       orderBy: { createdAt: 'DESC' as const },
       limit: itemsPerPage,
-      offset: currentOffset.value || 0,
+      offset: Math.floor(currentOffset.value) || 0,
     }
     
     let newTransactions: Transaction[] = []
@@ -860,13 +860,13 @@ const loadTransactions = async (reset = false) => {
       
       totalCount = depositsTotal + spendsTotal
       
-      // Calculate proper offsets based on actual data ratios
-      const depositRatio = depositsTotal / totalCount
-      const spendRatio = spendsTotal / totalCount
+      // Calculate proper offsets based on actual data ratios (avoid division by zero)
+      const depositRatio = totalCount > 0 ? depositsTotal / totalCount : 0
+      const spendRatio = totalCount > 0 ? spendsTotal / totalCount : 0
       
       const currentLength = transactions.value.length
-      const depositOffset = Math.floor(currentLength * depositRatio)
-      const spendOffset = Math.floor(currentLength * spendRatio)
+      const depositOffset = Math.floor(currentLength * depositRatio) || 0
+      const spendOffset = Math.floor(currentLength * spendRatio) || 0
       
       const batchSize = itemsPerPage * 2 // Load 2x more to ensure we get enough after sorting
       
@@ -875,12 +875,12 @@ const loadTransactions = async (reset = false) => {
         $sp.deposit.find(baseQuery, { 
           ...options, 
           limit: Math.min(batchSize, depositsTotal), // Don't request more than available
-          offset: Math.min(depositOffset, Math.max(0, depositsTotal - batchSize))
+          offset: Math.floor(Math.min(depositOffset, Math.max(0, depositsTotal - batchSize)))
         }),
         $sp.spend.find(baseQuery, { 
           ...options, 
           limit: batchSize, 
-          offset: spendOffset || 0
+          offset: Math.floor(spendOffset) || 0
         })
       ])
       
@@ -925,7 +925,7 @@ const loadTransactions = async (reset = false) => {
     }
     
     // Update offset for next load
-    currentOffset.value += itemsPerPage
+    currentOffset.value = Math.floor(currentOffset.value) + itemsPerPage
     
     // Check if we have more transactions to load
     hasMoreTransactions.value = transactions.value.length < totalCount && newTransactions.length > 0

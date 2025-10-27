@@ -1,0 +1,30 @@
+{
+  "page": {
+    "title": "Crear cuenta",
+    "subtitle": "Únase a nosotros para empezar a automatizar su atención al cliente"
+  },
+  "form": {
+    "fields": {
+      "email": {
+        "label": "Correo electrónico"
+      },
+      "password": {
+        "label": "Contraseña"
+      },
+      "acceptedEula": {
+        "label": "Acepto el [Acuerdo de licencia de usuario final](https://directsupport.ai/terms.html)"
+      },
+      "acceptedMarketing": {
+        "label": "Acepto recibir comunicaciones de marketing"
+      }
+    },
+    "buttons": {
+      "submit": "Regístrese en"
+    }
+  },
+  "messages": {
+    "error": {
+      "recaptchaFailed": "La verificación reCAPTCHA ha fallado. Por favor, inténtelo de nuevo."
+    }
+  }
+}

@@ -26,14 +26,14 @@ export default defineNuxtConfig({
         code: 'fr', 
         name: 'Français',
       },
-      // {
-      //   code: 'es',
-      //   name: 'Español', 
-      // },
-      // {
-      //   code: 'de',
-      //   name: 'Deutsch',
-      // }
+      {
+        code: 'es',
+        name: 'Español', 
+      },
+      {
+        code: 'de',
+        name: 'Deutsch',
+      }
     ],
     detectBrowserLanguage: {
       useCookie: true,

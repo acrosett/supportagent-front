@@ -3,7 +3,11 @@
     <!-- Regular chat message -->
     <div v-if="message.type !== 'tool-trace'" :class="['message', getMessageClass(message.type), { 'message-streaming': isStreaming(message.id) }]" :data-message-id="message.id">
       <div class="message-header">
-        <span class="sender-name">{{ getSenderName(message.type) }} <span class="ai-type-label">{{getAiTypeLabel(message.aiType)}}</span></span>
+        <span class="sender-name">
+          {{ getSenderName(message.type) }} 
+          <span v-if="(message as ChatMessage).fromStaff" class="human-badge">{{ t('chatMessage.badges.human') }}</span>
+          <span class="ai-type-label">{{getAiTypeLabel(message.aiType)}}</span>
+        </span>
         <span class="message-time">&nbsp;&nbsp;{{ formatTime(message.createdAt) }}</span>
       </div>
       <div class="message-content" :class="{ 'streaming-content': isStreaming(message.id) }">
@@ -211,6 +215,22 @@ const getToolTraceStatusClass = (trace: ToolTraceMessage): string => {
 
 .ai-type-label { 
   opacity: 0.7; 
+}
+
+.human-badge {
+  background: var(--primary-color, #667eea);
+  color: white;
+  padding: 0.125rem 0.375rem;
+  border-radius: 8px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+.dark-mode .human-badge {
+  background: var(--primary-color, #667eea);
 }
 
 .message-time { 

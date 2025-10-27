@@ -55,6 +55,8 @@
   config.darkMode = script.dataset.darkMode === 'true'; // dark mode flag
   config.soundOn = script.dataset.soundOn !== 'false'; // sound enabled by default
   config.debug = script.dataset.debug === 'true'; // debug mode flag
+  config.showAiDisclaimer = script.dataset.showAiDisclaimer === 'true'; // show AI disclaimer only when explicitly enabled
+  
   // Bounce timing (seconds)
   const parseSeconds = (v)=>{ if(!v) return undefined; const n=parseFloat(v); return isNaN(n)?undefined:n; };
   config.bounceAfterInit = parseSeconds(script.dataset.bounceAfterInit); // delay before first double bounce
@@ -760,9 +762,10 @@ const createWidget = (config) => {
             // Send full configuration to iframe
             // Pass icon map to iframe along with config, include initial mute state
             const currentMuteState = getMuteState();
+            
             sendMessage({
               type: 'set-config',
-              data: { config: { ...config, icons: ICON_SVGS, soundOn: !currentMuteState } }
+              data: { config: { ...config, icons: ICON_SVGS, soundOn: !currentMuteState, showAiDisclaimer: config.showAiDisclaimer || false } }
             });
 
             // Mark widget as ready after config is sent
@@ -777,7 +780,7 @@ const createWidget = (config) => {
                 type: 'parent-page-url',
                 data: { url: window.location.hostname + window.location.pathname }
               });
-            }, 150);
+            }, 500);
        
             break;
           case 'user-message':

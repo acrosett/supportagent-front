@@ -1,0 +1,64 @@
+{
+  "page": {
+    "title": "Carga y procesamiento de documentos"
+  },
+  "buttons": {
+    "backToFaq": "Volver a FAQ",
+    "resetFilters": "Restablecer filtros"
+  },
+  "aiNote": "La IA utilizará este contenido para actualizar las FAQ.",
+  "admin": {
+    "rawTextTitle": "Contenido de texto sin formato (sólo para administradores)",
+    "charactersCount": "{count} caracteres",
+    "textPlaceholder": "El texto procesado aparecerá aquí..."
+  },
+  "processingQueue": {
+    "title": "Cola de procesamiento",
+    "description": "Seguimiento de las tareas de procesamiento de documentos y actualización de FAQ"
+  },
+  "search": {
+    "placeholder": "Buscar tareas..."
+  },
+  "filters": {
+    "status": {
+      "all": "Todos",
+      "title": "Estado",
+      "queued": "En cola",
+      "processing": "Procesamiento",
+      "completed": "Completado",
+      "failed": "Fallido"
+    },
+    "initiator": {
+      "title": "Iniciador",
+      "all": "Todos",
+      "documentUpload": "Carga de documentos",
+      "staffAgent": "Agente de personal"
+    }
+  },
+  "states": {
+    "loading": "Cargando tareas...",
+    "loadingMore": "Cargando más tareas...",
+    "noMoreTasks": "No más tareas para cargar",
+    "noTasks": {
+      "title": "No se han encontrado tareas",
+      "description": "Las tareas de procesamiento aparecerán aquí cuando se carguen los documentos"
+    }
+  },
+  "taskCard": {
+    "created": "Creado",
+    "updated": "Actualizado"
+  },
+  "taskDetail": {
+    "title": "Detalles de la tarea",
+    "created": "Creado",
+    "updated": "Actualizado",
+    "knowledgeContent": "Contenido de conocimiento",
+    "noContent": "No hay contenido disponible",
+    "actions": {
+      "close": "Cerrar",
+      "reprocess": "Reprocesar",
+      "retry": "Reintentar tarea",
+      "viewLogs": "Ver registros"
+    }
+  }
+}

@@ -64,6 +64,9 @@ export class WidgetConfig {
     darkMode: boolean;
 
     @IsBoolean()
+    showAiDisclaimer: boolean = true;
+
+    @IsBoolean()
     draggable: boolean;
 
     @IsBoolean()

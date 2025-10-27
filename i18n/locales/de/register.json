@@ -1,0 +1,30 @@
+{
+  "page": {
+    "title": "Konto erstellen",
+    "subtitle": "Schließen Sie sich uns an und beginnen Sie mit der Automatisierung Ihres Kundensupports"
+  },
+  "form": {
+    "fields": {
+      "email": {
+        "label": "E-Mail"
+      },
+      "password": {
+        "label": "Passwort"
+      },
+      "acceptedEula": {
+        "label": "Ich akzeptiere die [Endbenutzer-Lizenzvereinbarung](https://directsupport.ai/terms.html)"
+      },
+      "acceptedMarketing": {
+        "label": "Ich bin damit einverstanden, Marketingmitteilungen zu erhalten"
+      }
+    },
+    "buttons": {
+      "submit": "Registrieren"
+    }
+  },
+  "messages": {
+    "error": {
+      "recaptchaFailed": "reCAPTCHA-Überprüfung fehlgeschlagen. Bitte versuchen Sie es erneut."
+    }
+  }
+}

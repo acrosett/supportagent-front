@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "title": "Fondos y facturación"
+  },
+  "page": {
+    "title": "Fondos y facturación",
+    "subtitle": "Gestione el saldo de su cuenta, los depósitos y los límites de gasto."
+  },
+  "balance": {
+    "title": "Saldo de la cuenta",
+    "verified": "Última verificación {date}",
+    "lowBalance": "Saldo bajo - Añadir fondos para continuar el servicio",
+    "buttons": {
+      "addFunds": "Añadir fondos",
+      "autoTopup": "Recarga automática"
+    },
+    "autoTopup": {
+      "enabled": "Recarga automática activada",
+      "trigger": "cuando el saldo sea inferior a $.{amount}",
+      "toggleOn": "EN",
+      "toggleOff": "OFF"
+    }
+  },
+  "subscription": {
+    "title": "Suscripción",
+    "price": "$5",
+    "period": "/mes",
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "description": {
+      "active": "Su suscripción está activa y se renovará automáticamente",
+      "inactive": "Activa tu suscripción para desbloquear todas las funciones y habilitar el chat AI."
+    },
+    "autoRenew": {
+      "label": "Renovación automática de la suscripción",
+      "description": "Renueve automáticamente su suscripción cada mes",
+      "toggleOn": "EN",
+      "toggleOff": "OFF"
+    },
+    "nextBilling": "Próxima fecha de facturación: {date}",
+    "button": "Activar suscripción"
+  },
+  "spendingLimit": {
+    "title": "Límite de gasto mensual",
+    "noLimit": "Sin límite",
+    "period": "/mes",
+    "description": {
+      "set": "Importe máximo que se puede ingresar al mes",
+      "unset": "Establezca un límite de depósito mensual para controlar sus gastos"
+    },
+    "button": "Editar límite"
+  },
+  "transactions": {
+    "title": "Historial de transacciones",
+    "filters": {
+      "all": "Todos",
+      "deposits": "Depósitos",
+      "spending": "Gastar"
+    },
+    "loading": "Cargando transacciones...",
+    "empty": {
+      "title": "No se han encontrado transacciones",
+      "subtitle": "Aquí aparecerá su historial de transacciones."
+    },
+    "loadMore": "Cargar más",
+    "noMore": "No más transacciones que cargar",
+    "viewDetails": "Ver detalles",
+    "types": {
+      "deposit": "Depósito",
+      "spending": "Gastar"
+    }
+  },
+  "popups": {
+    "addFunds": {
+      "title": "Añadir fondos",
+      "amountLabel": "Cantidad a añadir",
+      "buttons": {
+        "cancel": "Cancelar",
+        "addFunds": "Añadir fondos"
+      }
+    },
+    "autoTopup": {
+      "title": "Configuración de la recarga automática",
+      "explanation": "Configura la facturación automática para mantener el saldo de tu cuenta.",
+      "amountLabel": "Importe de la recarga",
+      "minimumWarning": "El importe mínimo de recarga automática es de 60",
+      "triggerInfo": "Cuando su saldo sea inferior a ${threshold} (10% del importe de la recarga), se le facturará automáticamente hasta ${amount}.",
+      "currentStatus": {
+        "amount": "Recarga automática actual:",
+        "trigger": "Umbral de activación:"
+      },
+      "buttons": {
+        "cancel": "Cancelar",
+        "choosePayment": "Elegir método de pago"
+      }
+    },
+    "subscription": {
+      "title": "Activar suscripción",
+      "confirmation": "Se le cobrará $5. Puede cancelar en cualquier momento.",
+      "buttons": {
+        "cancel": "Cancelar",
+        "activate": "Activar (5 $/mes)"
+      }
+    },
+    "spendingLimit": {
+      "title": "Límite de gasto mensual"
+    },
+    "transactionDetails": {
+      "title": "Detalles de la transacción - {type}",
+      "summary": {
+        "amount": "Importe:",
+        "date": "Date:",
+        "transactionId": "ID de transacción:"
+      },
+      "deposit": {
+        "title": "Información sobre depósitos",
+        "status": "Estado:",
+        "source": "Fuente:",
+        "currency": "Moneda:",
+        "autoTopup": "Recarga automática:",
+        "paymentDetails": "Datos de pago",
+        "paymentIntent": "Intención de pago:",
+        "chargeId": "ID de carga:",
+        "customerId": "ID de cliente:",
+        "refundInfo": "Información de reembolso",
+        "refundedAmount": "Importe reembolsado:",
+        "refundedAt": "Reembolsado en:",
+        "refundId": "ID de reembolso:",
+        "yes": "Sí",
+        "no": "No",
+        "notAvailable": "N/A",
+        "usd": "USD"
+      },
+      "spending": {
+        "title": "Información sobre gastos",
+        "service": "Servicio:",
+        "user": "Usuario:",
+        "cost": "Coste:",
+        "model": "Model:",
+        "requestId": "ID de solicitud:",
+        "metadata": "Metadatos"
+      }
+    }
+  },
+  "messages": {
+    "success": {
+      "fundsAdded": "¡Fondos añadidos correctamente! Su saldo ha sido actualizado.",
+      "autoTopupSaved": "La configuración de la recarga automática se ha guardado correctamente.",
+      "subscriptionActivated": "¡Suscripción activada correctamente! Bienvenido a Premium.",
+      "spendingLimitUpdated": "Límite de gasto actualizado correctamente.",
+      "autoTopupToggled": "Recarga automática {status} con éxito.",
+      "autoRenewToggled": "Renovación automática {status} con éxito."
+    },
+    "error": {
+      "addFunds": "No se han podido añadir fondos. Inténtelo de nuevo.",
+      "saveAutoTopup": "No se ha podido guardar la configuración de recarga automática. Inténtalo de nuevo.",
+      "activateSubscription": "Error al activar la suscripción. Inténtelo de nuevo.",
+      "updateSpendingLimit": "Error al actualizar el límite de gasto. Inténtelo de nuevo.",
+      "toggleAutoTopup": "Error al actualizar la configuración de recarga automática. Inténtelo de nuevo.",
+      "toggleAutoRenew": "No se ha podido actualizar la configuración de renovación automática. Inténtelo de nuevo.",
+      "loadTransactions": "No se han podido cargar las transacciones. Inténtelo de nuevo.",
+      "loadMore": "No se han podido cargar más transacciones. Inténtelo de nuevo."
+    },
+    "confirmation": {
+      "disableAutoTopup": "¿Estás seguro de que quieres desactivar la recarga automática?  Esto detendrá la facturación automática cuando tu saldo sea bajo.",
+      "disableAutoRenew": "¿Estás seguro de que quieres desactivar la renovación automática?  Su suscripción no se renovará automáticamente el mes que viene."
+    },
+    "status": {
+      "enabled": "activado",
+      "disabled": "desactivado"
+    }
+  }
+}

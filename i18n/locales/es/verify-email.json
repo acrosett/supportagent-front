@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "Verificación de correo electrónico",
+    "subtitleDefault": "Verificando su dirección de correo electrónico...",
+    "subtitleProcessing": "Procesando su solicitud de verificación...",
+    "subtitleSuccess": "Su correo electrónico ha sido verificado correctamente.",
+    "subtitleError": "Ha habido un problema al verificar tu correo electrónico."
+  },
+  "status": {
+    "loading": {
+      "title": "Verificando su correo electrónico...",
+      "message": "Espere mientras verificamos su dirección de correo electrónico."
+    },
+    "success": {
+      "title": "Correo electrónico verificado correctamente",
+      "message": "Su dirección de correo electrónico ha sido verificada. Ahora puede acceder a todas las funciones de su cuenta."
+    },
+    "error": {
+      "title": "Verificación fallida"
+    }
+  },
+  "buttons": {
+    "goToAccount": "Ir a la cuenta",
+    "goToDashboard": "Ir al panel de control",
+    "resendVerification": "Reenviar correo de verificación"
+  },
+  "messages": {
+    "noToken": "No se ha encontrado ningún token de verificación. Será redirigido a la página de inicio.",
+    "success": "¡Email verificado con éxito!",
+    "resendInfo": "Por favor, vaya a la configuración de su cuenta para reenviar el correo electrónico de verificación.",
+    "resendError": "Por favor, inténtalo de nuevo desde la configuración de tu cuenta.",
+    "error": {
+      "expired": "El enlace de verificación ha caducado o no es válido. Solicite un nuevo correo electrónico de verificación.",
+      "alreadyVerified": "Esta dirección de correo electrónico ya ha sido verificada.",
+      "failed": "Verificación fallida. Vuelva a intentarlo o póngase en contacto con el servicio de asistencia si el problema persiste.",
+      "unexpected": "Se ha producido un error inesperado durante la verificación. Por favor, inténtelo de nuevo."
+    }
+  }
+}

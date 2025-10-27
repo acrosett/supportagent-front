@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "title": "Panel de control - DirectSupport.ai"
+  },
+  "page": {
+    "title": "Cuadro de mandos",
+    "description": "¡Bienvenido a DirectSupport.ai! Supervise la actividad de su cuenta y obtenga información sobre el rendimiento de su servicio de atención al cliente."
+  },
+  "gettingStarted": {
+    "title": "Primeros pasos",
+    "description": "Pasos rápidos de configuración para sacar el máximo provecho de DirectSupport.ai. Haga clic en cualquiera de los pasos siguientes para empezar, o pregunte al soporte de chat para cualquier detalle.",
+    "steps": {
+      "configureProduct": {
+        "title": "Configure su producto",
+        "description": "Configure la información de su producto y las instrucciones del asistente de IA."
+      },
+      "assignPhone": {
+        "title": "Asigne su número de teléfono",
+        "description": "Asigne su número de teléfono para recibir actualizaciones y notificaciones de los clientes."
+      },
+      "uploadDocumentation": {
+        "title": "Suba su documentación",
+        "description": "Cargue sus archivos de documentación para generar sus FAQ automáticamente."
+      },
+      "installWidget": {
+        "title": "Instalar widget",
+        "description": "Añada el widget de chat a su sitio web para empezar a recibir mensajes de clientes."
+      }
+    }
+  },
+  "balance": {
+    "title": "Saldo de la cuenta",
+    "description": "Saldo actual de su cuenta e información de uso",
+    "status": {
+      "sufficient": "El equilibrio es suficiente",
+      "low": "Saldo bajo - Considere añadir fondos"
+    },
+    "buttons": {
+      "goToBilling": "Ir a Facturación"
+    }
+  },
+  "activity": {
+    "title": "Actividad de mensajes (14 días)",
+    "description": "Volumen de mensajes de clientes por nivel de prioridad",
+    "chart": {
+      "loading": "Cargando datos de actividad...",
+      "title": "Actividad de mensajes de clientes por prioridad",
+      "xAxisTitle": "Tiempo",
+      "yAxisTitle": "Recuento de mensajes",
+      "priorityLabels": {
+        "high": "Alta prioridad",
+        "regular": "Prioridad regular",
+        "lowest": "Prioridad más baja"
+      }
+    }
+  },
+  "messages": {
+    "error": {
+      "loadProductData": "Error al cargar los datos del producto",
+      "loadChartData": "Error al cargar los datos del gráfico",
+      "loadChart": "Error al cargar el gráfico"
+    }
+  }
+}

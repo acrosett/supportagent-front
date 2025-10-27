@@ -1,0 +1,26 @@
+{
+  "page": {
+    "title": "Bienvenido",
+    "subtitle": "Acceda a su cuenta"
+  },
+  "form": {
+    "fields": {
+      "expiresInSec": {
+        "label": "Mantenerme conectado durante 15 días",
+        "description": "Amplía la duración de la sesión para mayor comodidad"
+      }
+    },
+    "buttons": {
+      "submit": "Inicio de sesión"
+    }
+  },
+  "links": {
+    "resetPassword": "¿Problemas para iniciar sesión? Restablecer contraseña",
+    "register": "¿No tienes cuenta? Regístrese aquí"
+  },
+  "messages": {
+    "error": {
+      "loginFailed": "Error de inicio de sesión"
+    }
+  }
+}

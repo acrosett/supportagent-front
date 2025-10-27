@@ -19,46 +19,31 @@ import ConfirmPopup from '~/components/ConfirmPopup.vue'
 const route = useRoute()
 const { $config } = useNuxtApp()
 
-// Add scripts to the head (except on /widget page)
-useHead({
-  script: computed(() => {
-    // Don't add scripts on the widget page
-    if (route.path === '/widget') {
-      return []
-    }
-    
-    return [
-      // Cookie consent banner - DISABLED
-      // {
-      //   src: '/banner_source.js'
-      // },
-      // AI Support widget
-      {
-        src: `${$config.public.cdnBaseUrl}/embed.js`,
-        'data-api-token': '68ce983b17ff8a182e27c4c7',
-        'data-width': '400px',
-        'data-height': '600px',
-        'data-position': 'bottom-right',
-        'data-welcome-message': '👋 Welcome! How can I help you today?',
-        'data-icon': 'message',
-        'data-start-open': 'false',
-        'data-periodic-bounce': '5sec',
-        'data-primary-color': '#667eea',
-        'data-secondary-color': '#667eea',
-        'data-dark-mode': 'false',
-        'data-debug': 'true'
-      }
-    ]
-  })
-})
+// Widget is now handled manually in the watcher below
 
-// Set user token when layout loads (except on /widget page)
-onMounted(() => {
-  // Don't set user token on widget page
-  if (route.path === '/widget') {
-    return
-  }
-
+// Handle widget loading and user token setting
+const loadWidget = () => {
+  // Clean up any existing widget first
+  document.querySelectorAll('#ai-support-widget, #ai-support-widget-bubble').forEach(el => el.remove())
+  
+  // Create and load the widget script
+  const script = document.createElement('script')
+  script.src = `${$config.public.cdnBaseUrl}/embed.js`
+  script.setAttribute('data-api-token', '68ce983b17ff8a182e27c4c7')
+  script.setAttribute('data-width', '400px')
+  script.setAttribute('data-height', '600px')
+  script.setAttribute('data-position', 'bottom-right')
+  script.setAttribute('data-welcome-message', '👋 Welcome! How can I help you today?')
+  script.setAttribute('data-icon', 'message')
+  script.setAttribute('data-start-open', 'false')
+  script.setAttribute('data-periodic-bounce', '5sec')
+  script.setAttribute('data-primary-color', '#667eea')
+  script.setAttribute('data-secondary-color', '#667eea')
+  script.setAttribute('data-dark-mode', 'false')
+  script.setAttribute('data-debug', 'true')
+  
+  document.body.appendChild(script)
+  
   // Wait for the widget to be available, then set the user token
   const checkWidget = () => {
     if (window['AISupportWidget'] && typeof window['AISupportWidget'].setUserToken === 'function') {
@@ -76,7 +61,26 @@ onMounted(() => {
   }
   
   // Start checking for the widget
-  checkWidget()
+  setTimeout(checkWidget, 100)
+}
+
+// Watch for route changes and load/unload widget accordingly
+watch(() => route.path, (newPath) => {
+  if (newPath === '/widget') {
+    // Remove widget on widget page
+    document.querySelectorAll('#ai-support-widget, #ai-support-widget-bubble').forEach(el => el.remove())
+  } else {
+    // Load widget on other pages
+    loadWidget()
+  }
+}, { immediate: true })
+
+// Set user token when layout loads (except on /widget page)
+onMounted(() => {
+  // The watcher above handles initial load, but we need this for cases where the widget loads before the watcher
+  if (route.path !== '/widget') {
+    setTimeout(loadWidget, 100)
+  }
 })
 </script>
 

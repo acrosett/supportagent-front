@@ -1,0 +1,24 @@
+{
+  "search": {
+    "placeholder": "Buscar herramientas públicas..."
+  },
+  "status": {
+    "loading": "Cargando herramientas públicas..."
+  },
+  "empty": {
+    "title": "No se han encontrado herramientas públicas",
+    "description": "Ninguna herramienta pública coincide con tus criterios de búsqueda. Intente ajustar los términos de búsqueda."
+  },
+  "tool": {
+    "perCall": "por llamada API"
+  },
+  "actions": {
+    "useTool": "Usar herramienta"
+  },
+  "tools": {
+    "meteoForecast": {
+      "title": "Previsión meteorológica",
+      "description": "Obtén previsiones meteorológicas detalladas con datos horarios o diarios para un máximo de 16 días. Incluye temperatura, precipitaciones, viento y otra información meteorológica."
+    }
+  }
+}

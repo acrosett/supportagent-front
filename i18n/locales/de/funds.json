@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "title": "Gelder &amp; Abrechnung"
+  },
+  "page": {
+    "title": "Gelder &amp; Abrechnung",
+    "subtitle": "Verwalten Sie Ihren Kontostand, Einzahlungen und Ausgabenlimits."
+  },
+  "balance": {
+    "title": "Kontostand",
+    "verified": "Zuletzt geprüft {date}",
+    "lowBalance": "Niedriger Kontostand - Geld hinzufügen, um Dienst fortzusetzen",
+    "buttons": {
+      "addFunds": "Mittel hinzufügen",
+      "autoTopup": "Automatisches Aufladen"
+    },
+    "autoTopup": {
+      "enabled": "Automatisches Aufladen aktiviert",
+      "trigger": "wenn der Saldo unter $ fällt{amount}",
+      "toggleOn": "ON",
+      "toggleOff": "AUS"
+    }
+  },
+  "subscription": {
+    "title": "Abonnement",
+    "price": "$5",
+    "period": "/Monat",
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "description": {
+      "active": "Ihr Abonnement ist aktiv und wird automatisch erneuert",
+      "inactive": "Aktivieren Sie Ihr Abonnement, um alle Funktionen freizuschalten und den KI-Chat zu aktivieren."
+    },
+    "autoRenew": {
+      "label": "Abonnement automatisch verlängern",
+      "description": "Verlängern Sie Ihr Abonnement automatisch jeden Monat",
+      "toggleOn": "ON",
+      "toggleOff": "AUS"
+    },
+    "nextBilling": "Nächstes Abrechnungsdatum: {date}",
+    "button": "Abonnement aktivieren"
+  },
+  "spendingLimit": {
+    "title": "Monatliches Ausgabelimit",
+    "noLimit": "Kein Limit gesetzt",
+    "period": "/Monat",
+    "description": {
+      "set": "Maximaler Betrag, der pro Monat eingezahlt werden kann",
+      "unset": "Legen Sie ein monatliches Einzahlungslimit fest, um Ihre Kosten zu kontrollieren"
+    },
+    "button": "Limit bearbeiten"
+  },
+  "transactions": {
+    "title": "Transaktionsverlauf",
+    "filters": {
+      "all": "Alle",
+      "deposits": "Einlagen",
+      "spending": "Ausgaben"
+    },
+    "loading": "Laden von Transaktionen...",
+    "empty": {
+      "title": "Keine Transaktionen gefunden",
+      "subtitle": "Hier wird Ihr Transaktionsverlauf angezeigt."
+    },
+    "loadMore": "Mehr laden",
+    "noMore": "Keine Transaktionen mehr zu laden",
+    "viewDetails": "Details anzeigen",
+    "types": {
+      "deposit": "Einzahlung",
+      "spending": "Ausgaben"
+    }
+  },
+  "popups": {
+    "addFunds": {
+      "title": "Mittel hinzufügen",
+      "amountLabel": "Hinzufügender Betrag",
+      "buttons": {
+        "cancel": "Abbrechen",
+        "addFunds": "Mittel hinzufügen"
+      }
+    },
+    "autoTopup": {
+      "title": "Auto Top-up Einstellungen",
+      "explanation": "Richten Sie eine automatische Abrechnung ein, um Ihren Kontostand zu erhalten.",
+      "amountLabel": "Aufstockungsbetrag",
+      "minimumWarning": "Der Mindestbetrag für die automatische Aufladung beträgt $60",
+      "triggerInfo": "Wenn Ihr Guthaben unter ${threshold} (10% des Aufladebetrags) fällt, werden Ihnen automatisch bis zu ${amount} in Rechnung gestellt.",
+      "currentStatus": {
+        "amount": "Aktuelle automatische Aufstockung:",
+        "trigger": "Schwellenwert auslösen:"
+      },
+      "buttons": {
+        "cancel": "Abbrechen",
+        "choosePayment": "Zahlungsmethode wählen"
+      }
+    },
+    "subscription": {
+      "title": "Abonnement aktivieren",
+      "confirmation": "Ihnen werden $5 berechnet. Sie können jederzeit kündigen.",
+      "buttons": {
+        "cancel": "Abbrechen",
+        "activate": "Aktivieren ($5/Monat)"
+      }
+    },
+    "spendingLimit": {
+      "title": "Monatliches Ausgabelimit"
+    },
+    "transactionDetails": {
+      "title": "Transaktionsdetails - {type}",
+      "summary": {
+        "amount": "Betrag:",
+        "date": "Datum:",
+        "transactionId": "Transaktions-ID:"
+      },
+      "deposit": {
+        "title": "Informationen zur Einzahlung",
+        "status": "Status:",
+        "source": "Quelle:",
+        "currency": "Währung:",
+        "autoTopup": "Auto Top-up:",
+        "paymentDetails": "Zahlungsdetails",
+        "paymentIntent": "Absicht der Zahlung:",
+        "chargeId": "Gebühren-ID:",
+        "customerId": "Kunden-ID:",
+        "refundInfo": "Informationen zur Rückerstattung",
+        "refundedAmount": "Erstatteter Betrag:",
+        "refundedAt": "Erstattet am:",
+        "refundId": "Erstattungs-ID:",
+        "yes": "Ja",
+        "no": "Keine",
+        "notAvailable": "K.A.",
+        "usd": "USD"
+      },
+      "spending": {
+        "title": "Ausgaben-Informationen",
+        "service": "Dienst:",
+        "user": "Benutzer:",
+        "cost": "Kosten:",
+        "model": "Modell:",
+        "requestId": "Anfrage-ID:",
+        "metadata": "Metadaten"
+      }
+    }
+  },
+  "messages": {
+    "success": {
+      "fundsAdded": "Gelder erfolgreich hinzugefügt! Ihr Guthaben wurde aktualisiert.",
+      "autoTopupSaved": "Einstellungen für die automatische Aufladung erfolgreich gespeichert.",
+      "subscriptionActivated": "Abonnement erfolgreich aktiviert! Willkommen bei Premium.",
+      "spendingLimitUpdated": "Ausgabenlimit erfolgreich aktualisiert.",
+      "autoTopupToggled": "Automatisches Aufladen {status} erfolgreich.",
+      "autoRenewToggled": "Auto-Erneuerung {status} erfolgreich."
+    },
+    "error": {
+      "addFunds": "Gelder konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut.",
+      "saveAutoTopup": "Die Einstellungen für die automatische Aufladung konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+      "activateSubscription": "Das Abonnement konnte nicht aktiviert werden. Bitte versuchen Sie es erneut.",
+      "updateSpendingLimit": "Aktualisierung des Ausgabenlimits fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "toggleAutoTopup": "Die Einstellung für die automatische Aufladung konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+      "toggleAutoRenew": "Die Einstellung für die automatische Erneuerung konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+      "loadTransactions": "Transaktionen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+      "loadMore": "Es konnten keine weiteren Transaktionen geladen werden. Bitte versuchen Sie es erneut."
+    },
+    "confirmation": {
+      "disableAutoTopup": "Sind Sie sicher, dass Sie die automatische Aufladung deaktivieren möchten?  Damit wird die automatische Abrechnung bei niedrigem Guthaben gestoppt.",
+      "disableAutoRenew": "Sind Sie sicher, dass Sie die automatische Erneuerung deaktivieren möchten?  Ihr Abonnement wird im nächsten Monat nicht automatisch verlängert."
+    },
+    "status": {
+      "enabled": "aktiviert",
+      "disabled": "deaktiviert"
+    }
+  }
+}

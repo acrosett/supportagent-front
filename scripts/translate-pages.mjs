@@ -125,6 +125,8 @@ async function translatePageFile(pageFile, locale) {
   
   try {
     console.log(`🌍 Translating ${pageFile} for locale: ${locale}`);
+    // Ensure target directory exists to avoid ENOENT on write
+    await fs.mkdir(path.dirname(targetFile), { recursive: true });
     
     // Read source English file
     const sourceContent = await fs.readFile(sourceFile, 'utf-8');
@@ -203,7 +205,7 @@ async function translatePageFile(pageFile, locale) {
     const translatedData = applyTranslationsToJson(sourceData, translationMap, existingTranslations);
     
     // Save translated file
-    await fs.writeFile(targetFile, JSON.stringify(translatedData, null, 2), 'utf-8');
+  await fs.writeFile(targetFile, JSON.stringify(translatedData, null, 2), 'utf-8');
     
     console.log(`✅ Translation completed: ${pageFile} → ${locale}`);
     

@@ -1,0 +1,53 @@
+{
+  "header": {
+    "subtitle": "Wählen Sie einen Client, um eine Test-Chat-Sitzung zu starten. Test-Clients haben Zugang zu deaktivierten benutzerdefinierten Tools."
+  },
+  "status": {
+    "loading": "Testmandanten laden...",
+    "empty": "Keine Testclients gefunden"
+  },
+  "client": {
+    "unnamedClient": "Unbenannter Client",
+    "id": "ID",
+    "created": "Erstellt"
+  },
+  "actions": {
+    "deleteClient": "Mandant löschen",
+    "deleteAllClients": "Alle Clients löschen",
+    "createNewClient": "Neuen Testmandanten erstellen",
+    "cancel": "Abbrechen"
+  },
+  "modals": {
+    "createClient": {
+      "title": "Test-Client erstellen",
+      "description": "Erstellen Sie einen neuen Testmandanten für Debugging-Zwecke.",
+      "create": "Client erstellen",
+      "cancel": "Abbrechen"
+    },
+    "authToken": {
+      "title": "Authentifizierungs-Token",
+      "description": "Verwenden Sie dieses Token, um sich als Testclient zu authentifizieren:",
+      "copy": "Token kopieren",
+      "startChat": "Chat-Sitzung starten",
+      "cancel": "Abbrechen"
+    }
+  },
+  "messages": {
+    "success": {
+      "clientDeleted": "Testmandant gelöscht",
+      "allClientsDeleted": "Alle Testmandanten gelöscht",
+      "allDeleted": "Alle Testmandanten gelöscht",
+      "clientCreated": "Testmandant erstellt"
+    },
+    "error": {
+      "loadFailed": "Testmandanten konnten nicht geladen werden",
+      "deleteFailed": "Testmandant konnte nicht gelöscht werden",
+      "deleteAllFailed": "Alle Testmandanten konnten nicht gelöscht werden",
+      "createFailed": "Testmandant konnte nicht erstellt werden"
+    },
+    "confirm": {
+      "deleteClient": "Sind Sie sicher, dass Sie diesen Testmandanten löschen möchten?",
+      "deleteAllClients": "Sind Sie sicher, dass Sie alle Testmandanten löschen wollen?"
+    }
+  }
+}

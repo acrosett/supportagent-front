@@ -1,0 +1,24 @@
+{
+  "search": {
+    "placeholder": "Öffentliche Werkzeuge suchen..."
+  },
+  "status": {
+    "loading": "Öffentliche Werkzeuge laden..."
+  },
+  "empty": {
+    "title": "Keine öffentlichen Tools gefunden",
+    "description": "Keine öffentlichen Tools entsprechen Ihren Suchkriterien. Versuchen Sie, Ihre Suchbegriffe anzupassen."
+  },
+  "tool": {
+    "perCall": "per API-Aufruf"
+  },
+  "actions": {
+    "useTool": "Werkzeug verwenden"
+  },
+  "tools": {
+    "meteoForecast": {
+      "title": "Wettervorhersage",
+      "description": "Erhalten Sie detaillierte Wettervorhersagen mit stündlichen oder täglichen Daten für bis zu 16 Tage im Voraus. Enthält Temperatur, Niederschlag, Wind und andere meteorologische Informationen."
+    }
+  }
+}

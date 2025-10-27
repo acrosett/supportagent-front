@@ -221,7 +221,7 @@ const emailChangeFormData = ref<SendVerificationEmailDto>({
 
 // Computed properties
 const emailVerified = computed(() => {
-  return user.value?.isEmailVerified || user.value?.emailVerified || user.value?.isVerified || false
+  return user.value?.verifiedEmail || false
 })
 
 // Load product data

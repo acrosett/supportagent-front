@@ -5,10 +5,11 @@
     },
     "header": {
       "title": "Agent d'assistance",
-      "subtitle": "Chat support"
+      "subtitle": "Support Chat IA"
     },
     "ai": {
       "disableLabel": "Désactiver l'IA",
+      "disclaimer": "Les réponses sont générées par l'IA et peuvent être inexactes.",
       "messages": {
         "enabled": "AI activé",
         "disabled": "AI désactivé"
@@ -46,6 +47,9 @@
     "sender": {
       "client": "Client",
       "agent": "Agent d'assistance"
+    },
+    "badges": {
+      "human": "Personnel"
     },
     "aiType": {
       "fast": "Rapide",

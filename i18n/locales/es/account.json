@@ -1,0 +1,67 @@
+{
+  "page": {
+    "title": "Configuración de la cuenta",
+    "description": "Gestiona tu cuenta, correo electrónico, contraseña y configuración de seguridad."
+  },
+  "common": {
+    "loading": "Cargando..."
+  },
+  "deletion": {
+    "title": "Cuenta programada para eliminación",
+    "scheduledMessage": "Su cuenta ha sido marcada para ser eliminada en {date}"
+  },
+  "email": {
+    "title": "Verificación de correo electrónico",
+    "description": "Verifique su dirección de correo electrónico para activar funciones de seguridad adicionales",
+    "emailAddress": "Dirección de correo electrónico",
+    "updateEmail": "Actualizar correo electrónico",
+    "verified": "Correo electrónico verificado",
+    "notVerified": "Correo electrónico no verificado",
+    "sendVerification": "Enviar correo de verificación",
+    "popup": {
+      "title": "Cambiar dirección de correo electrónico",
+      "description": "Introduzca su nueva dirección de correo electrónico y la contraseña actual para enviar un correo electrónico de verificación."
+    },
+    "fields": {
+      "newEmail": {
+        "label": "Nueva dirección de correo electrónico",
+        "placeholder": "Introduzca su nueva dirección de correo electrónico",
+        "description": "Introduzca la nueva dirección de correo electrónico que desea utilizar para su cuenta"
+      },
+      "password": {
+        "label": "Contraseña actual",
+        "placeholder": "Introduzca su contraseña actual",
+        "description": "Introduzca su contraseña actual para confirmar este cambio"
+      }
+    }
+  },
+  "twoFA": {
+    "title": "Autenticación de dos factores (2FA)",
+    "description": "Añade una capa adicional de seguridad a tu cuenta",
+    "enabled": "Autenticación de dos factores activada",
+    "disabled": "Autenticación de dos factores desactivada",
+    "requirement": "Por favor, verifique primero su dirección de correo electrónico para habilitar 2FA",
+    "enableDescription": "Habilita 2FA para proteger tu cuenta con un paso de autenticación adicional",
+    "protectedMessage": "Su cuenta está protegida con autenticación de dos factores"
+  },
+  "password": {
+    "title": "Cambiar contraseña",
+    "updateButton": "Actualizar contraseña",
+    "fields": {
+      "current": {
+        "label": "Contraseña actual",
+        "placeholder": "Introduzca su contraseña actual"
+      },
+      "new": {
+        "label": "Nueva contraseña",
+        "placeholder": "Introduzca su nueva contraseña",
+        "description": "Debe tener al menos 8 caracteres"
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Eliminar cuenta",
+    "deleteButton": "Eliminar cuenta",
+    "cancelButton": "Cancelar el borrado de la cuenta"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "chatInterface": {
+    "status": {
+      "settingUp": "Einrichten des Chats..."
+    },
+    "header": {
+      "title": "Agent unterstützen",
+      "subtitle": "KI-Chat-Support"
+    },
+    "ai": {
+      "disableLabel": "AI deaktivieren",
+      "disclaimer": "Antworten werden von KI generiert und können ungenau sein.",
+      "messages": {
+        "enabled": "AI aktiviert",
+        "disabled": "AI deaktiviert"
+      }
+    },
+    "messages": {
+      "loadingOlder": "Laden älterer Nachrichten..."
+    },
+    "input": {
+      "placeholder": "Geben Sie Ihre Nachricht ein...",
+      "disabledPlaceholder": "KI für den Chat mit dem Client deaktivieren"
+    },
+    "toolTrace": {
+      "title": "Tool Trace Details",
+      "sections": {
+        "toolInfo": "Werkzeug-Informationen",
+        "input": "Eingabe",
+        "output": "Ausgabe",
+        "error": "Fehler"
+      },
+      "fields": {
+        "toolName": "Werkzeug-Name",
+        "status": "Status",
+        "executedAt": "Ausgeführt am"
+      },
+      "status": {
+        "unknownTool": "Unbekanntes Werkzeug",
+        "error": "Fehler",
+        "success": "Erfolg",
+        "unknown": "Unbekannt"
+      }
+    }
+  },
+  "chatMessage": {
+    "sender": {
+      "client": "Klient",
+      "agent": "Agent unterstützen"
+    },
+    "badges": {
+      "human": "Personal"
+    },
+    "aiType": {
+      "fast": "Schnell",
+      "smart": "Intelligent",
+      "pro": "Pro"
+    },
+    "followUp": {
+      "label": "Vorgeschlagene Fragen:"
+    },
+    "toolTrace": {
+      "detailsButton": "Einzelheiten",
+      "unknownTool": "Unbekanntes Werkzeug",
+      "status": {
+        "error": "Fehler",
+        "success": "Erfolg",
+        "unknown": "Unbekannt"
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "image": {
+    "alt": "Imagen",
+    "fullSizeAlt": "Imagen a tamaño completo"
+  },
+  "actions": {
+    "closePreview": "Cerrar vista previa"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "titles": {
+    "manageTags": "Gestionar etiquetas",
+    "createNewTag": "Crear nueva etiqueta",
+    "deleteTag": "Eliminar etiqueta"
+  },
+  "sections": {
+    "availableTags": "Etiquetas disponibles"
+  },
+  "messages": {
+    "noTags": "No hay etiquetas disponibles",
+    "deleteConfirmation": "¿Está seguro de que desea eliminar la etiqueta \"{{tagName}}\"?",
+    "deleteWarning": "Esto eliminará la etiqueta de todas las ediciones que la utilicen.",
+    "tagAdded": "Etiqueta añadida a la edición",
+    "tagRemoved": "Etiqueta eliminada de la edición",
+    "tagCreated": "Etiqueta creada con éxito",
+    "tagDeleted": "Etiqueta eliminada correctamente",
+    "failedToAddTag": "Fallo al añadir etiqueta",
+    "failedToRemoveTag": "Error al eliminar etiqueta",
+    "failedToCreateTag": "Error al crear etiqueta",
+    "failedToDeleteTag": "Error al borrar etiqueta",
+    "failedToLoadTags": "Error al cargar etiquetas"
+  },
+  "buttons": {
+    "addToIssue": "Añadir a la edición",
+    "removeFromIssue": "Eliminar de la edición",
+    "createNewTag": "Crear nueva etiqueta",
+    "createTag": "Crear etiqueta",
+    "cancel": "Cancelar",
+    "delete": "Borrar"
+  },
+  "form": {
+    "fields": {
+      "tagColor": {
+        "label": "Color de etiqueta",
+        "description": "Elige un color para esta etiqueta"
+      },
+      "tagName": {
+        "label": "Nombre de etiqueta",
+        "placeholder": "Introduzca el nombre de la etiqueta...",
+        "description": "Un nombre único para esta etiqueta"
+      }
+    }
+  }
+}

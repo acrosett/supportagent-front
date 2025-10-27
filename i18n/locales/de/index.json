@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "title": "Dashboard - DirectSupport.ai"
+  },
+  "page": {
+    "title": "Dashboard",
+    "description": "Willkommen bei DirectSupport.ai! Überwachen Sie Ihre Kontoaktivitäten und erhalten Sie Einblicke in die Leistung Ihres Kundensupports."
+  },
+  "gettingStarted": {
+    "title": "Erste Schritte",
+    "description": "Schnelle Einrichtungsschritte, um das Beste aus DirectSupport.ai herauszuholen. Klicken Sie auf einen der unten aufgeführten Schritte, um loszulegen, oder fragen Sie den Chat-Support nach weiteren Details.",
+    "steps": {
+      "configureProduct": {
+        "title": "Konfigurieren Sie Ihr Produkt",
+        "description": "Richten Sie Ihre Produktinformationen und KI-Assistenten-Anweisungen ein."
+      },
+      "assignPhone": {
+        "title": "Ihre Telefonnummer zuweisen",
+        "description": "Weisen Sie Ihre Telefonnummer zu, um Kunden-Updates und Benachrichtigungen zu erhalten."
+      },
+      "uploadDocumentation": {
+        "title": "Laden Sie Ihre Dokumentation hoch",
+        "description": "Laden Sie Ihre Dokumentationsdateien hoch, um Ihre FAQ automatisch zu generieren."
+      },
+      "installWidget": {
+        "title": "Widget installieren",
+        "description": "Fügen Sie das Chat-Widget zu Ihrer Website hinzu, um Kundennachrichten zu erhalten."
+      }
+    }
+  },
+  "balance": {
+    "title": "Kontostand",
+    "description": "Ihr aktueller Kontostand und Informationen zur Nutzung",
+    "status": {
+      "sufficient": "Gleichgewicht ist ausreichend",
+      "low": "Niedriges Guthaben - Aufstockung erwägen"
+    },
+    "buttons": {
+      "goToBilling": "Zur Rechnungsstellung"
+    }
+  },
+  "activity": {
+    "title": "Nachrichtenaktivität (14 Tage)",
+    "description": "Volumen der Kundennachrichten nach Prioritätsstufe",
+    "chart": {
+      "loading": "Laden von Aktivitätsdaten...",
+      "title": "Aktivität von Kundennachrichten nach Priorität",
+      "xAxisTitle": "Zeit",
+      "yAxisTitle": "Anzahl der Nachrichten",
+      "priorityLabels": {
+        "high": "Hohe Priorität",
+        "regular": "Regelmäßige Priorität",
+        "lowest": "Niedrigste Priorität"
+      }
+    }
+  },
+  "messages": {
+    "error": {
+      "loadProductData": "Produktdaten konnten nicht geladen werden",
+      "loadChartData": "Diagrammdaten konnten nicht geladen werden",
+      "loadChart": "Diagramm konnte nicht geladen werden"
+    }
+  }
+}

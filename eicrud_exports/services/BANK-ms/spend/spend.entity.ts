@@ -6,6 +6,7 @@ import { Client, ClientPriority } from "../../SUPPORT-ms/client/client.entity";
 import { Digestor } from "../../AI-ms/digestor/digestor.entity";
 import { EditorTask } from "../../AI-ms/editor-task/editor-task.entity";
 import { AiModelType } from "./cmds/shared.utils";
+import { AgentResultType } from "../../AI-ms/AiAgent";
 
 export enum SpendType {
   AI_THINKING = 'ai_thinking',
@@ -42,7 +43,7 @@ export class Think {
   outputTokenCount?: number;
 
   @IsString()
-  outputType?: 'use_tools' | 'send_result' | 'throw_error';
+  outputType?: AgentResultType;
 
   modelType?: AiModelType ;
 }

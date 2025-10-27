@@ -1,0 +1,34 @@
+{
+  "loading": "Laden von Protokollen...",
+  "noLogs": {
+    "title": "Keine Protokolle gefunden",
+    "subtitle": "Keine LLM-Trainingsdaten für diesen Kontext verfügbar"
+  },
+  "header": {
+    "title": "Bearbeitungshistorie ({count} Einträge)",
+    "subtitle": "LLM-Trainingsdaten und Verarbeitungsprotokolle für diesen Kontext"
+  },
+  "entry": {
+    "unknownAgent": "Unbekannter Agent",
+    "testBadge": "TEST",
+    "errorBadge": "{count} ERROR{plural}",
+    "sections": {
+      "input": "Eingabe",
+      "output": "Ausgabe"
+    },
+    "noInput": "Keine Eingabe verfügbar",
+    "noOutput": "Keine Ausgabe verfügbar",
+    "copyButton": "Kopieren"
+  },
+  "timestamps": {
+    "minutesAgo": "{minutes}m vor",
+    "hoursAgo": "{hours}h vor",
+    "daysAgo": "{days}d vor",
+    "unknown": "Unbekannt",
+    "invalid": "Ungültiges Datum"
+  },
+  "messages": {
+    "copySuccess": "LLM-Eingabe in die Zwischenablage kopiert!",
+    "copyError": "Kopieren in die Zwischenablage fehlgeschlagen"
+  }
+}

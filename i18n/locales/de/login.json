@@ -1,0 +1,26 @@
+{
+  "page": {
+    "title": "Willkommen zurück",
+    "subtitle": "Bei Ihrem Konto anmelden"
+  },
+  "form": {
+    "fields": {
+      "expiresInSec": {
+        "label": "Ich bleibe 15 Tage lang eingeloggt",
+        "description": "Erweitert die Sitzungsdauer für mehr Komfort"
+      }
+    },
+    "buttons": {
+      "submit": "Anmeldung"
+    }
+  },
+  "links": {
+    "resetPassword": "Probleme beim Einloggen? Setzen Sie Ihr Passwort zurück",
+    "register": "Kein Konto? Hier registrieren"
+  },
+  "messages": {
+    "error": {
+      "loginFailed": "Anmeldung fehlgeschlagen"
+    }
+  }
+}

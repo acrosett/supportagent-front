@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "title": "ImageCard Tests - DirectSupport.ai"
+  },
+  "page": {
+    "title": "ImageCard-Komponententests",
+    "description": "Testen der verbesserten ImageCard-Komponente mit echten Bildern von Picsum Photos zur Demonstration des Zuschneidens und der responsiven Größenanpassung"
+  },
+  "sections": {
+    "fullContent": "Vollständige Inhaltskarte",
+    "imageOnly": "Nur Bild Karte",
+    "titleOnly": "Nur Titel Karte",
+    "noImage": "Keine Bildkarte",
+    "minimal": "Minimaler Inhalt",
+    "onlyMetadata": "Nur Metadaten",
+    "landscape": "Landschaftsbild",
+    "square": "Quadratisches Bild",
+    "portrait": "Porträtbild",
+    "longContent": "Langer Inhaltstest"
+  },
+  "cards": {
+    "fullContent": {
+      "title": "Vollständiger Medienartikel",
+      "description": "Diese Karte enthält alle Informationen, einschließlich Titel, Beschreibung, Preis und Metadaten."
+    },
+    "titleOnly": {
+      "title": "Nur ein Titel"
+    },
+    "noImage": {
+      "title": "Kein Bild verfügbar",
+      "description": "Diese Karte zeigt, was passiert, wenn kein Bild angegeben wird."
+    },
+    "minimal": {
+      "title": "Minimal"
+    },
+    "landscape": {
+      "title": "Weite Landschaft",
+      "description": "Dieses Bild ist breiter als hoch - Sie werden sehen, wie es beschnitten wird."
+    },
+    "square": {
+      "title": "Perfektes Quadrat",
+      "description": "Dies ist ein quadratisches Bild, um verschiedene Seitenverhältnisse zu testen."
+    },
+    "portrait": {
+      "title": "Großes Porträt"
+    },
+    "longContent": {
+      "title": "Sehr langer Titel, der mit Ellipsis abgeschnitten werden sollte",
+      "description": "Dies ist eine sehr lange Beschreibung, die auf wenige Zeilen beschränkt werden sollte, um zu testen, ob die Kartenhöhe auch bei viel Textinhalt, der das Layout möglicherweise zerstören könnte, konsistent bleibt."
+    }
+  },
+  "metadata": {
+    "date1": "Jan 22, 2024",
+    "date2": "Jan 15, 2024",
+    "timeAgo1": "vor 2 Stunden",
+    "timeAgo2": "Langer Text-Test",
+    "views1": "143 Ansichten",
+    "views2": "999+ Ansichten",
+    "missingImage": "Fehlendes Bild"
+  },
+  "actions": {
+    "edit": "Bearbeiten"
+  },
+  "features": {
+    "title": "Neue Funktionen",
+    "list": {
+      "optional": "Alle Requisiten sind jetzt optional - Sie können Karten mit einer beliebigen Kombination von Inhalten erstellen",
+      "fixedDimensions": "Feste Kartenabmessungen - Alle Karten haben genau die gleiche Höhe (400px) und Breite in jedem Raster",
+      "responsiveImages": "Responsive Image Sizing - Der Bildbereich wächst/schrumpft basierend auf dem darunter liegenden Inhalt, während die Konsistenz der Karte erhalten bleibt",
+      "textOverflow": "Behandlung von Textüberlauf - Titel werden mit Ellipsen abgeschnitten, Beschreibungen werden auf maximal 3 Zeilen begrenzt",
+      "imageCropping": "Bilder zuschneiden (nicht die Größe ändern) - Bilder verwenden object-fit: cover zum Zuschneiden und Zentrieren, wobei das Seitenverhältnis erhalten bleibt",
+      "clickPreview": "Zur Vorschau klicken - Klicken Sie auf ein beliebiges Bild, um die vollständige, nicht beschnittene Version in einem Popup zu sehen.",
+      "flexibleLayout": "Flexibles Layout - Der Inhaltsbereich wird nur angezeigt, wenn es Inhalte zu zeigen gibt",
+      "accessibility": "Bessere Zugänglichkeit - Korrekte Alt-Text-Fallbacks und Tastaturnavigation"
+    },
+    "technicalNote": {
+      "title": "Wie die Bildgrößenbestimmung funktioniert:",
+      "description": "Jede Karte hat eine feste Höhe (400px). Der Bildabschnitt verwendet flex: 1, um zu wachsen und den Platz zu füllen, der übrig bleibt, nachdem sich der Inhaltsabschnitt genommen hat, was er braucht. Das Bild selbst verwendet object-fit: Abdeckung zu beschneiden (nicht Größe ändern) und Zentrum innerhalb seiner Container.",
+      "aspectRatios": "Beachten Sie die unterschiedlichen Seitenverhältnisse: Die quer-, quadratischen und hochformatigen Bilder von Picsum Photos werden alle so zugeschnitten, dass sie perfekt in ihre Container passen, wobei ihre ursprüngliche Qualität erhalten bleibt und sie sich an den verfügbaren Platz anpassen."
+    }
+  }
+}

@@ -18,7 +18,7 @@
   "paste": {
     "label": "Collez le contenu de votre texte",
     "placeholder": "Collez ou tapez votre contenu ici...",
-    "processButton": "Texte du processus",
+    "processButton": "Envoyer le texte",
     "defaultFileName": "Texte collé"
   },
   "confirm": {

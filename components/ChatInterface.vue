@@ -53,7 +53,11 @@
           :dark-mode="widgetConfig.darkMode"
           @send-message="sendMessage"
           @show-tool-trace-details="showToolTraceDetails"
-        />
+        />   
+        <!-- AI Disclaimer for empty or welcome-only chats -->
+        <div v-if="shouldShowDisclaimer" class="ai-disclaimer">
+          {{ t('chatInterface.ai.disclaimer') }}
+        </div>
 
         <!-- Typing Indicator -->
         <div v-if="isTyping" class="typing-indicator">
@@ -196,7 +200,8 @@ const widgetConfig = ref<any>({
   icons: null,
   darkMode: false,
   soundOn: true,
-  faqs: []
+  faqs: [],
+  showAiDisclaimer: false // Default to NOT showing disclaimer
 })
 
 // Client state
@@ -264,6 +269,16 @@ const placeholderText = computed(() => {
     return t('chatInterface.input.disabledPlaceholder')
   }
   return t('chatInterface.input.placeholder')
+})
+
+const shouldShowDisclaimer = computed(() => {
+  // Only show disclaimer if enabled in config AND no messages or only welcome message
+  if (!widgetConfig.value.showAiDisclaimer) {
+    return false
+  }
+  
+  const actualMessages = messages.value.filter(msg => !msg.id?.startsWith('welcome-'))
+  return actualMessages.length === 0
 })
 
 // Utility: lighten/darken color
@@ -1310,7 +1325,7 @@ onMounted(() => {
           break
         case 'parent-page-url':
           // Handle parent page URL from embed.js
-          console.log('Parent page URL received:', data?.url)
+          //console.log('Parent page URL received:', data?.url)
           if (data?.url) {
             parentPageUrl.value = data.url
           }
@@ -1386,6 +1401,9 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 .loading-more-indicator { display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.75rem; color:#666; font-size:0.875rem; margin-bottom:1rem; }
 .dark-mode .loading-more-indicator { color:#ccc; }
 
+.ai-disclaimer { padding-left: 0.75rem; color:#666; opacity:0.7; font-size:0.875rem; font-style:italic; max-width:80%; }
+.dark-mode .ai-disclaimer { color:#999; opacity:0.6; }
+
 .chat-container { display:flex; flex-direction:column; height:100%; overflow:hidden; }
 .chat-header { padding:1rem; border-bottom:1px solid #e1e5e9; background:#f8f9fa; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; }
 .dark-mode .chat-header { background:#1e1e22; border-bottom-color:#2a2a31; }
@@ -1447,6 +1465,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
 
 @media (max-width:320px) {
   .message { max-width:90%; padding:.5rem .75rem; }
+  .ai-disclaimer { max-width:90%; }
   .chat-header { padding:.75rem; }
   .messages-container { padding:.75rem; }
 }

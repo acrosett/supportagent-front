@@ -44,6 +44,10 @@
       "label": "Afficher la liste des FAQ",
       "description": "Afficher la liste des FAQ au lieu du formulaire du widget",
       "placeholder": "Sélectionner les FAQ à afficher"
+    },
+    "showAiDisclaimer": {
+      "label": "Afficher l'avertissement relatif à l'IA",
+      "description": "Affiche un avertissement indiquant que les réponses sont générées par l'intelligence artificielle."
     }
   },
   "actions": {

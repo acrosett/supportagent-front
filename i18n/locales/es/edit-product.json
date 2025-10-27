@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "title": "Configuración del producto"
+  },
+  "page": {
+    "title": {
+      "edit": "Editar Producto",
+      "create": "Crear nuevo producto"
+    },
+    "loading": "Cargando producto..."
+  },
+  "form": {
+    "fields": {
+      "name": {
+        "label": "Nombre del producto",
+        "placeholder": "p.ej. Mi agente de soporte",
+        "description": "Un nombre único para su producto de agente de soporte AI."
+      },
+      "description": {
+        "label": "Descripción del producto",
+        "description": "1. Qué es y qué hace su producto. 2. Algunos argumentos de marketing para vender el producto + su modelo de precios. 3. 3. Una descripción general de cómo utilizar su producto.",
+        "placeholder": "Para funcionar correctamente, el agente de IA necesita la siguiente información sobre su producto:\n\n## 1. Qué es y qué hace su producto.\n   *Ejemplo: Nuestra aplicación ayuda a las pequeñas empresas a gestionar sus facturas de forma rápida y segura.\n\n## 2. Algunos argumentos de marketing para vender el producto + su modelo de precios.\n   *Ejemplo: Ahorre tiempo, reduzca errores y amplíe su negocio, todo por sólo 19 $ al mes.\n\n## 3. 3. Una visión general sobre cómo utilizar su producto.\n   *Ejemplo:\n   - Vaya a la página **Inscríbase** y cree su cuenta.\n   - Verifique su correo electrónico a través del enlace de confirmación.\n   - Inicie sesión y diríjase al **Dashboard**.\n   - Vaya a la página **Configuración** para conectar su cuenta bancaria.\n- Vaya a la página **Facturas** para crear su primera factura.\n   - Utiliza la página **Informes** para hacer un seguimiento de los pagos y del rendimiento de tu negocio.\n \n "
+      },
+      "webhookUrl": {
+        "label": "URL del webhook",
+        "placeholder": "https://yoursite.com/api/validate-token",
+        "description": "Punto final de URL para validar tokens de usuario para usuarios autenticados."
+      },
+      "sharedSecret": {
+        "label": "Secreto compartido",
+        "placeholder": "Tu webhook secreto compartido",
+        "description": "Clave secreta utilizada para proteger las solicitudes de webhook entre su sistema y el nuestro."
+      },
+      "chatOn": {
+        "label": "Chat con inteligencia artificial",
+        "description": "Activar o desactivar la funcionalidad de chat AI para este producto."
+      },
+      "disableGuests": {
+        "label": "Desactivar el acceso de invitados",
+        "description": "Bloquea el acceso de invitados (usuarios no registrados) al chat incrustado. Desactivar si está manejando invitados en su webhook."
+      }
+    },
+    "buttons": {
+      "update": "Actualizar producto",
+      "create": "Crear producto"
+    }
+  },
+  "messages": {
+    "success": {
+      "updated": "Producto actualizado",
+      "created": "Producto creado"
+    }
+  }
+}

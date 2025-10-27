@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "title": "Herramientas de depuración"
+  },
+  "page": {
+    "title": "Herramientas de depuración",
+    "subtitle": "Utilidades administrativas de depuración y pruebas"
+  },
+  "llmReplay": {
+    "title": "Reproducir resultados LLM",
+    "description": "Recuperar y mostrar datos de formación LLM para una entrada específica del registro de formación.",
+    "form": {
+      "trainingLogId": {
+        "label": "ID del registro de formación:",
+        "placeholder": "Introduzca el ID del registro de formación..."
+      },
+      "button": "Reejecutar análisis"
+    },
+    "results": {
+      "title": "Resultado de los datos de formación:",
+      "error": "Error:"
+    },
+    "messages": {
+      "retrieving": "Recuperando datos de entrenamiento...",
+      "success": "Datos de entrenamiento recuperados correctamente (simulación)",
+      "idRequired": "Introduzca un ID de registro de formación"
+    }
+  },
+  "deleteClientData": {
+    "title": "Borrar datos del cliente",
+    "warning": "⚠️ ADVERTENCIA: Borrar todos los mensajes y datos del cliente para el usuario actual. Esta acción no se puede deshacer.",
+    "button": "Borrar mis datos de cliente",
+    "confirmation": "¿Estás seguro de que quieres BORRAR TODOS los datos y mensajes de tus clientes?  Esta acción NO PUEDE deshacerse y eliminará permanentemente todo su historial de chat y la información de sus clientes.",
+    "messages": {
+      "deleting": "Borrar datos de cliente...",
+      "success": "Datos del cliente borrados correctamente"
+    }
+  },
+  "effectiveDelete": {
+    "title": "Eliminación efectiva de cuentas",
+    "warning": "⚠️ PELIGRO: Eliminar permanentemente una cuenta y todos los datos asociados. Esta acción no se puede deshacer.",
+    "form": {
+      "productId": {
+        "label": "ID del producto",
+        "placeholder": "Introduzca el ID del producto a eliminar...",
+        "description": "El ID del producto/cuenta que se va a eliminar de forma permanente."
+      },
+      "reason": {
+        "label": "Motivo del borrado",
+        "placeholder": "Introduzca el motivo de la eliminación...",
+        "description": "Explique por qué se elimina esta cuenta (necesario para la pista de auditoría)"
+      }
+    },
+    "button": "Ejecutar eliminación de cuenta",
+    "confirmation": "¿Está seguro de que desea ELIMINAR PERMANENTEMENTE la cuenta con ID de producto: {productId}?  Esta acción NO PUEDE deshacerse y borrará inmediatamente todos los datos asociados.  Razón: {reason}",
+    "messages": {
+      "executing": "Ejecutando borrado de cuenta...",
+      "success": "Eliminación de cuenta ejecutada correctamente"
+    }
+  },
+  "messages": {
+    "error": {
+      "accessDenied": "Acceso denegado: Se requieren privilegios de administrador",
+      "verifyAdmin": "Error al verificar privilegios de administrador",
+      "deleteClient": "Error al borrar los datos del cliente",
+      "deleteAccount": "No se ha podido ejecutar la eliminación de la cuenta"
+    }
+  }
+}

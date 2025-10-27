@@ -1,0 +1,67 @@
+{
+  "header": {
+    "title": "Häufig gestellte Fragen"
+  },
+  "buttons": {
+    "newFaq": "Neue FAQ",
+    "documentUpload": "Dokument hochladen",
+    "prev": "Prev",
+    "next": "Nächste"
+  },
+  "search": {
+    "placeholder": "FAQs durchsuchen..."
+  },
+  "pagination": {
+    "perPage": "Pro Seite",
+    "pageInfo": "Seite {current} / {total}"
+  },
+  "states": {
+    "loading": "FAQs laden...",
+    "empty": "Keine FAQs entsprechen Ihrer Suche."
+  },
+  "actions": {
+    "toggleAnswer": "Antwort umschalten",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "popups": {
+    "create": {
+      "title": "Neue FAQ"
+    },
+    "edit": {
+      "title": "FAQ bearbeiten"
+    }
+  },
+  "form": {
+    "fields": {
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Tags auswählen oder hinzufügen"
+      },
+      "question": {
+        "label": "Frage",
+        "placeholder": "Geben Sie hier die FAQ-Frage ein"
+      },
+      "answer": {
+        "label": "Antwort",
+        "placeholder": "Geben Sie hier die Antwort auf die FAQ ein"
+      }
+    },
+    "buttons": {
+      "cancel": "Abbrechen",
+      "create": "FAQ erstellen",
+      "save": "FAQ speichern",
+      "update": "FAQ aktualisieren"
+    }
+  },
+  "messages": {
+    "success": {
+      "created": "FAQ erfolgreich erstellt",
+      "updated": "FAQ erfolgreich aktualisiert",
+      "deleted": "FAQ erfolgreich gelöscht"
+    },
+    "confirm": {
+      "delete": "Sind Sie sicher, dass Sie diese FAQ löschen möchten?"
+    }
+  }
+}

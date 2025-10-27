@@ -1,0 +1,56 @@
+{
+  "page": {
+    "title": "FAQ Verwaltung"
+  },
+  "header": {
+    "title": "Häufig gestellte Fragen"
+  },
+  "buttons": {
+    "newFaq": "Neue FAQ",
+    "documentUpload": "Dokument hochladen",
+    "prev": "Vorherige",
+    "next": "Nächste"
+  },
+  "search": {
+    "placeholder": "FAQs durchsuchen..."
+  },
+  "pagination": {
+    "perPage": "Pro Seite",
+    "pageInfo": "Seite {current} / {total}"
+  },
+  "states": {
+    "loading": "FAQs laden...",
+    "empty": "Keine FAQs entsprechen Ihrer Suche."
+  },
+  "actions": {
+    "toggleAnswer": "Antwort umschalten",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "popups": {
+    "create": {
+      "title": "Neue FAQ"
+    },
+    "edit": {
+      "title": "FAQ bearbeiten"
+    }
+  },
+  "form": {
+    "fields": {},
+    "buttons": {
+      "cancel": "Abbrechen",
+      "save": "FAQ speichern",
+      "update": "FAQ aktualisieren"
+    }
+  },
+  "messages": {
+    "success": {
+      "created": "FAQ erfolgreich erstellt",
+      "updated": "FAQ erfolgreich aktualisiert",
+      "deleted": "FAQ erfolgreich gelöscht"
+    },
+    "confirm": {
+      "delete": "Sind Sie sicher, dass Sie diese FAQ löschen möchten?"
+    }
+  }
+}

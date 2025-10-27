@@ -1,0 +1,63 @@
+{
+  "page": {
+    "title": "Configuración del widget",
+    "description": "Ajuste la apariencia y el comportamiento de su widget de soporte y, a continuación, copie el fragmento incrustado."
+  },
+  "status": {
+    "loading": "Cargando configuración del widget..."
+  },
+  "embed": {
+    "title": "Insertar fragmento",
+    "copyButton": "Copiar fragmento",
+    "copiedMessage": "¡Copiado!"
+  },
+  "fields": {
+    "primaryColor": "Color principal",
+    "secondaryColor": "Color secundario",
+    "bounceAfterInit": "Rebote después de Init (segundos)",
+    "periodicBounce": "Rebote periódico (segundos)",
+    "position": {
+      "label": "Posición",
+      "bottomRight": "Abajo a la derecha",
+      "bottomLeft": "Parte inferior izquierda"
+    },
+    "icon": {
+      "label": "Icono",
+      "message": "Mensaje",
+      "headset": "Auriculares",
+      "robot": "Robot"
+    },
+    "options": {
+      "label": "Opciones",
+      "enabledLabel": "HABILITADO",
+      "disabledLabel": "DESHABILITADO",
+      "off": "OFF",
+      "on": "EN",
+      "yes": "SÍ",
+      "no": "NO"
+    },
+    "welcomeMessage": {
+      "label": "Mensaje de bienvenida",
+      "placeholder": "👋 ¡Bienvenido!"
+    },
+    "faqs": {
+      "label": "Mostrar lista de FAQ",
+      "description": "Mostrar lista de FAQ en lugar del formulario del widget",
+      "placeholder": "Seleccione las preguntas frecuentes que desea mostrar"
+    },
+    "showAiDisclaimer": {
+      "label": "Mostrar descargo de responsabilidad AI",
+      "description": "Mostrar una advertencia de que las respuestas son generadas por IA"
+    }
+  },
+  "actions": {
+    "save": "Guardar"
+  },
+  "messages": {
+    "success": {
+      "saved": "Configuración del widget guardada correctamente",
+      "copied": "Insertar fragmento copiado en el portapapeles",
+      "updated": "Widget actualizado correctamente"
+    }
+  }
+}
