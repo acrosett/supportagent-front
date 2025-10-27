@@ -75,13 +75,7 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true })
 
-// Set user token when layout loads (except on /widget page)
-onMounted(() => {
-  // The watcher above handles initial load, but we need this for cases where the widget loads before the watcher
-  if (route.path !== '/widget') {
-    setTimeout(loadWidget, 100)
-  }
-})
+
 </script>
 
 <style scoped lang="scss">
