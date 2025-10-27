@@ -9,8 +9,8 @@
   },
   "messages": {
     "noTags": "Pas de tags disponibles",
-    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer la balise \"{{nom de la balise}}\" ?",
-    "deleteWarning": "Cela supprimera la balise de tous les numéros qui l'utilisent.",
+    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer la balise \"{{tagName}}\" ?",
+    "deleteWarning": "Ceci supprimera la balise de tous les numéros qui l'utilisent.",
     "tagAdded": "Étiquette ajoutée au numéro",
     "tagRemoved": "Étiquette supprimée de l'édition",
     "tagCreated": "Étiquette créée avec succès",

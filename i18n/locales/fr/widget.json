@@ -46,8 +46,8 @@
       "placeholder": "Sélectionner les FAQ à afficher"
     },
     "showAiDisclaimer": {
-      "label": "Afficher l'avertissement relatif à l'IA",
-      "description": "Affiche un avertissement indiquant que les réponses sont générées par l'intelligence artificielle."
+      "label": "Afficher l'avis de non-responsabilité de l'IA",
+      "description": "Afficher une clause de non-responsabilité indiquant que les réponses sont générées par l'IA"
     }
   },
   "actions": {

@@ -11,7 +11,7 @@
   "entry": {
     "unknownAgent": "Agent inconnu",
     "testBadge": "TEST",
-    "errorBadge": "{count} ERROR{pluriel}",
+    "errorBadge": "{count} ERREUR{plural}",
     "sections": {
       "input": "Entrée",
       "output": "Sortie"
@@ -21,9 +21,9 @@
     "copyButton": "Copier"
   },
   "timestamps": {
-    "minutesAgo": "Il y a {minutes}m",
-    "hoursAgo": "Il y a {hours}h",
-    "daysAgo": "Il y a {jours}d",
+    "minutesAgo": "{minutes}il y a m",
+    "hoursAgo": "{hours}il y a h",
+    "daysAgo": "{days}il y a d",
     "unknown": "Inconnu",
     "invalid": "Date invalide"
   },

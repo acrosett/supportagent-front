@@ -30,7 +30,7 @@
   },
   "balance": {
     "title": "Solde du compte",
-    "description": "Solde de votre compte et informations sur son utilisation",
+    "description": "Le solde de votre compte et les informations relatives à son utilisation",
     "status": {
       "sufficient": "L'équilibre suffit",
       "low": "Solde faible - Envisagez d'ajouter des fonds"

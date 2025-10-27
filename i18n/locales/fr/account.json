@@ -8,7 +8,7 @@
   },
   "deletion": {
     "title": "Compte dont la suppression est programmée",
-    "scheduledMessage": "Votre compte a été marqué pour suppression le {date}"
+    "scheduledMessage": "Votre compte a été signalé pour suppression sur {date}"
   },
   "email": {
     "title": "Vérification de l'e-mail",

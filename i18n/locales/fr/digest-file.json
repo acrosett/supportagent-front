@@ -9,7 +9,7 @@
     "supportedFiles": "Prend en charge : HTML, PDF, Word (.doc, .docx), XML, Texte (.txt), Markdown (.md), JSON, CSV"
   },
   "processing": {
-    "message": "Traitement de {nomdefichier}..."
+    "message": "Traitement de {fileName}..."
   },
   "success": {
     "message": "Traitement réussi",
@@ -18,16 +18,16 @@
   "paste": {
     "label": "Collez le contenu de votre texte",
     "placeholder": "Collez ou tapez votre contenu ici...",
-    "processButton": "Envoyer le texte",
+    "processButton": "Envoyer à l'IA",
     "defaultFileName": "Texte collé"
   },
   "confirm": {
     "uploadTitle": "Confirmer le téléchargement",
     "processTitle": "Confirmer le traitement",
-    "uploadMessage": "Vous êtes sur le point de télécharger {nomdufichier} ({tailleKB} KB).",
-    "processMessage": "Vous êtes sur le point de traiter {nomdufichier} ({tailleKB} Ko de texte).",
+    "uploadMessage": "Vous êtes sur le point de télécharger {fileName} ({sizeKB} KB).",
+    "processMessage": "Vous êtes sur le point de traiter {fileName} ({sizeKB} KB de texte).",
     "defaultFileName": "votre fichier",
-    "calculatingCost": "Calculer le coût estimé...",
+    "calculatingCost": "Calcul du coût estimé...",
     "estimatedCost": "Coût de traitement estimé : ${cost}",
     "cancel": "Annuler",
     "process": "Processus avec l'IA"

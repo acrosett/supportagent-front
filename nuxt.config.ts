@@ -144,6 +144,7 @@ export default defineNuxtConfig({
       sourcemap: true,
       rollupOptions: {
         output: {
+          sourcemap: true, // Ensure sourcemaps are enabled for output
           manualChunks: {
             // Separate chunk for widget components
             'widget': [

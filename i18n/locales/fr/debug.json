@@ -30,7 +30,7 @@
     "title": "Supprimer les données du client",
     "warning": "⚠️ WARNING : Supprimer tous les messages et données du client pour l'utilisateur actuel. Cette action ne peut être annulée !",
     "button": "Supprimer les données de mes clients",
-    "confirmation": "Êtes-vous sûr de vouloir SUPPRIMER TOUTES les données et tous les messages de vos clients ? Cette action NE PEUT PAS être annulée et supprimera de façon permanente tout votre historique de chat et toutes les informations relatives à vos clients.",
+    "confirmation": "Êtes-vous sûr de vouloir SUPPRIMER TOUTES les données et tous les messages de vos clients ?  Cette action NE PEUT PAS être annulée et supprimera de façon permanente tout votre historique de chat et toutes les informations relatives à vos clients.",
     "messages": {
       "deleting": "Suppression des données des clients...",
       "success": "Les données du client ont été supprimées avec succès"
@@ -52,7 +52,7 @@
       }
     },
     "button": "Exécuter la suppression du compte",
-    "confirmation": "Êtes-vous sûr de vouloir SUPPRIMER PERMANENTEMENT le compte avec l'ID de produit : {productId}? Cette action ne peut pas être annulée et supprimera immédiatement toutes les données associées. Reason : {reason}",
+    "confirmation": "Êtes-vous sûr de vouloir SUPPRIMER PERMANENTEMENT le compte avec l'ID de produit : {productId}?  Cette action NE PEUT PAS être annulée et supprimera immédiatement toutes les données associées.  Raison : {reason}",
     "messages": {
       "executing": "Exécution de la suppression du compte...",
       "success": "La suppression du compte a été exécutée avec succès"

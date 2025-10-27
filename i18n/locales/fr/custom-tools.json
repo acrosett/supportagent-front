@@ -72,7 +72,7 @@
       "title": "Outil personnalisé (notre chatbot peut les créer pour vous)"
     },
     "extendTool": {
-      "title": "Étendre l'outil {publicName}"
+      "title": "Extension de l'outil {publicName} "
     },
     "addDomain": {
       "title": "Ajouter un domaine",
@@ -97,8 +97,8 @@
       "description": "Nom unique pour cet outil (en minuscules, sans espaces)"
     },
     "description": {
-      "label": "Description de la page",
-      "placeholder": "Décrire ce que fait cet outil...",
+      "label": "Description",
+      "placeholder": "Décrivez ce que fait cet outil...",
       "description": "Description détaillée de l'objectif et des fonctionnalités de l'outil"
     },
     "url": {
@@ -116,7 +116,7 @@
     "contentType": {
       "label": "Type de contenu",
       "placeholder": "application/json",
-      "description": "Type MIME pour le corps de la demande"
+      "description": "Type MIME pour le corps de la requête"
     },
     "timeout": {
       "label": "Délai d'attente (ms)",
@@ -133,7 +133,7 @@
     },
     "actions": {
       "cancel": "Annuler",
-      "save": "Outil de sauvegarde",
+      "save": "Outil d'enregistrement",
       "update": "Outil de mise à jour",
       "create": "Créer un outil"
     }

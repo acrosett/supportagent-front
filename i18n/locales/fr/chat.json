@@ -5,11 +5,11 @@
     },
     "header": {
       "title": "Agent d'assistance",
-      "subtitle": "Support Chat IA"
+      "subtitle": "Support de chat AI"
     },
     "ai": {
       "disableLabel": "Désactiver l'IA",
-      "disclaimer": "Les réponses sont générées par l'IA et peuvent être inexactes.",
+      "disclaimer": "Les réponses sont générées par l'IA et peuvent être imprécises.",
       "messages": {
         "enabled": "AI activé",
         "disabled": "AI désactivé"

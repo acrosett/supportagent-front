@@ -16,7 +16,7 @@
     },
     "autoTopup": {
       "enabled": "Recharge automatique activée",
-      "trigger": "lorsque le solde est inférieur à ${montant}",
+      "trigger": "lorsque le solde tombe en dessous de ${amount}",
       "toggleOn": "ON",
       "toggleOff": "OFF"
     }
@@ -86,7 +86,7 @@
       "explanation": "Configurez la facturation automatique pour maintenir le solde de votre compte.",
       "amountLabel": "Montant complémentaire",
       "minimumWarning": "Le montant minimum du rechargement automatique est de 60",
-      "triggerInfo": "Lorsque votre solde tombe en dessous de ${seuil} (10% du montant de la recharge), vous serez automatiquement facturé jusqu'à concurrence de ${montant}.",
+      "triggerInfo": "Lorsque votre solde tombe en dessous de ${threshold} (10% du montant de la recharge), vous serez automatiquement facturé jusqu'à ${amount}.",
       "currentStatus": {
         "amount": "Recharge automatique actuelle :",
         "trigger": "Seuil de déclenchement :"
@@ -150,8 +150,8 @@
       "autoTopupSaved": "Les paramètres de recharge automatique ont été enregistrés avec succès.",
       "subscriptionActivated": "L'abonnement a été activé avec succès ! Bienvenue à Premium.",
       "spendingLimitUpdated": "La limite de dépenses a été mise à jour avec succès.",
-      "autoTopupToggled": "Recharge automatique {état} réussie.",
-      "autoRenewToggled": "Renouvellement automatique de {état} réussi."
+      "autoTopupToggled": "Recharge automatique {status} avec succès.",
+      "autoRenewToggled": "Renouvellement automatique {status} avec succès."
     },
     "error": {
       "addFunds": "L'ajout de fonds a échoué. Veuillez réessayer.",
@@ -164,8 +164,8 @@
       "loadMore": "Échec du chargement d'autres transactions. Veuillez réessayer."
     },
     "confirmation": {
-      "disableAutoTopup": "Êtes-vous sûr de vouloir désactiver le rechargement automatique ? Cela arrêtera la facturation automatique lorsque votre solde sera faible.",
-      "disableAutoRenew": "Êtes-vous sûr de vouloir désactiver le renouvellement automatique ? Votre abonnement ne sera pas renouvelé automatiquement le mois prochain."
+      "disableAutoTopup": "Êtes-vous sûr de vouloir désactiver le rechargement automatique ?  Cela empêchera la facturation automatique lorsque votre solde est faible.",
+      "disableAutoRenew": "Êtes-vous sûr de vouloir désactiver le renouvellement automatique ?  Votre abonnement ne sera pas renouvelé automatiquement le mois prochain."
     },
     "status": {
       "enabled": "activé",

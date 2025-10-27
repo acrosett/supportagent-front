@@ -4,7 +4,7 @@
   },
   "status": {
     "loading": "Chargement des clients de test...",
-    "empty": "Aucun client test trouvé"
+    "empty": "Aucun client de test trouvé"
   },
   "client": {
     "unnamedClient": "Client sans nom",

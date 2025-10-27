@@ -71,7 +71,7 @@
       "imageCropping": "Recadrage des images (pas de redimensionnement) - Les images utilisent object-fit : cover pour être recadrées et centrées, en préservant le rapport hauteur/largeur.",
       "clickPreview": "Cliquez pour prévisualiser - Cliquez sur n'importe quelle image pour voir la version complète, non recadrée, dans une fenêtre contextuelle.",
       "flexibleLayout": "Mise en page flexible - la section Contenu n'apparaît que lorsqu'il y a du contenu à afficher",
-      "accessibility": "Meilleure accessibilité - Retombées correctes du texte alt et navigation au clavier"
+      "accessibility": "Amélioration de l'accessibilité - Retombées correctes du texte alt et navigation au clavier"
     },
     "technicalNote": {
       "title": "Comment fonctionne le dimensionnement des images :",

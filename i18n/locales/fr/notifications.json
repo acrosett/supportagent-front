@@ -25,9 +25,9 @@
     "unknown": "Date inconnue",
     "invalid": "Date invalide",
     "relative": {
-      "minutesAgo": "Il y a {minutes}m",
-      "hoursAgo": "Il y a {hours}h",
-      "daysAgo": "Il y a {jours}d"
+      "minutesAgo": "{minutes}il y a m",
+      "hoursAgo": "{hours}il y a h",
+      "daysAgo": "{days}il y a d"
     }
   },
   "errors": {

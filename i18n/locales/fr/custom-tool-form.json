@@ -19,7 +19,7 @@
   "url": {
     "label": "URL",
     "placeholder": "https://api.example.com/endpoint",
-    "description": "L'URL complète où l'outil effectuera les requêtes"
+    "description": "L'URL complète où l'outil effectuera des requêtes"
   },
   "method": {
     "label": "Méthode HTTP",
