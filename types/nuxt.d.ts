@@ -7,6 +7,7 @@ declare module 'nuxt/app' {
     $userEmail: string
     $userProductId: string
     $userRole: string
+    $setIsConnectedCookie: (durationSeconds: number) => void
     $toast: {
       state: { 
         visible: boolean

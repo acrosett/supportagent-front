@@ -33,6 +33,15 @@ export default defineNuxtPlugin(nuxtApp => {
     document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Strict`;
   }
 
+  // Helper functions for isConnected cookie
+  function setIsConnectedCookie(durationSeconds: number) {
+    setCookieRaw('isConnected', 'true', durationSeconds, true)
+  }
+  
+  function deleteIsConnectedCookie() {
+    deleteCookieRaw('isConnected')
+  }
+
   const nuxtCookieStorage: ClientStorage = {
     get(name: string): string {
       return getCookieRaw(`l-${name}-l`)
@@ -49,19 +58,21 @@ export default defineNuxtPlugin(nuxtApp => {
     url: config.public.apiBaseUrl as string,
     onLogout: () => {
       console.log("onLogout called");
-  const router = nuxtApp.$router as unknown as Router | undefined;
-  if (!router) return;
-  const currentPath = router.currentRoute.value.path;
-      
+      deleteIsConnectedCookie();
+      const router = nuxtApp.$router as unknown as Router | undefined;
+      if (!router) return;
+      const currentPath = router.currentRoute.value.path;
+
       // Only redirect to login if we're not on a public path
       if (!isPublicPath(currentPath)) {
         router.push("/login");
       }
     },
-    storage: nuxtCookieStorage
-
+    // storage: nuxtCookieStorage,
+    useSecureCookie: true,
   });
   nuxtApp.provide('sp', sp)
-  
+  nuxtApp.provide('setIsConnectedCookie', setIsConnectedCookie)
+
 
 })

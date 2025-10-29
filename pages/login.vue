@@ -72,11 +72,10 @@ const actions: MegaFormAction[] = [
         throw Error(t('messages.error.loginFailed'));
       }
       const { userId, accessToken } = res;
-
       
       // Use the same expiration time for JWT storage
       const jwtExpiration = data.expiresInSec || (3600 * 30); // Default to 30 minutes if not staying connected
-      await useNuxtApp().$sp.user.setJwt(accessToken as string, jwtExpiration);
+      useNuxtApp().$setIsConnectedCookie(jwtExpiration);
       useNuxtApp().$userId = userId;
 
       // Check for redirectTo parameter and navigate accordingly

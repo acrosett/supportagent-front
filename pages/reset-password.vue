@@ -150,7 +150,7 @@ const resetPasswordActions: MegaFormAction[] = [
         
         // Set JWT with default expiration (30 minutes)
         const jwtExpiration = 3600 * 30
-        await useNuxtApp().$sp.user.setJwt(accessToken as string, jwtExpiration)
+        useNuxtApp().$setIsConnectedCookie(jwtExpiration)
         useNuxtApp().$userId = userId
         
         useNuxtApp().$toast.show(

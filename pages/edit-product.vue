@@ -61,6 +61,7 @@ const formData = ref({
   webhookUrl: '',
   sharedSecret: '',
   chatOn: true,
+  disableGuests: false,
 })
 
 // Load existing product if editing
@@ -76,13 +77,8 @@ const loadProduct = async () => {
     if (product) {
       currentProduct.value = product
       // Populate form data with existing product data
-      formData.value = {
-        name: product.name || '',
-        description: product.description || '',
-        webhookUrl: product.webhookUrl || '',
-        sharedSecret: product.sharedSecret || '',
-        chatOn: product.chatOn || false,
-      }
+      formData.value = { ...(formData.value||{}), ...product }
+  
     }
   } catch (error) {
     console.error('Failed to load product:', error)
@@ -112,7 +108,6 @@ const fieldOverrides: OverrideRecord<Product> = {
   disableGuests: {
     label: t('form.fields.disableGuests.label'),
     description: t('form.fields.disableGuests.description'),
-    
   },
   description: {
     maxChars: 4000,

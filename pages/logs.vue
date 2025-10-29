@@ -342,7 +342,7 @@ const showLogDetails = ref(false)
 const selectedLog = ref<Log | null>(null)
 
 // Debounced search
-let searchTimeout: NodeJS.Timeout | null = null
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const debouncedSearch = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
@@ -681,15 +681,26 @@ const formatJsonData = (data: string) => {
   }
 }
 
-// Infinite scroll
-const handleScroll = () => {
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-  const windowHeight = window.innerHeight
-  const documentHeight = document.documentElement.scrollHeight
-  
-  if (scrollTop + windowHeight >= documentHeight - 1000 && hasMore.value && !loading.value) {
-    loadLogs()
+// Throttle function for scroll events
+let scrollTimeout: ReturnType<typeof setTimeout> | null = null
+
+// Scroll detection for infinite loading
+const handleScroll = (event: Event) => {
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout)
   }
+  
+  scrollTimeout = setTimeout(() => {
+    const target = event.target as HTMLElement
+    const scrollTop = target.scrollTop
+    const scrollHeight = target.scrollHeight
+    const clientHeight = target.clientHeight
+        
+    // Load more when user scrolls to within 200px of bottom
+    if (scrollTop + clientHeight >= scrollHeight - 200 && hasMore.value && !loading.value) {
+      loadLogs()
+    }
+  }, 100)
 }
 
 // Lifecycle
@@ -703,12 +714,20 @@ onMounted(async () => {
   // Load chart data
   await loadChartData()
   
-  // Add scroll listener
-  window.addEventListener('scroll', handleScroll)
+  // Add scroll listener for infinite loading to the main content element
+  const mainElement = document.querySelector('main.main-content')
+  if (mainElement) {
+    mainElement.addEventListener('scroll', handleScroll)
+  }
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  // Clean up scroll listener and timeout
+  const mainElement = document.querySelector('main.main-content')
+  if (mainElement) {
+    mainElement.removeEventListener('scroll', handleScroll)
+  }
+  if (scrollTimeout) clearTimeout(scrollTimeout)
   if (searchTimeout) clearTimeout(searchTimeout)
   if (chartInstance) {
     chartInstance.destroy()
@@ -908,6 +927,8 @@ onUnmounted(() => {
 
 .logs-container {
   min-height: 400px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .loading-state,
@@ -922,6 +943,8 @@ onUnmounted(() => {
 .logs-list {
   display: grid;
   gap: 1rem;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .log-item {
@@ -932,6 +955,8 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   border-left: 4px solid transparent;
+  max-width: 100%;
+  overflow: hidden;
   
   &:hover {
     transform: translateY(-2px);
@@ -1027,6 +1052,9 @@ onUnmounted(() => {
   margin-bottom: 1rem;
   line-height: 1.5;
   color: var(--text);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .log-footer {

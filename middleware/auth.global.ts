@@ -3,6 +3,22 @@ import { PUBLIC_PATHS, isPublicPath, isPathMatch } from "../utils/auth-config"
 import { isValidRedirect } from "../utils/redirect-validation"
 import { NuxtApp } from "nuxt/app";
 
+// Helper function to read isConnected cookie
+function getIsConnectedCookie(): boolean {
+  if (!import.meta.client) return false
+  const name = 'isConnected='
+  const decodedCookie = decodeURIComponent(document.cookie)
+  const ca = decodedCookie.split(';')
+  for (let c of ca) {
+    while (c.charAt(0) === ' ') c = c.substring(1)
+    if (c.indexOf(name) === 0) {
+      const value = c.substring(name.length, c.length)
+      return value === 'true'
+    }
+  }
+  return false
+}
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
 
   const nuxtApp = useNuxtApp()
@@ -17,9 +33,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return
   }
 
-  const jwt = nuxtApp.$sp.user.config.storage?.get(nuxtApp.$sp.user.JWT_STORAGE_KEY);
+  const isConnected = getIsConnectedCookie();
 
-  const loggedIn = jwt && await checkLogin(nuxtApp).catch((e) => {
+  const loggedIn = isConnected && await checkLogin(nuxtApp).catch((e) => {
     console.warn('Login check failed:', e);
     return false;
   });
@@ -45,7 +61,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 async function checkLogin(nuxtApp: NuxtApp) {
   // TODO: Call API to check login status
   // Return true if logged in, false otherwise
-
 
   const res = await nuxtApp.$sp.user.check_jwt_extended({});
   const userId = res.base.userId as string;

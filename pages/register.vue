@@ -91,7 +91,7 @@ const actions: MegaFormAction[] = [
         (data as any).recaptchaToken = recaptchaToken;
 
         const { userId, accessToken } = await useNuxtApp().$sp.user.create_account_extendedS(data);
-        await useNuxtApp().$sp.user.setJwt(accessToken as string, 3600 * 30); // 30 minutes
+        useNuxtApp().$setIsConnectedCookie(3600 * 30);
         useNuxtApp().$userId = userId;
               
         // Navigate to /
